@@ -30,7 +30,7 @@ Requires .NET 8.0 SDK or later.
 git clone https://github.com/xsyetopz/JagFX.git
 cd jagfx-scala
 
-# build everything (incl. external-ish libs)
+# build everything (incl. soon-to-be-NuGet libs)
 dotnet build
 ```
 
@@ -70,7 +70,7 @@ dotnet run --project src/JagFX.Cli --framework net8.0 -- inspect input.synth
 
 ### Self-Contained Executable
 
-Build a single executable for your platform:
+Build single executable for your platform:
 
 ```bash
 # Windows (Intel/AMD)
