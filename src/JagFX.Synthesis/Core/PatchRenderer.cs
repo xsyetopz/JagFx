@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 
 namespace JagFX.Synthesis.Core;
 
-public static class PatchMixer
+public static class PatchRenderer
 {
     public static AudioBuffer Synthesize(Patch patch, int loopCount, int voiceFilter = -1)
     {
@@ -21,8 +21,8 @@ public static class PatchMixer
         }
 
         var sampleCount = (int)(maxDuration * AudioConstants.SampleRatePerMillisecond);
-        var loopStart = (int)(patch.Loop.BeginSample * AudioConstants.SampleRatePerMillisecond);
-        var loopStop = (int)(patch.Loop.EndSample * AudioConstants.SampleRatePerMillisecond);
+        var loopStart = (int)(patch.Loop.BeginMs * AudioConstants.SampleRatePerMillisecond);
+        var loopStop = (int)(patch.Loop.EndMs * AudioConstants.SampleRatePerMillisecond);
 
         var effectiveLoopCount = ValidateLoopRegion(loopStart, loopStop, sampleCount, loopCount);
         var totalSampleCount = sampleCount + (loopStop - loopStart) * Math.Max(0, effectiveLoopCount - 1);
@@ -47,7 +47,7 @@ public static class PatchMixer
         var maxDuration = 0;
         foreach (var (_, voice) in voices)
         {
-            var endTime = voice.DurationSamples + voice.StartSample;
+            var endTime = voice.DurationMs + voice.OffsetMs;
             if (endTime > maxDuration)
             {
                 maxDuration = endTime;
@@ -77,7 +77,7 @@ public static class PatchMixer
         foreach (var (_, voice) in voices)
         {
             var voiceBuffer = VoiceSynthesizer.Synthesize(voice);
-            var startOffset = (int)(voice.StartSample * AudioConstants.SampleRatePerMillisecond);
+            var startOffset = (int)(voice.OffsetMs * AudioConstants.SampleRatePerMillisecond);
 
             for (var i = 0; i < voiceBuffer.Length; i++)
             {

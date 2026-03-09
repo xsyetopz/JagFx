@@ -78,7 +78,7 @@ public static class ConvertCommand
             Console.WriteLine($"Loop count: {loopCount}");
 
             var patch = SynthFileReader.ReadFromPath(inputPath);
-            var audio = PatchMixer.Synthesize(patch, loopCount);
+            var audio = PatchRenderer.Synthesize(patch, loopCount);
             WaveFileWriter.WriteToPath(audio.ToBytes16LE(), outputPath, bitsPerSample: 16);
 
             Console.WriteLine($"Successfully wrote {outputPath}");
