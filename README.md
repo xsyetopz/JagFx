@@ -37,12 +37,42 @@ dotnet build
 ## Quick Start
 
 ```bash
+# run desktop GUI
+dotnet run --project src/JagFX.Desktop
+
 # run CLI application
 dotnet run --project src/JagFX.Cli --framework net8.0
 
 # run XUnit tests
 dotnet test
 ```
+
+## Desktop GUI
+
+Open, edit, and play back `.synth` files with the graphical editor.
+
+```bash
+dotnet run --project src/JagFX.Desktop
+```
+
+**Keyboard shortcuts**
+
+| Key | Action |
+|-----|--------|
+| `Space` | Play / stop |
+| `Ctrl+O` | Open file |
+| `Ctrl+S` | Save |
+| `Ctrl+Shift+S` | Save as |
+| `Ctrl+E` | Export WAV |
+| `◀ ▶` (header) | Navigate to previous / next patch in directory |
+
+**Workflow**
+
+1. Open a `.synth` file (`Ctrl+O` or drag-and-drop).
+2. Select a voice from the header strip (buttons 1–10).
+3. Click a rack cell (PITCH, VOLUME, V.RATE, …) to inspect its envelope in the panel on the right.
+4. Edit segment breakpoints by dragging them on the envelope canvas, or adjust values numerically.
+5. Press `Space` to preview, `Ctrl+S` to save, `Ctrl+E` to export as WAV.
 
 ## Usage
 
