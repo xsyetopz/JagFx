@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:JagFX.Desktop.ViewModels"
+             xmlns:inspector="using:JagFX.Desktop.Views.Inspector"
+             x:Class="JagFX.Desktop.Views.Inspector.InspectorPanel"
+             x:DataType="vm:MainViewModel">
+
+    <Border Background="#141414" BorderBrush="#272727" BorderThickness="0,0,1,0">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="0">
+
+                <!-- Partials Matrix -->
+                <inspector:PartialsMatrix DataContext="{Binding Patch.SelectedVoice}" />
+
+                <!-- Envelope Inspector (visible when envelope selected) -->
+                <inspector:EnvelopeInspector DataContext="{Binding}" />
+
+                <!-- Echo Section -->
+                <inspector:EchoSection DataContext="{Binding Patch.SelectedVoice}" />
+
+                <!-- Filter Section -->
+                <inspector:FilterSection DataContext="{Binding Patch.SelectedVoice.Filter}" />
+
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+
+</UserControl>

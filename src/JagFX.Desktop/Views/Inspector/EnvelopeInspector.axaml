@@ -1,0 +1,97 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:JagFX.Desktop.ViewModels"
+             xmlns:insp="using:JagFX.Desktop.Views.Inspector"
+             x:Class="JagFX.Desktop.Views.Inspector.EnvelopeInspector"
+             x:DataType="vm:MainViewModel">
+
+    <UserControl.Resources>
+        <insp:WaveformConverter x:Key="WaveformConverter" />
+    </UserControl.Resources>
+
+    <Border IsVisible="{Binding SelectedEnvelope, Converter={x:Static ObjectConverters.IsNotNull}}">
+        <StackPanel Spacing="0">
+            <!-- Section Header -->
+            <Border Background="#1a1a1a" Padding="6,3" BorderBrush="#272727" BorderThickness="0,1,0,1">
+                <TextBlock FontSize="8" FontWeight="Bold" Foreground="#4db8d4"
+                           Text="{Binding SelectedEnvelopeTitle, StringFormat='ENVELOPE: {0}'}" />
+            </Border>
+
+            <!-- Waveform selector -->
+            <Border Padding="6,4">
+                <StackPanel Spacing="4">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="WAVE" FontSize="7" Foreground="#686868" VerticalAlignment="Center" Width="36" />
+                        <ComboBox SelectedIndex="{Binding SelectedEnvelope.Waveform, Converter={StaticResource WaveformConverter}}"
+                                  FontSize="8" MinHeight="18" Padding="4,1" Width="90"
+                                  Background="#0c0c0c" Foreground="#c0c0c0">
+                            <ComboBoxItem Content="Off" />
+                            <ComboBoxItem Content="Square" />
+                            <ComboBoxItem Content="Sine" />
+                            <ComboBoxItem Content="Saw" />
+                            <ComboBoxItem Content="Noise" />
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="START" FontSize="7" Foreground="#686868" VerticalAlignment="Center" Width="36" />
+                        <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                       Value="{Binding SelectedEnvelope.StartValue}"
+                                       Minimum="-2147483648" Maximum="2147483647"
+                                       Width="90" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="END" FontSize="7" Foreground="#686868" VerticalAlignment="Center" Width="36" />
+                        <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                       Value="{Binding SelectedEnvelope.EndValue}"
+                                       Minimum="-2147483648" Maximum="2147483647"
+                                       Width="90" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Segments table -->
+            <Border Padding="4,2" Background="#141414" BorderBrush="#272727" BorderThickness="0,1,0,0">
+                <Grid ColumnDefinitions="20,*,*,20">
+                    <TextBlock Grid.Column="0" Text="#" FontSize="7" Foreground="#444444" />
+                    <TextBlock Grid.Column="1" Text="DUR" FontSize="7" Foreground="#444444" />
+                    <TextBlock Grid.Column="2" Text="PEAK" FontSize="7" Foreground="#444444" HorizontalAlignment="Right" />
+                </Grid>
+            </Border>
+
+            <ItemsControl ItemsSource="{Binding SelectedEnvelope.Segments}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:SegmentViewModel">
+                        <Border Padding="4,1" BorderBrush="#1e1e1e" BorderThickness="0,0,0,0.5">
+                            <Grid ColumnDefinitions="20,*,*,20">
+                                <TextBlock Grid.Column="0" FontSize="8" Foreground="#444444"
+                                           VerticalAlignment="Center" />
+                                <NumericUpDown Grid.Column="1"
+                                               Theme="{StaticResource JagNumericStyle}"
+                                               Value="{Binding Duration}"
+                                               Minimum="0" Maximum="65535"
+                                               MinHeight="16" FontSize="8" />
+                                <NumericUpDown Grid.Column="2"
+                                               Theme="{StaticResource JagNumericStyle}"
+                                               Value="{Binding TargetLevel}"
+                                               Minimum="0" Maximum="65535"
+                                               MinHeight="16" FontSize="8"
+                                               HorizontalAlignment="Right" />
+                                <Button Grid.Column="3" Theme="{StaticResource JagToolButton}" Content="x"
+                                        Padding="2,0" MinWidth="16" MinHeight="14"
+                                        Command="{Binding DataContext.SelectedEnvelope.RemoveSegmentCommand,
+                                            RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Button Theme="{StaticResource JagToolButton}" Content="+ ADD" Margin="4,2"
+                    Command="{Binding SelectedEnvelope.AddDefaultSegmentCommand}" />
+        </StackPanel>
+    </Border>
+
+</UserControl>

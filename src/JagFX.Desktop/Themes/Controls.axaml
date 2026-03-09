@@ -1,0 +1,131 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Compact button style for header toolbar -->
+    <ControlTheme x:Key="JagToolButton" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource ButtonDefaultBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="5,2" />
+        <Setter Property="MinHeight" Value="18" />
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+        <Setter Property="FontSize" Value="9" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <ContentPresenter Content="{TemplateBinding Content}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="#252525" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="^:pressed">
+            <Setter Property="Background" Value="#0d1d24" />
+        </Style>
+    </ControlTheme>
+
+    <!-- Voice toggle button (active = cyan) -->
+    <ControlTheme x:Key="JagVoiceToggle" TargetType="ToggleButton">
+        <Setter Property="Background" Value="{DynamicResource ButtonDefaultBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="3,1" />
+        <Setter Property="MinHeight" Value="18" />
+        <Setter Property="MinWidth" Value="18" />
+        <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+        <Setter Property="FontSize" Value="9" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <ContentPresenter Content="{TemplateBinding Content}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:checked">
+            <Setter Property="Background" Value="#0d1d24" />
+            <Setter Property="BorderBrush" Value="#4db8d4" />
+            <Setter Property="Foreground" Value="#4db8d4" />
+        </Style>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="#252525" />
+        </Style>
+    </ControlTheme>
+
+    <!-- Voice selection button (numbered, with enabled/selected states) -->
+    <ControlTheme x:Key="JagVoiceButton" TargetType="Button">
+        <Setter Property="Background" Value="#1e1e1e" />
+        <Setter Property="Foreground" Value="#444444" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="18" />
+        <Setter Property="MinWidth" Value="18" />
+        <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+        <Setter Property="FontSize" Value="8" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <ContentPresenter Content="{TemplateBinding Content}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="#252525" />
+        </Style>
+        <Style Selector="^.enabled">
+            <Setter Property="Foreground" Value="#4db8d4" />
+            <Setter Property="Opacity" Value="0.6" />
+        </Style>
+        <Style Selector="^.selected">
+            <Setter Property="Background" Value="#0d1d24" />
+            <Setter Property="BorderBrush" Value="#4db8d4" />
+            <Setter Property="Foreground" Value="#4db8d4" />
+            <Setter Property="Opacity" Value="1.0" />
+        </Style>
+    </ControlTheme>
+
+    <!-- Compact numeric input style -->
+    <ControlTheme x:Key="JagNumericStyle" TargetType="NumericUpDown">
+        <Setter Property="Background" Value="{DynamicResource SurfaceInputBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+        <Setter Property="FontSize" Value="9" />
+        <Setter Property="MinHeight" Value="18" />
+        <Setter Property="ShowButtonSpinner" Value="False" />
+    </ControlTheme>
+
+</ResourceDictionary>

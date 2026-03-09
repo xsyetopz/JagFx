@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:JagFX.Desktop.ViewModels"
+             x:Class="JagFX.Desktop.Views.Inspector.PartialsMatrix"
+             x:DataType="vm:VoiceViewModel">
+
+    <Border Margin="0" Padding="0">
+        <StackPanel Spacing="0">
+            <!-- Section Header -->
+            <Border Background="#1a1a1a" Padding="6,3" BorderBrush="#272727" BorderThickness="0,0,0,1">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="PARTIALS" FontSize="8" FontWeight="Bold" Foreground="#686868" VerticalAlignment="Center" />
+                    <!-- Bank switch buttons -->
+                    <StackPanel Orientation="Horizontal" Spacing="1">
+                        <ToggleButton Theme="{StaticResource JagVoiceToggle}"
+                                      x:Name="Bank1Toggle"
+                                      Content="1-5" IsChecked="True"
+                                      FontSize="7" Padding="3,1" MinHeight="14" MinWidth="24" />
+                        <ToggleButton Theme="{StaticResource JagVoiceToggle}"
+                                      x:Name="Bank2Toggle"
+                                      Content="6-10"
+                                      FontSize="7" Padding="3,1" MinHeight="14" MinWidth="24" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Column headers -->
+            <Border Padding="4,2" Background="#141414">
+                <Grid ColumnDefinitions="18,*,50,40">
+                    <TextBlock Grid.Column="0" Text="#" FontSize="7" Foreground="#444444" />
+                    <TextBlock Grid.Column="1" Text="VOL" FontSize="7" Foreground="#444444" />
+                    <TextBlock Grid.Column="2" Text="PITCH" FontSize="7" Foreground="#444444" />
+                    <TextBlock Grid.Column="3" Text="DLY" FontSize="7" Foreground="#444444" HorizontalAlignment="Right" />
+                </Grid>
+            </Border>
+
+            <!-- Partial rows -->
+            <ItemsControl ItemsSource="{Binding VisiblePartials}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PartialViewModel">
+                        <Border Padding="4,1" BorderBrush="#1e1e1e" BorderThickness="0,0,0,0.5">
+                            <Grid ColumnDefinitions="18,*,50,40">
+                                <CheckBox Grid.Column="0" IsChecked="{Binding IsActive}"
+                                          MinWidth="12" MinHeight="12"
+                                          Padding="0" Margin="0" />
+                                <NumericUpDown Grid.Column="1"
+                                               Theme="{StaticResource JagNumericStyle}"
+                                               Value="{Binding Amplitude}"
+                                               Minimum="0" Maximum="65535"
+                                               MinHeight="16" FontSize="8" />
+                                <NumericUpDown Grid.Column="2"
+                                               Theme="{StaticResource JagNumericStyle}"
+                                               Value="{Binding PitchOffsetSemitones}"
+                                               Minimum="-128" Maximum="127"
+                                               MinHeight="16" FontSize="8" />
+                                <NumericUpDown Grid.Column="3"
+                                               Theme="{StaticResource JagNumericStyle}"
+                                               Value="{Binding DelayMs}"
+                                               Minimum="0" Maximum="65535"
+                                               MinHeight="16" FontSize="8"
+                                               HorizontalAlignment="Right" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Border>
+
+</UserControl>

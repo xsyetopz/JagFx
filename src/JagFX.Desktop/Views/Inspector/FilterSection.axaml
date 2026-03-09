@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:JagFX.Desktop.ViewModels"
+             x:Class="JagFX.Desktop.Views.Inspector.FilterSection"
+             x:DataType="vm:FilterViewModel">
+
+    <StackPanel Spacing="0">
+        <!-- Section Header -->
+        <Border Background="#1a1a1a" Padding="6,3" BorderBrush="#272727" BorderThickness="0,1,0,1">
+            <TextBlock Text="FILTER" FontSize="8" FontWeight="Bold" Foreground="#686868" />
+        </Border>
+
+        <Border Padding="6,4" IsVisible="{Binding HasFilter}">
+            <StackPanel Spacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="POLES" FontSize="7" Foreground="#686868" VerticalAlignment="Center" Width="42" />
+                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                   Value="{Binding PoleCount0}"
+                                   Minimum="0" Maximum="15"
+                                   Width="40" IsReadOnly="True" />
+                    <TextBlock Text="/" FontSize="8" Foreground="#444444" VerticalAlignment="Center" />
+                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                   Value="{Binding PoleCount1}"
+                                   Minimum="0" Maximum="15"
+                                   Width="40" IsReadOnly="True" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="GAIN" FontSize="7" Foreground="#686868" VerticalAlignment="Center" Width="42" />
+                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                   Value="{Binding UnityGain0}"
+                                   Minimum="0" Maximum="65535"
+                                   Width="55" />
+                    <TextBlock Text="/" FontSize="8" Foreground="#444444" VerticalAlignment="Center" />
+                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                   Value="{Binding UnityGain1}"
+                                   Minimum="0" Maximum="65535"
+                                   Width="55" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Padding="6,4" IsVisible="{Binding !HasFilter}">
+            <TextBlock Text="No filter" FontSize="8" Foreground="#444444" FontStyle="Italic" />
+        </Border>
+    </StackPanel>
+
+</UserControl>

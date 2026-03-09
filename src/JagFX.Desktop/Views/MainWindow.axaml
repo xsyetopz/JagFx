@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:JagFX.Desktop.ViewModels"
+        xmlns:header="using:JagFX.Desktop.Views.Header"
+        xmlns:inspector="using:JagFX.Desktop.Views.Inspector"
+        xmlns:rack="using:JagFX.Desktop.Views.Rack"
+        x:Class="JagFX.Desktop.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="{Binding WindowTitle}"
+        Width="1280" Height="800"
+        MinWidth="1024" MinHeight="700"
+        Background="#0c0c0c"
+        WindowStartupLocation="CenterScreen">
+
+    <DockPanel LastChildFill="True">
+        <!-- Header Bar -->
+        <header:HeaderBar DockPanel.Dock="Top" DataContext="{Binding}" />
+
+        <!-- Main content area -->
+        <Grid ColumnDefinitions="180,*">
+            <!-- Left Inspector Panel -->
+            <inspector:InspectorPanel Grid.Column="0" DataContext="{Binding}" />
+
+            <!-- Envelope Rack -->
+            <rack:EnvelopeRack Grid.Column="1" DataContext="{Binding}" />
+        </Grid>
+    </DockPanel>
+
+</Window>

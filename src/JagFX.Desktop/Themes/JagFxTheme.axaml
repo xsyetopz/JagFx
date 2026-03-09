@@ -1,0 +1,29 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Global dark background -->
+    <Style Selector="Window">
+        <Setter Property="Background" Value="#0c0c0c" />
+        <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+        <Setter Property="FontSize" Value="9" />
+        <Setter Property="Foreground" Value="#c0c0c0" />
+    </Style>
+
+    <!-- Compact TextBlock defaults -->
+    <Style Selector="TextBlock">
+        <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+        <Setter Property="Foreground" Value="#c0c0c0" />
+    </Style>
+
+    <!-- Separator styling -->
+    <Style Selector="Separator">
+        <Setter Property="Background" Value="#272727" />
+        <Setter Property="Height" Value="1" />
+    </Style>
+
+    <!-- ScrollBar thin dark style -->
+    <Style Selector="ScrollViewer">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+</Styles>

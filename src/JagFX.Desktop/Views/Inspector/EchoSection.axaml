@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:JagFX.Desktop.ViewModels"
+             x:Class="JagFX.Desktop.Views.Inspector.EchoSection"
+             x:DataType="vm:VoiceViewModel">
+
+    <StackPanel Spacing="0">
+        <!-- Section Header -->
+        <Border Background="#1a1a1a" Padding="6,3" BorderBrush="#272727" BorderThickness="0,1,0,1">
+            <TextBlock Text="ECHO" FontSize="8" FontWeight="Bold" Foreground="#686868" />
+        </Border>
+
+        <Border Padding="6,4">
+            <StackPanel Spacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="DELAY" FontSize="7" Foreground="#686868" VerticalAlignment="Center" Width="36" />
+                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                   Value="{Binding EchoDelay}"
+                                   Minimum="0" Maximum="65535"
+                                   Width="70" />
+                    <TextBlock Text="ms" FontSize="7" Foreground="#444444" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="FDBK" FontSize="7" Foreground="#686868" VerticalAlignment="Center" Width="36" />
+                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                   Value="{Binding EchoFeedback}"
+                                   Minimum="0" Maximum="100"
+                                   Width="70" />
+                    <TextBlock Text="%" FontSize="7" Foreground="#444444" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+
+</UserControl>

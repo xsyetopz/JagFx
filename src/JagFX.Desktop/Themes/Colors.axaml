@@ -1,0 +1,75 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Base surface colors -->
+    <Color x:Key="SurfaceBase">#0c0c0c</Color>
+    <Color x:Key="SurfaceGraph">#0e0e0e</Color>
+    <Color x:Key="SurfaceHeader">#181818</Color>
+    <Color x:Key="SurfacePanel">#141414</Color>
+    <Color x:Key="SurfaceCell">#111111</Color>
+    <Color x:Key="SurfaceCellHeader">#1a1a1a</Color>
+    <Color x:Key="SurfaceInput">#0c0c0c</Color>
+
+    <!-- Border colors -->
+    <Color x:Key="BorderDefault">#272727</Color>
+    <Color x:Key="BorderSubtle">#1e1e1e</Color>
+    <Color x:Key="BorderAccent">#4db8d4</Color>
+
+    <!-- Text colors -->
+    <Color x:Key="TextPrimary">#c0c0c0</Color>
+    <Color x:Key="TextSecondary">#686868</Color>
+    <Color x:Key="TextMuted">#444444</Color>
+    <Color x:Key="TextAccent">#4db8d4</Color>
+
+    <!-- Envelope line colors by group -->
+    <Color x:Key="LineBase">#4db8d4</Color>
+    <Color x:Key="LineVibrato">#d4a84d</Color>
+    <Color x:Key="LineTremolo">#d47a4d</Color>
+    <Color x:Key="LineGate">#4db8a8</Color>
+    <Color x:Key="LineFilter">#8888d4</Color>
+
+    <!-- Breakpoint colors -->
+    <Color x:Key="BreakpointFill">#4db8d4</Color>
+    <Color x:Key="BreakpointSelected">#ffffff</Color>
+
+    <!-- Grid line color -->
+    <Color x:Key="GridLine">#1a1a1a</Color>
+    <Color x:Key="GridMidline">#252525</Color>
+
+    <!-- Button colors -->
+    <Color x:Key="ButtonDefault">#1e1e1e</Color>
+    <Color x:Key="ButtonBorder">#2c2c2c</Color>
+    <Color x:Key="ButtonHover">#252525</Color>
+    <Color x:Key="ButtonActive">#0d1d24</Color>
+    <Color x:Key="ButtonActiveBorder">#4db8d4</Color>
+
+    <!-- Voice strip active/inactive -->
+    <Color x:Key="VoiceActive">#4db8d4</Color>
+    <Color x:Key="VoiceInactive">#333333</Color>
+
+    <!-- SolidColorBrushes for direct binding -->
+    <SolidColorBrush x:Key="SurfaceBaseBrush" Color="{StaticResource SurfaceBase}" />
+    <SolidColorBrush x:Key="SurfaceGraphBrush" Color="{StaticResource SurfaceGraph}" />
+    <SolidColorBrush x:Key="SurfaceHeaderBrush" Color="{StaticResource SurfaceHeader}" />
+    <SolidColorBrush x:Key="SurfacePanelBrush" Color="{StaticResource SurfacePanel}" />
+    <SolidColorBrush x:Key="SurfaceCellBrush" Color="{StaticResource SurfaceCell}" />
+    <SolidColorBrush x:Key="SurfaceCellHeaderBrush" Color="{StaticResource SurfaceCellHeader}" />
+    <SolidColorBrush x:Key="SurfaceInputBrush" Color="{StaticResource SurfaceInput}" />
+    <SolidColorBrush x:Key="BorderDefaultBrush" Color="{StaticResource BorderDefault}" />
+    <SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtle}" />
+    <SolidColorBrush x:Key="BorderAccentBrush" Color="{StaticResource BorderAccent}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
+    <SolidColorBrush x:Key="TextAccentBrush" Color="{StaticResource TextAccent}" />
+    <SolidColorBrush x:Key="LineBaseBrush" Color="{StaticResource LineBase}" />
+    <SolidColorBrush x:Key="LineVibratoBrush" Color="{StaticResource LineVibrato}" />
+    <SolidColorBrush x:Key="LineTremoloBrush" Color="{StaticResource LineTremolo}" />
+    <SolidColorBrush x:Key="LineGateBrush" Color="{StaticResource LineGate}" />
+    <SolidColorBrush x:Key="LineFilterBrush" Color="{StaticResource LineFilter}" />
+    <SolidColorBrush x:Key="GridLineBrush" Color="{StaticResource GridLine}" />
+    <SolidColorBrush x:Key="GridMidlineBrush" Color="{StaticResource GridMidline}" />
+    <SolidColorBrush x:Key="ButtonDefaultBrush" Color="{StaticResource ButtonDefault}" />
+    <SolidColorBrush x:Key="ButtonBorderBrush" Color="{StaticResource ButtonBorder}" />
+
+</ResourceDictionary>

@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:JagFX.Desktop.ViewModels"
+             xmlns:rack="using:JagFX.Desktop.Views.Rack"
+             x:Class="JagFX.Desktop.Views.Rack.EnvelopeRack"
+             x:DataType="vm:MainViewModel">
+
+    <!-- 4-column x 3-row grid: cols 0-2 equal (27%), col 3 narrower (19%) -->
+    <Grid RowDefinitions="*,*,*"
+          ColumnDefinitions="27*,27*,27*,19*"
+          Margin="1">
+
+        <!-- Row 0: Pitch -->
+        <rack:EnvelopeCell Grid.Row="0" Grid.Column="0"
+                           x:Name="CellPitch" />
+        <rack:EnvelopeCell Grid.Row="0" Grid.Column="1"
+                           x:Name="CellVibratoRate" />
+        <rack:EnvelopeCell Grid.Row="0" Grid.Column="2"
+                           x:Name="CellVibratoDepth" />
+        <rack:EnvelopeCell Grid.Row="0" Grid.Column="3"
+                           x:Name="CellPoleZero" />
+
+        <!-- Row 1: Amplitude -->
+        <rack:EnvelopeCell Grid.Row="1" Grid.Column="0"
+                           x:Name="CellVolume" />
+        <rack:EnvelopeCell Grid.Row="1" Grid.Column="1"
+                           x:Name="CellTremoloRate" />
+        <rack:EnvelopeCell Grid.Row="1" Grid.Column="2"
+                           x:Name="CellTremoloDepth" />
+        <rack:EnvelopeCell Grid.Row="1" Grid.Column="3"
+                           x:Name="CellFilter" />
+
+        <!-- Row 2: Output -->
+        <rack:EnvelopeCell Grid.Row="2" Grid.Column="0"
+                           x:Name="CellGapOff" />
+        <rack:EnvelopeCell Grid.Row="2" Grid.Column="1"
+                           x:Name="CellGapOn" />
+        <rack:EnvelopeCell Grid.Row="2" Grid.Column="2"
+                           x:Name="CellOutput" />
+        <rack:EnvelopeCell Grid.Row="2" Grid.Column="3"
+                           x:Name="CellBode" />
+    </Grid>
+
+</UserControl>
