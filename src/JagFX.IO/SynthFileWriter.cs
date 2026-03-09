@@ -48,15 +48,15 @@ public static class SynthFileWriter
 
         WriteOptionalEnvelopePair(buffer, voice.PitchLfo);
         WriteOptionalEnvelopePair(buffer, voice.AmplitudeLfo);
-        WriteOptionalEnvelopePair(buffer, voice.GateSilenceEnvelope, voice.GateDurationEnvelope);
+        WriteOptionalEnvelopePair(buffer, voice.GapOffEnvelope, voice.GapOnEnvelope);
 
         WritePartials(buffer, voice.Partials);
 
         buffer.WriteUSmart16((ushort)voice.Echo.DelayMilliseconds);
-        buffer.WriteUSmart16((ushort)voice.Echo.MixPercent);
+        buffer.WriteUSmart16((ushort)voice.Echo.FeedbackPercent);
 
-        buffer.WriteUInt16BigEndian(voice.DurationSamples);
-        buffer.WriteUInt16BigEndian(voice.StartSample);
+        buffer.WriteUInt16BigEndian(voice.DurationMs);
+        buffer.WriteUInt16BigEndian(voice.OffsetMs);
 
         if (voice.Filter != null)
         {
@@ -67,14 +67,14 @@ public static class SynthFileWriter
     private static void WriteEnvelope(BinaryBuffer buffer, Envelope envelope)
     {
         buffer.WriteUInt8((int)envelope.Waveform);
-        buffer.WriteInt32BigEndian(envelope.StartSample);
-        buffer.WriteInt32BigEndian(envelope.EndSample);
+        buffer.WriteInt32BigEndian(envelope.StartValue);
+        buffer.WriteInt32BigEndian(envelope.EndValue);
         buffer.WriteUInt8(envelope.Segments.Count);
 
         foreach (var segment in envelope.Segments)
         {
-            buffer.WriteUInt16BigEndian(segment.DurationSamples);
-            buffer.WriteUInt16BigEndian(segment.PeakLevel);
+            buffer.WriteUInt16BigEndian(segment.Duration);
+            buffer.WriteUInt16BigEndian(segment.TargetLevel);
         }
     }
 
@@ -86,7 +86,7 @@ public static class SynthFileWriter
         }
         else
         {
-            WriteEnvelope(buffer, lfo.FrequencyRate);
+            WriteEnvelope(buffer, lfo.RateEnvelope);
             WriteEnvelope(buffer, lfo.ModulationDepth);
         }
     }
@@ -132,9 +132,9 @@ public static class SynthFileWriter
         WriteFilterCoefficients(buffer, filter, 0);
         WriteFilterCoefficients(buffer, filter, 1);
 
-        if (filter.CutoffEnvelope != null)
+        if (filter.ModulationEnvelope != null)
         {
-            WriteFilterEnvelope(buffer, filter.CutoffEnvelope);
+            WriteFilterEnvelope(buffer, filter.ModulationEnvelope);
         }
     }
 
@@ -161,15 +161,15 @@ public static class SynthFileWriter
 
         foreach (var segment in envelope.Segments)
         {
-            buffer.WriteUInt16BigEndian(segment.DurationSamples);
-            buffer.WriteUInt16BigEndian(segment.PeakLevel);
+            buffer.WriteUInt16BigEndian(segment.Duration);
+            buffer.WriteUInt16BigEndian(segment.TargetLevel);
         }
     }
 
     private static void WriteLoop(BinaryBuffer buffer, LoopSegment loop)
     {
-        buffer.WriteUInt16BigEndian(loop.BeginSample);
-        buffer.WriteUInt16BigEndian(loop.EndSample);
+        buffer.WriteUInt16BigEndian(loop.BeginMs);
+        buffer.WriteUInt16BigEndian(loop.EndMs);
     }
 
     private static int CalculateModulationMask(Filter filter)
