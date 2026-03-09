@@ -7,7 +7,7 @@ using Xunit;
 
 namespace JagFX.Synthesis.Tests;
 
-public class PatchMixerTests
+public class PatchRendererTests
 {
     #region Single Voice Tests
 
@@ -16,7 +16,7 @@ public class PatchMixerTests
     {
         var file = SynthFileReader.Read(TestResources.CowDeath);
         Assert.NotNull(file);
-        var audio = PatchMixer.Synthesize(file, 1);
+        var audio = PatchRenderer.Synthesize(file, 1);
         Assert.True(audio.Length > 0);
         Assert.Equal(AudioConstants.SampleRate, audio.SampleRate);
         Assert.Equal(19889 - 44, audio.Length);
@@ -27,7 +27,7 @@ public class PatchMixerTests
     {
         var file = SynthFileReader.Read(TestResources.WardOfArceuusCast);
         Assert.NotNull(file);
-        var audio = PatchMixer.Synthesize(file, 1);
+        var audio = PatchRenderer.Synthesize(file, 1);
         Assert.True(audio.Length > 0);
         Assert.Equal(AudioConstants.SampleRate, audio.SampleRate);
     }
@@ -43,7 +43,7 @@ public class PatchMixerTests
             voices: [],
             loop: new LoopSegment(0, 0)
         );
-        var audio = PatchMixer.Synthesize(emptyFile, 1);
+        var audio = PatchRenderer.Synthesize(emptyFile, 1);
         Assert.Equal(0, audio.Length);
     }
 
@@ -61,7 +61,7 @@ public class PatchMixerTests
         var file = SynthFileReader.Read(bytes);
         Assert.NotNull(file);
 
-        var audio = PatchMixer.Synthesize(file, 1);
+        var audio = PatchRenderer.Synthesize(file, 1);
         Assert.True(audio.Length > 0);
         Assert.Equal(AudioConstants.SampleRate, audio.SampleRate);
         Assert.True(audio.Samples.Length > 0);
