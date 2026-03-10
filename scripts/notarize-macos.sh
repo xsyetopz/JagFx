@@ -65,8 +65,6 @@ DMG_PATH="$ROOT_DIR/publish/$DMG_NAME"
 echo -e "\n${BOLD}JagFx macOS Release Builder${RESET}"
 echo "  Version : $VERSION"
 echo "  Arch    : $ARCH"
-echo "  Sign    : $APPLE_SIGNING_IDENTITY"
-echo "  Notarize: $APPLE_NOTARIZE_PROFILE"
 echo "  Output  : $DMG_PATH"
 
 # ── Preflight checks ─────────────────────────────────────────────────────────
@@ -79,8 +77,8 @@ command -v xcrun    >/dev/null || die "xcrun not found (install Xcode CLT)"
 [[ -f "$ENTITLEMENTS" ]] || die "Entitlements not found: $ENTITLEMENTS"
 
 # Verify the signing certificate exists in the keychain
-security find-identity -v -p codesigning | grep -qF "$APPLE_SIGNING_IDENTITY" \
-    || die "Signing certificate not found in keychain: $APPLE_SIGNING_IDENTITY"
+security find-identity -v -p codesigning 2>/dev/null | grep -qF "$APPLE_SIGNING_IDENTITY" \
+    || die "Signing certificate not found in keychain (check APPLE_SIGNING_IDENTITY in .env)"
 ok "All checks passed"
 
 # ── Build ─────────────────────────────────────────────────────────────────────
@@ -108,11 +106,11 @@ codesign \
     --entitlements "$ENTITLEMENTS" \
     --sign "$APPLE_SIGNING_IDENTITY" \
     --timestamp \
-    "$APP_BUNDLE"
-ok "Signed: $APP_BUNDLE"
+    "$APP_BUNDLE" 2>&1 | grep -v "replacing existing signature" || true
+ok "Signed"
 
-# Verify signature
-codesign --verify --deep --strict "$APP_BUNDLE" \
+# Verify signature (output suppressed — contains identity)
+codesign --verify --deep --strict "$APP_BUNDLE" 2>/dev/null \
     && ok "Signature verified" \
     || die "Signature verification failed"
 
@@ -142,14 +140,14 @@ codesign \
     --force \
     --sign "$APPLE_SIGNING_IDENTITY" \
     --timestamp \
-    "$DMG_PATH"
+    "$DMG_PATH" 2>/dev/null
 ok "DMG signed"
 
 # ── Notarize ─────────────────────────────────────────────────────────────────
 step "Submitting to Apple Notary Service (this may take a few minutes)"
 xcrun notarytool submit "$DMG_PATH" \
     --keychain-profile "$APPLE_NOTARIZE_PROFILE" \
-    --wait
+    --wait 2>&1 | grep -Ev "(profile|team|apple-id|credentials)"
 ok "Notarization approved"
 
 # ── Staple ───────────────────────────────────────────────────────────────────
