@@ -3,123 +3,62 @@
              xmlns:vm="using:JagFX.Desktop.ViewModels"
              x:Class="JagFX.Desktop.Views.Header.HeaderBar"
              x:DataType="vm:MainViewModel"
-             Height="32">
+             Height="40">
 
-    <Border Background="#181818" BorderBrush="#272727" BorderThickness="0,0,0,1" Padding="5,0">
-        <StackPanel Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
-
+    <Border Background="{StaticResource SurfaceHeaderBrush}" BorderBrush="{StaticResource BorderDefaultBrush}"
+            BorderThickness="0,0,0,1" Padding="3,0">
+        <StackPanel Orientation="Horizontal" Spacing="1" VerticalAlignment="Center">
             <!-- Patch Navigation -->
-            <StackPanel Orientation="Horizontal" Spacing="1">
-                <Button Theme="{StaticResource JagToolButton}"
-                        Content="&#x25C0;"
-                        Command="{Binding NavigatePatchCommand}"
-                        CommandParameter="-1"
-                        ToolTip.Tip="Previous patch" />
-                <Border Background="#0c0c0c" BorderBrush="#4db8d4" BorderThickness="1"
-                        Padding="6,0" MinWidth="148" Height="18"
-                        VerticalAlignment="Center">
-                    <TextBlock Text="{Binding PatchName}"
-                               Foreground="#4db8d4"
-                               FontWeight="Bold" FontSize="8"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               TextTrimming="CharacterEllipsis" />
-                </Border>
-                <Button Theme="{StaticResource JagToolButton}"
-                        Content="&#x25B6;"
-                        Command="{Binding NavigatePatchCommand}"
-                        CommandParameter="1"
-                        ToolTip.Tip="Next patch" />
-            </StackPanel>
+            <Button Theme="{StaticResource JagToolButton}"
+                    Command="{Binding NavigatePatchCommand}"
+                    CommandParameter="-1"
+                    ToolTip.Tip="Previous patch">
+                <PathIcon Data="{StaticResource IconChevronLeft}" Width="14" Height="14" />
+            </Button>
+            <Border Background="{StaticResource SurfaceInputBrush}" BorderBrush="{StaticResource BorderAccentBrush}"
+                    BorderThickness="1" Padding="4,0" Width="100" Height="20"
+                    VerticalAlignment="Center">
+                <TextBlock Text="{Binding PatchName}"
+                           Foreground="{StaticResource TextAccentBrush}"
+                           FontWeight="Bold" FontSize="10"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           TextTrimming="CharacterEllipsis" />
+            </Border>
+            <Button Theme="{StaticResource JagToolButton}"
+                    Command="{Binding NavigatePatchCommand}"
+                    CommandParameter="1"
+                    ToolTip.Tip="Next patch">
+                <PathIcon Data="{StaticResource IconChevronRight}" Width="14" Height="14" />
+            </Button>
 
             <!-- Separator -->
-            <Border Width="1" Height="16" Background="#272727" Margin="4,0" />
+            <Border Width="1" Height="20" Background="{StaticResource BorderDefaultBrush}" Margin="2,0" />
 
             <!-- File Operations -->
-            <StackPanel Orientation="Horizontal" Spacing="1">
-                <Button Theme="{StaticResource JagToolButton}" Content="OPEN"
-                        Command="{Binding OpenCommand}" ToolTip.Tip="Open file (Ctrl+O)" />
-                <Button Theme="{StaticResource JagToolButton}" Content="SAVE"
-                        Command="{Binding SaveCommand}" ToolTip.Tip="Save file (Ctrl+S)" />
-                <Button Theme="{StaticResource JagToolButton}" Content="SAVE AS"
-                        Command="{Binding SaveAsCommand}" ToolTip.Tip="Save as... (Ctrl+Shift+S)" />
-                <Button Theme="{StaticResource JagToolButton}" Content="EXPORT"
-                        Command="{Binding ExportCommand}" ToolTip.Tip="Export WAV (Ctrl+E)" />
-            </StackPanel>
+            <Button Theme="{StaticResource JagToolButton}"
+                    Command="{Binding OpenCommand}" ToolTip.Tip="Open file (Ctrl+O)">
+                <PathIcon Data="{StaticResource IconFolderOpen}" Width="14" Height="14" />
+            </Button>
+            <Button Theme="{StaticResource JagToolButton}"
+                    Command="{Binding SaveCommand}" ToolTip.Tip="Save file (Ctrl+S)">
+                <PathIcon Data="{StaticResource IconContentSave}" Width="14" Height="14" />
+            </Button>
 
             <!-- Separator -->
-            <Border Width="1" Height="16" Background="#272727" Margin="4,0" />
-
-            <!-- Voice Strip (1-10) -->
-            <ItemsControl ItemsSource="{Binding Patch.Voices}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="1" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="vm:VoiceViewModel">
-                        <Button Theme="{StaticResource JagVoiceButton}"
-                                Content="{Binding DisplayIndex}"
-                                Command="{Binding DataContext.SelectVoiceCommand,
-                                    RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                CommandParameter="{Binding Index}"
-                                Classes.enabled="{Binding IsEnabled}"
-                                Classes.selected="{Binding IsSelected}"
-                                Width="18" Height="18" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <!-- Separator -->
-            <Border Width="1" Height="16" Background="#272727" Margin="4,0" />
+            <Border Width="1" Height="20" Background="{StaticResource BorderDefaultBrush}" Margin="2,0" />
 
             <!-- Transport -->
-            <StackPanel Orientation="Horizontal" Spacing="1">
-                <Button Theme="{StaticResource JagToolButton}"
-                        Content="&#x25B6;"
-                        Command="{Binding TogglePlayCommand}"
-                        ToolTip.Tip="Play (Space)" />
-                <Button Theme="{StaticResource JagToolButton}"
-                        Content="&#x25A0;"
-                        Command="{Binding StopCommand}"
-                        ToolTip.Tip="Stop" />
-            </StackPanel>
-
-            <!-- Separator -->
-            <Border Width="1" Height="16" Background="#272727" Margin="4,0" />
-
-            <!-- Voice Parameters -->
-            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                <TextBlock Text="DUR" Foreground="#686868" FontSize="8" VerticalAlignment="Center" />
-                <NumericUpDown Theme="{StaticResource JagNumericStyle}"
-                               Value="{Binding Patch.SelectedVoice.DurationMs}"
-                               Minimum="0" Maximum="65535"
-                               Width="60" />
-                <TextBlock Text="OFS" Foreground="#686868" FontSize="8" VerticalAlignment="Center" />
-                <NumericUpDown Theme="{StaticResource JagNumericStyle}"
-                               Value="{Binding Patch.SelectedVoice.OffsetMs}"
-                               Minimum="0" Maximum="65535"
-                               Width="60" />
-            </StackPanel>
-
-            <!-- Separator -->
-            <Border Width="1" Height="16" Background="#272727" Margin="4,0" />
-
-            <!-- Loop Parameters -->
-            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                <TextBlock Text="LOOP" Foreground="#686868" FontSize="8" VerticalAlignment="Center" />
-                <NumericUpDown Theme="{StaticResource JagNumericStyle}"
-                               Value="{Binding Patch.LoopBegin}"
-                               Minimum="0" Maximum="65535"
-                               Width="50" />
-                <TextBlock Text="-" Foreground="#686868" FontSize="8" VerticalAlignment="Center" />
-                <NumericUpDown Theme="{StaticResource JagNumericStyle}"
-                               Value="{Binding Patch.LoopEnd}"
-                               Minimum="0" Maximum="65535"
-                               Width="50" />
-            </StackPanel>
-
+            <Button Theme="{StaticResource JagToolButton}"
+                    Command="{Binding TogglePlayCommand}"
+                    ToolTip.Tip="Play (Space)">
+                <PathIcon Data="{StaticResource IconPlay}" Width="14" Height="14" />
+            </Button>
+            <Button Theme="{StaticResource JagToolButton}"
+                    Command="{Binding StopCommand}"
+                    ToolTip.Tip="Stop">
+                <PathIcon Data="{StaticResource IconStop}" Width="14" Height="14" />
+            </Button>
         </StackPanel>
     </Border>
 
