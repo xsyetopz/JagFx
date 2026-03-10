@@ -12,15 +12,15 @@
     <Color x:Key="SurfaceFooter">#1a1a1a</Color>
 
     <!-- Border colors -->
-    <Color x:Key="BorderDefault">#333333</Color>
+    <Color x:Key="BorderDefault">#3a3a3a</Color>
     <Color x:Key="BorderSubtle">#272727</Color>
     <Color x:Key="BorderAccent">#009E73</Color>
 
     <!-- Text colors -->
     <Color x:Key="TextPrimary">#f0f0f0</Color>
-    <Color x:Key="TextSecondary">#999999</Color>
+    <Color x:Key="TextSecondary">#aaaaaa</Color>
     <Color x:Key="TextMuted">#555555</Color>
-    <Color x:Key="TextButton">#d0d0d0</Color>
+    <Color x:Key="TextButton">#dcdcdc</Color>
     <Color x:Key="TextAccent">#009E73</Color>
 
     <!-- Envelope line colors -->
@@ -37,7 +37,7 @@
 
     <!-- Button colors -->
     <Color x:Key="ButtonDefault">#2f2f2f</Color>
-    <Color x:Key="ButtonBorder">#444444</Color>
+    <Color x:Key="ButtonBorder">#4c4c4c</Color>
     <Color x:Key="ButtonHover">#383838</Color>
     <Color x:Key="ButtonActive">#1a1a1a</Color>
     <Color x:Key="ButtonActiveBorder">#009E73</Color>
