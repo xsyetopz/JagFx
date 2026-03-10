@@ -9,7 +9,7 @@ namespace JagFx.Desktop.Controls;
 /// </summary>
 public readonly struct EnvelopeGeometry
 {
-    private const double Padding = 4;
+    internal const double Padding = 4;
     private const double HitRadius = 8;
 
     public Point[] Points { get; }
@@ -23,7 +23,7 @@ public readonly struct EnvelopeGeometry
         PlotHeight = plotHeight;
     }
 
-    public static EnvelopeGeometry Compute(EnvelopeViewModel env, double canvasWidth, double canvasHeight, int zoomLevel = 1)
+    public static EnvelopeGeometry Compute(EnvelopeViewModel env, double canvasWidth, double canvasHeight, int zoomLevel = 1, double scrollOffset = 0)
     {
         var segments = env.Segments;
         var plotW = (canvasWidth - Padding * 2) * zoomLevel;
@@ -45,12 +45,12 @@ public readonly struct EnvelopeGeometry
 
         // Start point -- minLevel maps to bottom, maxLevel maps to top
         var startY = Padding + plotH - ((env.StartValue - minLevel) / range) * plotH;
-        points[0] = new Point(Padding, Math.Clamp(startY, Padding, Padding + plotH));
+        points[0] = new Point(Padding - scrollOffset, Math.Clamp(startY, Padding, Padding + plotH));
 
         for (var i = 0; i < segments.Count; i++)
         {
             xAccum += segments[i].Duration;
-            var x = Padding + xAccum / totalDuration * plotW;
+            var x = Padding + xAccum / totalDuration * plotW - scrollOffset;
             var y = Padding + plotH - ((segments[i].TargetLevel - minLevel) / range) * plotH;
             points[i + 1] = new Point(x, Math.Clamp(y, Padding, Padding + plotH));
         }
@@ -81,7 +81,7 @@ public readonly struct EnvelopeGeometry
     /// compensating the next segment to keep total duration constant.
     /// </summary>
     public static void AdjustDuration(double canvasX, double canvasWidth, int segmentIndex,
-        EnvelopeViewModel env, double totalDuration, int zoomLevel = 1)
+        EnvelopeViewModel env, double totalDuration, int zoomLevel = 1, double scrollOffset = 0)
     {
         var plotW = (canvasWidth - Padding * 2) * zoomLevel;
         if (plotW <= 0 || totalDuration <= 0) return;
@@ -93,8 +93,8 @@ public readonly struct EnvelopeGeometry
         for (var i = 0; i < segmentIndex; i++)
             prevTime += segments[i].Duration;
 
-        // Convert X position to time
-        var newTime = (canvasX - Padding) / plotW * totalDuration;
+        // Convert X position to time (add offset back to get plot-space coordinate)
+        var newTime = (canvasX + scrollOffset - Padding) / plotW * totalDuration;
 
         // New duration = time at this point - time at previous point
         var newDur = (int)Math.Clamp(newTime - prevTime, 1, totalDuration);
