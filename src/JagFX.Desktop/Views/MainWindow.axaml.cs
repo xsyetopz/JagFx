@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using JagFx.Desktop.Services;
 using JagFx.Desktop.ViewModels;
+using JagFx.Domain.Models;
 
 namespace JagFx.Desktop.Views;
 
@@ -42,7 +43,7 @@ public partial class MainWindow : Window
         };
 
         // Select first envelope by default
-        vm.SelectEnvelope("PITCH");
+        vm.SelectEnvelope(SignalChainSlot.Pitch);
     }
 
     private void OnWindowKeyDown(object? sender, KeyEventArgs e)
