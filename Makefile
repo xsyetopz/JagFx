@@ -24,7 +24,7 @@ CONF     := Release
         publish-macos-arm64 publish-macos-x64 publish-windows publish-linux \
         release-macos-arm64 release-macos-x64 release-macos
 
-# ── Development ──────────────────────────────────────────────────────────────
+# -- Development --------------------------------------------------------------
 
 run:
 	dotnet run --project $(DESKTOP)
@@ -35,7 +35,7 @@ build:
 test:
 	dotnet test --nologo
 
-# ── Unsigned publish ─────────────────────────────────────────────────────────
+# -- Unsigned publish ---------------------------------------------------------
 
 publish-macos-arm64:
 	dotnet publish $(DESKTOP) -c $(CONF) -r osx-arm64 -o publish/osx-arm64 --nologo
@@ -49,7 +49,7 @@ publish-windows:
 publish-linux:
 	dotnet publish $(DESKTOP) -c $(CONF) -r linux-x64 --self-contained -o publish/linux-x64 --nologo
 
-# ── Signed + notarized macOS DMG ─────────────────────────────────────────────
+# -- Signed + notarized macOS DMG ---------------------------------------------
 
 release-macos-arm64:
 	$(SCRIPTS)/notarize-macos.sh osx-arm64
