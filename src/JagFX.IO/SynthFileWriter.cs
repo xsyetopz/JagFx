@@ -133,8 +133,8 @@ public static class SynthFileWriter
         var modulationMask = CalculateModulationMask(filter);
         buffer.WriteUInt8(modulationMask);
 
-        WriteFilterPhase0Coefficients(buffer, filter);
-        WriteFilterPhase1Coefficients(buffer, filter, modulationMask);
+        WriteFilterCoefficients(buffer, filter, phase: 0, modulationMask: 0);
+        WriteFilterCoefficients(buffer, filter, phase: 1, modulationMask);
 
         if (filter.ModulationEnvelope != null)
         {
@@ -142,31 +142,18 @@ public static class SynthFileWriter
         }
     }
 
-    private static void WriteFilterPhase0Coefficients(BinaryBuffer buffer, Filter filter)
+    private static void WriteFilterCoefficients(BinaryBuffer buffer, Filter filter, int phase, int modulationMask)
     {
         for (var channel = 0; channel < 2; channel++)
         {
             var poles = filter.PoleCounts[channel];
             for (var pole = 0; pole < poles; pole++)
             {
-                buffer.WriteUInt16BigEndian(filter.PolePhase[channel][0][pole]);
-                buffer.WriteUInt16BigEndian(filter.PoleMagnitude[channel][0][pole]);
-            }
-        }
-    }
+                if (modulationMask != 0 && (modulationMask & (1 << (channel * 4 + pole))) == 0)
+                    continue;
 
-    private static void WriteFilterPhase1Coefficients(BinaryBuffer buffer, Filter filter, int modulationMask)
-    {
-        for (var channel = 0; channel < 2; channel++)
-        {
-            var poles = filter.PoleCounts[channel];
-            for (var pole = 0; pole < poles; pole++)
-            {
-                if ((modulationMask & (1 << (channel * 4 + pole))) != 0)
-                {
-                    buffer.WriteUInt16BigEndian(filter.PolePhase[channel][1][pole]);
-                    buffer.WriteUInt16BigEndian(filter.PoleMagnitude[channel][1][pole]);
-                }
+                buffer.WriteUInt16BigEndian(filter.PolePhase[channel][phase][pole]);
+                buffer.WriteUInt16BigEndian(filter.PoleMagnitude[channel][phase][pole]);
             }
         }
     }
