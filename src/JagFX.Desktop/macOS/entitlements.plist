@@ -2,19 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!--
-        Required for .NET 8 JIT compiler to function under Hardened Runtime.
-        Without this, the process will crash on launch when codesigned with
-        the --options runtime flag.
-    -->
     <key>com.apple.security.cs.allow-jit</key>
     <true/>
-
-    <!--
-        Required because .NET loads native dylibs (libSkiaSharp, libAvalonia, etc.)
-        that are not signed by Apple. Without this, the dynamic linker will refuse
-        to load them under Hardened Runtime.
-    -->
     <key>com.apple.security.cs.disable-library-validation</key>
     <true/>
 </dict>
