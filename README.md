@@ -195,17 +195,23 @@ dotnet publish src/JagFx.Desktop -c Release -r osx-x64 -o publish/osx-x64
 # → publish/JagFx.app
 ```
 
-### Windows (x64)
+### Windows — single `.exe`
 
 ```bash
 dotnet publish src/JagFx.Desktop -c Release -r win-x64 --self-contained -o publish/win-x64
+# → publish/win-x64/JagFx.Desktop.exe
 ```
 
-### Linux (x64)
+### Linux — single binary
 
 ```bash
 dotnet publish src/JagFx.Desktop -c Release -r linux-x64 --self-contained -o publish/linux-x64
+# → publish/linux-x64/JagFx.Desktop
 ```
+
+All native libraries (SkiaSharp, HarfBuzz, etc.) are embedded in the executable
+on Windows and Linux. On macOS they sit next to the binary inside the `.app` bundle
+due to a platform restriction on loading shared libraries from memory.
 
 ### Framework-Dependent (any platform with .NET 8 installed)
 
