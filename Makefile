@@ -5,13 +5,13 @@
 #   make build          build (debug)
 #   make test           run all tests
 #
-# Release — unsigned, no notarization
+# Release -- unsigned, no notarization
 #   make publish-macos-arm64
 #   make publish-macos-x64
 #   make publish-windows
 #   make publish-linux
 #
-# Release — macOS signed + notarized DMG (requires .env)
+# Release -- macOS signed + notarized DMG (requires .env)
 #   make release-macos-arm64
 #   make release-macos-x64
 #   make release-macos          builds both arches

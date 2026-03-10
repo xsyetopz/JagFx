@@ -94,7 +94,7 @@ dotnet publish "$DESKTOP_PROJ" \
 ok "Published to $PUBLISH_DIR"
 
 # The BundleMacApp MSBuild target creates $APP_BUNDLE automatically.
-[[ -d "$APP_BUNDLE" ]] || die ".app bundle not found at $APP_BUNDLE — did the BundleMacApp target run?"
+[[ -d "$APP_BUNDLE" ]] || die ".app bundle not found at $APP_BUNDLE -- did the BundleMacApp target run?"
 ok ".app bundle created"
 
 # ── Code sign ────────────────────────────────────────────────────────────────
@@ -104,12 +104,12 @@ step "Unlocking keychain"
 # This will prompt for your macOS login password if the keychain is currently locked.
 security unlock-keychain "$HOME/Library/Keychains/login.keychain-db" \
     && ok "Keychain unlocked" \
-    || die "Could not unlock keychain — re-run and enter your login password when prompted"
+    || die "Could not unlock keychain -- re-run and enter your login password when prompted"
 
 step "Code signing"
 
 # Filter signing identity out of codesign output so it never appears in the terminal.
-# Errors and warnings are still shown — only lines containing the identity are dropped.
+# Errors and warnings are still shown -- only lines containing the identity are dropped.
 _sign() {
     codesign "$@" 2>&1 | grep -vF "$APPLE_SIGNING_IDENTITY" || return "${PIPESTATUS[0]}"
 }
@@ -119,10 +119,10 @@ _sign() {
 # in a single pass, causing errSecInternalComponent on libs like libSkiaSharp.
 while IFS= read -r -d '' lib; do
     _sign --force --sign "$APPLE_SIGNING_IDENTITY" --timestamp "$lib" || \
-        warn "Could not sign $(basename "$lib") — continuing"
+        warn "Could not sign $(basename "$lib") -- continuing"
 done < <(find "$APP_BUNDLE" -name "*.dylib" -print0)
 
-# Sign the bundle itself (no --deep — sub-components are already signed above)
+# Sign the bundle itself (no --deep -- sub-components are already signed above)
 _sign \
     --force \
     --options runtime \
@@ -132,7 +132,7 @@ _sign \
     "$APP_BUNDLE"
 ok "Signed"
 
-# Verify (output suppressed — codesign --display prints the identity)
+# Verify (output suppressed -- codesign --display prints the identity)
 codesign --verify --deep --strict "$APP_BUNDLE" 2>/dev/null \
     && ok "Signature verified" \
     || die "Signature verification failed"
@@ -181,7 +181,7 @@ ok "Stapled"
 # Verify gatekeeper will accept it
 spctl --assess --type open --context context:primary-signature -v "$DMG_PATH" \
     && ok "Gatekeeper check passed" \
-    || warn "Gatekeeper check reported an issue — review output above"
+    || warn "Gatekeeper check reported an issue -- review output above"
 
 # ── Done ─────────────────────────────────────────────────────────────────────
 echo -e "\n${GREEN}${BOLD}✔ Done!${RESET}"

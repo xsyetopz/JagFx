@@ -48,7 +48,7 @@
 
       publish/osx-arm64/
         JagFx.Desktop           (single-file binary)
-        JagFx.app/              (bundle — placed inside the arch dir, not above it)
+        JagFx.app/              (bundle -- placed inside the arch dir, not above it)
           Contents/
             MacOS/
               JagFx.Desktop

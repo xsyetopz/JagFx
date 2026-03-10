@@ -177,31 +177,31 @@ dotnet run --project src/JagFx.Cli --framework net8.0 -- inspect input.synth
 
 ## Building for Distribution
 
-Use the `Makefile` targets — they wrap the correct `dotnet publish` invocations
+Use the `Makefile` targets -- they wrap the correct `dotnet publish` invocations
 so you don't have to remember the flags.
 
 ### Quick reference
 
 | Target | Output |
 |--------|--------|
-| `make publish-macos-arm64` | `publish/osx-arm64/JagFx.app` — unsigned .app (Apple Silicon) |
-| `make publish-macos-x64` | `publish/osx-x64/JagFx.app` — unsigned .app (Intel) |
-| `make publish-windows` | `publish/win-x64/JagFx.Desktop.exe` — single executable |
-| `make publish-linux` | `publish/linux-x64/JagFx.Desktop` — single executable |
-| `make release-macos-arm64` | `publish/JagFx-2.0.0-osx-arm64.dmg` — signed, notarized |
-| `make release-macos-x64` | `publish/JagFx-2.0.0-osx-x64.dmg` — signed, notarized |
+| `make publish-macos-arm64` | `publish/osx-arm64/JagFx.app` -- unsigned .app (Apple Silicon) |
+| `make publish-macos-x64` | `publish/osx-x64/JagFx.app` -- unsigned .app (Intel) |
+| `make publish-windows` | `publish/win-x64/JagFx.Desktop.exe` -- single executable |
+| `make publish-linux` | `publish/linux-x64/JagFx.Desktop` -- single executable |
+| `make release-macos-arm64` | `publish/JagFx-2.0.0-osx-arm64.dmg` -- signed, notarized |
+| `make release-macos-x64` | `publish/JagFx-2.0.0-osx-x64.dmg` -- signed, notarized |
 | `make release-macos` | both DMGs in one command |
 
-### macOS — unsigned (dev / testing)
+### macOS -- unsigned (dev / testing)
 
 ```bash
 make publish-macos-arm64   # Apple Silicon → publish/osx-arm64/JagFx.app
 make publish-macos-x64     # Intel         → publish/osx-x64/JagFx.app
 ```
 
-### macOS — signed + notarized DMG
+### macOS -- signed + notarized DMG
 
-Requires `.env` (copy from `.env.example`) and a one-time keychain setup —
+Requires `.env` (copy from `.env.example`) and a one-time keychain setup --
 see the notarization section above.
 
 ```bash
@@ -210,13 +210,13 @@ make release-macos-x64     # → publish/JagFx-2.0.0-osx-x64.dmg
 make release-macos         # both arches
 ```
 
-### Windows — single `.exe`
+### Windows -- single `.exe`
 
 ```bash
 make publish-windows   # → publish/win-x64/JagFx.Desktop.exe
 ```
 
-### Linux — single binary
+### Linux -- single binary
 
 ```bash
 make publish-linux   # → publish/linux-x64/JagFx.Desktop
