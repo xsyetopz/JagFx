@@ -99,12 +99,25 @@ ok ".app bundle created"
 
 # ── Code sign ────────────────────────────────────────────────────────────────
 step "Unlocking keychain"
-# signer "(null)" / errSecInternalComponent means the private key is inaccessible
-# because the login keychain is locked. Unlock it before signing.
-# This will prompt for your macOS login password if the keychain is currently locked.
-security unlock-keychain "$HOME/Library/Keychains/login.keychain-db" \
-    && ok "Keychain unlocked" \
-    || die "Could not unlock keychain -- re-run and enter your login password when prompted"
+# codesign needs the keychain unlocked AND apple-tool:/apple: partition access
+# on the private key. Without set-key-partition-list, codesign gets
+# errSecInternalComponent even when the keychain is unlocked.
+# Read password once; unset immediately after use.
+if [[ -z "${KEYCHAIN_PASSWORD:-}" ]]; then
+    read -rsp "Keychain password: " KEYCHAIN_PASSWORD
+    echo
+    _clear_kp=true
+fi
+
+KEYCHAIN="$HOME/Library/Keychains/login.keychain-db"
+security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN" \
+    || die "Could not unlock keychain"
+security set-key-partition-list -S apple-tool:,apple: -s \
+    -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" 2>/dev/null \
+    || die "Could not set key partition list — check your keychain password"
+
+[[ "${_clear_kp:-}" == "true" ]] && unset KEYCHAIN_PASSWORD _clear_kp
+ok "Keychain ready"
 
 step "Code signing"
 
