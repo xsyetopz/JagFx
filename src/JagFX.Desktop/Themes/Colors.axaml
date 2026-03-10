@@ -14,21 +14,21 @@
     <!-- Border colors -->
     <Color x:Key="BorderDefault">#333333</Color>
     <Color x:Key="BorderSubtle">#272727</Color>
-    <Color x:Key="BorderAccent">#44BB77</Color>
+    <Color x:Key="BorderAccent">#009E73</Color>
 
     <!-- Text colors -->
     <Color x:Key="TextPrimary">#f0f0f0</Color>
-    <Color x:Key="TextSecondary">#888888</Color>
+    <Color x:Key="TextSecondary">#999999</Color>
     <Color x:Key="TextMuted">#555555</Color>
-    <Color x:Key="TextButton">#bbbbbb</Color>
-    <Color x:Key="TextAccent">#44BB77</Color>
+    <Color x:Key="TextButton">#d0d0d0</Color>
+    <Color x:Key="TextAccent">#009E73</Color>
 
     <!-- Envelope line colors -->
-    <Color x:Key="LineEnvelope">#44BB77</Color>
-    <Color x:Key="LineFilter">#8888d4</Color>
+    <Color x:Key="LineEnvelope">#009E73</Color>
+    <Color x:Key="LineFilter">#0072B2</Color>
 
     <!-- Breakpoint colors -->
-    <Color x:Key="BreakpointFill">#44BB77</Color>
+    <Color x:Key="BreakpointFill">#009E73</Color>
     <Color x:Key="BreakpointSelected">#ffffff</Color>
 
     <!-- Grid line color -->
@@ -36,22 +36,22 @@
     <Color x:Key="GridMidline">#252525</Color>
 
     <!-- Button colors -->
-    <Color x:Key="ButtonDefault">#2a2a2a</Color>
-    <Color x:Key="ButtonBorder">#3a3a3a</Color>
+    <Color x:Key="ButtonDefault">#2f2f2f</Color>
+    <Color x:Key="ButtonBorder">#444444</Color>
     <Color x:Key="ButtonHover">#383838</Color>
-    <Color x:Key="ButtonActive">#0d1d24</Color>
-    <Color x:Key="ButtonActiveBorder">#44BB77</Color>
+    <Color x:Key="ButtonActive">#1a1a1a</Color>
+    <Color x:Key="ButtonActiveBorder">#009E73</Color>
 
     <!-- Voice strip active/inactive -->
-    <Color x:Key="VoiceActive">#44BB77</Color>
+    <Color x:Key="VoiceActive">#009E73</Color>
     <Color x:Key="VoiceInactive">#333333</Color>
 
     <!-- Voice button states -->
     <Color x:Key="VoiceInactiveBg">#1a1a1a</Color>
     <Color x:Key="VoiceInactiveText">#3a3a3a</Color>
     <Color x:Key="VoiceInactiveBorder">#222222</Color>
-    <Color x:Key="VoiceEnabledBg">#1e2a24</Color>
-    <Color x:Key="VoiceEnabledBorder">#2a4a38</Color>
+    <Color x:Key="VoiceEnabledBg">#222222</Color>
+    <Color x:Key="VoiceEnabledBorder">#333333</Color>
 
     <!-- SolidColorBrushes for direct binding -->
     <SolidColorBrush x:Key="SurfaceBaseBrush" Color="{StaticResource SurfaceBase}" />

@@ -34,7 +34,9 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
         <Setter Property="FontSize" Value="9" />
-        <Setter Property="MinHeight" Value="18" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Padding" Value="4,0" />
         <Setter Property="ShowButtonSpinner" Value="False" />
     </Style>
 
@@ -43,6 +45,28 @@
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="2,0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Height" Value="20" />
+    </Style>
+
+    <!-- Strip Fluent chrome from inner TextBox border -->
+    <Style Selector="NumericUpDown /template/ TextBox /template/ Border#PART_BorderElement">
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <!-- Force TextPresenter vertical centering -->
+    <Style Selector="NumericUpDown /template/ TextBox /template/ TextPresenter#PART_TextPresenter">
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Remove DataValidationErrors wrapper height -->
+    <Style Selector="NumericUpDown /template/ DataValidationErrors">
+        <Setter Property="MinHeight" Value="0" />
     </Style>
 
 </Styles>

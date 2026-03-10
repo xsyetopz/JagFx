@@ -33,7 +33,7 @@
             <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         </Style>
         <Style Selector="^:pressed">
-            <Setter Property="Background" Value="#0d1d24" />
+            <Setter Property="Background" Value="#1a1a1a" />
         </Style>
     </ControlTheme>
 
@@ -65,9 +65,9 @@
             </ControlTemplate>
         </Setter>
         <Style Selector="^:checked">
-            <Setter Property="Background" Value="#0d1d24" />
-            <Setter Property="BorderBrush" Value="#44BB77" />
-            <Setter Property="Foreground" Value="#44BB77" />
+            <Setter Property="Background" Value="#1a1a1a" />
+            <Setter Property="BorderBrush" Value="#009E73" />
+            <Setter Property="Foreground" Value="#009E73" />
         </Style>
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="#383838" />
@@ -76,9 +76,9 @@
 
     <!-- Voice selection button (numbered, with enabled/selected states) -->
     <ControlTheme x:Key="JagVoiceButton" TargetType="Button">
-        <Setter Property="Background" Value="{DynamicResource ButtonDefaultBrush}" />
-        <Setter Property="Foreground" Value="{DynamicResource TextButtonBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="Background" Value="#1a1a1a" />
+        <Setter Property="Foreground" Value="#3a3a3a" />
+        <Setter Property="BorderBrush" Value="#222222" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="MinHeight" Value="18" />
@@ -86,7 +86,7 @@
         <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
         <Setter Property="FontSize" Value="9" />
         <Setter Property="CornerRadius" Value="0" />
-        <Setter Property="Opacity" Value="0.5" />
+        <Setter Property="Opacity" Value="0.6" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
@@ -112,9 +112,9 @@
             <Setter Property="Opacity" Value="1.0" />
         </Style>
         <Style Selector="^.selected">
-            <Setter Property="Background" Value="#0d1d24" />
-            <Setter Property="BorderBrush" Value="#44BB77" />
-            <Setter Property="Foreground" Value="#44BB77" />
+            <Setter Property="Background" Value="#1a1a1a" />
+            <Setter Property="BorderBrush" Value="#009E73" />
+            <Setter Property="Foreground" Value="#009E73" />
             <Setter Property="Opacity" Value="1.0" />
         </Style>
     </ControlTheme>
@@ -147,14 +147,14 @@
             </ControlTemplate>
         </Setter>
         <Style Selector="^:checked">
-            <Setter Property="Background" Value="#0d1d24" />
-            <Setter Property="BorderBrush" Value="#44BB77" />
-            <Setter Property="Foreground" Value="#44BB77" />
+            <Setter Property="Background" Value="#1a1a1a" />
+            <Setter Property="BorderBrush" Value="#009E73" />
+            <Setter Property="Foreground" Value="#009E73" />
         </Style>
         <Style Selector="^.solo:checked">
-            <Setter Property="Background" Value="#2d1a0a" />
-            <Setter Property="BorderBrush" Value="#ffaa44" />
-            <Setter Property="Foreground" Value="#ffaa44" />
+            <Setter Property="Background" Value="#1a1a1a" />
+            <Setter Property="BorderBrush" Value="#E69F00" />
+            <Setter Property="Foreground" Value="#E69F00" />
         </Style>
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="#383838" />
@@ -193,7 +193,7 @@
             <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         </Style>
         <Style Selector="^:pressed">
-            <Setter Property="Background" Value="#0d1d24" />
+            <Setter Property="Background" Value="#1a1a1a" />
         </Style>
     </ControlTheme>
 
