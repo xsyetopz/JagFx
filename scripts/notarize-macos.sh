@@ -98,6 +98,14 @@ ok "Published to $PUBLISH_DIR"
 ok ".app bundle created"
 
 # ── Code sign ────────────────────────────────────────────────────────────────
+step "Unlocking keychain"
+# signer "(null)" / errSecInternalComponent means the private key is inaccessible
+# because the login keychain is locked. Unlock it before signing.
+# This will prompt for your macOS login password if the keychain is currently locked.
+security unlock-keychain "$HOME/Library/Keychains/login.keychain-db" \
+    && ok "Keychain unlocked" \
+    || die "Could not unlock keychain — re-run and enter your login password when prompted"
+
 step "Code signing"
 
 # Filter signing identity out of codesign output so it never appears in the terminal.
