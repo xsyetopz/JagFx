@@ -166,21 +166,21 @@ This file `ice_cast_rev377.synth` (`331` bytes) demonstrates voice with maximum 
 
 ```text
 Voice 0:
-├── Pitch Envelope (sine, 5 segments, 40→2000)
-├── Volume Envelope (off, 5 segments, 0→100)
-├── Vibrato: none
-├── Tremolo: none
-├── Gate Envelopes (present: 5+4 segments)
-├── 4 Oscillators (vol: 70, 150, 1024, 7602)
-├── Echo (delay=24329ms, mix=66%)
-├── Duration=36610ms, Start=0ms
-└── Filter (15 pairs per channel!)
-    ├── Channel Config: 0xFF (Count0=15, Count1=15)
-    ├── Unity Gains: 65535, 65535
-    ├── Modulation Mask: 0xFF (poles 0-3 of ch0 + poles 0-3 of ch1 = 8 modulated)
-    ├── Phase-0 coefficients: 30 pairs (freq+mag for all 30 poles)
-    ├── Phase-1 coefficients: 8 pairs (only for 8 modulated poles)
-    └── Filter Envelope (255 segments)
+├-- Pitch Envelope (sine, 5 segments, 40→2000)
+├-- Volume Envelope (off, 5 segments, 0→100)
+├-- Vibrato: none
+├-- Tremolo: none
+├-- Gate Envelopes (present: 5+4 segments)
+├-- 4 Oscillators (vol: 70, 150, 1024, 7602)
+├-- Echo (delay=24329ms, mix=66%)
+├-- Duration=36610ms, Start=0ms
+└-- Filter (15 pairs per channel!)
+    ├-- Channel Config: 0xFF (Count0=15, Count1=15)
+    ├-- Unity Gains: 65535, 65535
+    ├-- Modulation Mask: 0xFF (poles 0-3 of ch0 + poles 0-3 of ch1 = 8 modulated)
+    ├-- Phase-0 coefficients: 30 pairs (freq+mag for all 30 poles)
+    ├-- Phase-1 coefficients: 8 pairs (only for 8 modulated poles)
+    └-- Filter Envelope (255 segments)
 
 Voices 1-9: Empty (0x00 markers)
 Loop: truncated/not present
