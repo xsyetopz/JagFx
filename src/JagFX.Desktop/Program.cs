@@ -1,6 +1,6 @@
 using Avalonia;
 
-namespace JagFX.Desktop;
+namespace JagFx.Desktop;
 
 internal static class Program
 {

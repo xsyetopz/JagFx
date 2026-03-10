@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using JagFX.Domain.Models;
+using JagFx.Domain.Models;
 
-namespace JagFX.Desktop.ViewModels;
+namespace JagFx.Desktop.ViewModels;
 
 public partial class SegmentViewModel : ObservableObject
 {

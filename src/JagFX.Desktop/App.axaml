@@ -1,17 +1,17 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="JagFX.Desktop.App"
+             x:Class="JagFx.Desktop.App"
              RequestedThemeVariant="Dark">
     <Application.Styles>
         <FluentTheme />
-        <StyleInclude Source="avares://JagFX.Desktop/Themes/JagFxTheme.axaml" />
+        <StyleInclude Source="avares://JagFx.Desktop/Themes/JagFxTheme.axaml" />
     </Application.Styles>
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="avares://JagFX.Desktop/Themes/Colors.axaml" />
-                <ResourceInclude Source="avares://JagFX.Desktop/Themes/Icons.axaml" />
-                <ResourceInclude Source="avares://JagFX.Desktop/Themes/Controls.axaml" />
+                <ResourceInclude Source="avares://JagFx.Desktop/Themes/Colors.axaml" />
+                <ResourceInclude Source="avares://JagFx.Desktop/Themes/Icons.axaml" />
+                <ResourceInclude Source="avares://JagFx.Desktop/Themes/Controls.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

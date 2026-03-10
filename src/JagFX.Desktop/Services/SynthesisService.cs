@@ -1,8 +1,8 @@
-using JagFX.Domain.Models;
-using JagFX.Synthesis.Core;
-using JagFX.Synthesis.Data;
+using JagFx.Domain.Models;
+using JagFx.Synthesis.Core;
+using JagFx.Synthesis.Data;
 
-namespace JagFX.Desktop.Services;
+namespace JagFx.Desktop.Services;
 
 public static class SynthesisService
 {

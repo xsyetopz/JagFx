@@ -1,6 +1,6 @@
 using Avalonia.Media;
 
-namespace JagFX.Desktop.Controls;
+namespace JagFx.Desktop.Controls;
 
 /// <summary>
 /// Centralized canvas drawing colors used across all custom controls.

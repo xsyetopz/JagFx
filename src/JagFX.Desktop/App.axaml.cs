@@ -1,10 +1,10 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using JagFX.Desktop.ViewModels;
-using JagFX.Desktop.Views;
+using JagFx.Desktop.ViewModels;
+using JagFx.Desktop.Views;
 
-namespace JagFX.Desktop;
+namespace JagFx.Desktop;
 
 public class App : Application
 {

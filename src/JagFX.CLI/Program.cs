@@ -1,4 +1,4 @@
-namespace JagFX.Cli;
+namespace JagFx.Cli;
 
 public static class Program
 {

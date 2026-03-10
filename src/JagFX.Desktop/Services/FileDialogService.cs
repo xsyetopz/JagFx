@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 
-namespace JagFX.Desktop.Services;
+namespace JagFx.Desktop.Services;
 
 public static class FileDialogService
 {

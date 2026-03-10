@@ -4,8 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>JagFX.Core</RootNamespace>
-    <AssemblyName>JagFX.Core</AssemblyName>
+    <RootNamespace>JagFx.Core</RootNamespace>
+    <AssemblyName>JagFx.Core</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

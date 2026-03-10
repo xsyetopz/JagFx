@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 
-namespace JagFX.Desktop.Controls;
+namespace JagFx.Desktop.Controls;
 
 public class WaveformCanvas : Control
 {

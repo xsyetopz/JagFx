@@ -1,7 +1,7 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace JagFX.Desktop.Converters;
+namespace JagFx.Desktop.Converters;
 
 public class BoolToOpacityConverter : IValueConverter
 {

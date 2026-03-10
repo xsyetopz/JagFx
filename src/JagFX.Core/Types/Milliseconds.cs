@@ -1,6 +1,6 @@
-using JagFX.Core.Constants;
+using JagFx.Core.Constants;
 
-namespace JagFX.Core.Types;
+namespace JagFx.Core.Types;
 
 /// <summary>
 /// Represents a time duration in milliseconds.

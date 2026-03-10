@@ -4,13 +4,13 @@ using System.ComponentModel;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using JagFX.Desktop.Controls;
-using JagFX.Desktop.Services;
-using JagFX.Domain.Models;
-using JagFX.Io;
-using JagFX.Synthesis.Data;
+using JagFx.Desktop.Controls;
+using JagFx.Desktop.Services;
+using JagFx.Domain.Models;
+using JagFx.Io;
+using JagFx.Synthesis.Data;
 
-namespace JagFX.Desktop.ViewModels;
+namespace JagFx.Desktop.ViewModels;
 
 public enum GridMode { Main, Filter, Both }
 
@@ -81,12 +81,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             var dirty = IsDirty ? " *" : "";
             if (string.IsNullOrEmpty(FilePath))
-                return $"JagFX - {PatchName}{dirty}";
+                return $"JagFx - {PatchName}{dirty}";
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var display = FilePath.StartsWith(home)
                 ? "~" + FilePath[home.Length..]
                 : FilePath;
-            return $"JagFX - {display}{dirty}";
+            return $"JagFx - {display}{dirty}";
         }
     }
 
@@ -210,40 +210,49 @@ public partial class MainViewModel : ObservableObject, IDisposable
             "PITCH" => voice with
             {
                 AmplitudeEnvelope = neutralAmp,
-                PitchLfo = null, AmplitudeLfo = null,
-                GapOffEnvelope = null, GapOnEnvelope = null,
+                PitchLfo = null,
+                AmplitudeLfo = null,
+                GapOffEnvelope = null,
+                GapOnEnvelope = null,
                 Filter = null
             },
             "VOLUME" => voice with
             {
-                PitchLfo = null, AmplitudeLfo = null,
-                GapOffEnvelope = null, GapOnEnvelope = null,
+                PitchLfo = null,
+                AmplitudeLfo = null,
+                GapOffEnvelope = null,
+                GapOnEnvelope = null,
                 Filter = null
             },
             "V.RATE" or "V.DEPTH" => voice with
             {
                 AmplitudeEnvelope = neutralAmp,
                 AmplitudeLfo = null,
-                GapOffEnvelope = null, GapOnEnvelope = null,
+                GapOffEnvelope = null,
+                GapOnEnvelope = null,
                 Filter = null
             },
             "T.RATE" or "T.DEPTH" => voice with
             {
                 PitchLfo = null,
-                GapOffEnvelope = null, GapOnEnvelope = null,
+                GapOffEnvelope = null,
+                GapOnEnvelope = null,
                 Filter = null
             },
             "GAP OFF" or "GAP ON" => voice with
             {
                 AmplitudeEnvelope = neutralAmp,
-                PitchLfo = null, AmplitudeLfo = null,
+                PitchLfo = null,
+                AmplitudeLfo = null,
                 Filter = null
             },
             "FILTER" => voice with
             {
                 AmplitudeEnvelope = neutralAmp,
-                PitchLfo = null, AmplitudeLfo = null,
-                GapOffEnvelope = null, GapOnEnvelope = null
+                PitchLfo = null,
+                AmplitudeLfo = null,
+                GapOffEnvelope = null,
+                GapOnEnvelope = null
             },
             _ => voice
         };

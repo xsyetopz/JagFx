@@ -1,4 +1,4 @@
-namespace JagFX.Cli.Commands;
+namespace JagFx.Cli.Commands;
 
 /// <summary>
 /// Shared utilities for CLI commands.

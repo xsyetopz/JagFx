@@ -1,7 +1,7 @@
 using System.Numerics;
-using JagFX.Desktop.ViewModels;
+using JagFx.Desktop.ViewModels;
 
-namespace JagFX.Desktop.Controls;
+namespace JagFx.Desktop.Controls;
 
 public static class FilterResponseCalculator
 {

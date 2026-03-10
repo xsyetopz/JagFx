@@ -2,9 +2,9 @@ using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
-using JagFX.Desktop.ViewModels;
+using JagFx.Desktop.ViewModels;
 
-namespace JagFX.Desktop.Controls;
+namespace JagFx.Desktop.Controls;
 
 public class FrequencyResponseCanvas : Control
 {

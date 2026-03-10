@@ -5,8 +5,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>JagFX.Desktop</RootNamespace>
-    <AssemblyName>JagFX.Desktop</AssemblyName>
+    <RootNamespace>JagFx.Desktop</RootNamespace>
+    <AssemblyName>JagFx.Desktop</AssemblyName>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
@@ -20,10 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JagFX.Core\JagFX.Core.csproj" />
-    <ProjectReference Include="..\JagFX.Domain\JagFX.Domain.csproj" />
-    <ProjectReference Include="..\JagFX.Io\JagFX.Io.csproj" />
-    <ProjectReference Include="..\JagFX.Synthesis\JagFX.Synthesis.csproj" />
+    <ProjectReference Include="..\JagFx.Core\JagFx.Core.csproj" />
+    <ProjectReference Include="..\JagFx.Domain\JagFx.Domain.csproj" />
+    <ProjectReference Include="..\JagFx.Io\JagFx.Io.csproj" />
+    <ProjectReference Include="..\JagFx.Synthesis\JagFx.Synthesis.csproj" />
   </ItemGroup>
 
 </Project>

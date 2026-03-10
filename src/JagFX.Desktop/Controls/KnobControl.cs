@@ -4,7 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
 
-namespace JagFX.Desktop.Controls;
+namespace JagFx.Desktop.Controls;
 
 public class KnobControl : Control
 {

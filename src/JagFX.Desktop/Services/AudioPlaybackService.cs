@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using JagFX.Io;
-using JagFX.Synthesis.Data;
+using JagFx.Io;
+using JagFx.Synthesis.Data;
 
-namespace JagFX.Desktop.Services;
+namespace JagFx.Desktop.Services;
 
 public class AudioPlaybackService : IDisposable
 {

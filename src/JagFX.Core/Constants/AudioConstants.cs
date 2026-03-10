@@ -1,4 +1,4 @@
-namespace JagFX.Core.Constants;
+namespace JagFx.Core.Constants;
 
 public static class AudioConstants
 {

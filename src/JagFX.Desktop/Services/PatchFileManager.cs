@@ -1,7 +1,7 @@
-using JagFX.Desktop.ViewModels;
-using JagFX.Io;
+using JagFx.Desktop.ViewModels;
+using JagFx.Io;
 
-namespace JagFX.Desktop.Services;
+namespace JagFx.Desktop.Services;
 
 /// <summary>
 /// Handles patch file I/O: load, save, and directory-based navigation.

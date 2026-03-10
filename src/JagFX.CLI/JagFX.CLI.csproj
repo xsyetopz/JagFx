@@ -5,15 +5,15 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>JagFX.Cli</RootNamespace>
-    <AssemblyName>JagFX.Cli</AssemblyName>
+    <RootNamespace>JagFx.Cli</RootNamespace>
+    <AssemblyName>JagFx.Cli</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JagFX.Core\JagFX.Core.csproj" />
-    <ProjectReference Include="..\JagFX.Domain\JagFX.Domain.csproj" />
-    <ProjectReference Include="..\JagFX.Io\JagFX.Io.csproj" />
-    <ProjectReference Include="..\JagFX.Synthesis\JagFX.Synthesis.csproj" />
+    <ProjectReference Include="..\JagFx.Core\JagFx.Core.csproj" />
+    <ProjectReference Include="..\JagFx.Domain\JagFx.Domain.csproj" />
+    <ProjectReference Include="..\JagFx.Io\JagFx.Io.csproj" />
+    <ProjectReference Include="..\JagFx.Synthesis\JagFx.Synthesis.csproj" />
   </ItemGroup>
 
   <ItemGroup>

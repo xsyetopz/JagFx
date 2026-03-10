@@ -1,9 +1,9 @@
-using JagFX.Io;
-using JagFX.Synthesis;
-using JagFX.Synthesis.Core;
+using JagFx.Io;
+using JagFx.Synthesis;
+using JagFx.Synthesis.Core;
 using System.CommandLine;
 
-namespace JagFX.Cli.Commands;
+namespace JagFx.Cli.Commands;
 
 /// <summary>
 /// CLI command for converting .synth files to .wav format.

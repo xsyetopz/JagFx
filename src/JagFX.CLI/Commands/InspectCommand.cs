@@ -1,8 +1,8 @@
-using JagFX.Core.Constants;
-using JagFX.Io.Buffers;
+using JagFx.Core.Constants;
+using JagFx.Io.Buffers;
 using System.CommandLine;
 
-namespace JagFX.Cli.Commands;
+namespace JagFx.Cli.Commands;
 
 /// <summary>
 /// CLI command for inspecting .synth file structure in assembly-like format.

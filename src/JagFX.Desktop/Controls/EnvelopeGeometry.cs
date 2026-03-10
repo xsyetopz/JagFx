@@ -1,7 +1,7 @@
 using Avalonia;
-using JagFX.Desktop.ViewModels;
+using JagFx.Desktop.ViewModels;
 
-namespace JagFX.Desktop.Controls;
+namespace JagFx.Desktop.Controls;
 
 /// <summary>
 /// Computes breakpoint positions for an envelope within a given plot area.
@@ -43,7 +43,7 @@ public readonly struct EnvelopeGeometry
         var points = new Point[segments.Count + 1];
         double xAccum = 0;
 
-        // Start point — minLevel maps to bottom, maxLevel maps to top
+        // Start point -- minLevel maps to bottom, maxLevel maps to top
         var startY = Padding + plotH - ((env.StartValue - minLevel) / range) * plotH;
         points[0] = new Point(Padding, Math.Clamp(startY, Padding, Padding + plotH));
 

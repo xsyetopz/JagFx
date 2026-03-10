@@ -1,4 +1,4 @@
-namespace JagFX.Core.Types;
+namespace JagFx.Core.Types;
 
 /// <summary>
 /// Represents a percentage value (0-100).
