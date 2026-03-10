@@ -61,6 +61,7 @@ public partial class SignalChainPanel : UserControl
                     Foreground = new SolidColorBrush(Color.Parse(color)),
                     Opacity = 0.7,
                     Margin = new Thickness(4, 1, 0, 0),
+                    TextTrimming = TextTrimming.CharacterEllipsis,
                 };
 
                 Control canvas;
@@ -122,22 +123,25 @@ public partial class SignalChainPanel : UserControl
         innerGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
         innerGrid.RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
 
-        // Header row: title (left) + toolbar (right) on same line
-        var headerGrid = new Grid();
+        // Header row: title (Star) + toolbar (Auto)
+        var headerGrid = new Grid { ClipToBounds = true };
         headerGrid.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
         headerGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
 
+        titleBlock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
         Grid.SetColumn(titleBlock, 0);
         headerGrid.Children.Add(titleBlock);
 
         var toolbar = CreateToolbar(canvas, title, slotType);
         toolbar.Margin = new Thickness(0);
+        toolbar.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right;
         Grid.SetColumn(toolbar, 1);
         headerGrid.Children.Add(toolbar);
 
         Grid.SetRow(headerGrid, 0);
         innerGrid.Children.Add(headerGrid);
 
+        // Canvas row
         Grid.SetRow(canvas, 1);
         innerGrid.Children.Add(canvas);
 
@@ -174,9 +178,12 @@ public partial class SignalChainPanel : UserControl
             Margin = new Thickness(2, 0, 0, 1),
         };
 
-        // All cells get zoom buttons
-        var zoomGroup = CreateZoomGroup(canvas);
-        toolbar.Children.Add(zoomGroup);
+        // Zoom buttons only for canvases that support zoom
+        if (slotType != SlotType.PoleZero && slotType != SlotType.Bode)
+        {
+            var zoomGroup = CreateZoomGroup(canvas);
+            toolbar.Children.Add(zoomGroup);
+        }
 
         // Envelope cells get [S] solo button
         if (slotType == SlotType.Envelope)
@@ -239,6 +246,26 @@ public partial class SignalChainPanel : UserControl
             group.Children.Add(btn);
         }
 
+        // Sync toggle buttons when zoom changes from wheel input
+        var groupRef = group;
+        canvas.PropertyChanged += (_, e) =>
+        {
+            var isZoomProp = canvas switch
+            {
+                EnvelopeCanvas => e.Property == EnvelopeCanvas.ZoomLevelProperty,
+                WaveformCanvas => e.Property == WaveformCanvas.ZoomLevelProperty,
+                _ => false,
+            };
+            if (!isZoomProp) return;
+
+            var newZoom = (int)(e.NewValue ?? 1);
+            foreach (var child in groupRef.Children)
+            {
+                if (child is ToggleButton tb)
+                    tb.IsChecked = (int)(tb.Tag ?? 1) == newZoom;
+            }
+        };
+
         return group;
     }
 
@@ -251,12 +278,6 @@ public partial class SignalChainPanel : UserControl
                 break;
             case WaveformCanvas wc:
                 wc.ZoomLevel = zoomLevel;
-                break;
-            case PoleZeroCanvas pzc:
-                pzc.ZoomLevel = zoomLevel;
-                break;
-            case FrequencyResponseCanvas frc:
-                frc.ZoomLevel = zoomLevel;
                 break;
         }
     }
@@ -383,10 +404,10 @@ public partial class SignalChainPanel : UserControl
 
     private static string GetSlotColor(string title, SlotType type) => type switch
     {
-        SlotType.PoleZero => "#8888d4",
-        SlotType.Waveform => "#44BB77",
-        SlotType.Bode => "#8888d4",
-        _ => MainViewModel.SignalChain.FirstOrDefault(e => e.Title == title).Color ?? "#44BB77",
+        SlotType.PoleZero => "#0072B2",
+        SlotType.Waveform => "#009E73",
+        SlotType.Bode => "#0072B2",
+        _ => MainViewModel.SignalChain.FirstOrDefault(e => e.Title == title).Color ?? "#009E73",
     };
 
     private void OnDataContextChanged(object? sender, EventArgs e)
@@ -519,7 +540,7 @@ public partial class SignalChainPanel : UserControl
         foreach (var slot in _slots)
         {
             var selected = slot.Title == title;
-            slot.Container.BorderBrush = SolidColorBrush.Parse(selected ? "#44BB77" : "#272727");
+            slot.Container.BorderBrush = SolidColorBrush.Parse(selected ? "#009E73" : "#272727");
             slot.Container.BorderThickness = new Thickness(1.5, 0.5, 0.5, 0.5);
         }
     }
@@ -536,30 +557,51 @@ public partial class SignalChainPanel : UserControl
         {
             case GridMode.Main:
                 // 3×3: cols 0-2 equal, col 3 = 0
+                foreach (var slot in _slots)
+                {
+                    if (FilterCells.Contains(slot.Title))
+                        slot.Container.Width = double.NaN;
+                }
                 for (var i = 0; i < 3; i++)
                     colDefs[i].Width = new GridLength(1, GridUnitType.Star);
                 colDefs[3].Width = new GridLength(0);
+                colDefs[3].MaxWidth = double.PositiveInfinity;
                 for (var i = 0; i < 3; i++)
                     rowDefs[i].Height = new GridLength(1, GridUnitType.Star);
+                MatrixGrid.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
                 break;
 
             case GridMode.Filter:
                 // Only col 3 visible (stacked vertically in 3 rows)
                 for (var i = 0; i < 3; i++)
                     colDefs[i].Width = new GridLength(0);
-                colDefs[3].Width = new GridLength(1, GridUnitType.Star);
+                colDefs[3].Width = GridLength.Auto;
+                colDefs[3].MaxWidth = double.PositiveInfinity;
                 for (var i = 0; i < 3; i++)
                     rowDefs[i].Height = new GridLength(1, GridUnitType.Star);
+                MatrixGrid.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
+                foreach (var slot in _slots)
+                {
+                    if (FilterCells.Contains(slot.Title))
+                        slot.Container.Width = 300;
+                }
                 break;
 
             case GridMode.Both:
-                // Full 3×4
-                colDefs[0].Width = new GridLength(27, GridUnitType.Star);
-                colDefs[1].Width = new GridLength(27, GridUnitType.Star);
-                colDefs[2].Width = new GridLength(27, GridUnitType.Star);
-                colDefs[3].Width = new GridLength(19, GridUnitType.Star);
+                // Full 3×4 — equal columns
+                foreach (var slot in _slots)
+                {
+                    if (FilterCells.Contains(slot.Title))
+                        slot.Container.Width = double.NaN;
+                }
+                colDefs[0].Width = new GridLength(1, GridUnitType.Star);
+                colDefs[1].Width = new GridLength(1, GridUnitType.Star);
+                colDefs[2].Width = new GridLength(1, GridUnitType.Star);
+                colDefs[3].Width = new GridLength(1, GridUnitType.Star);
+                colDefs[3].MaxWidth = double.PositiveInfinity;
                 for (var i = 0; i < 3; i++)
                     rowDefs[i].Height = new GridLength(1, GridUnitType.Star);
+                MatrixGrid.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
                 break;
         }
     }
