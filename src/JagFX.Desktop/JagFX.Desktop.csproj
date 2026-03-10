@@ -46,22 +46,27 @@
   <!--
     After publishing for an osx RID, assemble a standard .app bundle:
 
-      <PublishDir>/
-        JagFx.Desktop           (single-file binary, stays here too)
+      publish/osx-arm64/
+        JagFx.Desktop           (single-file binary)
+        JagFx.app/              (bundle — placed inside the arch dir, not above it)
+          Contents/
+            MacOS/
+              JagFx.Desktop
+              lib*.dylib
+            Resources/
+            Info.plist
 
-      <AppBundlePath>/
-        Contents/
-          MacOS/
-            JagFx.Desktop       (copy of the binary — this is what macOS launches)
-          Resources/
-          Info.plist
+      publish/osx-x64/
+        JagFx.Desktop
+        JagFx.app/
+          ...
   -->
   <Target Name="BundleMacApp" AfterTargets="Publish"
           Condition="$(RuntimeIdentifier.StartsWith('osx'))">
 
     <PropertyGroup>
       <_AppName>JagFx</_AppName>
-      <_BundleDir>$([System.IO.Path]::GetFullPath('$(PublishDir)../$(_AppName).app/'))</_BundleDir>
+      <_BundleDir>$(PublishDir)$(_AppName).app/</_BundleDir>
       <_MacOSDir>$(_BundleDir)Contents/MacOS/</_MacOSDir>
       <_ResourcesDir>$(_BundleDir)Contents/Resources/</_ResourcesDir>
       <_InfoPlist>$(_BundleDir)Contents/Info.plist</_InfoPlist>

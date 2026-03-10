@@ -52,7 +52,7 @@ ARCH="${1:-osx-arm64}"
 
 # ── Derived paths ────────────────────────────────────────────────────────────
 PUBLISH_DIR="$ROOT_DIR/publish/$ARCH"
-APP_BUNDLE="$ROOT_DIR/publish/JagFx.app"
+APP_BUNDLE="$PUBLISH_DIR/JagFx.app"
 ENTITLEMENTS="$ROOT_DIR/src/JagFx.Desktop/macOS/entitlements.plist"
 DESKTOP_PROJ="$ROOT_DIR/src/JagFx.Desktop"
 
