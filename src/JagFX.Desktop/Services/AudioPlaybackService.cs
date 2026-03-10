@@ -7,18 +7,58 @@ namespace JagFx.Desktop.Services;
 public class AudioPlaybackService : IDisposable
 {
     private Process? _playbackProcess;
-    private string? _tempWavPath;
+    private readonly string _tempWavPath = Path.Combine(Path.GetTempPath(), $"jagfx_{Environment.ProcessId}.wav");
 
     public event Action? PlaybackFinished;
 
     public bool IsPlaying => _playbackProcess is { HasExited: false };
 
+    public bool HasWavFile => File.Exists(_tempWavPath);
+
     public async Task PlayAsync(AudioBuffer buffer)
     {
         Stop();
-
-        _tempWavPath = Path.Combine(Path.GetTempPath(), $"jagfx_{Guid.NewGuid():N}.wav");
         await Task.Run(() => WaveFileWriter.WriteToPath(buffer.ToBytes16LE(), _tempWavPath, bitsPerSample: 16));
+        StartAndWatch();
+    }
+
+    public void PlayFromCache()
+    {
+        Stop();
+        StartAndWatch();
+    }
+
+    public async Task UpdateWavAsync(AudioBuffer buffer)
+    {
+        await Task.Run(() => WaveFileWriter.WriteToPath(buffer.ToBytes16LE(), _tempWavPath, bitsPerSample: 16));
+    }
+
+    public void ReplayFromExistingFile()
+    {
+        if (_playbackProcess is { HasExited: false })
+        {
+            try { _playbackProcess.Kill(); }
+            catch { /* process may have exited */ }
+        }
+
+        _playbackProcess?.Dispose();
+        StartAndWatch();
+    }
+
+    public void Stop()
+    {
+        if (_playbackProcess is { HasExited: false })
+        {
+            try { _playbackProcess.Kill(); }
+            catch { /* process may have exited */ }
+        }
+
+        _playbackProcess?.Dispose();
+        _playbackProcess = null;
+    }
+
+    private void StartAndWatch()
+    {
         _playbackProcess = StartAudioProcess(_tempWavPath);
 
         if (_playbackProcess is not null)
@@ -45,58 +85,11 @@ public class AudioPlaybackService : IDisposable
         return Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
     }
 
-    public void ReplayFromExistingFile()
-    {
-        if (_tempWavPath is null) return;
-
-        if (_playbackProcess is { HasExited: false })
-        {
-            try { _playbackProcess.Kill(); }
-            catch { /* process may have exited */ }
-        }
-
-        _playbackProcess?.Dispose();
-        _playbackProcess = StartAudioProcess(_tempWavPath);
-
-        if (_playbackProcess is not null)
-        {
-            var process = _playbackProcess;
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    await process.WaitForExitAsync();
-                    PlaybackFinished?.Invoke();
-                }
-                catch { /* process may have been killed */ }
-            });
-        }
-    }
-
-    public void Stop()
-    {
-        if (_playbackProcess is { HasExited: false })
-        {
-            try { _playbackProcess.Kill(); }
-            catch { /* process may have exited */ }
-        }
-
-        _playbackProcess?.Dispose();
-        _playbackProcess = null;
-        CleanupTempFile();
-    }
-
-    private void CleanupTempFile()
-    {
-        if (_tempWavPath is null) return;
-        try { File.Delete(_tempWavPath); }
-        catch { /* best effort */ }
-        _tempWavPath = null;
-    }
-
     public void Dispose()
     {
         Stop();
+        try { File.Delete(_tempWavPath); }
+        catch { /* best effort */ }
         GC.SuppressFinalize(this);
     }
 }
