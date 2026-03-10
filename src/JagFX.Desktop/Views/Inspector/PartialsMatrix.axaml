@@ -1,15 +1,23 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:JagFX.Desktop.ViewModels"
+             xmlns:conv="using:JagFX.Desktop.Converters"
              x:Class="JagFX.Desktop.Views.Inspector.PartialsMatrix"
              x:DataType="vm:VoiceViewModel">
+
+    <UserControl.Resources>
+        <conv:RawToPercentConverter x:Key="RawToPercentConverter" />
+        <conv:BoolToOpacityConverter x:Key="BoolToOpacity" />
+    </UserControl.Resources>
 
     <Border Margin="0" Padding="0">
         <StackPanel Spacing="0">
             <!-- Section Header -->
-            <Border Background="#1a1a1a" Padding="6,3" BorderBrush="#272727" BorderThickness="0,0,0,1">
+            <Border Background="{StaticResource SurfaceCellHeaderBrush}" Padding="6,3"
+                    BorderBrush="{StaticResource BorderDefaultBrush}" BorderThickness="0,0,0,1">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="PARTIALS" FontSize="8" FontWeight="Bold" Foreground="#686868" VerticalAlignment="Center" />
+                    <TextBlock Text="PARTIALS" FontSize="8" FontWeight="Bold"
+                               Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
                     <!-- Bank switch buttons -->
                     <StackPanel Orientation="Horizontal" Spacing="1">
                         <ToggleButton Theme="{StaticResource JagVoiceToggle}"
@@ -25,12 +33,12 @@
             </Border>
 
             <!-- Column headers -->
-            <Border Padding="4,2" Background="#141414">
+            <Border Padding="4,2" Background="{StaticResource SurfacePanelBrush}">
                 <Grid ColumnDefinitions="18,*,50,40">
-                    <TextBlock Grid.Column="0" Text="#" FontSize="7" Foreground="#444444" />
-                    <TextBlock Grid.Column="1" Text="VOL" FontSize="7" Foreground="#444444" />
-                    <TextBlock Grid.Column="2" Text="PITCH" FontSize="7" Foreground="#444444" />
-                    <TextBlock Grid.Column="3" Text="DLY" FontSize="7" Foreground="#444444" HorizontalAlignment="Right" />
+                    <TextBlock Grid.Column="0" Text="#" FontSize="7" Foreground="{StaticResource TextMutedBrush}" />
+                    <TextBlock Grid.Column="1" Text="VOL" FontSize="7" Foreground="{StaticResource TextMutedBrush}" />
+                    <TextBlock Grid.Column="2" Text="PITCH" FontSize="7" Foreground="{StaticResource TextMutedBrush}" />
+                    <TextBlock Grid.Column="3" Text="DLY" FontSize="7" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Right" />
                 </Grid>
             </Border>
 
@@ -38,27 +46,35 @@
             <ItemsControl ItemsSource="{Binding VisiblePartials}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:PartialViewModel">
-                        <Border Padding="4,1" BorderBrush="#1e1e1e" BorderThickness="0,0,0,0.5">
+                        <Border Padding="4,1" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="0,0,0,0.5"
+                                Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacity}}">
                             <Grid ColumnDefinitions="18,*,50,40">
                                 <CheckBox Grid.Column="0" IsChecked="{Binding IsActive}"
                                           MinWidth="12" MinHeight="12"
                                           Padding="0" Margin="0" />
-                                <NumericUpDown Grid.Column="1"
-                                               Theme="{StaticResource JagNumericStyle}"
-                                               Value="{Binding Amplitude}"
-                                               Minimum="0" Maximum="65535"
-                                               MinHeight="16" FontSize="8" />
-                                <NumericUpDown Grid.Column="2"
-                                               Theme="{StaticResource JagNumericStyle}"
-                                               Value="{Binding PitchOffsetSemitones}"
-                                               Minimum="-128" Maximum="127"
-                                               MinHeight="16" FontSize="8" />
-                                <NumericUpDown Grid.Column="3"
-                                               Theme="{StaticResource JagNumericStyle}"
-                                               Value="{Binding DelayMs}"
-                                               Minimum="0" Maximum="65535"
-                                               MinHeight="16" FontSize="8"
-                                               HorizontalAlignment="Right" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2">
+                                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                                   Value="{Binding Amplitude, Converter={StaticResource RawToPercentConverter}}"
+                                                   Minimum="0" Maximum="100"
+                                                   MinHeight="16" FontSize="8"
+                                                   FormatString="F1" />
+                                    <TextBlock Text="%" FontSize="7" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="2">
+                                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                                   Value="{Binding PitchOffsetSemitones}"
+                                                   Minimum="-128" Maximum="127"
+                                                   MinHeight="16" FontSize="8" />
+                                    <TextBlock Text="st" FontSize="7" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="2"
+                                            HorizontalAlignment="Right">
+                                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
+                                                   Value="{Binding DelayMs}"
+                                                   Minimum="0" Maximum="65535"
+                                                   MinHeight="16" FontSize="8" />
+                                    <TextBlock Text="ms" FontSize="7" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                </StackPanel>
                             </Grid>
                         </Border>
                     </DataTemplate>

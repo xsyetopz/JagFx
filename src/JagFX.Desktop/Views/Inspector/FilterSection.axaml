@@ -1,47 +1,52 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:JagFX.Desktop.ViewModels"
+             xmlns:conv="using:JagFX.Desktop.Converters"
+             xmlns:controls="using:JagFX.Desktop.Controls"
              x:Class="JagFX.Desktop.Views.Inspector.FilterSection"
              x:DataType="vm:FilterViewModel">
 
+    <UserControl.Resources>
+        <conv:RawToPercentConverter x:Key="RawToPercentConverter" />
+    </UserControl.Resources>
+
     <StackPanel Spacing="0">
         <!-- Section Header -->
-        <Border Background="#1a1a1a" Padding="6,3" BorderBrush="#272727" BorderThickness="0,1,0,1">
-            <TextBlock Text="FILTER" FontSize="8" FontWeight="Bold" Foreground="#686868" />
+        <Border Background="{StaticResource SurfaceCellHeaderBrush}" Padding="6,3"
+                BorderBrush="{StaticResource BorderDefaultBrush}" BorderThickness="0,1,0,1">
+            <TextBlock Text="FILTER" FontSize="9" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" />
         </Border>
 
-        <Border Padding="6,4" IsVisible="{Binding HasFilter}">
-            <StackPanel Spacing="4">
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                    <TextBlock Text="POLES" FontSize="7" Foreground="#686868" VerticalAlignment="Center" Width="42" />
-                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
-                                   Value="{Binding PoleCount0}"
+        <Border Padding="4,4" IsVisible="{Binding HasFilter}">
+            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" HorizontalAlignment="Stretch">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="POLES" FontSize="9"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           VerticalAlignment="Center" Margin="0,0,4,2" />
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="2">
+                    <NumericUpDown Value="{Binding PoleCount0, TargetNullValue=0, FallbackValue=0}"
                                    Minimum="0" Maximum="15"
-                                   Width="40" IsReadOnly="True" />
-                    <TextBlock Text="/" FontSize="8" Foreground="#444444" VerticalAlignment="Center" />
-                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
-                                   Value="{Binding PoleCount1}"
+                                   Width="36" />
+                    <TextBlock Text="/" FontSize="9" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                    <NumericUpDown Value="{Binding PoleCount1, TargetNullValue=0, FallbackValue=0}"
                                    Minimum="0" Maximum="15"
-                                   Width="40" IsReadOnly="True" />
+                                   Width="36" />
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                    <TextBlock Text="GAIN" FontSize="7" Foreground="#686868" VerticalAlignment="Center" Width="42" />
-                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
-                                   Value="{Binding UnityGain0}"
-                                   Minimum="0" Maximum="65535"
-                                   Width="55" />
-                    <TextBlock Text="/" FontSize="8" Foreground="#444444" VerticalAlignment="Center" />
-                    <NumericUpDown Theme="{StaticResource JagNumericStyle}"
-                                   Value="{Binding UnityGain1}"
-                                   Minimum="0" Maximum="65535"
-                                   Width="55" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" />
+                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                            Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                    <controls:KnobControl Value="{Binding UnityGain0, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
+                                          Minimum="0" Maximum="100" Label="GAIN 0" Step="0.5"
+                                          FormatString="F1" Unit="%" Height="56" />
+                    <controls:KnobControl Value="{Binding UnityGain1, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
+                                          Minimum="0" Maximum="100" Label="GAIN 1" Step="0.5"
+                                          FormatString="F1" Unit="%" Height="56" />
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </Border>
 
-        <Border Padding="6,4" IsVisible="{Binding !HasFilter}">
-            <TextBlock Text="No filter" FontSize="8" Foreground="#444444" FontStyle="Italic" />
+        <Border Padding="4,4" IsVisible="{Binding !HasFilter}">
+            <TextBlock Text="No filter" FontSize="9" Foreground="{StaticResource TextMutedBrush}" FontStyle="Italic" />
         </Border>
     </StackPanel>
 
