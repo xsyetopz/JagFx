@@ -14,12 +14,10 @@ public partial class PartialsFooter : UserControl
     public PartialsFooter()
     {
         InitializeComponent();
-        Bank1Toggle.Click += (_, _) => SetBank(0);
-        Bank2Toggle.Click += (_, _) => SetBank(5);
-        BtnOne.Click += (_, _) => SetPlaySingleVoice(true);
-        BtnAll.Click += (_, _) => SetPlaySingleVoice(false);
-        BtnLoop.Click += (_, _) => ToggleLoop();
-        BtnTrue.Click += (_, _) => ToggleTrueWave();
+        BtnBankPrev.Click += (_, _) => CycleBank(-1);
+        BtnBankNext.Click += (_, _) => CycleBank(1);
+        BtnOne.Click += (_, _) => { if (DataContext is MainViewModel vm) vm.PlaySingleVoice = true; };
+        BtnAll.Click += (_, _) => { if (DataContext is MainViewModel vm) vm.PlaySingleVoice = false; };
         BtnCopy.Click += (_, _) => CopyVoice();
         BtnReset.Click += (_, _) => ResetVoice();
         BtnMain.Click += (_, _) => SetGridMode(GridMode.Main);
@@ -77,32 +75,14 @@ public partial class PartialsFooter : UserControl
             BindPartialSlots();
     }
 
-    private void SetBank(int offset)
+    private void CycleBank(int direction)
     {
         if (DataContext is not MainViewModel vm) return;
         var voice = vm.Patch.SelectedVoice;
-        voice.PartialBankOffset = offset;
-        Bank1Toggle.IsChecked = offset == 0;
-        Bank2Toggle.IsChecked = offset == 5;
+        var newOffset = voice.PartialBankOffset + direction * 5;
+        if (newOffset < 0 || newOffset > 5) return;
+        voice.PartialBankOffset = newOffset;
         BindPartialSlots();
-    }
-
-    private void SetPlaySingleVoice(bool single)
-    {
-        if (DataContext is MainViewModel vm)
-            vm.PlaySingleVoice = single;
-    }
-
-    private void ToggleLoop()
-    {
-        if (DataContext is MainViewModel vm)
-            vm.IsLooping = !vm.IsLooping;
-    }
-
-    private void ToggleTrueWave()
-    {
-        if (DataContext is MainViewModel vm)
-            vm.TrueWaveEnabled = !vm.TrueWaveEnabled;
     }
 
     private void CopyVoice()
