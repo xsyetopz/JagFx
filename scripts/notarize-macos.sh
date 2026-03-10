@@ -17,7 +17,7 @@
 
 set -euo pipefail
 
-# ── Colours ──────────────────────────────────────────────────────────────────
+# -- Colours ------------------------------------------------------------------
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
 CYAN='\033[0;36m'; BOLD='\033[1m'; RESET='\033[0m'
 
@@ -26,11 +26,11 @@ ok()    { echo -e "${GREEN}✔ $*${RESET}"; }
 warn()  { echo -e "${YELLOW}⚠ $*${RESET}"; }
 die()   { echo -e "${RED}✘ $*${RESET}" >&2; exit 1; }
 
-# ── Resolve paths ────────────────────────────────────────────────────────────
+# -- Resolve paths ------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# ── Load .env ────────────────────────────────────────────────────────────────
+# -- Load .env ----------------------------------------------------------------
 ENV_FILE="$ROOT_DIR/.env"
 if [[ -f "$ENV_FILE" ]]; then
     # shellcheck disable=SC1090
@@ -40,17 +40,17 @@ else
     die ".env not found. Copy .env.example → .env and fill in your credentials."
 fi
 
-# ── Required variables ───────────────────────────────────────────────────────
+# -- Required variables -------------------------------------------------------
 : "${APPLE_SIGNING_IDENTITY:?APPLE_SIGNING_IDENTITY is not set in .env}"
 : "${APPLE_TEAM_ID:?APPLE_TEAM_ID is not set in .env}"
 : "${APPLE_NOTARIZE_PROFILE:?APPLE_NOTARIZE_PROFILE is not set in .env}"
 
-# ── Arguments ────────────────────────────────────────────────────────────────
+# -- Arguments ----------------------------------------------------------------
 ARCH="${1:-osx-arm64}"
 [[ "$ARCH" == "osx-arm64" || "$ARCH" == "osx-x64" ]] \
     || die "Unknown arch '$ARCH'. Use osx-arm64 or osx-x64."
 
-# ── Derived paths ────────────────────────────────────────────────────────────
+# -- Derived paths ------------------------------------------------------------
 PUBLISH_DIR="$ROOT_DIR/publish/$ARCH"
 APP_BUNDLE="$PUBLISH_DIR/JagFx.app"
 ENTITLEMENTS="$ROOT_DIR/src/JagFx.Desktop/macOS/entitlements.plist"
@@ -67,7 +67,7 @@ echo "  Version : $VERSION"
 echo "  Arch    : $ARCH"
 echo "  Output  : $DMG_PATH"
 
-# ── Preflight checks ─────────────────────────────────────────────────────────
+# -- Preflight checks ---------------------------------------------------------
 step "Preflight checks"
 command -v dotnet   >/dev/null || die "dotnet not found"
 command -v codesign >/dev/null || die "codesign not found (install Xcode CLT)"
@@ -81,7 +81,7 @@ security find-identity -v -p codesigning 2>/dev/null | grep -qF "$APPLE_SIGNING_
     || die "Signing certificate not found in keychain (check APPLE_SIGNING_IDENTITY in .env)"
 ok "All checks passed"
 
-# ── Build ─────────────────────────────────────────────────────────────────────
+# -- Build ---------------------------------------------------------------------
 step "Publishing $ARCH"
 rm -rf "$PUBLISH_DIR" "$APP_BUNDLE"
 dotnet publish "$DESKTOP_PROJ" \
@@ -97,7 +97,7 @@ ok "Published to $PUBLISH_DIR"
 [[ -d "$APP_BUNDLE" ]] || die ".app bundle not found at $APP_BUNDLE -- did the BundleMacApp target run?"
 ok ".app bundle created"
 
-# ── Code sign ────────────────────────────────────────────────────────────────
+# -- Code sign ----------------------------------------------------------------
 step "Unlocking keychain"
 # codesign needs the keychain unlocked AND apple-tool:/apple: partition access
 # on the private key. Without set-key-partition-list, codesign gets
@@ -150,7 +150,7 @@ codesign --verify --deep --strict "$APP_BUNDLE" 2>/dev/null \
     && ok "Signature verified" \
     || die "Signature verification failed"
 
-# ── Create DMG ───────────────────────────────────────────────────────────────
+# -- Create DMG ---------------------------------------------------------------
 step "Creating DMG"
 rm -f "$DMG_PATH"
 
@@ -170,7 +170,7 @@ hdiutil create \
     "$DMG_PATH"
 ok "DMG created: $DMG_PATH"
 
-# ── Sign the DMG ─────────────────────────────────────────────────────────────
+# -- Sign the DMG -------------------------------------------------------------
 step "Signing DMG"
 codesign \
     --force \
@@ -179,14 +179,14 @@ codesign \
     "$DMG_PATH" 2>/dev/null
 ok "DMG signed"
 
-# ── Notarize ─────────────────────────────────────────────────────────────────
+# -- Notarize -----------------------------------------------------------------
 step "Submitting to Apple Notary Service (this may take a few minutes)"
 xcrun notarytool submit "$DMG_PATH" \
     --keychain-profile "$APPLE_NOTARIZE_PROFILE" \
     --wait 2>&1 | grep -Ev "(profile|team|apple-id|credentials)"
 ok "Notarization approved"
 
-# ── Staple ───────────────────────────────────────────────────────────────────
+# -- Staple -------------------------------------------------------------------
 step "Stapling notarization ticket"
 xcrun stapler staple "$DMG_PATH"
 ok "Stapled"
@@ -196,6 +196,6 @@ spctl --assess --type open --context context:primary-signature -v "$DMG_PATH" \
     && ok "Gatekeeper check passed" \
     || warn "Gatekeeper check reported an issue -- review output above"
 
-# ── Done ─────────────────────────────────────────────────────────────────────
+# -- Done ---------------------------------------------------------------------
 echo -e "\n${GREEN}${BOLD}✔ Done!${RESET}"
 echo -e "  Distributable DMG: ${BOLD}$DMG_PATH${RESET}"
