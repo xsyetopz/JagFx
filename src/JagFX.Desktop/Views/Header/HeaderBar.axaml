@@ -66,6 +66,7 @@
             <!-- Loop group -->
             <Button x:Name="BtnLoop" Theme="{StaticResource JagVoiceButton}" Content="LOOP" MinWidth="32" Height="18"
                     FontSize="8" ToolTip.Tip="Loop playback"
+                    Classes.enabled="True"
                     Classes.selected="{Binding IsLooping}" />
             <TextBlock Text="CNT" FontSize="8" Foreground="{StaticResource TextSecondaryBrush}"
                        VerticalAlignment="Center" Margin="4,0,2,0" />
