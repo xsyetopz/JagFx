@@ -11,6 +11,13 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
+  <!-- macOS: produce a single self-contained binary so the .app bundle contains one file -->
+  <PropertyGroup Condition="$(RuntimeIdentifier.StartsWith('osx'))">
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.3" />
     <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
@@ -25,5 +32,69 @@
     <ProjectReference Include="..\JagFx.Io\JagFx.Io.csproj" />
     <ProjectReference Include="..\JagFx.Synthesis\JagFx.Synthesis.csproj" />
   </ItemGroup>
+
+  <!--
+    After publishing for an osx RID, assemble a standard .app bundle:
+
+      <PublishDir>/
+        JagFx.Desktop           (single-file binary, stays here too)
+
+      <AppBundlePath>/
+        Contents/
+          MacOS/
+            JagFx.Desktop       (copy of the binary — this is what macOS launches)
+          Resources/
+          Info.plist
+  -->
+  <Target Name="BundleMacApp" AfterTargets="Publish"
+          Condition="$(RuntimeIdentifier.StartsWith('osx'))">
+
+    <PropertyGroup>
+      <_AppName>JagFx</_AppName>
+      <_BundleDir>$([System.IO.Path]::GetFullPath('$(PublishDir)../$(_AppName).app/'))</_BundleDir>
+      <_MacOSDir>$(_BundleDir)Contents/MacOS/</_MacOSDir>
+      <_ResourcesDir>$(_BundleDir)Contents/Resources/</_ResourcesDir>
+      <_InfoPlist>$(_BundleDir)Contents/Info.plist</_InfoPlist>
+      <_Binary>$(PublishDir)$(AssemblyName)</_Binary>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_MacOSDir);$(_ResourcesDir)" />
+
+    <Copy SourceFiles="$(_Binary)" DestinationFolder="$(_MacOSDir)" />
+
+    <Exec Command="chmod +x '$(_MacOSDir)$(AssemblyName)'" />
+
+    <WriteLinesToFile File="$(_InfoPlist)" Overwrite="true" Lines="
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
+&lt;plist version=&quot;1.0&quot;&gt;
+&lt;dict&gt;
+    &lt;key&gt;CFBundleExecutable&lt;/key&gt;
+    &lt;string&gt;$(AssemblyName)&lt;/string&gt;
+    &lt;key&gt;CFBundleIdentifier&lt;/key&gt;
+    &lt;string&gt;com.jagfx.desktop&lt;/string&gt;
+    &lt;key&gt;CFBundleName&lt;/key&gt;
+    &lt;string&gt;$(_AppName)&lt;/string&gt;
+    &lt;key&gt;CFBundleDisplayName&lt;/key&gt;
+    &lt;string&gt;$(_AppName)&lt;/string&gt;
+    &lt;key&gt;CFBundleVersion&lt;/key&gt;
+    &lt;string&gt;$(Version)&lt;/string&gt;
+    &lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
+    &lt;string&gt;$(Version)&lt;/string&gt;
+    &lt;key&gt;CFBundlePackageType&lt;/key&gt;
+    &lt;string&gt;APPL&lt;/string&gt;
+    &lt;key&gt;NSHighResolutionCapable&lt;/key&gt;
+    &lt;true/&gt;
+    &lt;key&gt;NSPrincipalClass&lt;/key&gt;
+    &lt;string&gt;NSApplication&lt;/string&gt;
+    &lt;key&gt;LSMinimumSystemVersion&lt;/key&gt;
+    &lt;string&gt;12.0&lt;/string&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;
+" />
+
+    <Message Importance="high" Text="macOS app bundle: $(_BundleDir)" />
+
+  </Target>
 
 </Project>

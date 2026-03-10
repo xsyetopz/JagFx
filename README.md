@@ -180,23 +180,34 @@ dotnet run --project src/JagFx.Cli --framework net8.0 -- inspect input.synth
 Publish the Desktop project directly — not the solution — because library
 projects are multi-targeted and cannot be published at solution level.
 
-### Self-Contained Executable
+### macOS — .app bundle (Apple Silicon / Intel)
+
+The publish step automatically creates a `JagFx.app` bundle alongside the
+output directory. Copy it to `/Applications` or distribute it directly.
 
 ```bash
-# Windows (x64)
-dotnet publish src/JagFx.Desktop -c Release -r win-x64 --self-contained -o publish/win-x64
+# Apple Silicon
+dotnet publish src/JagFx.Desktop -c Release -r osx-arm64 -o publish/osx-arm64
+# → publish/JagFx.app
 
-# Linux (x64)
-dotnet publish src/JagFx.Desktop -c Release -r linux-x64 --self-contained -o publish/linux-x64
-
-# macOS (Intel)
-dotnet publish src/JagFx.Desktop -c Release -r osx-x64 --self-contained -o publish/osx-x64
-
-# macOS (Apple Silicon)
-dotnet publish src/JagFx.Desktop -c Release -r osx-arm64 --self-contained -o publish/osx-arm64
+# Intel
+dotnet publish src/JagFx.Desktop -c Release -r osx-x64 -o publish/osx-x64
+# → publish/JagFx.app
 ```
 
-### Framework-Dependent
+### Windows (x64)
+
+```bash
+dotnet publish src/JagFx.Desktop -c Release -r win-x64 --self-contained -o publish/win-x64
+```
+
+### Linux (x64)
+
+```bash
+dotnet publish src/JagFx.Desktop -c Release -r linux-x64 --self-contained -o publish/linux-x64
+```
+
+### Framework-Dependent (any platform with .NET 8 installed)
 
 ```bash
 dotnet publish src/JagFx.Desktop -c Release -o publish
