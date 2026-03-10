@@ -1,9 +1,9 @@
-using JagFX.Core.Constants;
-using JagFX.Domain.Models;
-using JagFX.Io.Buffers;
+using JagFx.Core.Constants;
+using JagFx.Domain.Models;
+using JagFx.Io.Buffers;
 using System.Collections.Immutable;
 
-namespace JagFX.Io;
+namespace JagFx.Io;
 
 public static class SynthFileWriter
 {

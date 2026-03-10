@@ -1,7 +1,7 @@
 using SmartInt;
 using System.Buffers.Binary;
 
-namespace JagFX.Io.Buffers;
+namespace JagFx.Io.Buffers;
 
 public class BinaryBuffer
 {

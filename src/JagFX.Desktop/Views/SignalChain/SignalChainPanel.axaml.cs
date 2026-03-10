@@ -5,11 +5,11 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
-using JagFX.Desktop.Controls;
-using JagFX.Desktop.ViewModels;
-using JagFX.Domain.Models;
+using JagFx.Desktop.Controls;
+using JagFx.Desktop.ViewModels;
+using JagFx.Domain.Models;
 
-namespace JagFX.Desktop.Views.SignalChain;
+namespace JagFx.Desktop.Views.SignalChain;
 
 public partial class SignalChainPanel : UserControl
 {
@@ -69,44 +69,44 @@ public partial class SignalChainPanel : UserControl
                 switch (slotType)
                 {
                     case SlotType.Envelope:
-                    {
-                        var envCanvas = new EnvelopeCanvas
                         {
-                            IsThumbnail = false,
-                            LineColor = new SolidColorBrush(Color.Parse(color)),
-                        };
-                        canvas = envCanvas;
-                        var container = WrapInCell(titleBlock, canvas, row, col, title, slotType);
-                        slot = new EnvelopeSlot(title, container, envCanvas);
-                        break;
-                    }
+                            var envCanvas = new EnvelopeCanvas
+                            {
+                                IsThumbnail = false,
+                                LineColor = new SolidColorBrush(Color.Parse(color)),
+                            };
+                            canvas = envCanvas;
+                            var container = WrapInCell(titleBlock, canvas, row, col, title, slotType);
+                            slot = new EnvelopeSlot(title, container, envCanvas);
+                            break;
+                        }
                     case SlotType.PoleZero:
-                    {
-                        var pzc = new PoleZeroCanvas();
-                        _pzCanvas = pzc;
-                        canvas = pzc;
-                        var container = WrapInCell(titleBlock, canvas, row, col, title, slotType);
-                        slot = new SpecialSlot(title, container, pzc);
-                        break;
-                    }
+                        {
+                            var pzc = new PoleZeroCanvas();
+                            _pzCanvas = pzc;
+                            canvas = pzc;
+                            var container = WrapInCell(titleBlock, canvas, row, col, title, slotType);
+                            slot = new SpecialSlot(title, container, pzc);
+                            break;
+                        }
                     case SlotType.Waveform:
-                    {
-                        var wc = new WaveformCanvas();
-                        _outCanvas = wc;
-                        canvas = wc;
-                        var container = WrapInCell(titleBlock, canvas, row, col, title, slotType);
-                        slot = new SpecialSlot(title, container, wc);
-                        break;
-                    }
+                        {
+                            var wc = new WaveformCanvas();
+                            _outCanvas = wc;
+                            canvas = wc;
+                            var container = WrapInCell(titleBlock, canvas, row, col, title, slotType);
+                            slot = new SpecialSlot(title, container, wc);
+                            break;
+                        }
                     case SlotType.Bode:
-                    {
-                        var frc = new FrequencyResponseCanvas();
-                        _bodeCanvas = frc;
-                        canvas = frc;
-                        var container = WrapInCell(titleBlock, canvas, row, col, title, slotType);
-                        slot = new SpecialSlot(title, container, frc);
-                        break;
-                    }
+                        {
+                            var frc = new FrequencyResponseCanvas();
+                            _bodeCanvas = frc;
+                            canvas = frc;
+                            var container = WrapInCell(titleBlock, canvas, row, col, title, slotType);
+                            slot = new SpecialSlot(title, container, frc);
+                            break;
+                        }
                     default:
                         continue;
                 }

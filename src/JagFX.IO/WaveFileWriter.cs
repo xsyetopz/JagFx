@@ -1,7 +1,7 @@
-using JagFX.Core.Constants;
+using JagFx.Core.Constants;
 using System.Buffers.Binary;
 
-namespace JagFX.Io;
+namespace JagFx.Io;
 
 public static class WaveFileWriter
 {

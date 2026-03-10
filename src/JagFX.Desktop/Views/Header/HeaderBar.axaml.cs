@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace JagFX.Desktop.Views.Header;
+namespace JagFx.Desktop.Views.Header;
 
 public partial class HeaderBar : UserControl
 {

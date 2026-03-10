@@ -1,11 +1,11 @@
-using JagFX.Core.Constants;
-using JagFX.Domain.Models;
-using JagFX.Io;
-using JagFX.Synthesis.Core;
-using JagFX.TestData;
+using JagFx.Core.Constants;
+using JagFx.Domain.Models;
+using JagFx.Io;
+using JagFx.Synthesis.Core;
+using JagFx.TestData;
 using Xunit;
 
-namespace JagFX.Synthesis.Tests;
+namespace JagFx.Synthesis.Tests;
 
 public class PatchRendererTests
 {

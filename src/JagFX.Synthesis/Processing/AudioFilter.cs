@@ -1,9 +1,9 @@
-using JagFX.Core.Constants;
-using JagFX.Domain.Models;
-using JagFX.Domain.Utilities;
-using JagFX.Synthesis.Data;
+using JagFx.Core.Constants;
+using JagFx.Domain.Models;
+using JagFx.Domain.Utilities;
+using JagFx.Synthesis.Data;
 
-namespace JagFX.Synthesis.Processing;
+namespace JagFx.Synthesis.Processing;
 
 public static class AudioFilter
 {

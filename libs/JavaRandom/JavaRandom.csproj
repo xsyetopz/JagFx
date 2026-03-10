@@ -3,9 +3,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PackageId>JagFX.JavaRandom</PackageId>
+    <PackageId>JagFx.JavaRandom</PackageId>
     <Version>1.0.0</Version>
-    <Authors>JagFX</Authors>
+    <Authors>JagFx</Authors>
     <Description>Java-compatible Random implementation for .NET. Provides the same algorithm as java.util.Random for cross-platform compatibility.</Description>
     <PackageTags>random;java;compatibility;rng</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

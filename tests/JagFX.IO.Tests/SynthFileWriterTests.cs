@@ -1,8 +1,8 @@
-using JagFX.Domain.Models;
-using JagFX.TestData;
+using JagFx.Domain.Models;
+using JagFx.TestData;
 using Xunit;
 
-namespace JagFX.Io.Tests;
+namespace JagFx.Io.Tests;
 
 public class SynthFileWriterTests
 {

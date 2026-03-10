@@ -1,8 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:JagFX.Desktop.ViewModels"
-             xmlns:inspector="using:JagFX.Desktop.Views.Inspector"
-             x:Class="JagFX.Desktop.Views.Inspector.InspectorPanel"
+             xmlns:vm="using:JagFx.Desktop.ViewModels"
+             xmlns:inspector="using:JagFx.Desktop.Views.Inspector"
+             x:Class="JagFx.Desktop.Views.Inspector.InspectorPanel"
              x:DataType="vm:MainViewModel">
 
     <Border Background="{StaticResource SurfacePanelBrush}" BorderBrush="{StaticResource BorderDefaultBrush}" BorderThickness="0,0,1,0">

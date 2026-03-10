@@ -11,9 +11,9 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../../src/JagFX.Core/JagFX.Core.csproj" />
-    <ProjectReference Include="../../src/JagFX.IO/JagFX.IO.csproj" />
-    <ProjectReference Include="../../src/JagFX.Domain/JagFX.Domain.csproj" />
-    <ProjectReference Include="../JagFX.TestData/JagFX.TestData.csproj" />
+    <ProjectReference Include="../../src/JagFx.Core/JagFx.Core.csproj" />
+    <ProjectReference Include="../../src/JagFx.IO/JagFx.IO.csproj" />
+    <ProjectReference Include="../../src/JagFx.Domain/JagFx.Domain.csproj" />
+    <ProjectReference Include="../JagFx.TestData/JagFx.TestData.csproj" />
   </ItemGroup>
 </Project>

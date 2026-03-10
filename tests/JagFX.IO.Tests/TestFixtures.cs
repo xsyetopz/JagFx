@@ -1,4 +1,4 @@
-namespace JagFX.Io.Tests;
+namespace JagFx.Io.Tests;
 
 public static class TestFixtures
 {

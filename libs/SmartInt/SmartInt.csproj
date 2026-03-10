@@ -9,7 +9,7 @@
     <Version>0.1.0</Version>
     <Title>SmartInt</Title>
     <Description>Jagex Smart encoding for OSRS cache integers</Description>
-    <Authors>JagFX Team</Authors>
+    <Authors>JagFx Team</Authors>
     <PackageTags>osrs;smart;encoding;runescape</PackageTags>
     <IsPackable>true</IsPackable>
   </PropertyGroup>

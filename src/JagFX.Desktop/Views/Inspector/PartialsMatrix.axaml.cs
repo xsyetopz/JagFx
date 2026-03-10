@@ -1,7 +1,7 @@
 using Avalonia.Controls;
-using JagFX.Desktop.ViewModels;
+using JagFx.Desktop.ViewModels;
 
-namespace JagFX.Desktop.Views.Inspector;
+namespace JagFx.Desktop.Views.Inspector;
 
 public partial class PartialsMatrix : UserControl
 {

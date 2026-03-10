@@ -4,14 +4,14 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>JagFX.Synthesis</RootNamespace>
-    <AssemblyName>JagFX.Synthesis</AssemblyName>
+    <RootNamespace>JagFx.Synthesis</RootNamespace>
+    <AssemblyName>JagFx.Synthesis</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\JavaRandom\JavaRandom.csproj" />
-    <ProjectReference Include="..\JagFX.Core\JagFX.Core.csproj" />
-    <ProjectReference Include="..\JagFX.Domain\JagFX.Domain.csproj" />
+    <ProjectReference Include="..\JagFx.Core\JagFx.Core.csproj" />
+    <ProjectReference Include="..\JagFx.Domain\JagFx.Domain.csproj" />
   </ItemGroup>
 
 </Project>

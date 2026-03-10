@@ -1,9 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Input;
-using JagFX.Desktop.Services;
-using JagFX.Desktop.ViewModels;
+using JagFx.Desktop.Services;
+using JagFx.Desktop.ViewModels;
 
-namespace JagFX.Desktop.Views;
+namespace JagFx.Desktop.Views;
 
 public partial class MainWindow : Window
 {

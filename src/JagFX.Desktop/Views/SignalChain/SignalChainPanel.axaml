@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:JagFX.Desktop.ViewModels"
-             x:Class="JagFX.Desktop.Views.SignalChain.SignalChainPanel"
+             xmlns:vm="using:JagFx.Desktop.ViewModels"
+             x:Class="JagFx.Desktop.Views.SignalChain.SignalChainPanel"
              x:DataType="vm:MainViewModel">
 
     <Border Background="{StaticResource SurfacePanelBrush}">

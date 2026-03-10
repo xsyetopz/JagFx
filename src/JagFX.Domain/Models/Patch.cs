@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace JagFX.Domain.Models;
+namespace JagFx.Domain.Models;
 
 public record Patch(
     ImmutableList<Voice?> Voices,

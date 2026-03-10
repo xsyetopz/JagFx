@@ -1,4 +1,4 @@
-namespace JagFX.JavaRandom;
+namespace JagFx.JavaRandom;
 
 /// <summary>
 /// Java-compatible Random implementation using java.util.Random algorithm.

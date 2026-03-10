@@ -1,7 +1,7 @@
-using JagFX.Core.Constants;
+using JagFx.Core.Constants;
 using System.Collections.Concurrent;
 
-namespace JagFX.Synthesis.Data;
+namespace JagFx.Synthesis.Data;
 
 public static class AudioBufferPool
 {

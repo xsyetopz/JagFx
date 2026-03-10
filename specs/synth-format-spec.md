@@ -1,6 +1,6 @@
 # Jagex .synth File Format Specification
 
-Formal specification based on C# implementation (JagFX).
+Formal specification based on C# implementation (JagFx).
 
 ## Overview
 

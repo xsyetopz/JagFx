@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-namespace JagFX.Domain.Models;
+namespace JagFx.Domain.Models;
 
 public record Filter(
     ImmutableArray<int> PoleCounts,

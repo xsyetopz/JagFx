@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace JagFX.Desktop.Views.Inspector;
+namespace JagFx.Desktop.Views.Inspector;
 
 public partial class EchoSection : UserControl
 {

@@ -4,12 +4,12 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>JagFX.Domain</RootNamespace>
-    <AssemblyName>JagFX.Domain</AssemblyName>
+    <RootNamespace>JagFx.Domain</RootNamespace>
+    <AssemblyName>JagFx.Domain</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JagFX.Core\JagFX.Core.csproj" />
+    <ProjectReference Include="..\JagFx.Core\JagFx.Core.csproj" />
     <ProjectReference Include="..\..\libs\SmartInt\SmartInt.csproj" />
   </ItemGroup>
 

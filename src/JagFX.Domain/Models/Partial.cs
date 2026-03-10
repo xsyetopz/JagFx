@@ -1,5 +1,5 @@
-using JagFX.Core.Types;
-namespace JagFX.Domain.Models;
+using JagFx.Core.Types;
+namespace JagFx.Domain.Models;
 
 public enum Waveform
 {

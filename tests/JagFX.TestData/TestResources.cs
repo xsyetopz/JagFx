@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace JagFX.TestData;
+namespace JagFx.TestData;
 
 /// <summary>
 /// Provides access to embedded test resource files.
@@ -8,7 +8,7 @@ namespace JagFX.TestData;
 public static class TestResources
 {
     private static readonly Assembly Assembly = typeof(TestResources).Assembly;
-    private const string ResourcePrefix = "JagFX.TestData.Resources";
+    private const string ResourcePrefix = "JagFx.TestData.Resources";
 
     /// <summary>
     /// Gets the raw hex string content of an embedded resource.

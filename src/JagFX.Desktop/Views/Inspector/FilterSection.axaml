@@ -1,9 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:JagFX.Desktop.ViewModels"
-             xmlns:conv="using:JagFX.Desktop.Converters"
-             xmlns:controls="using:JagFX.Desktop.Controls"
-             x:Class="JagFX.Desktop.Views.Inspector.FilterSection"
+             xmlns:vm="using:JagFx.Desktop.ViewModels"
+             xmlns:conv="using:JagFx.Desktop.Converters"
+             xmlns:controls="using:JagFx.Desktop.Controls"
+             x:Class="JagFx.Desktop.Views.Inspector.FilterSection"
              x:DataType="vm:FilterViewModel">
 
     <UserControl.Resources>

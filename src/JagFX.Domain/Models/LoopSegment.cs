@@ -1,4 +1,4 @@
-namespace JagFX.Domain.Models;
+namespace JagFx.Domain.Models;
 
 public record LoopSegment(int BeginMs, int EndMs)
 {

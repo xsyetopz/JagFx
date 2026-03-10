@@ -1,6 +1,6 @@
-using JagFX.Core.Constants;
+using JagFx.Core.Constants;
 
-namespace JagFX.Domain.Utilities;
+namespace JagFx.Domain.Utilities;
 
 public static class AudioMath
 {

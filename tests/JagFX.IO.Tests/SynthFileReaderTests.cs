@@ -1,9 +1,9 @@
-using JagFX.Domain.Models;
-using JagFX.Io;
-using JagFX.TestData;
+using JagFx.Domain.Models;
+using JagFx.Io;
+using JagFx.TestData;
 using Xunit;
 
-namespace JagFX.Io.Tests;
+namespace JagFx.Io.Tests;
 
 public class SynthFileReaderTests
 {

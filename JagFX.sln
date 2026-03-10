@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFX.Cli", "src\JagFX.Cli\JagFX.Cli.csproj", "{265D628D-19F8-45CF-8349-11E2DF96CB28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.Cli", "src\JagFx.Cli\JagFx.Cli.csproj", "{265D628D-19F8-45CF-8349-11E2DF96CB28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFX.Core", "src\JagFX.Core\JagFX.Core.csproj", "{A4C5D6E7-F8G9-0123-HIJK-LM4567890123}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.Core", "src\JagFx.Core\JagFx.Core.csproj", "{A4C5D6E7-F8G9-0123-HIJK-LM4567890123}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFX.Domain", "src\JagFX.Domain\JagFX.Domain.csproj", "{DA277A9C-E66E-4AEE-9D04-E00BBDA9561C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.Domain", "src\JagFx.Domain\JagFx.Domain.csproj", "{DA277A9C-E66E-4AEE-9D04-E00BBDA9561C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFX.Io", "src\JagFX.Io\JagFX.Io.csproj", "{90456C7F-91CF-4643-8542-047D617F08AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.Io", "src\JagFx.Io\JagFx.Io.csproj", "{90456C7F-91CF-4643-8542-047D617F08AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFX.Synthesis", "src\JagFX.Synthesis\JagFX.Synthesis.csproj", "{05A6452C-C05C-40DF-A555-B9C1856600D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.Synthesis", "src\JagFx.Synthesis\JagFx.Synthesis.csproj", "{05A6452C-C05C-40DF-A555-B9C1856600D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaRandom", "libs\JavaRandom\JavaRandom.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567891}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInt", "libs\SmartInt\SmartInt.csproj", "{3CFF2272-A74F-493D-A189-16BB5F9AE22D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFX.IO.Tests", "tests\JagFX.IO.Tests\JagFX.IO.Tests.csproj", "{E30AF335-253C-4F3E-9F9C-CDD41D454FD2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.IO.Tests", "tests\JagFx.IO.Tests\JagFx.IO.Tests.csproj", "{E30AF335-253C-4F3E-9F9C-CDD41D454FD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFX.Synthesis.Tests", "tests\JagFX.Synthesis.Tests\JagFX.Synthesis.Tests.csproj", "{901D87BC-0B29-4C2F-B44D-EBD1D179D0EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.Synthesis.Tests", "tests\JagFx.Synthesis.Tests\JagFx.Synthesis.Tests.csproj", "{901D87BC-0B29-4C2F-B44D-EBD1D179D0EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFX.TestData", "tests\JagFX.TestData\JagFX.TestData.csproj", "{D7E8F9G0-H1I2-3456-JKLM-NO7890123456}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.TestData", "tests\JagFx.TestData\JagFx.TestData.csproj", "{D7E8F9G0-H1I2-3456-JKLM-NO7890123456}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInt.Tests", "libs\SmartInt\tests\SmartInt.Tests.csproj", "{BC2F1A79-8C67-48B9-B138-DB87D6E8B2F9}"
 EndProject
@@ -29,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{B1EB69F6-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CB84E977-02EF-4003-A8FA-21185E2464FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFX.Desktop", "src\JagFX.Desktop\JagFX.Desktop.csproj", "{DFCC227D-23BE-4954-85E3-F7AFEC4BFEA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.Desktop", "src\JagFx.Desktop\JagFx.Desktop.csproj", "{DFCC227D-23BE-4954-85E3-F7AFEC4BFEA4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

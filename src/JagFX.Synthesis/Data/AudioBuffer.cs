@@ -1,7 +1,7 @@
-using JagFX.Core.Constants;
-using JagFX.Domain.Utilities;
+using JagFx.Core.Constants;
+using JagFx.Domain.Utilities;
 
-namespace JagFX.Synthesis.Data;
+namespace JagFx.Synthesis.Data;
 
 public class AudioBuffer(int[] samples, int sampleRate = AudioConstants.SampleRate)
 {

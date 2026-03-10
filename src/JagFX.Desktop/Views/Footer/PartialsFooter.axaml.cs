@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.Linq;
 using Avalonia.Controls;
-using JagFX.Desktop.ViewModels;
+using JagFx.Desktop.ViewModels;
 
-namespace JagFX.Desktop.Views.Footer;
+namespace JagFx.Desktop.Views.Footer;
 
 public partial class PartialsFooter : UserControl
 {

@@ -1,9 +1,9 @@
-using JagFX.Core.Constants;
-using JagFX.Domain;
-using JagFX.Domain.Utilities;
-using JavaRng = JagFX.JavaRandom.JavaRandom;
+using JagFx.Core.Constants;
+using JagFx.Domain;
+using JagFx.Domain.Utilities;
+using JavaRng = JagFx.JavaRandom.JavaRandom;
 
-namespace JagFX.Synthesis.Data;
+namespace JagFx.Synthesis.Data;
 
 public static class WaveformTables
 {

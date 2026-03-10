@@ -1,7 +1,7 @@
-using JagFX.Core.Constants;
-using JagFX.Domain.Models;
+using JagFx.Core.Constants;
+using JagFx.Domain.Models;
 
-namespace JagFX.Synthesis.Processing;
+namespace JagFx.Synthesis.Processing;
 
 public class EnvelopeGenerator(Envelope envelope)
 {

@@ -1,10 +1,10 @@
-using JagFX.Core.Constants;
-using JagFX.Domain.Models;
-using JagFX.Domain.Utilities;
-using JagFX.Synthesis.Data;
+using JagFx.Core.Constants;
+using JagFx.Domain.Models;
+using JagFx.Domain.Utilities;
+using JagFx.Synthesis.Data;
 using System.Collections.Immutable;
 
-namespace JagFX.Synthesis.Core;
+namespace JagFx.Synthesis.Core;
 
 public static class PatchRenderer
 {

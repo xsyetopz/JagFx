@@ -7,7 +7,7 @@
 			"type": "process",
 			"args": [
 				"build",
-				"${workspaceFolder}/JagFX.sln",
+				"${workspaceFolder}/JagFx.sln",
 				"/property:GenerateFullPaths=true",
 				"/consoleloggerparameters:NoSummary;ForceNoAlign"
 			],
@@ -19,7 +19,7 @@
 			"type": "process",
 			"args": [
 				"publish",
-				"${workspaceFolder}/JagFX.sln",
+				"${workspaceFolder}/JagFx.sln",
 				"/property:GenerateFullPaths=true",
 				"/consoleloggerparameters:NoSummary;ForceNoAlign"
 			],
@@ -29,7 +29,7 @@
 			"label": "watch",
 			"command": "dotnet",
 			"type": "process",
-			"args": ["watch", "run", "--project", "${workspaceFolder}/JagFX.sln"],
+			"args": ["watch", "run", "--project", "${workspaceFolder}/JagFx.sln"],
 			"problemMatcher": "$msCompile"
 		}
 	]

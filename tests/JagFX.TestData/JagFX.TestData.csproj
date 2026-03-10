@@ -5,8 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <RootNamespace>JagFX.TestData</RootNamespace>
-    <AssemblyName>JagFX.TestData</AssemblyName>
+    <RootNamespace>JagFx.TestData</RootNamespace>
+    <AssemblyName>JagFx.TestData</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
