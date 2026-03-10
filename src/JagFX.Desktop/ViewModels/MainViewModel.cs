@@ -46,7 +46,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private EnvelopeViewModel? _selectedEnvelope;
 
     [ObservableProperty]
-    private string _selectedEnvelopeTitle = "";
+    private SignalChainSlot _selectedSlot;
 
     [ObservableProperty]
     private string _selectedEnvelopeColor = "#009E73";
@@ -61,7 +61,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _playSingleVoice;
 
     [ObservableProperty]
-    private string? _soloedEnvelope;
+    private SignalChainSlot? _soloedSlot;
 
     [ObservableProperty]
     private bool _isLooping;
@@ -102,6 +102,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly AudioPlaybackService _playback = new();
 
     private AudioBuffer? _cachedBuffer;
+    private bool _bufferStale;
     private CancellationTokenSource? _renderCts;
     private System.Threading.Timer? _debounceTimer;
     private DispatcherTimer? _positionTimer;
@@ -109,6 +110,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private double _playbackDuration;
     private VoiceViewModel? _subscribedVoice;
     private bool _stoppingManually;
+    private double _singlePassDuration;
+    private double _loopCycleDuration;
+    private double _loopStartNormalized;
+    private double _loopEndNormalized;
     private Voice? _copiedVoice;
 
     public MainViewModel()
@@ -117,7 +122,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _fileManager.FileChanged += OnFileChanged;
         Patch.PropertyChanged += (_, e) =>
         {
-            MarkDirty();
+            ScheduleRerender();
             if (e.PropertyName == nameof(PatchViewModel.SelectedVoiceIndex))
             {
                 SubscribeVoiceChanges(Patch.SelectedVoice);
@@ -136,36 +141,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private int EffectiveLoopCount => IsLooping ? (LoopCount == 0 ? 50 : LoopCount) : 1;
 
-    partial void OnPlaySingleVoiceChanged(bool value)
-    {
-        _cachedBuffer = null;
-        ScheduleRerender();
-    }
-
-    partial void OnIsLoopingChanged(bool value)
-    {
-        _cachedBuffer = null;
-        ScheduleRerender();
-    }
-
-    partial void OnLoopCountChanged(int value)
-    {
-        _cachedBuffer = null;
-        ScheduleRerender();
-    }
-
-    partial void OnSoloedEnvelopeChanged(string? value)
-    {
-        _cachedBuffer = null;
-        ScheduleRerender();
-    }
-
-    private void MarkDirty()
-    {
-        IsDirty = true;
-        _cachedBuffer = null;
-        ScheduleRerender();
-    }
+    partial void OnPlaySingleVoiceChanged(bool value) => ScheduleRerender();
+    partial void OnIsLoopingChanged(bool value) => ScheduleRerender();
+    partial void OnLoopCountChanged(int value) => ScheduleRerender();
+    partial void OnSoloedSlotChanged(SignalChainSlot? value) => ScheduleRerender();
 
     partial void OnTrueWaveEnabledChanged(bool value)
     {
@@ -175,9 +154,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void ScheduleRerender()
     {
         IsDirty = true;
-        _cachedBuffer = null;
+        _bufferStale = true;
 
-        if (!TrueWaveEnabled) return;
+        if (!TrueWaveEnabled)
+        {
+            OutputSamples = null;
+            return;
+        }
 
         _debounceTimer?.Dispose();
         _debounceTimer = new System.Threading.Timer(
@@ -199,20 +182,72 @@ public partial class MainViewModel : ObservableObject, IDisposable
             var model = Patch.ToModel();
             var voiceFilter = PlaySingleVoice ? Patch.SelectedVoiceIndex : -1;
 
-            if (SoloedEnvelope is not null)
+            if (SoloedSlot is not null)
                 model = ApplySolo(model, voiceFilter >= 0 ? voiceFilter : Patch.SelectedVoiceIndex);
 
-            var buffer = await SynthesisService.RenderAsync(model, loopCount: EffectiveLoopCount, voiceFilter: voiceFilter, ct: cts.Token);
+            // Always render single pass for waveform display
+            var buffer = await SynthesisService.RenderAsync(model, loopCount: 1, voiceFilter: voiceFilter, ct: cts.Token);
             if (cts.Token.IsCancellationRequested) return;
-            _cachedBuffer = buffer;
-            if (buffer.Length > 0)
+
+            _singlePassDuration = buffer.Length / (double)buffer.SampleRate;
+            var loopBeginMs = Patch.LoopBegin;
+            var loopEndMs = Patch.LoopEnd;
+            if (loopEndMs > loopBeginMs && _singlePassDuration > 0)
             {
-                var maxAbs = buffer.Samples.Max(Math.Abs);
-                var scale = maxAbs > 0 ? 1.0f / maxAbs : 0f;
-                OutputSamples = Array.ConvertAll(buffer.Samples, s => s * scale);
+                _loopCycleDuration = (loopEndMs - loopBeginMs) / 1000.0;
+                var totalMs = _singlePassDuration * 1000.0;
+                _loopStartNormalized = loopBeginMs / totalMs;
+                _loopEndNormalized = loopEndMs / totalMs;
+            }
+            else
+            {
+                _loopCycleDuration = 0;
+            }
+
+            NormalizeAndSetOutput(buffer);
+
+            // If looping playback is active, re-render the playback buffer too
+            if (IsPlaying)
+            {
+                // Default loop region to full patch when looping with no valid loop markers
+                if (IsLooping && model.Loop.BeginMs >= model.Loop.EndMs && model.ActiveVoices.Any())
+                {
+                    var maxMs = model.ActiveVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
+                    if (maxMs > 0)
+                        model = model with { Loop = new LoopSegment(0, maxMs) };
+                }
+
+                var playbackBuffer = await SynthesisService.RenderAsync(model, loopCount: EffectiveLoopCount, voiceFilter: voiceFilter, ct: cts.Token);
+                if (cts.Token.IsCancellationRequested) return;
+                _cachedBuffer = playbackBuffer;
+                _bufferStale = false;
+                await _playback.UpdateWavAsync(playbackBuffer);
             }
         }
         catch (OperationCanceledException) { }
+    }
+
+    private void NormalizeAndSetOutput(AudioBuffer buffer)
+    {
+        var samples = buffer.Samples;
+        if (samples.Length <= 0) return;
+
+        var maxAbs = 0;
+        foreach (var s in samples)
+        {
+            var abs = Math.Abs(s);
+            if (abs > maxAbs) maxAbs = abs;
+        }
+
+        var output = new float[samples.Length];
+        if (maxAbs > 0)
+        {
+            var scale = 1.0f / maxAbs;
+            for (var i = 0; i < samples.Length; i++)
+                output[i] = samples[i] * scale;
+        }
+
+        OutputSamples = output;
     }
 
     private Patch ApplySolo(Patch model, int voiceIndex)
@@ -221,62 +256,31 @@ public partial class MainViewModel : ObservableObject, IDisposable
         var voice = model.Voices[voiceIndex];
         if (voice is null) return model;
 
-        var soloTitle = SoloedEnvelope;
+        var soloSlot = SoloedSlot;
+        if (soloSlot is null) return model;
 
-        // Build neutralized voice based on what's soloed
-        var neutralFreq = voice.FrequencyEnvelope; // always keep base frequency
+        // Start from a fully-neutralized base, then restore the soloed component
         var neutralAmp = new Envelope(Waveform.Off, 65535, 65535,
-            ImmutableList.Create(new Segment(voice.DurationMs, 65535))); // constant max amplitude
+            ImmutableList.Create(new Segment(voice.DurationMs, 65535)));
 
-        Voice soloedVoice = soloTitle switch
+        var baseVoice = voice with
         {
-            "PITCH" => voice with
-            {
-                AmplitudeEnvelope = neutralAmp,
-                PitchLfo = null,
-                AmplitudeLfo = null,
-                GapOffEnvelope = null,
-                GapOnEnvelope = null,
-                Filter = null
-            },
-            "VOLUME" => voice with
-            {
-                PitchLfo = null,
-                AmplitudeLfo = null,
-                GapOffEnvelope = null,
-                GapOnEnvelope = null,
-                Filter = null
-            },
-            "V.RATE" or "V.DEPTH" => voice with
-            {
-                AmplitudeEnvelope = neutralAmp,
-                AmplitudeLfo = null,
-                GapOffEnvelope = null,
-                GapOnEnvelope = null,
-                Filter = null
-            },
-            "T.RATE" or "T.DEPTH" => voice with
-            {
-                PitchLfo = null,
-                GapOffEnvelope = null,
-                GapOnEnvelope = null,
-                Filter = null
-            },
-            "GAP OFF" or "GAP ON" => voice with
-            {
-                AmplitudeEnvelope = neutralAmp,
-                PitchLfo = null,
-                AmplitudeLfo = null,
-                Filter = null
-            },
-            "FILTER" => voice with
-            {
-                AmplitudeEnvelope = neutralAmp,
-                PitchLfo = null,
-                AmplitudeLfo = null,
-                GapOffEnvelope = null,
-                GapOnEnvelope = null
-            },
+            AmplitudeEnvelope = neutralAmp,
+            PitchLfo = null,
+            AmplitudeLfo = null,
+            GapOffEnvelope = null,
+            GapOnEnvelope = null,
+            Filter = null,
+        };
+
+        var soloedVoice = soloSlot switch
+        {
+            SignalChainSlot.Pitch => baseVoice,
+            SignalChainSlot.Volume => baseVoice with { AmplitudeEnvelope = voice.AmplitudeEnvelope },
+            SignalChainSlot.VibratoRate or SignalChainSlot.VibratoDepth => baseVoice with { PitchLfo = voice.PitchLfo },
+            SignalChainSlot.TremoloRate or SignalChainSlot.TremoloDepth => baseVoice with { AmplitudeLfo = voice.AmplitudeLfo },
+            SignalChainSlot.GapOff or SignalChainSlot.GapOn => baseVoice with { GapOffEnvelope = voice.GapOffEnvelope, GapOnEnvelope = voice.GapOnEnvelope },
+            SignalChainSlot.Filter => baseVoice with { Filter = voice.Filter },
             _ => voice
         };
 
@@ -332,9 +336,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
         v.GapOff, v.GapOn
     ];
 
-    private void OnVoicePropertyChanged(object? s, PropertyChangedEventArgs e) => MarkDirty();
+    private void OnVoicePropertyChanged(object? s, PropertyChangedEventArgs e) => ScheduleRerender();
 
-    private void OnNestedPropertyChanged(object? s, PropertyChangedEventArgs e) => MarkDirty();
+    private void OnNestedPropertyChanged(object? s, PropertyChangedEventArgs e) => ScheduleRerender();
 
     private void OnSegmentsCollectionChanged(object? s, NotifyCollectionChangedEventArgs e)
     {
@@ -344,7 +348,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (e.OldItems is not null)
             foreach (SegmentViewModel seg in e.OldItems)
                 seg.PropertyChanged -= OnNestedPropertyChanged;
-        MarkDirty();
+        ScheduleRerender();
     }
 
     #endregion
@@ -395,38 +399,38 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 Patch.Voices[index].Load(_copiedVoice);
                 IsCopyMode = false;
-                _cachedBuffer = null;
+                _bufferStale = true;
             }
 
             Patch.SelectedVoiceIndex = index;
             if (SelectedEnvelope is not null)
-                SelectEnvelope(SelectedEnvelopeTitle);
+                SelectEnvelope(SelectedSlot);
         }
     }
 
-    public static readonly (string Title, string Color, Func<VoiceViewModel, EnvelopeViewModel> Getter)[] SignalChain =
+    public static readonly (SignalChainSlot Slot, Func<VoiceViewModel, EnvelopeViewModel> Getter)[] SignalChain =
     [
-        ("PITCH",   "#009E73", v => v.Pitch),
-        ("V.RATE",  "#009E73", v => v.VibratoRate),
-        ("V.DEPTH", "#009E73", v => v.VibratoDepth),
-        ("VOLUME",  "#009E73", v => v.Volume),
-        ("T.RATE",  "#009E73", v => v.TremoloRate),
-        ("T.DEPTH", "#009E73", v => v.TremoloDepth),
-        ("GAP OFF", "#009E73", v => v.GapOff),
-        ("GAP ON",  "#009E73", v => v.GapOn),
-        ("FILTER",  "#0072B2", v => v.FilterEnvelope),
+        (SignalChainSlot.Pitch,        v => v.Pitch),
+        (SignalChainSlot.VibratoRate,   v => v.VibratoRate),
+        (SignalChainSlot.VibratoDepth,  v => v.VibratoDepth),
+        (SignalChainSlot.Volume,        v => v.Volume),
+        (SignalChainSlot.TremoloRate,   v => v.TremoloRate),
+        (SignalChainSlot.TremoloDepth,  v => v.TremoloDepth),
+        (SignalChainSlot.GapOff,        v => v.GapOff),
+        (SignalChainSlot.GapOn,         v => v.GapOn),
+        (SignalChainSlot.Filter,        v => v.FilterEnvelope),
     ];
 
-    public void SelectEnvelope(string title)
+    public void SelectEnvelope(SignalChainSlot slot)
     {
         var voice = Patch.SelectedVoice;
-        SelectedEnvelopeTitle = title;
+        SelectedSlot = slot;
 
-        var entry = SignalChain.FirstOrDefault(e => e.Title == title);
+        var entry = SignalChain.FirstOrDefault(e => e.Slot == slot);
         if (entry.Getter is not null)
         {
             SelectedEnvelope = entry.Getter(voice);
-            SelectedEnvelopeColor = entry.Color;
+            SelectedEnvelopeColor = slot.DefaultColor();
         }
         else
         {
@@ -436,10 +440,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public void SelectEnvelopeByOffset(int offset)
     {
-        var currentIndex = Array.FindIndex(SignalChain, e => e.Title == SelectedEnvelopeTitle);
+        var currentIndex = Array.FindIndex(SignalChain, e => e.Slot == SelectedSlot);
         if (currentIndex < 0) currentIndex = 0;
         var newIndex = Math.Clamp(currentIndex + offset, 0, SignalChain.Length - 1);
-        SelectEnvelope(SignalChain[newIndex].Title);
+        SelectEnvelope(SignalChain[newIndex].Slot);
     }
 
     public void CopyVoice()
@@ -451,7 +455,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public void ResetVoice()
     {
         Patch.SelectedVoice.Clear();
-        _cachedBuffer = null;
+        _bufferStale = true;
         ScheduleRerender();
     }
 
@@ -466,26 +470,72 @@ public partial class MainViewModel : ObservableObject, IDisposable
         StopPositionTimer();
 
         var buffer = _cachedBuffer;
+
         if (buffer is null || buffer.Length == 0)
         {
-            var model = Patch.ToModel();
-            var voiceFilter = PlaySingleVoice ? Patch.SelectedVoiceIndex : -1;
-            buffer = await SynthesisService.RenderAsync(model, loopCount: EffectiveLoopCount, voiceFilter: voiceFilter);
-            _cachedBuffer = buffer;
-            if (buffer.Length > 0)
-            {
-                var maxAbs = buffer.Samples.Max(Math.Abs);
-                var scale = maxAbs > 0 ? 1.0f / maxAbs : 0f;
-                OutputSamples = Array.ConvertAll(buffer.Samples, s => s * scale);
-            }
+            buffer = await SynthesizeAndCacheAsync();
+        }
+        else if (_bufferStale)
+        {
+            buffer = await SynthesizeAndCacheAsync();
+        }
+        else if (_playback.HasWavFile)
+        {
+            IsPlaying = true;
+            _playback.PlayFromCache();
+            StartPositionTimer(buffer.Length / (double)buffer.SampleRate);
+            return;
         }
 
-        if (buffer.Length > 0)
+        if (buffer is { Length: > 0 })
         {
             IsPlaying = true;
             await _playback.PlayAsync(buffer);
             StartPositionTimer(buffer.Length / (double)buffer.SampleRate);
         }
+    }
+
+    private async Task<AudioBuffer> SynthesizeAndCacheAsync()
+    {
+        var model = Patch.ToModel();
+        var voiceFilter = PlaySingleVoice ? Patch.SelectedVoiceIndex : -1;
+
+        if (SoloedSlot is not null)
+            model = ApplySolo(model, voiceFilter >= 0 ? voiceFilter : Patch.SelectedVoiceIndex);
+
+        // Default loop region to full patch when looping with no valid loop markers
+        if (IsLooping && model.Loop.BeginMs >= model.Loop.EndMs && model.ActiveVoices.Any())
+        {
+            var maxMs = model.ActiveVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
+            if (maxMs > 0)
+                model = model with { Loop = new LoopSegment(0, maxMs) };
+        }
+
+        var buffer = await SynthesisService.RenderAsync(model, loopCount: EffectiveLoopCount, voiceFilter: voiceFilter);
+        _cachedBuffer = buffer;
+        _bufferStale = false;
+
+        // Always compute loop timing from model (loop region may have been defaulted above)
+        if (model.ActiveVoices.Any())
+        {
+            var maxDurationMs = model.ActiveVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
+            _singlePassDuration = maxDurationMs / 1000.0;
+            var loopBeginMs = model.Loop.BeginMs;
+            var loopEndMs = model.Loop.EndMs;
+            if (loopEndMs > loopBeginMs && _singlePassDuration > 0)
+            {
+                _loopCycleDuration = (loopEndMs - loopBeginMs) / 1000.0;
+                var totalMs = _singlePassDuration * 1000.0;
+                _loopStartNormalized = loopBeginMs / totalMs;
+                _loopEndNormalized = loopEndMs / totalMs;
+            }
+            else
+            {
+                _loopCycleDuration = 0;
+            }
+        }
+
+        return buffer;
     }
 
     [RelayCommand]
@@ -511,15 +561,31 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void OnPositionTick(object? sender, EventArgs e)
     {
         var elapsed = (DateTime.UtcNow - _playbackStart).TotalSeconds;
-        PlaybackPosition = Math.Clamp(elapsed / _playbackDuration, 0, 1);
-        if (PlaybackPosition >= 1.0)
+
+        if (IsLooping && LoopCount == 0 && _loopCycleDuration > 0)
         {
-            if (IsLooping && LoopCount == 0 && _cachedBuffer is { Length: > 0 })
+            if (elapsed < _singlePassDuration)
             {
-                PlaybackPosition = 0;
-                _playbackStart = DateTime.UtcNow;
+                // First pass: linear sweep across full waveform
+                PlaybackPosition = elapsed / _singlePassDuration;
             }
             else
+            {
+                // Subsequent passes: cycle through loop region only
+                var loopElapsed = elapsed - _singlePassDuration;
+                var cyclePos = (loopElapsed % _loopCycleDuration) / _loopCycleDuration;
+                PlaybackPosition = _loopStartNormalized + cyclePos * (_loopEndNormalized - _loopStartNormalized);
+            }
+        }
+        else if (IsLooping && LoopCount == 0 && _singlePassDuration > 0)
+        {
+            // No loop region defined: cycle through full pass
+            PlaybackPosition = (elapsed % _singlePassDuration) / _singlePassDuration;
+        }
+        else
+        {
+            PlaybackPosition = Math.Clamp(elapsed / _playbackDuration, 0, 1);
+            if (PlaybackPosition >= 1.0)
             {
                 StopPositionTimer();
                 IsPlaying = false;
@@ -544,8 +610,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             if (IsLooping && LoopCount == 0 && !_stoppingManually && _cachedBuffer is { Length: > 0 })
             {
+                // Silently restart afplay — position continues cycling via modulo
                 _playback.ReplayFromExistingFile();
-                _playbackStart = DateTime.UtcNow;
                 return;
             }
 
