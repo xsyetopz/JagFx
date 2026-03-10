@@ -93,7 +93,7 @@ graph TD
 
 ```bash
 git clone https://github.com/xsyetopz/JagFx.git
-cd jagfx-scala
+cd JagFx
 
 dotnet build       # build all projects
 dotnet test        # run tests

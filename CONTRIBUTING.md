@@ -9,7 +9,7 @@ This guide keeps expectations clear and simple so you can move fast without gues
 ## Standard Workflow
 
 1. Fork repository.
-2. Clone fork: `git clone https://github.com/<your-user>/jagfx-scala.git`.
+2. Clone fork: `git clone https://github.com/<your-user>/JagFx.git`.
 3. Create topic branch: `git checkout -b feat/<short-description>`.
 4. Make focused changes.
 5. Run `dotnet build && dotnet test` to verify nothing is broken.
