@@ -1,4 +1,4 @@
-# JagFX - Jagex Synth Editor
+# JagFX — Jagex Synth Editor
 
 <p align="left">
   <img
@@ -8,106 +8,156 @@
   >
 </p>
 
-Cross-platform editor for Jagex Audio Synthesis (`.synth`) files. Create, edit, visualize, and export OldSchool RuneScape sound effects.
+Cross-platform editor for Jagex Audio Synthesis (`.synth`) files — the sound format used by OldSchool RuneScape. Open, edit, visualize, and export OSRS sound effects.
+
+---
+
+## Contents
+
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+- [Desktop GUI](#desktop-gui)
+- [CLI](#cli)
+- [Building for Distribution](#building-for-distribution)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+
+---
 
 ## Features
 
 | Category | Description |
-|----------|----------|
-| **Envelopes** | Pitch, Volume, Vibrato (Rate/Depth), Tremolo (Rate/Depth), Gap Off/On (gating) |
-| **Partials** | 10 additive partials with volume, decicent offset, and time delay |
-| **Filter** | IIR filter with pole/zero editor, frequency response visualisation |
-| **Modulation** | FM (vibrato) and AM (tremolo) with envelope-controlled rate/depth |
+|----------|-------------|
+| **Signal Chain** | Per-voice signal chain with 9 envelope slots: Pitch, Volume, Vibrato Rate/Depth, Tremolo Rate/Depth, Gap Off/On, Filter |
+| **Envelopes** | Multi-segment envelopes with configurable waveform (Off, Square, Sine, Saw, Noise), start/end values, and draggable breakpoints |
+| **Partials** | 10 additive partials per voice — volume, decicent offset, and time delay |
+| **Filter** | IIR filter with interactive pole/zero editor and real-time frequency response visualization |
+| **Modulation** | FM vibrato and AM tremolo with envelope-driven rate and depth |
 | **Echo** | Configurable echo delay and feedback level per voice |
-| **Export** | Save as `.synth` or export to `.wav` (8-bit or 16-bit) |
+| **TRUE Wave** | Live waveform preview that re-renders within ~100 ms of any edit |
+| **Export** | Save as `.synth` or export to 16-bit `.wav` |
 
-## Installation
+---
 
-Requires .NET 8.0 SDK or later.
+## Project Structure
+
+```
+src/
+├── JagFX.Domain      — immutable domain model (Patch, Voice, Envelope, Filter, …)
+├── JagFX.Core        — shared utilities and binary buffer helpers
+├── JagFX.Io          — .synth file reader/writer
+├── JagFX.Synthesis   — DSP engine: renders Patch → PCM audio buffer
+├── JagFX.Desktop     — Avalonia desktop GUI (MVVM)
+└── JagFX.Cli         — command-line converter and inspector
+```
+
+---
+
+## Requirements
+
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download) or later
+
+---
+
+## Getting Started
 
 ```bash
-# clone this repository
 git clone https://github.com/xsyetopz/JagFX.git
 cd jagfx-scala
 
-# build everything (incl. soon-to-be-NuGet libs)
-dotnet build
+dotnet build       # build all projects
+dotnet test        # run tests
 ```
 
-## Quick Start
-
-```bash
-# run desktop GUI
-dotnet run --project src/JagFX.Desktop
-
-# run CLI application
-dotnet run --project src/JagFX.Cli --framework net8.0
-
-# run XUnit tests
-dotnet test
-```
+---
 
 ## Desktop GUI
 
-Open, edit, and play back `.synth` files with the graphical editor.
-
 ```bash
 dotnet run --project src/JagFX.Desktop
 ```
 
-**Keyboard shortcuts**
+### Layout
+
+```
+┌─────────────────────────────────────────────────────┐
+│  Header Bar  — patch name, navigation, file, transport │
+├──────────────┬──────────────────────────────────────┤
+│              │                                      │
+│  Inspector   │        Signal Chain Matrix           │
+│  Panel       │  (voices × envelope slots)           │
+│              │                                      │
+├──────────────┴──────────────────────────────────────┤
+│  Partials Footer  — 10 additive partials per voice  │
+└─────────────────────────────────────────────────────┘
+```
+
+- **Header bar** — patch navigation (◀/▶), open, save, play/stop, TRUE wave toggle.
+- **Signal chain matrix** — rows are envelope slots (PITCH, VOLUME, V.RATE, …), columns are voices (1–6). Each cell shows a thumbnail canvas and a MODE dropdown for waveform selection.
+- **Inspector panel** — editing controls for the selected envelope: START/END knobs, segment list (DUR/LVL per segment), filter editor, echo knobs.
+- **Partials footer** — 10 additive partials for the selected voice with volume, decicent offset, and delay.
+
+### Workflow
+
+1. Open a `.synth` file (`Ctrl+O` or drag-and-drop).
+2. Select a voice column (1–6); inactive voices are dimmed, active ones are at full brightness, selected has an accent border.
+3. Click a signal chain cell (PITCH, VOLUME, …) to open it in the inspector.
+4. Use the **MODE** dropdown on a cell to set the envelope waveform (Off / Square / Sine / Saw / Noise).
+5. Drag breakpoints on the envelope canvas or adjust START/END/DUR/LVL with the knobs.
+6. Enable **TRUE** in the header — the waveform canvas updates live as you edit.
+7. `Space` to preview playback, `Ctrl+S` to save, `Ctrl+Shift+S` to save as / export WAV.
+
+### Keyboard Shortcuts
 
 | Key | Action |
 |-----|--------|
 | `Space` | Play / stop |
 | `Ctrl+O` | Open file |
 | `Ctrl+S` | Save |
-| `Ctrl+Shift+S` | Save as |
-| `Ctrl+E` | Export WAV |
+| `Ctrl+Shift+S` | Save as (also supports `.wav` export) |
 | `◀ ▶` (header) | Navigate to previous / next patch in directory |
+| `↑ / ↓` | Select previous / next envelope in signal chain |
+| `V` | Toggle single-voice preview mode |
 
-**Workflow**
+---
 
-1. Open a `.synth` file (`Ctrl+O` or drag-and-drop).
-2. Select a voice from the header strip (buttons 1–6); inactive voices are dimmed, active ones are at full brightness, selected is highlighted with an accent border.
-3. Click a signal chain cell (PITCH, VOLUME, V.RATE, …) to inspect its envelope in the panel on the right. Use the MODE dropdown on each cell to choose the waveform (Off / Square / Sine / Saw / Noise).
-4. Edit segment breakpoints by dragging them on the envelope canvas, or adjust START/END/DUR/LVL values with the knobs.
-5. Enable **TRUE** in the header to see the rendered waveform update live as you edit.
-6. Press `Space` to preview, `Ctrl+S` to save, `Ctrl+E` to export as WAV.
+## CLI
 
-## Usage
-
-### Converting .synth to .wav
+### Convert `.synth` to `.wav`
 
 ```bash
-# positional args
+# positional arguments
 dotnet run --project src/JagFX.Cli --framework net8.0 -- input.synth output.wav
 
-# specify loop count (optional)
+# with loop count
 dotnet run --project src/JagFX.Cli --framework net8.0 -- input.synth output.wav 4
 
-# flag args
+# named flags
 dotnet run --project src/JagFX.Cli --framework net8.0 -- -i input.synth -o output.wav
 dotnet run --project src/JagFX.Cli --framework net8.0 -- -i input.synth -o output.wav -l 4
 ```
 
-### Inspecting .synth files
+### Inspect a `.synth` file
 
 ```bash
 dotnet run --project src/JagFX.Cli --framework net8.0 -- inspect input.synth
 ```
 
+---
+
 ## Building for Distribution
 
 ### Self-Contained Executable
 
-Build single executable for your platform:
-
 ```bash
-# Windows (Intel/AMD)
+# Windows (x64)
 dotnet publish -c Release -r win-x64 --self-contained -o publish/win-x64
 
-# Linux (Intel/AMD)
+# Linux (x64)
 dotnet publish -c Release -r linux-x64 --self-contained -o publish/linux-x64
 
 # macOS (Intel)
@@ -123,22 +173,30 @@ dotnet publish -c Release -r osx-arm64 --self-contained -o publish/osx-arm64
 dotnet publish -c Release -o publish
 ```
 
+---
+
 ## Examples
 
 ### `ice_cast.synth` and `ice_barrage_impact.synth`
 
 <https://github.com/user-attachments/assets/b0564501-5d82-4239-8883-b32ab746e7dc>
 
+---
+
 ## Contributing
 
-Contributions welcome. Feel free to open issues or submit pull requests.
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow, coding guidelines, and pull request checklist.
+
+---
 
 ## License
 
-MIT - see [LICENSE](LICENSE) file for details.
+MIT — see [LICENSE](LICENSE) for details.
+
+---
 
 ## Acknowledgments
 
-[Lost City](https://github.com/LostCityRS) - Different client versions of `.synth` files
+[Lost City](https://github.com/LostCityRS) — different client versions of `.synth` files
 
-[OpenOSRS](https://github.com/open-osrs/runelite/tree/master/runescape-client) - Decompiled and partially deobfuscated files related to `.synth` format and IIR filter
+[OpenOSRS](https://github.com/open-osrs/runelite/tree/master/runescape-client) — decompiled and partially deobfuscated files related to the `.synth` format and IIR filter
