@@ -100,24 +100,31 @@ ok ".app bundle created"
 # ── Code sign ────────────────────────────────────────────────────────────────
 step "Code signing"
 
+# Filter signing identity out of codesign output so it never appears in the terminal.
+# Errors and warnings are still shown — only lines containing the identity are dropped.
+_sign() {
+    codesign "$@" 2>&1 | grep -vF "$APPLE_SIGNING_IDENTITY" || return "${PIPESTATUS[0]}"
+}
+
 # Sign inside-out: native dylibs first, then the bundle.
 # --deep is avoided because it re-signs already-signed third-party dylibs
 # in a single pass, causing errSecInternalComponent on libs like libSkiaSharp.
 while IFS= read -r -d '' lib; do
-    codesign --force --sign "$APPLE_SIGNING_IDENTITY" --timestamp "$lib" 2>/dev/null
+    _sign --force --sign "$APPLE_SIGNING_IDENTITY" --timestamp "$lib" || \
+        warn "Could not sign $(basename "$lib") — continuing"
 done < <(find "$APP_BUNDLE" -name "*.dylib" -print0)
 
 # Sign the bundle itself (no --deep — sub-components are already signed above)
-codesign \
+_sign \
     --force \
     --options runtime \
     --entitlements "$ENTITLEMENTS" \
     --sign "$APPLE_SIGNING_IDENTITY" \
     --timestamp \
-    "$APP_BUNDLE" 2>/dev/null
+    "$APP_BUNDLE"
 ok "Signed"
 
-# Verify signature (output suppressed — contains identity)
+# Verify (output suppressed — codesign --display prints the identity)
 codesign --verify --deep --strict "$APP_BUNDLE" 2>/dev/null \
     && ok "Signature verified" \
     || die "Signature verification failed"
