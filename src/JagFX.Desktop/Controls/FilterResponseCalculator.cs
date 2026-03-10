@@ -11,6 +11,9 @@ public static class FilterResponseCalculator
     private const int SampleRate = 22050;
 
     public static double[] ComputeMagnitudeResponse(FilterViewModel filter, int numPoints = NumPoints)
+        => ComputeMagnitudeResponse(filter, 0, numPoints);
+
+    public static double[] ComputeMagnitudeResponse(FilterViewModel filter, int phaseIndex, int numPoints = NumPoints)
     {
         var result = new double[numPoints];
 
@@ -21,12 +24,24 @@ public static class FilterResponseCalculator
             return result;
         }
 
-        // Extract poles from channel 0, bank 0
+        if (filter.PolePhase[0].IsDefault || phaseIndex >= filter.PolePhase[0].Length)
+        {
+            Array.Fill(result, 0.0);
+            return result;
+        }
+
+        if (filter.PolePhase[0][phaseIndex].IsDefault)
+        {
+            Array.Fill(result, 0.0);
+            return result;
+        }
+
+        // Extract poles from channel 0, given phase index
         var poles = new Complex[poleCount];
         for (var i = 0; i < poleCount; i++)
         {
-            var phase = filter.PolePhase[0][0][i] / 65535.0 * 2.0 * Math.PI;
-            var magnitude = filter.PoleMagnitude[0][0][i] / 65535.0;
+            var phase = filter.PolePhase[0][phaseIndex][i] / 65536.0 * 2.0 * Math.PI;
+            var magnitude = filter.PoleMagnitude[0][phaseIndex][i] / 65536.0;
             poles[i] = Complex.FromPolarCoordinates(magnitude, phase);
         }
 
