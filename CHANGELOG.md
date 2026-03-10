@@ -8,13 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- **JagVoiceButton visual tiers** — inactive voices (no data) are now dimmed at 50% opacity; active voices (have data, not selected) show default button colors with no green tint; selected voice keeps accent border + green text. All button themes (`JagVoiceButton`, `JagToolButton`, `JagCellButton`, `JagCellToggle`) now share the same `{DynamicResource ...}` color tokens.
+- **JagVoiceButton visual tiers** -- inactive voices (no data) are now dimmed at 50% opacity; active voices (have data, not selected) show default button colors with no green tint; selected voice keeps accent border + green text. All button themes (`JagVoiceButton`, `JagToolButton`, `JagCellButton`, `JagCellToggle`) now share the same `{DynamicResource ...}` color tokens.
 
-- **EnvelopeInspector waveform buttons removed** — the —/⊓/∿/⟋/⁂ waveform selector row was redundant with the signal chain MODE dropdown and has been removed. Waveform selection is done exclusively via the MODE dropdown on each signal chain cell. Inspector padding updated to `6,6` for consistent spacing.
+- **EnvelopeInspector waveform buttons removed** -- the --/⊓/∿/⟋/⁂ waveform selector row was redundant with the signal chain MODE dropdown and has been removed. Waveform selection is done exclusively via the MODE dropdown on each signal chain cell. Inspector padding updated to `6,6` for consistent spacing.
 
-- **TRUE wave render reliability** — the debounce timer's fire-and-forget async callback now catches and logs unhandled exceptions, preventing silent render failures when editing envelope knobs.
+- **TRUE wave render reliability** -- the debounce timer's fire-and-forget async callback now catches and logs unhandled exceptions, preventing silent render failures when editing envelope knobs.
 
-- **DSP-accurate naming refactor** — renamed identifiers across the full solution to match what the code actually does. No behaviour changes.
+- **DSP-accurate naming refactor** -- renamed identifiers across the full solution to match what the code actually does. No behaviour changes.
 
   | Old name | New name | Reason |
   |----------|----------|--------|
