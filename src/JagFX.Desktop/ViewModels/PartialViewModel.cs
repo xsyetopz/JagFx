@@ -18,6 +18,13 @@ public partial class PartialViewModel : ObservableObject
     [ObservableProperty]
     private int _delayMs;
 
+    [ObservableProperty]
+    private int _displayIndex = 1;
+
+    public double AmplitudeFraction => Amplitude / 65535.0;
+
+    partial void OnAmplitudeChanged(int value) => OnPropertyChanged(nameof(AmplitudeFraction));
+
     public void Load(Partial partial)
     {
         IsActive = true;

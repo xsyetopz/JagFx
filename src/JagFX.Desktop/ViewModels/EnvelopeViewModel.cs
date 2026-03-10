@@ -9,6 +9,9 @@ namespace JagFX.Desktop.ViewModels;
 public partial class SegmentViewModel : ObservableObject
 {
     [ObservableProperty]
+    private int _index;
+
+    [ObservableProperty]
     private int _duration;
 
     [ObservableProperty]
@@ -37,10 +40,12 @@ public partial class EnvelopeViewModel : ObservableObject
         EndValue = envelope.EndValue;
 
         Segments.Clear();
-        foreach (var seg in envelope.Segments)
+        for (var i = 0; i < envelope.Segments.Count; i++)
         {
+            var seg = envelope.Segments[i];
             Segments.Add(new SegmentViewModel
             {
+                Index = i,
                 Duration = seg.Duration,
                 TargetLevel = seg.TargetLevel
             });
@@ -71,11 +76,15 @@ public partial class EnvelopeViewModel : ObservableObject
     {
         Segments.Add(new SegmentViewModel
         {
+            Index = Segments.Count,
             Duration = duration,
             TargetLevel = peak
         });
         OnPropertyChanged(nameof(IsEmpty));
     }
+
+    [RelayCommand]
+    private void SetWaveform(string waveformId) => Waveform = (Waveform)int.Parse(waveformId);
 
     [RelayCommand]
     private void AddDefaultSegment() => AddSegment(100, 0);
@@ -84,6 +93,7 @@ public partial class EnvelopeViewModel : ObservableObject
     private void RemoveSegment(SegmentViewModel seg)
     {
         Segments.Remove(seg);
+        ReindexSegments();
         OnPropertyChanged(nameof(IsEmpty));
     }
 
@@ -92,7 +102,14 @@ public partial class EnvelopeViewModel : ObservableObject
         if (index >= 0 && index < Segments.Count)
         {
             Segments.RemoveAt(index);
+            ReindexSegments();
             OnPropertyChanged(nameof(IsEmpty));
         }
+    }
+
+    private void ReindexSegments()
+    {
+        for (var i = 0; i < Segments.Count; i++)
+            Segments[i].Index = i;
     }
 }

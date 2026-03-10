@@ -26,12 +26,15 @@ public partial class PatchViewModel : ObservableObject
         Voices = new ObservableCollection<VoiceViewModel>(
             Enumerable.Range(0, AudioConstants.MaxVoices)
                 .Select(i => new VoiceViewModel { Index = i }));
+        SyncVoiceSelection();
     }
 
-    partial void OnSelectedVoiceIndexChanged(int value)
+    partial void OnSelectedVoiceIndexChanged(int value) => SyncVoiceSelection();
+
+    private void SyncVoiceSelection()
     {
         for (var i = 0; i < Voices.Count; i++)
-            Voices[i].IsSelected = i == value;
+            Voices[i].IsSelected = i == SelectedVoiceIndex;
         OnPropertyChanged(nameof(SelectedVoice));
     }
 
@@ -49,6 +52,7 @@ public partial class PatchViewModel : ObservableObject
         // Select first active voice, or voice 0
         var firstActive = patch.ActiveVoices.FirstOrDefault();
         SelectedVoiceIndex = firstActive.Voice is not null ? firstActive.Index : 0;
+        SyncVoiceSelection();
     }
 
     public void Clear()
@@ -59,6 +63,7 @@ public partial class PatchViewModel : ObservableObject
 
         foreach (var v in Voices)
             v.Clear();
+        SyncVoiceSelection();
     }
 
     public Patch ToModel()

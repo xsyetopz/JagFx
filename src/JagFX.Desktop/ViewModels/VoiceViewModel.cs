@@ -57,7 +57,7 @@ public partial class VoiceViewModel : ObservableObject
     {
         Partials = new ObservableCollection<PartialViewModel>(
             Enumerable.Range(0, AudioConstants.MaxOscillators)
-                .Select(_ => new PartialViewModel()));
+                .Select(i => new PartialViewModel { DisplayIndex = i + 1 }));
     }
 
     public void Load(Voice? voice)
