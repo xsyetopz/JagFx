@@ -1,10 +1,10 @@
 # Jagex Synthesizer File Format and Engine Specification
 
-**Version**: 2.0
-**Origin**: Jagex RuneScape (OldSchool) client audio subsystem
-**Sample Rate**: 22,050 Hz (fixed)
-**Channels**: 1 (mono)
-**Byte Order**: Big-endian throughout
+- **Version**: 2.0
+- **Origin**: OldSchool RuneScape client audio subsystem
+- **Sample Rate**: 22,050 Hz (fixed)
+- **Channels**: 1 (mono)
+- **Byte Order**: Big-endian throughout
 
 ---
 
@@ -12,10 +12,10 @@
 
 ### 1.1 Primitive Types
 
-| Type  | Size    | Description                                       |
-|-------|---------|---------------------------------------------------|
-| `u8`  | 1 byte  | Unsigned 8-bit integer, range [0, 255]            |
-| `u16` | 2 bytes | Unsigned 16-bit integer, big-endian, range [0, 65535] |
+| Type  | Size    | Description                                            |
+| ----- | ------- | ------------------------------------------------------ |
+| `u8`  | 1 byte  | Unsigned 8-bit integer, range [0, 255]                 |
+| `u16` | 2 bytes | Unsigned 16-bit integer, big-endian, range [0, 65535]  |
 | `s32` | 4 bytes | Signed 32-bit integer, big-endian, range [-2³¹, 2³¹-1] |
 
 ### 1.2 Variable-Length Types
@@ -43,10 +43,10 @@ A variable-length unsigned integer encoding values in the range [0, 32767].
 > &emsp; **else** \
 > &emsp;&emsp; emit 2 bytes: (*v* + 32768) as u16 big-endian
 
-| Byte Form  | Byte 0 Range | Value Range    |
-|------------|-------------|----------------|
-| 1-byte     | 0x00–0x7F   | 0–127          |
-| 2-byte     | 0x80–0xFF   | 0–32767        |
+| Byte Form | Byte 0 Range | Value Range |
+| --------- | ------------ | ----------- |
+| 1-byte    | 0x00–0x7F    | 0–127       |
+| 2-byte    | 0x80–0xFF    | 0–32767     |
 
 #### 1.2.2 Smart16 (Signed Smart Integer)
 
@@ -71,20 +71,20 @@ A variable-length signed integer encoding values in the range [-32768, 16383].
 > &emsp; **else** \
 > &emsp;&emsp; emit 2 bytes: (*v* + 49152) as u16 big-endian
 
-| Byte Form  | Byte 0 Range | Value Range        |
-|------------|-------------|--------------------|
-| 1-byte     | 0x00–0x7F   | -64 to 63          |
-| 2-byte     | 0x80–0xFF   | -32768 to 16383    |
+| Byte Form | Byte 0 Range | Value Range     |
+| --------- | ------------ | --------------- |
+| 1-byte    | 0x00–0x7F    | -64 to 63       |
+| 2-byte    | 0x80–0xFF    | -32768 to 16383 |
 
 ### 1.3 Fixed-Point Arithmetic
 
 The format uses Q16.16 fixed-point representation extensively:
 
-| Constant       | Value   | Description                         |
-|----------------|---------|-------------------------------------|
-| `SCALE`        | 65536   | Full fixed-point multiplier (1 << 16) |
-| `OFFSET`       | 32768   | Signed/unsigned midpoint (1 << 15)  |
-| `QUARTER`      | 16384   | Quarter-scale for waveforms (1 << 14) |
+| Constant  | Value | Description                           |
+| --------- | ----- | ------------------------------------- |
+| `SCALE`   | 65536 | Full fixed-point multiplier (1 << 16) |
+| `OFFSET`  | 32768 | Signed/unsigned midpoint (1 << 15)    |
+| `QUARTER` | 16384 | Quarter-scale for waveforms (1 << 14) |
 
 ---
 
@@ -108,11 +108,11 @@ A `.synth` file consists of up to 10 sequential **voice slots** followed by a 4-
 
 Each slot is processed sequentially. The parser peeks the first byte as a **marker**:
 
-| Marker Value | Action                                                                      |
-|-------------|-----------------------------------------------------------------------------|
-| `0x00`      | Empty slot. Consume 1 byte, advance to next slot.                           |
-| `1`–`4`     | Voice present. Marker doubles as the pitch envelope's waveform ID. Read voice body. |
-| Other       | Invalid marker. Treat slot as null. **Stop processing** all remaining slots. |
+| Marker Value | Action                                                                              |
+| ------------ | ----------------------------------------------------------------------------------- |
+| `0x00`       | Empty slot. Consume 1 byte, advance to next slot.                                   |
+| `1`–`4`      | Voice present. Marker doubles as the pitch envelope's waveform ID. Read voice body. |
+| Other        | Invalid marker. Treat slot as null. **Stop processing** all remaining slots.        |
 
 **Minimum size check**: Before reading a voice, the parser verifies at least **30 bytes** remain in the buffer. If fewer bytes remain and the marker is non-zero, the slot and all subsequent slots are set to null.
 
@@ -122,36 +122,36 @@ Each slot is processed sequentially. The parser peeks the first byte as a **mark
 
 When a valid marker (1–4) is encountered with sufficient remaining bytes, the voice body is read in the following strict order:
 
-| #  | Field               | Type                  | Description                              |
-|----|---------------------|-----------------------|------------------------------------------|
-| 1  | Pitch Envelope      | Envelope              | Frequency contour over time              |
-| 2  | Amplitude Envelope  | Envelope              | Volume contour over time                 |
-| 3  | Vibrato LFO         | Optional Envelope Pair | Pitch modulation (rate + depth)         |
-| 4  | Tremolo LFO         | Optional Envelope Pair | Amplitude modulation (rate + depth)     |
-| 5  | Gate Envelopes      | Optional Envelope Pair | Silence duration + sound duration       |
-| 6  | Partials            | Partial[]             | Additive synthesis sources (max 10)      |
-| 7  | Echo Delay          | `usmart16`            | Feedback delay in milliseconds           |
-| 8  | Echo Feedback       | `usmart16`            | Feedback gain as percentage (0–100)      |
-| 9  | Duration            | `u16`                 | Total voice duration in milliseconds     |
-| 10 | Offset              | `u16`                 | Delay before voice starts in milliseconds |
-| 11 | Filter              | Filter (optional)     | IIR pole-zero filter                     |
+| #   | Field              | Type                   | Description                               |
+| --- | ------------------ | ---------------------- | ----------------------------------------- |
+| 1   | Pitch Envelope     | Envelope               | Frequency contour over time               |
+| 2   | Amplitude Envelope | Envelope               | Volume contour over time                  |
+| 3   | Vibrato LFO        | Optional Envelope Pair | Pitch modulation (rate + depth)           |
+| 4   | Tremolo LFO        | Optional Envelope Pair | Amplitude modulation (rate + depth)       |
+| 5   | Gate Envelopes     | Optional Envelope Pair | Silence duration + sound duration         |
+| 6   | Partials           | Partial[]              | Additive synthesis sources (max 10)       |
+| 7   | Echo Delay         | `usmart16`             | Feedback delay in milliseconds            |
+| 8   | Echo Feedback      | `usmart16`             | Feedback gain as percentage (0–100)       |
+| 9   | Duration           | `u16`                  | Total voice duration in milliseconds      |
+| 10  | Offset             | `u16`                  | Delay before voice starts in milliseconds |
+| 11  | Filter             | Filter (optional)      | IIR pole-zero filter                      |
 
 ### 3.1 Envelope Structure
 
-| Field         | Type  | Description                                        |
-|---------------|-------|----------------------------------------------------|
-| Waveform      | `u8`  | Waveform ID (0=Off, 1=Square, 2=Sine, 3=Saw, 4=Noise) |
-| Start Value   | `s32` | Initial envelope value (fixed-point)               |
-| End Value     | `s32` | Final envelope value (fixed-point)                 |
-| Segment Count | `u8`  | Number of segments (N)                             |
-| Segments[0..N-1] | Segment[] | Linear interpolation waypoints                |
+| Field            | Type      | Description                                           |
+| ---------------- | --------- | ----------------------------------------------------- |
+| Waveform         | `u8`      | Waveform ID (0=Off, 1=Square, 2=Sine, 3=Saw, 4=Noise) |
+| Start Value      | `s32`     | Initial envelope value (fixed-point)                  |
+| End Value        | `s32`     | Final envelope value (fixed-point)                    |
+| Segment Count    | `u8`      | Number of segments (N)                                |
+| Segments[0..N-1] | Segment[] | Linear interpolation waypoints                        |
 
 Each **segment** consists of:
 
-| Field        | Type  | Description                                     |
-|------------- |-------|-------------------------------------------------|
+| Field        | Type  | Description                                               |
+| ------------ | ----- | --------------------------------------------------------- |
 | Duration     | `u16` | Time to reach target (units of 1/65536 of voice duration) |
-| Target Level | `u16` | Interpolation target (0–65535)                  |
+| Target Level | `u16` | Interpolation target (0–65535)                            |
 
 **Note**: The `TargetLevel` field represents a position in the range [0, 65535] that maps linearly between `StartValue` and `EndValue`. A value of 0 maps to `StartValue`; 65535 maps to `EndValue`.
 
@@ -171,20 +171,20 @@ Three voice features (vibrato, tremolo, gating) use paired envelopes. Detection:
 
 Read up to 10 partials. Each partial:
 
-| Field            | Type       | Description                              |
-|------------------|------------|------------------------------------------|
-| Amplitude        | `usmart16` | Relative volume as percentage            |
-| Pitch Offset     | `smart16`  | Semitone offset in decicents             |
-| Delay            | `usmart16` | Start delay in milliseconds              |
+| Field        | Type       | Description                   |
+| ------------ | ---------- | ----------------------------- |
+| Amplitude    | `usmart16` | Relative volume as percentage |
+| Pitch Offset | `smart16`  | Semitone offset in decicents  |
+| Delay        | `usmart16` | Start delay in milliseconds   |
 
 **Termination**: When the decoded `Amplitude` value equals 0, stop reading. Since `usmart16` encodes 0 as byte `0x00`, this is equivalent to encountering a zero byte.
 
 ### 3.4 Echo Parameters
 
-| Field     | Type       | Description                   |
-|-----------|------------|-------------------------------|
-| Delay     | `usmart16` | Echo delay in milliseconds    |
-| Feedback  | `usmart16` | Feedback gain (0–100 percent) |
+| Field    | Type       | Description                   |
+| -------- | ---------- | ----------------------------- |
+| Delay    | `usmart16` | Echo delay in milliseconds    |
+| Feedback | `usmart16` | Feedback gain (0–100 percent) |
 
 Echo is only active when both `Delay > 0` and `Feedback > 0`.
 
@@ -208,27 +208,27 @@ The first byte of the filter header (pole count packing) can collide with valid 
 
 ### 4.2 Filter Header
 
-| Field          | Type  | Description                                               |
-|----------------|-------|-----------------------------------------------------------|
-| Pole Config    | `u8`  | Packed: `poleCount0 = byte >> 4`, `poleCount1 = byte & 0x0F` |
-| Unity Gain Ch0 | `u16` | Gain normalization for feedforward channel                |
-| Unity Gain Ch1 | `u16` | Gain normalization for feedback channel                   |
-| Modulation Mask| `u8`  | Bit flags for per-pole phase-1 coefficient presence       |
+| Field           | Type  | Description                                                  |
+| --------------- | ----- | ------------------------------------------------------------ |
+| Pole Config     | `u8`  | Packed: `poleCount0 = byte >> 4`, `poleCount1 = byte & 0x0F` |
+| Unity Gain Ch0  | `u16` | Gain normalization for feedforward channel                   |
+| Unity Gain Ch1  | `u16` | Gain normalization for feedback channel                      |
+| Modulation Mask | `u8`  | Bit flags for per-pole phase-1 coefficient presence          |
 
 The pole config byte packs two 4-bit pole counts. Each count specifies the number of second-order sections for that filter direction. Maximum is 15 per direction, though typical files use 1–4.
 
 **Modulation mask** layout (8 bits):
 
-| Bit | Pole                    |
-|-----|-------------------------|
-| 0   | Direction 0, pole 0     |
-| 1   | Direction 0, pole 1     |
-| 2   | Direction 0, pole 2     |
-| 3   | Direction 0, pole 3     |
-| 4   | Direction 1, pole 0     |
-| 5   | Direction 1, pole 1     |
-| 6   | Direction 1, pole 2     |
-| 7   | Direction 1, pole 3     |
+| Bit | Pole                |
+| --- | ------------------- |
+| 0   | Direction 0, pole 0 |
+| 1   | Direction 0, pole 1 |
+| 2   | Direction 0, pole 2 |
+| 3   | Direction 0, pole 3 |
+| 4   | Direction 1, pole 0 |
+| 5   | Direction 1, pole 1 |
+| 6   | Direction 1, pole 2 |
+| 7   | Direction 1, pole 3 |
 
 ### 4.3 Filter Coefficients
 
@@ -236,10 +236,10 @@ Coefficients are read in two phases across both directions (ch0 then ch1):
 
 **Phase 0 (baseline):** For each direction with `poleCount > 0`, read `poleCount` pairs:
 
-| Field     | Type  | Description          |
-|-----------|-------|----------------------|
-| Frequency | `u16` | Pole center phase    |
-| Magnitude | `u16` | Pole magnitude       |
+| Field     | Type  | Description       |
+| --------- | ----- | ----------------- |
+| Frequency | `u16` | Pole center phase |
+| Magnitude | `u16` | Pole magnitude    |
 
 **Phase 1 (modulated):** For each direction, for each pole index `p`:
 
@@ -262,9 +262,9 @@ Read **only if** `modulationMask ≠ 0` **OR** `unityGainCh0 ≠ unityGainCh1`.
 
 This is a minimal envelope containing only segments (no waveform, start, or end fields):
 
-| Field         | Type      | Description                |
-|---------------|-----------|----------------------------|
-| Segment Count | `u8`      | Number of segments (N)     |
+| Field            | Type      | Description                  |
+| ---------------- | --------- | ---------------------------- |
+| Segment Count    | `u8`      | Number of segments (N)       |
 | Segments[0..N-1] | Segment[] | Duration + TargetLevel pairs |
 
 The envelope is constructed with `Waveform = Off`, `StartValue = 0`, `EndValue = 0`.
@@ -279,8 +279,8 @@ If the buffer is truncated during filter reading, the **entire filter is discard
 
 The final 4 bytes of the file form the loop footer:
 
-| Field      | Type  | Description                    |
-|------------|-------|--------------------------------|
+| Field      | Type  | Description                       |
+| ---------- | ----- | --------------------------------- |
 | Loop Start | `u16` | Sample position where loop begins |
 | Loop End   | `u16` | Sample position where loop ends   |
 
@@ -360,13 +360,13 @@ The `EnvelopeGenerator` is a state machine that evaluates multi-segment envelope
 
 ### 9.1 State Variables
 
-| Variable    | Initial Value                    | Description                       |
-|-------------|----------------------------------|-----------------------------------|
-| `amplitude` | `startValue << 15`               | Current value in Q15 fixed-point  |
-| `delta`     | `0`                              | Per-tick increment                |
-| `position`  | `0`                              | Current segment index             |
-| `threshold` | `1`                              | Tick count to trigger next segment|
-| `ticks`     | `0`                              | Ticks elapsed in current segment  |
+| Variable    | Initial Value      | Description                        |
+| ----------- | ------------------ | ---------------------------------- |
+| `amplitude` | `startValue << 15` | Current value in Q15 fixed-point   |
+| `delta`     | `0`                | Per-tick increment                 |
+| `position`  | `0`                | Current segment index              |
+| `threshold` | `1`                | Tick count to trigger next segment |
+| `ticks`     | `0`                | Ticks elapsed in current segment   |
 
 ### 9.2 Evaluate (per-sample)
 
@@ -644,44 +644,44 @@ After mixing and loop expansion, each sample *x* is clamped to the signed 16-bit
 
 ## 13. Constants Reference
 
-| Constant             | Value                     | Description                                      |
-|----------------------|---------------------------|--------------------------------------------------|
-| `SampleRate`         | 22050                     | Audio sample rate in Hz                          |
-| `AudioChannelCount`  | 1                         | Mono output                                      |
-| `BitsPerSample`      | 8                         | Legacy audio bit depth                           |
-| `MaxVoices`          | 10                        | Maximum voice slots per patch                    |
-| `MaxOscillators`     | 10                        | Maximum partials per voice                       |
-| `MaxFilterPairs`     | 15                        | Maximum poles per filter direction               |
-| `FilterUpdateRate`   | 256                       | Value of `byte.MaxValue + 1`                     |
-| `PhaseMask`          | 0x7FFF (32767)            | 15-bit phase accumulator mask                    |
-| `PhaseScale`         | 32.768                    | Phase increment scaling factor                   |
-| `NoisePhaseDiv`      | 2607                      | Noise waveform phase divisor                     |
-| `MaxBufferSize`      | 1,048,576                 | Maximum input file size (1 MiB)                  |
-| `FixedPoint.Scale`   | 65536 (1 << 16)           | Q16 fixed-point multiplier                       |
-| `FixedPoint.Offset`  | 32768 (1 << 15)           | Signed midpoint / table size                     |
-| `FixedPoint.Quarter` | 16384 (1 << 14)           | Quarter-scale for waveform amplitude             |
-| `DecicentRatio`      | 1.0057929410678534        | Frequency ratio per decicent (2^(1/1200))        |
-| `SinTableDivisor`    | 5215.1903                 | Sine table generation divisor                    |
-| `CircleSegments`     | 64                        | Unit circle table resolution                     |
-| `SemitoneRange`      | 120                       | Cached decicent range (±120)                     |
-| `ChunkSize`          | 128                       | Filter main-loop block size                      |
-| `MaxCoefficients`    | 8                         | Maximum SOS coefficient array size               |
-| `MinVoiceSize`       | 30                        | Minimum bytes for a valid voice slot             |
-| `EnvelopeStartThreshold` | 10,000,000            | Plausibility bound for filter/voice disambiguation |
-| `MaxReasonableSegCount`  | 15                    | Maximum plausible segment count for disambiguation |
-| `EnvelopeScaleFactor`| 15                        | Envelope amplitude Q15 shift                     |
-| `TwoPi`              | 6.283185307179586         | 2π                                               |
+| Constant                 | Value              | Description                                        |
+| ------------------------ | ------------------ | -------------------------------------------------- |
+| `SampleRate`             | 22050              | Audio sample rate in Hz                            |
+| `AudioChannelCount`      | 1                  | Mono output                                        |
+| `BitsPerSample`          | 8                  | Legacy audio bit depth                             |
+| `MaxVoices`              | 10                 | Maximum voice slots per patch                      |
+| `MaxOscillators`         | 10                 | Maximum partials per voice                         |
+| `MaxFilterPairs`         | 15                 | Maximum poles per filter direction                 |
+| `FilterUpdateRate`       | 256                | Value of `byte.MaxValue + 1`                       |
+| `PhaseMask`              | 0x7FFF (32767)     | 15-bit phase accumulator mask                      |
+| `PhaseScale`             | 32.768             | Phase increment scaling factor                     |
+| `NoisePhaseDiv`          | 2607               | Noise waveform phase divisor                       |
+| `MaxBufferSize`          | 1,048,576          | Maximum input file size (1 MiB)                    |
+| `FixedPoint.Scale`       | 65536 (1 << 16)    | Q16 fixed-point multiplier                         |
+| `FixedPoint.Offset`      | 32768 (1 << 15)    | Signed midpoint / table size                       |
+| `FixedPoint.Quarter`     | 16384 (1 << 14)    | Quarter-scale for waveform amplitude               |
+| `DecicentRatio`          | 1.0057929410678534 | Frequency ratio per decicent (2^(1/1200))          |
+| `SinTableDivisor`        | 5215.1903          | Sine table generation divisor                      |
+| `CircleSegments`         | 64                 | Unit circle table resolution                       |
+| `SemitoneRange`          | 120                | Cached decicent range (±120)                       |
+| `ChunkSize`              | 128                | Filter main-loop block size                        |
+| `MaxCoefficients`        | 8                  | Maximum SOS coefficient array size                 |
+| `MinVoiceSize`           | 30                 | Minimum bytes for a valid voice slot               |
+| `EnvelopeStartThreshold` | 10,000,000         | Plausibility bound for filter/voice disambiguation |
+| `MaxReasonableSegCount`  | 15                 | Maximum plausible segment count for disambiguation |
+| `EnvelopeScaleFactor`    | 15                 | Envelope amplitude Q15 shift                       |
+| `TwoPi`                  | 6.283185307179586  | 2π                                                 |
 
 ---
 
 ## 14. Waveform ID Reference
 
-| ID | Name   | Description                                      |
-|----|--------|--------------------------------------------------|
-| 0  | Off    | Silent output (no waveform generated)            |
-| 1  | Square | Band-unlimited square wave                       |
-| 2  | Sine   | Table-lookup sine wave (32768-entry LUT)         |
-| 3  | Saw    | Band-unlimited sawtooth wave                     |
-| 4  | Noise  | Pseudo-random noise from pre-computed table      |
+| ID  | Name   | Description                                 |
+| --- | ------ | ------------------------------------------- |
+| 0   | Off    | Silent output (no waveform generated)       |
+| 1   | Square | Band-unlimited square wave                  |
+| 2   | Sine   | Table-lookup sine wave (32768-entry LUT)    |
+| 3   | Saw    | Band-unlimited sawtooth wave                |
+| 4   | Noise  | Pseudo-random noise from pre-computed table |
 
 Waveform IDs outside the range [0, 4] are treated as `Off`.
