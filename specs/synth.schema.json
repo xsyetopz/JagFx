@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/JagFx/specs/synth.schema.json",
+  "title": "JagFx Synth Patch",
+  "description": "JSON interchange format for OSRS .synth synthesizer patches",
+  "type": "object",
+  "required": ["voices"],
+  "properties": {
+    "voices": {
+      "type": "array",
+      "description": "Up to 10 voice slots (null entries represent empty slots)",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/voice" },
+          { "type": "null" }
+        ]
+      }
+    },
+    "loop": {
+      "$ref": "#/$defs/loopSegment",
+      "description": "Loop region in milliseconds. Defaults to {beginMs: 0, endMs: 0} (no loop)"
+    }
+  },
+  "$defs": {
+    "voice": {
+      "type": "object",
+      "required": ["frequencyEnvelope", "amplitudeEnvelope", "durationMs"],
+      "properties": {
+        "frequencyEnvelope": {
+          "$ref": "#/$defs/envelope",
+          "description": "Pitch envelope controlling frequency over time"
+        },
+        "amplitudeEnvelope": {
+          "$ref": "#/$defs/envelope",
+          "description": "Volume envelope controlling amplitude over time"
+        },
+        "pitchLfo": {
+          "$ref": "#/$defs/lfo",
+          "description": "Vibrato (pitch LFO). Omit or null if unused"
+        },
+        "amplitudeLfo": {
+          "$ref": "#/$defs/lfo",
+          "description": "Tremolo (amplitude LFO). Omit or null if unused"
+        },
+        "gapOffEnvelope": {
+          "$ref": "#/$defs/envelope",
+          "description": "Gate off-time envelope. Omit or null if unused"
+        },
+        "gapOnEnvelope": {
+          "$ref": "#/$defs/envelope",
+          "description": "Gate on-time envelope. Omit or null if unused"
+        },
+        "partials": {
+          "type": "array",
+          "description": "Additive synthesis partials (up to 10). Defaults to []",
+          "maxItems": 10,
+          "items": { "$ref": "#/$defs/partial" }
+        },
+        "echo": {
+          "$ref": "#/$defs/echo",
+          "description": "Echo/delay effect. Defaults to {delayMilliseconds: 0, feedbackPercent: 0}"
+        },
+        "durationMs": {
+          "type": "integer",
+          "description": "Voice duration in milliseconds",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "offsetMs": {
+          "type": "integer",
+          "description": "Voice start offset in milliseconds. Defaults to 0",
+          "minimum": 0,
+          "maximum": 65535,
+          "default": 0
+        },
+        "filter": {
+          "$ref": "#/$defs/filter",
+          "description": "IIR pole-zero filter. Omit or null if unused"
+        }
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "required": ["waveform", "startValue", "endValue", "segments"],
+      "properties": {
+        "waveform": {
+          "$ref": "#/$defs/waveform",
+          "description": "Waveform shape for this envelope's oscillator"
+        },
+        "startValue": {
+          "type": "integer",
+          "description": "Start value (raw Q16 fixed-point integer)"
+        },
+        "endValue": {
+          "type": "integer",
+          "description": "End value (raw Q16 fixed-point integer)"
+        },
+        "segments": {
+          "type": "array",
+          "description": "Envelope segments defining shape over time",
+          "maxItems": 255,
+          "items": { "$ref": "#/$defs/segment" }
+        }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "required": ["duration", "targetLevel"],
+      "properties": {
+        "duration": {
+          "type": "integer",
+          "description": "Segment end time as fraction of voice duration (0-65535, where 65535 = end)",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "targetLevel": {
+          "type": "integer",
+          "description": "Target level at segment end (0-65535, maps linearly between startValue and endValue)",
+          "minimum": 0,
+          "maximum": 65535
+        }
+      }
+    },
+    "waveform": {
+      "type": "string",
+      "enum": ["off", "square", "sine", "saw", "noise"],
+      "description": "Waveform type for oscillators and envelope modulation"
+    },
+    "lfo": {
+      "type": "object",
+      "required": ["rateEnvelope", "modulationDepth"],
+      "properties": {
+        "rateEnvelope": {
+          "$ref": "#/$defs/envelope",
+          "description": "LFO rate envelope"
+        },
+        "modulationDepth": {
+          "$ref": "#/$defs/envelope",
+          "description": "LFO modulation depth envelope"
+        }
+      }
+    },
+    "partial": {
+      "type": "object",
+      "required": ["amplitude", "pitchOffsetSemitones"],
+      "properties": {
+        "amplitude": {
+          "type": "integer",
+          "description": "Partial amplitude (0-100 percent)",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "pitchOffsetSemitones": {
+          "type": "integer",
+          "description": "Pitch offset from base frequency in semitones"
+        },
+        "delay": {
+          "type": "integer",
+          "description": "Start delay in milliseconds. Defaults to 0",
+          "minimum": 0,
+          "default": 0
+        }
+      }
+    },
+    "echo": {
+      "type": "object",
+      "required": ["delayMilliseconds", "feedbackPercent"],
+      "properties": {
+        "delayMilliseconds": {
+          "type": "integer",
+          "description": "Echo delay in milliseconds",
+          "minimum": 0
+        },
+        "feedbackPercent": {
+          "type": "integer",
+          "description": "Echo feedback amount (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "filter": {
+      "type": "object",
+      "required": ["poleCounts", "unityGain", "polePhase", "poleMagnitude"],
+      "properties": {
+        "poleCounts": {
+          "type": "array",
+          "description": "Number of pole pairs per channel [feedforward, feedback]",
+          "items": { "type": "integer", "minimum": 0, "maximum": 15 },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "unityGain": {
+          "type": "array",
+          "description": "Unity gain values per channel [feedforward, feedback]",
+          "items": { "type": "integer", "minimum": 0, "maximum": 65535 },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "polePhase": {
+          "$ref": "#/$defs/filterCoefficients",
+          "description": "Pole phase (frequency) coefficients"
+        },
+        "poleMagnitude": {
+          "$ref": "#/$defs/filterCoefficients",
+          "description": "Pole magnitude coefficients"
+        },
+        "modulationEnvelope": {
+          "$ref": "#/$defs/envelope",
+          "description": "Filter modulation envelope. Omit or null if no time-varying modulation"
+        }
+      }
+    },
+    "filterCoefficients": {
+      "type": "object",
+      "required": ["feedforward", "feedback"],
+      "properties": {
+        "feedforward": {
+          "$ref": "#/$defs/filterPhases",
+          "description": "Channel 0 (feedforward) coefficients"
+        },
+        "feedback": {
+          "$ref": "#/$defs/filterPhases",
+          "description": "Channel 1 (feedback) coefficients"
+        }
+      }
+    },
+    "filterPhases": {
+      "type": "object",
+      "required": ["baseline", "modulated"],
+      "properties": {
+        "baseline": {
+          "type": "array",
+          "description": "Phase 0 (baseline) coefficients per pole",
+          "items": { "type": "integer" },
+          "maxItems": 15
+        },
+        "modulated": {
+          "type": "array",
+          "description": "Phase 1 (modulated) coefficients per pole",
+          "items": { "type": "integer" },
+          "maxItems": 15
+        }
+      }
+    },
+    "loopSegment": {
+      "type": "object",
+      "required": ["beginMs", "endMs"],
+      "properties": {
+        "beginMs": {
+          "type": "integer",
+          "description": "Loop start in milliseconds",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "endMs": {
+          "type": "integer",
+          "description": "Loop end in milliseconds",
+          "minimum": 0,
+          "maximum": 65535
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "voices": [
+    {
+      "frequencyEnvelope": {
+        "waveform": "sine",
+        "startValue": 0,
+        "endValue": 500,
+        "segments": [
+          { "duration": 65535, "targetLevel": 32768 }
+        ]
+      },
+      "amplitudeEnvelope": {
+        "waveform": "off",
+        "startValue": 0,
+        "endValue": 100,
+        "segments": [
+          { "duration": 16384, "targetLevel": 65535 },
+          { "duration": 65535, "targetLevel": 0 }
+        ]
+      },
+      "durationMs": 500
+    }
+  ]
+}

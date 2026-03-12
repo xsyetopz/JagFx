@@ -1,0 +1,111 @@
+{
+  "voices": [
+    {
+      "frequencyEnvelope": {
+        "waveform": "sine",
+        "startValue": 30,
+        "endValue": 300,
+        "segments": [
+          {
+            "duration": 0,
+            "targetLevel": 0
+          },
+          {
+            "duration": 5566,
+            "targetLevel": 22283
+          },
+          {
+            "duration": 22982,
+            "targetLevel": 46662
+          },
+          {
+            "duration": 35012,
+            "targetLevel": 18613
+          },
+          {
+            "duration": 65535,
+            "targetLevel": 0
+          }
+        ]
+      },
+      "amplitudeEnvelope": {
+        "waveform": "off",
+        "startValue": 0,
+        "endValue": 100,
+        "segments": [
+          {
+            "duration": 0,
+            "targetLevel": 31720
+          },
+          {
+            "duration": 12029,
+            "targetLevel": 46400
+          },
+          {
+            "duration": 36089,
+            "targetLevel": 33817
+          },
+          {
+            "duration": 49017,
+            "targetLevel": 10224
+          },
+          {
+            "duration": 65535,
+            "targetLevel": 0
+          }
+        ]
+      },
+      "pitchLfo": {
+        "rateEnvelope": {
+          "waveform": "square",
+          "startValue": 0,
+          "endValue": 150,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 32244
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 31720
+            }
+          ]
+        },
+        "modulationDepth": {
+          "waveform": "off",
+          "startValue": 0,
+          "endValue": 100,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 1573
+            },
+            {
+              "duration": 13286,
+              "targetLevel": 19923
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 65535
+            }
+          ]
+        }
+      },
+      "partials": [
+        {
+          "amplitude": 100,
+          "pitchOffsetSemitones": 0
+        },
+        {
+          "amplitude": 60,
+          "pitchOffsetSemitones": 133
+        }
+      ],
+      "echo": {
+        "delayMilliseconds": 0,
+        "feedbackPercent": 100
+      },
+      "durationMs": 900
+    }
+  ]
+}
