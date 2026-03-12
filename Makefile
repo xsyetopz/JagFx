@@ -15,10 +15,16 @@
 #   make release-macos-arm64
 #   make release-macos-x64
 #   make release-macos          builds both arches
+#
+# Release -- macOS signed DMG, skip notarization
+#   make release-macos-arm64 SKIP_NOTARIZE=1
+#   make release-macos-x64  SKIP_NOTARIZE=1
 
 DESKTOP  := src/JagFx.Desktop
 SCRIPTS  := scripts
 CONF     := Release
+
+NOTARIZE_FLAGS := $(if $(SKIP_NOTARIZE),--skip-notarize)
 
 .PHONY: run build test \
         publish-macos-arm64 publish-macos-x64 publish-windows publish-linux \
@@ -52,9 +58,9 @@ publish-linux:
 # -- Signed + notarized macOS DMG ---------------------------------------------
 
 release-macos-arm64:
-	$(SCRIPTS)/notarize-macos.sh osx-arm64
+	$(SCRIPTS)/notarize-macos.sh $(NOTARIZE_FLAGS) osx-arm64
 
 release-macos-x64:
-	$(SCRIPTS)/notarize-macos.sh osx-x64
+	$(SCRIPTS)/notarize-macos.sh $(NOTARIZE_FLAGS) osx-x64
 
 release-macos: release-macos-arm64 release-macos-x64

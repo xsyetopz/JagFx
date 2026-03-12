@@ -4,9 +4,10 @@
 # Build, sign, notarize, staple, and package JagFx.Desktop as a macOS DMG.
 #
 # Usage:
-#   ./scripts/notarize-macos.sh [arch]
+#   ./scripts/notarize-macos.sh [--skip-notarize] [arch]
 #
-#   arch  osx-arm64 (default, Apple Silicon) | osx-x64 (Intel)
+#   --skip-notarize  Build, sign, and package the DMG but skip notarization/stapling
+#   arch             osx-arm64 (default, Apple Silicon) | osx-x64 (Intel)
 #
 # Prerequisites:
 #   1. Copy .env.example → .env and fill in your credentials.
@@ -44,9 +45,17 @@ fi
 # -- Required variables -------------------------------------------------------
 : "${APPLE_SIGNING_IDENTITY:?APPLE_SIGNING_IDENTITY is not set in .env}"
 : "${APPLE_TEAM_ID:?APPLE_TEAM_ID is not set in .env}"
-: "${APPLE_NOTARIZE_PROFILE:?APPLE_NOTARIZE_PROFILE is not set in .env}"
+if [[ "$SKIP_NOTARIZE" == false ]]; then
+    : "${APPLE_NOTARIZE_PROFILE:?APPLE_NOTARIZE_PROFILE is not set in .env}"
+fi
 
 # -- Arguments ----------------------------------------------------------------
+SKIP_NOTARIZE=false
+if [[ "${1:-}" == "--skip-notarize" ]]; then
+    SKIP_NOTARIZE=true
+    shift
+fi
+
 ARCH="${1:-osx-arm64}"
 [[ "$ARCH" == "osx-arm64" || "$ARCH" == "osx-x64" ]] \
     || die "Unknown arch '$ARCH'. Use osx-arm64 or osx-x64."
@@ -167,6 +176,9 @@ codesign \
 ok "DMG signed"
 
 # -- Notarize -----------------------------------------------------------------
+if [[ "$SKIP_NOTARIZE" == true ]]; then
+    warn "Skipping notarization (--skip-notarize)"
+else
 step "Submitting to Apple Notary Service"
 
 NOTARIZE_TIMEOUT_MINUTES="${NOTARIZE_TIMEOUT_MINUTES:-30}"
@@ -247,6 +259,8 @@ ok "Stapled"
 spctl --assess --type open --context context:primary-signature -v "$DMG_PATH" \
     && ok "Gatekeeper check passed" \
     || warn "Gatekeeper check reported an issue -- review output above"
+
+fi # end skip-notarize guard
 
 # -- Done ---------------------------------------------------------------------
 echo -e "\n${GREEN}${BOLD}✔ Done!${RESET}"
