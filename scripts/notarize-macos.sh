@@ -167,10 +167,75 @@ codesign \
 ok "DMG signed"
 
 # -- Notarize -----------------------------------------------------------------
-step "Submitting to Apple Notary Service (this may take a few minutes)"
-xcrun notarytool submit "$DMG_PATH" \
-    --keychain-profile "$APPLE_NOTARIZE_PROFILE" \
-    --wait 2>&1 | grep -Ev "(profile|team|apple-id|credentials)"
+step "Submitting to Apple Notary Service"
+
+NOTARIZE_TIMEOUT_MINUTES="${NOTARIZE_TIMEOUT_MINUTES:-30}"
+NOTARIZE_POLL_INTERVAL="${NOTARIZE_POLL_INTERVAL:-30}"
+NOTARIZE_MAX_RETRIES="${NOTARIZE_MAX_RETRIES:-5}"
+
+# Submit without --wait so we control polling
+SUBMIT_OUTPUT=$(xcrun notarytool submit "$DMG_PATH" \
+    --keychain-profile "$APPLE_NOTARIZE_PROFILE" 2>&1)
+echo "$SUBMIT_OUTPUT"
+
+SUBMISSION_ID=$(grep -oE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' <<< "$SUBMIT_OUTPUT" | head -1)
+[[ -n "$SUBMISSION_ID" ]] || die "Failed to parse submission ID from notarytool output"
+ok "Submitted (ID: $SUBMISSION_ID)"
+
+# Poll for completion
+DEADLINE=$(( $(date +%s) + NOTARIZE_TIMEOUT_MINUTES * 60 ))
+CONSECUTIVE_FAILURES=0
+
+step "Polling for notarization status (timeout: ${NOTARIZE_TIMEOUT_MINUTES}m, interval: ${NOTARIZE_POLL_INTERVAL}s)"
+
+while true; do
+    NOW=$(date +%s)
+    if (( NOW >= DEADLINE )); then
+        echo ""
+        warn "Notarization timed out after ${NOTARIZE_TIMEOUT_MINUTES} minutes."
+        echo ""
+        echo "The submission is likely still being processed by Apple."
+        echo "Check status manually and staple when ready:"
+        echo ""
+        echo "  xcrun notarytool info $SUBMISSION_ID --keychain-profile $APPLE_NOTARIZE_PROFILE"
+        echo "  xcrun stapler staple $DMG_PATH"
+        echo ""
+        die "Timed out waiting for notarization (submission ID: $SUBMISSION_ID)"
+    fi
+    REMAINING=$(( (DEADLINE - NOW) / 60 ))
+
+    if INFO_OUTPUT=$(xcrun notarytool info "$SUBMISSION_ID" \
+        --keychain-profile "$APPLE_NOTARIZE_PROFILE" 2>&1); then
+        CONSECUTIVE_FAILURES=0
+    else
+        CONSECUTIVE_FAILURES=$(( CONSECUTIVE_FAILURES + 1 ))
+        warn "Poll failed ($CONSECUTIVE_FAILURES/$NOTARIZE_MAX_RETRIES): $INFO_OUTPUT"
+        if (( CONSECUTIVE_FAILURES >= NOTARIZE_MAX_RETRIES )); then
+            die "Aborting after $NOTARIZE_MAX_RETRIES consecutive poll failures (submission ID: $SUBMISSION_ID)"
+        fi
+        sleep "$NOTARIZE_POLL_INTERVAL"
+        continue
+    fi
+
+    STATUS=$(grep -i "status:" <<< "$INFO_OUTPUT" | head -1 | sed 's/.*status:[[:space:]]*//' | tr '[:upper:]' '[:lower:]' | xargs)
+    echo "[$(date '+%H:%M:%S')] Status: $STATUS (${REMAINING}m remaining)"
+
+    case "$STATUS" in
+        accepted)
+            break
+            ;;
+        invalid|rejected)
+            warn "Fetching notarization log..."
+            xcrun notarytool log "$SUBMISSION_ID" \
+                --keychain-profile "$APPLE_NOTARIZE_PROFILE" 2>&1 || true
+            die "Notarization $STATUS (submission ID: $SUBMISSION_ID)"
+            ;;
+        *)
+            sleep "$NOTARIZE_POLL_INTERVAL"
+            ;;
+    esac
+done
+
 ok "Notarization approved"
 
 # -- Staple -------------------------------------------------------------------
