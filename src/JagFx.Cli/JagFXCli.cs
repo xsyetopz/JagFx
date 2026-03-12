@@ -24,6 +24,8 @@ public static class JagFxCli
         ConvertCommand.Configure(rootCommand);
 
         rootCommand.Add(new InspectCommand());
+        rootCommand.Add(new ToJsonCommand());
+        rootCommand.Add(new FromJsonCommand());
         return rootCommand;
     }
 }
