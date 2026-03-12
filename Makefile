@@ -19,16 +19,22 @@
 # Release -- macOS signed DMG, skip notarization
 #   make release-macos-arm64 SKIP_NOTARIZE=1
 #   make release-macos-x64  SKIP_NOTARIZE=1
+#
+# Release -- Linux / Windows distributable archives
+#   make release-linux          .tar.gz
+#   make release-windows        .zip
 
 DESKTOP  := src/JagFx.Desktop
 SCRIPTS  := scripts
 CONF     := Release
+VERSION  := $(shell grep -oE '<Version>[^<]+' Directory.Build.props | head -1 | sed 's/<Version>//')
 
 NOTARIZE_FLAGS := $(if $(SKIP_NOTARIZE),--skip-notarize)
 
 .PHONY: run build test \
         publish-macos-arm64 publish-macos-x64 publish-windows publish-linux \
-        release-macos-arm64 release-macos-x64 release-macos
+        release-macos-arm64 release-macos-x64 release-macos \
+        release-linux release-windows
 
 # -- Development --------------------------------------------------------------
 
@@ -64,3 +70,13 @@ release-macos-x64:
 	$(SCRIPTS)/notarize-macos.sh $(NOTARIZE_FLAGS) osx-x64
 
 release-macos: release-macos-arm64 release-macos-x64
+
+# -- Linux / Windows distributable archives ------------------------------------
+
+release-linux: publish-linux
+	rm -f publish/linux-x64/*.pdb
+	tar -czf publish/JagFx-$(VERSION)-linux-x64.tar.gz -C publish/linux-x64 .
+
+release-windows: publish-windows
+	rm -f publish/win-x64/*.pdb
+	cd publish/win-x64 && zip -rq ../JagFx-$(VERSION)-win-x64.zip .
