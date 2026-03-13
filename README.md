@@ -2,9 +2,9 @@
 
 <p align="left">
   <img
-    src="assets/relic_unlock_spinning_hover.png"
-    alt="Relic Unlock Spinning Hover"
-    onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/xsyetopz/JagFx/main/assets/relic_unlock_spinning_hover.png';"
+    src="assets/370_cow_death.png"
+    alt="Cow Death"
+    onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/xsyetopz/JagFx/main/assets/370_cow_death.png';"
   >
 </p>
 
