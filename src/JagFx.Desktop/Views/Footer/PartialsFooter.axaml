@@ -14,23 +14,31 @@
                     CornerRadius="2" Margin="1,2" Padding="2">
                 <StackPanel Spacing="1">
                     <Border Background="{StaticResource SurfaceCellHeaderBrush}" Padding="2,1" Margin="-2,-2,-2,0" CornerRadius="2,2,0,0">
-                        <TextBlock Text="{Binding DisplayIndex, StringFormat='PARTIAL {0}'}"
-                                   FontSize="8" FontWeight="Bold"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   HorizontalAlignment="Center" />
+                        <Grid ColumnDefinitions="Auto,*">
+                            <CheckBox Grid.Column="0" IsChecked="{Binding IsActive}"
+                                      MinWidth="14" MinHeight="14"
+                                      Padding="0" Margin="2,0,0,0"
+                                      VerticalAlignment="Center"
+                                      ToolTip.Tip="Toggle partial active" />
+                            <TextBlock Grid.Column="1" Text="{Binding DisplayIndex, StringFormat='PARTIAL {0}'}"
+                                       FontSize="8" FontWeight="Bold"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
                     </Border>
                     <Grid ColumnDefinitions="*,*,*">
                         <controls:KnobControl Grid.Column="0"
                                               Value="{Binding PitchOffsetSemitones}"
-                                              Minimum="-128" Maximum="127"
+                                              Minimum="-128" Maximum="127" DefaultValue="0"
                                               Label="PIT" Step="1" FormatString="F0" Unit="st"
                                               Height="32"
                                               IsEnabled="{Binding IsActive}" />
                         <controls:KnobControl Grid.Column="1"
                                               Value="{Binding Amplitude, Converter={StaticResource RawToPercentConverter}}"
-                                              Minimum="0" Maximum="100"
+                                              Minimum="0" Maximum="100" DefaultValue="100"
                                               Label="VOL" Step="0.5" FormatString="F1" Unit="%"
-                                              Height="32" />
+                                              Height="32"
+                                              IsEnabled="{Binding IsActive}" />
                         <controls:KnobControl Grid.Column="2"
                                               Value="{Binding DelayMs}"
                                               Minimum="0" Maximum="65535"
