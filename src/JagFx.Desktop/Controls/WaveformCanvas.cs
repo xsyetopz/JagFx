@@ -75,19 +75,18 @@ public class WaveformCanvas : Control
 
         context.FillRectangle(ThemeColors.CanvasBackgroundBrush, new Rect(0, 0, w, h));
 
+        var cy = h / 2;
+        context.DrawLine(ThemeColors.MidPen, new Point(0, cy), new Point(w, cy));
+
         var samples = Samples;
         if (samples is null || samples.Length == 0) return;
 
         using var clip = context.PushClip(new Rect(0, 0, w, h));
 
-        var cy = h / 2;
         var scale = h * 0.45;
         var effectiveW = w * ZoomLevel;
         var step = (double)samples.Length / effectiveW;
         var offset = ScrollOffset;
-
-        // Center line
-        context.DrawLine(ThemeColors.MidPen, new Point(0, cy), new Point(w, cy));
 
         // Min/max per column rendering
         var pen = ThemeColors.WaveformPen;
