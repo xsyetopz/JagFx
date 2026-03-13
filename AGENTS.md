@@ -20,7 +20,7 @@ dotnet test         # Must pass all tests before any PR
 | `JagFx.Io`        | Binary reader/writer, JSON serialization (`Json/`), WAV writer                      |
 | `JagFx.Synthesis` | DSP engine: `PatchRenderer`, `VoiceSynthesizer`, `AudioFilter`                      |
 | `JagFx.Cli`       | CLI commands via `System.CommandLine`: `convert`, `inspect`, `to-json`, `from-json` |
-| `JagFx.Desktop`   | Avalonia 11 MVVM desktop editor                                                     |
+| `JagFx.Desktop`   | Avalonia 11 MVVM desktop editor with custom canvas controls                         |
 | `JagFx.TestData`  | Embedded hex resources for test fixtures                                            |
 
 ## Key Patterns
@@ -31,6 +31,9 @@ dotnet test         # Must pass all tests before any PR
 - **CLI commands**: class extending `Command`, registered in `JagFxCli.BuildRootCommand()`
 - **Tests**: xUnit with `TestResources.GetBytes("name")` for embedded hex fixtures
 - **Desktop**: MVVM with `CommunityToolkit.Mvvm`, service-based architecture
+- **Controls**: custom Avalonia canvas controls (`EnvelopeCanvas`, `WaveformCanvas`, `PoleZeroCanvas`, `KnobControl`) in `Controls/`
+- **DAW-style interactions**: double-click to insert breakpoints, right-click context menu, Delete key removal, cursor feedback
+- **Theme**: `ThemeColors.cs` centralizes rendering color constants; `Colors.axaml` defines XAML-side resource brushes
 
 ## Rules
 

@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.2.0]
+
+### Added
+
+- **DAW-style envelope editing** -- double-click to insert breakpoints, right-click context menu (Delete Point / Add Point Here / Add Point at End), Delete/Backspace key to remove selected point, cursor feedback (Hand over breakpoints, Cross over lines), visual selection indicator
+- **Knob double-click-to-reset** -- `DefaultValue` property on `KnobControl`; double-click resets to default (or minimum if unset)
+- **Partial active toggle** -- checkbox in partials footer header to enable/disable individual partials
+
+### Changed
+
+- **Darker UI theme** -- all surface colors shifted darker (`SurfaceBase` #333→#1a1a, `SurfaceCell` #404040→#2a2a2a, etc.), subtler borders, brighter text (#f0f0f0→#ffffff)
+- **Knob visuals** -- darker background arc (#505050→#333333), darker fill (#4a4a4a→#1a1a1a), brighter labels (#888→#aaa); re-renders on `IsEnabled` change
+- **Waveform center line** -- drawn before clip region so it's visible even with no samples
+- **Partials footer** -- knobs gain `DefaultValue` bindings (PIT=0, VOL=100, DLY=0)
+
+### Removed
+
+- `PartialsMatrix.axaml` / `.axaml.cs` (unused inspector view)
+
+## [2.1.0]
+
 ### Added
 
 - **JSON interchange format** -- a human-readable JSON representation of `.synth` patches for programmatic creation and inspection. Includes `SynthJsonModels` (DTOs), `SynthJsonMapper` (domain ↔ DTO), and `SynthJsonSerializer` (public API) in `JagFx.Io.Json`. Uses string waveform names (`"sine"`, `"square"`, etc.), raw Q16 integers for envelope values (round-trip safe), and structured filter coefficients (`feedforward`/`feedback` × `baseline`/`modulated`). Optional fields default to sensible values when omitted.

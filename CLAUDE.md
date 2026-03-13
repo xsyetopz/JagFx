@@ -35,7 +35,10 @@ src/
   JagFx.Io/          # SynthFileReader/Writer (binary), Json/ (SynthJsonSerializer), WaveFileWriter
   JagFx.Synthesis/   # PatchRenderer, VoiceSynthesizer, AudioFilter, EnvelopeGenerator
   JagFx.Cli/         # System.CommandLine CLI: convert, inspect, to-json, from-json
-  JagFx.Desktop/     # Avalonia MVVM app with custom canvas controls
+  JagFx.Desktop/     # Avalonia MVVM app
+    Controls/        # EnvelopeCanvas, WaveformCanvas, PoleZeroCanvas, KnobControl
+    ViewModels/      # MVVM view models (CommunityToolkit.Mvvm)
+    Views/           # AXAML views: Inspector, SignalChain, Footer, Header
 libs/
   JavaRandom/         # Java-compatible RNG (for OSRS noise waveform)
   SmartInt/           # Variable-length integer codec
@@ -58,6 +61,8 @@ specs/
 - **Commit style**: `[scope:] verb lowercase` (e.g. `synth reader: consolidate filter reading`)
 - **No .editorconfig** — follow existing code style in each file
 - **Version**: managed in `Directory.Build.props`
+- **Canvas controls**: DAW-style interactions (double-click insert, right-click menu, Delete key, cursor feedback)
+- **Theme colors**: `ThemeColors.cs` centralizes rendering constants; `Colors.axaml` for XAML resource brushes
 
 ## Binary format notes
 
