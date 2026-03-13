@@ -1,9 +1,9 @@
 <Project>
   <PropertyGroup>
-    <Version>2.0.1</Version>
-    <AssemblyVersion>2.0.1.0</AssemblyVersion>
-    <FileVersion>2.0.10</FileVersion>
-    <InformationalVersion>2.0.1</InformationalVersion>
+    <Version>2.1.0</Version>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+    <FileVersion>2.1.0.0</FileVersion>
+    <InformationalVersion>2.1.0</InformationalVersion>
     <Company>JagFX</Company>
     <Product>JagFX</Product>
     <Copyright>Copyright © 2026 JagFX Contributors</Copyright>
