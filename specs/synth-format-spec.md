@@ -281,7 +281,7 @@ All tables are computed once at initialization.
 
 - **Size**: 32,768 entries
 - **RNG**: Java-compatible LCG seeded with `0` (48-bit state, multiplier `0x5DEECE66D`, addend `0xB`)
-- **Formula**: $\text{noiseTable}[i] = (\text{nextInt}() \mathbin{\&} 2) - 1 \in \{-1, +1\}$
+- **Formula**: $\text{noiseTable}[i] = (\text{nextInt}() \land 2) - 1 \in \{-1, +1\}$
 
 ### 7.3 Semitone Cache
 
@@ -300,7 +300,7 @@ All tables are computed once at initialization.
 
 ## 8. Waveform Generation
 
-All waveforms use a 32-bit signed phase accumulator. Let $\varphi$ denote the raw accumulator and $A$ the amplitude. Define effective phase $\tilde{\varphi} = \varphi \mathbin{\&} \text{0x7FFF}$.
+All waveforms use a 32-bit signed phase accumulator. Let $\varphi$ denote the raw accumulator and $A$ the amplitude. Define effective phase $\tilde{\varphi} = \varphi \land \text{0x7FFF}$.
 
 $$
 \text{GenerateSample}(A, \varphi, w) = \begin{cases}
@@ -308,7 +308,7 @@ $$
 +A \text{ if } \tilde{\varphi} < 16384,\; -A \text{ otherwise} & w = \text{Square} \\
 \lfloor \text{sineTable}[\tilde{\varphi}] \cdot A / 2^{14} \rfloor & w = \text{Sine} \\
 \lfloor \tilde{\varphi} \cdot A / 2^{14} \rfloor - A & w = \text{Saw} \\
-\text{noiseTable}[\lfloor \varphi / 2607 \rfloor \mathbin{\&} \text{0x7FFF}] \cdot A & w = \text{Noise}
+\text{noiseTable}[\lfloor \varphi / 2607 \rfloor \land \text{0x7FFF}] \cdot A & w = \text{Noise}
 \end{cases}
 $$
 
