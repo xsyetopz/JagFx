@@ -2,24 +2,24 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- Base surface colors -->
-    <Color x:Key="SurfaceBase">#333333</Color>
+    <Color x:Key="SurfaceBase">#1a1a1a</Color>
     <Color x:Key="SurfaceGraph">#000000</Color>
-    <Color x:Key="SurfaceHeader">#3a3a3a</Color>
-    <Color x:Key="SurfacePanel">#3c3c3c</Color>
-    <Color x:Key="SurfaceCell">#404040</Color>
-    <Color x:Key="SurfaceCellHeader">#444444</Color>
-    <Color x:Key="SurfaceInput">#2a2a2a</Color>
-    <Color x:Key="SurfaceFooter">#333333</Color>
+    <Color x:Key="SurfaceHeader">#222222</Color>
+    <Color x:Key="SurfacePanel">#242424</Color>
+    <Color x:Key="SurfaceCell">#2a2a2a</Color>
+    <Color x:Key="SurfaceCellHeader">#2e2e2e</Color>
+    <Color x:Key="SurfaceInput">#000000</Color>
+    <Color x:Key="SurfaceFooter">#1a1a1a</Color>
 
     <!-- Border colors -->
-    <Color x:Key="BorderDefault">#555555</Color>
-    <Color x:Key="BorderSubtle">#4a4a4a</Color>
+    <Color x:Key="BorderDefault">#3a3a3a</Color>
+    <Color x:Key="BorderSubtle">#2e2e2e</Color>
     <Color x:Key="BorderAccent">#009E73</Color>
 
     <!-- Text colors -->
-    <Color x:Key="TextPrimary">#f0f0f0</Color>
-    <Color x:Key="TextSecondary">#aaaaaa</Color>
-    <Color x:Key="TextMuted">#777777</Color>
+    <Color x:Key="TextPrimary">#ffffff</Color>
+    <Color x:Key="TextSecondary">#cccccc</Color>
+    <Color x:Key="TextMuted">#999999</Color>
     <Color x:Key="TextButton">#ffffff</Color>
     <Color x:Key="TextAccent">#009E73</Color>
 
