@@ -83,24 +83,34 @@ public class WaveformCanvas : Control
         var cy = h / 2;
         var scale = h * 0.45;
         var effectiveW = w * ZoomLevel;
-        var step = Math.Max(1.0, (double)samples.Length / effectiveW);
+        var step = (double)samples.Length / effectiveW;
         var offset = ScrollOffset;
 
-        Point? prev = null;
-        for (double i = 0; i < samples.Length; i += step)
+        // Center line
+        context.DrawLine(ThemeColors.MidPen, new Point(0, cy), new Point(w, cy));
+
+        // Min/max per column rendering
+        var pen = ThemeColors.WaveformPen;
+        for (int px = 0; px < (int)w; px++)
         {
-            var x = i / step - offset;
-            if (x > w) break;
-            var y = cy - samples[(int)i] * scale;
-            var pt = new Point(x, Math.Clamp(y, 0, h));
+            var sampleStart = (int)((px + offset) * step);
+            var sampleEnd = (int)((px + 1 + offset) * step);
+            sampleEnd = Math.Min(sampleEnd, samples.Length);
+            if (sampleStart >= samples.Length) break;
+            if (sampleStart < 0) continue;
 
-            if (prev.HasValue && x >= 0)
-                context.DrawLine(ThemeColors.WaveformPen, prev.Value, pt);
+            float min = float.MaxValue, max = float.MinValue;
+            for (int j = sampleStart; j < sampleEnd; j++)
+            {
+                if (samples[j] < min) min = samples[j];
+                if (samples[j] > max) max = samples[j];
+            }
 
-            if (x >= 0)
-                prev = pt;
-            else
-                prev = null;
+            if (min == float.MaxValue) continue;
+
+            var yMin = cy - min * scale;
+            var yMax = cy - max * scale;
+            context.DrawLine(pen, new Point(px, yMin), new Point(px, yMax));
         }
 
         // Playback position marker
