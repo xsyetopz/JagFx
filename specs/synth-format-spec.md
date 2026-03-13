@@ -210,7 +210,7 @@ The pole config byte packs two 4-bit pole counts (max 15 per direction, typical 
 
 Coefficients are read in two phases across both directions (ch0 then ch1):
 
-**Phase 0 (baseline):** For each direction with $\text{poleCount} > 0$, read $\text{poleCount}$ pairs of $(\\text{frequency}, \text{magnitude})$ as `u16`.
+**Phase 0 (baseline):** For each direction with $\text{poleCount} > 0$, read $\text{poleCount}$ pairs of $(\text{frequency}, \text{magnitude})$ as `u16`.
 
 **Phase 1 (modulated):** For each direction, for each pole index $p$: if bit $(d \cdot 4 + p)$ of the modulation mask is **set**, read a new pair; if **clear**, copy phase-0 values.
 
@@ -551,7 +551,7 @@ a_0^{-1} \leftarrow 10^{-\hat{g} \cdot 0.0030517578 / 20}
 $$
 
 $$
-\text{inverseA0\_Q16} \leftarrow \lfloor a_0^{-1} \cdot 65536 \rfloor
+\text{inverseA0}\_\text{Q16} \leftarrow \lfloor a_0^{-1} \cdot 65536 \rfloor
 $$
 
 The constant $0.0030517578 \approx 1/327.68$ maps the raw gain value to decibels.
@@ -593,7 +593,7 @@ After SOS cascade construction:
 - **Feedforward** (direction 0): scaled by floating-point inverse A₀ before quantization.
 - **Feedback** (direction 1): used directly.
 
-All coefficients quantized to Q16: $\text{coeff\_Q16}[i] = \lfloor \text{sos}[d, i] \cdot 65536 \rfloor$. Total per direction: $2 \cdot \text{poleCount}$.
+All coefficients quantized to Q16: $\text{coeff}\_\text{Q16}[i] = \lfloor \text{sos}[d, i] \cdot 65536 \rfloor$. Total per direction: $2 \cdot \text{poleCount}$.
 
 ### 11.4 Sample Processing
 
@@ -606,7 +606,7 @@ The filter processes the buffer in three phases:
 For each sample $n$:
 
 $$
-\text{acc} \leftarrow \lfloor \text{input}[n + K_\text{ff}] \cdot \text{inverseA0\_Q16} / 2^{16} \rfloor + \sum_{k=0}^{K_\text{ff}-1} \lfloor \text{input}[n + K_\text{ff} - 1 - k] \cdot \text{ff}[k] / 2^{16} \rfloor
+\text{acc} \leftarrow \lfloor \text{input}[n + K_\text{ff}] \cdot \text{inverseA0}\_\text{Q16} / 2^{16} \rfloor + \sum_{k=0}^{K_\text{ff}-1} \lfloor \text{input}[n + K_\text{ff} - 1 - k] \cdot \text{ff}[k] / 2^{16} \rfloor
 $$
 
 $$
