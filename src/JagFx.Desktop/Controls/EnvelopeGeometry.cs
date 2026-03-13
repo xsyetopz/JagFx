@@ -89,6 +89,46 @@ public readonly struct EnvelopeGeometry
     }
 
     /// <summary>
+    /// Tests whether a point is near any line segment between breakpoints.
+    /// Returns the segment index (0-based into Segments) if within radius, or -1 if no hit.
+    /// </summary>
+    public int LineHitTest(Point pos, double hitRadius = 6)
+    {
+        for (var i = 0; i < Points.Length - 1; i++)
+        {
+            var a = Points[i];
+            var b = Points[i + 1];
+            var dx = b.X - a.X;
+            var dy = b.Y - a.Y;
+            var lenSq = dx * dx + dy * dy;
+
+            double t;
+            if (lenSq < 0.001)
+                t = 0;
+            else
+                t = Math.Clamp(((pos.X - a.X) * dx + (pos.Y - a.Y) * dy) / lenSq, 0, 1);
+
+            var projX = a.X + t * dx;
+            var projY = a.Y + t * dy;
+            var distSq = (pos.X - projX) * (pos.X - projX) + (pos.Y - projY) * (pos.Y - projY);
+
+            if (distSq <= hitRadius * hitRadius)
+                return i;
+        }
+
+        return -1;
+    }
+
+    /// <summary>
+    /// Converts a canvas X position back to cumulative time.
+    /// </summary>
+    public double XToTime(double canvasX, double totalDuration, double scrollOffset)
+    {
+        if (PlotWidth <= 0 || totalDuration <= 0) return 0;
+        return (canvasX + scrollOffset - Padding) / PlotWidth * totalDuration;
+    }
+
+    /// <summary>
     /// Adjusts the duration of the segment at segmentIndex based on the canvas X position,
     /// compensating the next segment to keep total duration constant.
     /// </summary>

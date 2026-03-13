@@ -37,6 +37,9 @@ public class EnvelopeCanvas : Control
 
     private static readonly int[] ZoomLevels = [1, 2, 4];
 
+    private static readonly IPen SelectionPen = new Pen(ThemeColors.AccentBrush, 1.5).ToImmutable();
+    private static readonly IBrush SelectionBrush = new SolidColorBrush(Color.FromArgb(80, 0, 158, 115)).ToImmutable();
+
     private int _dragIndex = -1;
     private double _dragMinLevel;
     private double _dragRange;
@@ -46,6 +49,8 @@ public class EnvelopeCanvas : Control
     private bool _isPanning;
     private double _panStartX;
     private double _panStartOffset;
+
+    private int _selectedIndex = -1;
 
     public EnvelopeViewModel? Envelope
     {
@@ -93,6 +98,11 @@ public class EnvelopeCanvas : Control
     {
         get => GetValue(DisplayModeProperty);
         set => SetValue(DisplayModeProperty, value);
+    }
+
+    public EnvelopeCanvas()
+    {
+        Focusable = true;
     }
 
     static EnvelopeCanvas()
@@ -223,8 +233,17 @@ public class EnvelopeCanvas : Control
             context.DrawLine(linePen, points[i], points[i + 1]);
 
         const double s = 3;
-        foreach (var pt in points)
+        const double selR = 5;
+        for (var i = 0; i < points.Length; i++)
         {
+            var pt = points[i];
+
+            // Selection highlight for breakpoints (index i corresponds to segment i-1)
+            if (_selectedIndex >= 0 && i == _selectedIndex + 1)
+            {
+                context.DrawEllipse(SelectionBrush, SelectionPen, pt, selR, selR);
+            }
+
             context.DrawLine(ThemeColors.MarkerPen, new Point(pt.X - s, pt.Y - s), new Point(pt.X + s, pt.Y + s));
             context.DrawLine(ThemeColors.MarkerPen, new Point(pt.X - s, pt.Y + s), new Point(pt.X + s, pt.Y - s));
         }
@@ -242,14 +261,50 @@ public class EnvelopeCanvas : Control
         var env = Envelope;
         if (env is null || env.Segments.Count == 0) return;
 
-        var geo = EnvelopeGeometry.Compute(env, Bounds.Width, Bounds.Height, ZoomLevel, ScrollOffset);
-        _dragIndex = geo.HitTest(e.GetPosition(this));
+        var pos = e.GetPosition(this);
+        var geo = EnvelopeGeometry.Compute(env, Bounds.Width, Bounds.Height, ZoomLevel, ScrollOffset, DisplayMode);
+        var props = e.GetCurrentPoint(this).Properties;
+
+        // Right-click → context menu
+        if (props.IsRightButtonPressed)
+        {
+            ShowContextMenu(pos, geo, env);
+            e.Handled = true;
+            return;
+        }
+
+        var hitIndex = geo.HitTest(pos);
+
+        // Double-click on empty space near a line → insert point
+        if (e.ClickCount == 2 && hitIndex < 0)
+        {
+            var lineIndex = geo.LineHitTest(pos);
+            if (lineIndex >= 0)
+            {
+                InsertPointOnLine(lineIndex, pos, geo, env);
+                e.Handled = true;
+                return;
+            }
+        }
+
+        _dragIndex = hitIndex;
 
         if (_dragIndex >= 0)
         {
-            _dragMinLevel = Math.Min(env.StartValue, env.Segments.Min(s => s.TargetLevel));
-            _dragRange = Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel)) - _dragMinLevel;
-            if (_dragRange <= 0) _dragRange = 1;
+            _selectedIndex = _dragIndex;
+            Focus();
+
+            if (DisplayMode is EnvelopeDisplayMode.FullScale or EnvelopeDisplayMode.Normalized)
+            {
+                _dragMinLevel = 0;
+                _dragRange = 65535;
+            }
+            else
+            {
+                _dragMinLevel = Math.Min(env.StartValue, env.Segments.Min(s => s.TargetLevel));
+                _dragRange = Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel)) - _dragMinLevel;
+                if (_dragRange <= 0) _dragRange = 1;
+            }
             _dragTotalDuration = env.Segments.Sum(s => s.Duration);
             if (_dragTotalDuration <= 0) _dragTotalDuration = 1;
             e.Pointer.Capture(this);
@@ -257,11 +312,18 @@ public class EnvelopeCanvas : Control
         }
         else if (ZoomLevel > 1)
         {
+            _selectedIndex = -1;
+            InvalidateVisual();
             _isPanning = true;
-            _panStartX = e.GetPosition(this).X;
+            _panStartX = pos.X;
             _panStartOffset = ScrollOffset;
             e.Pointer.Capture(this);
             e.Handled = true;
+        }
+        else
+        {
+            _selectedIndex = -1;
+            InvalidateVisual();
         }
     }
 
@@ -277,40 +339,64 @@ public class EnvelopeCanvas : Control
             return;
         }
 
-        if (_dragIndex < 0) return;
-
-        var env = Envelope;
-        if (env is null || _dragIndex >= env.Segments.Count) return;
-
-        var pos = e.GetPosition(this);
-        var level = EnvelopeGeometry.YToPeakLevel(pos.Y, Bounds.Height, _dragMinLevel, _dragRange);
-        if (IsSnapEnabled)
-            level = EnvelopeGeometry.SnapLevel(level, _dragMinLevel, _dragRange, ZoomLevel);
-        env.Segments[_dragIndex].TargetLevel = level;
-        EnvelopeGeometry.AdjustDuration(pos.X, Bounds.Width, _dragIndex, env, _dragTotalDuration, ZoomLevel, ScrollOffset);
-        if (IsSnapEnabled)
+        if (_dragIndex >= 0)
         {
-            var preDur = env.Segments[_dragIndex].Duration;
-            var snappedDur = EnvelopeGeometry.SnapDuration(preDur, _dragTotalDuration, ZoomLevel);
-            if (_dragIndex + 1 < env.Segments.Count)
+            var env = Envelope;
+            if (env is null || _dragIndex >= env.Segments.Count) return;
+
+            var pos = e.GetPosition(this);
+            var level = EnvelopeGeometry.YToPeakLevel(pos.Y, Bounds.Height, _dragMinLevel, _dragRange);
+            if (IsSnapEnabled)
+                level = EnvelopeGeometry.SnapLevel(level, _dragMinLevel, _dragRange, ZoomLevel);
+            env.Segments[_dragIndex].TargetLevel = level;
+            EnvelopeGeometry.AdjustDuration(pos.X, Bounds.Width, _dragIndex, env, _dragTotalDuration, ZoomLevel, ScrollOffset);
+            if (IsSnapEnabled)
             {
-                var snapDelta = snappedDur - preDur;
-                var nextDur = env.Segments[_dragIndex + 1].Duration - snapDelta;
-                if (nextDur >= 1)
+                var preDur = env.Segments[_dragIndex].Duration;
+                var snappedDur = EnvelopeGeometry.SnapDuration(preDur, _dragTotalDuration, ZoomLevel);
+                if (_dragIndex + 1 < env.Segments.Count)
+                {
+                    var snapDelta = snappedDur - preDur;
+                    var nextDur = env.Segments[_dragIndex + 1].Duration - snapDelta;
+                    if (nextDur >= 1)
+                    {
+                        env.Segments[_dragIndex].Duration = snappedDur;
+                        env.Segments[_dragIndex + 1].Duration = nextDur;
+                    }
+                }
+                else
                 {
                     env.Segments[_dragIndex].Duration = snappedDur;
-                    env.Segments[_dragIndex + 1].Duration = nextDur;
                 }
+            }
+            var seg = env.Segments[_dragIndex];
+            KnobControl.RaiseHint($"Segment {_dragIndex + 1}: Level={seg.TargetLevel}, Duration={seg.Duration}");
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+
+        // Cursor feedback when not dragging or panning
+        if (!IsThumbnail)
+        {
+            var env = Envelope;
+            if (env is not null && env.Segments.Count > 0)
+            {
+                var pos = e.GetPosition(this);
+                var geo = EnvelopeGeometry.Compute(env, Bounds.Width, Bounds.Height, ZoomLevel, ScrollOffset, DisplayMode);
+
+                if (geo.HitTest(pos) >= 0)
+                    Cursor = new Cursor(StandardCursorType.Hand);
+                else if (geo.LineHitTest(pos) >= 0)
+                    Cursor = new Cursor(StandardCursorType.Cross);
+                else
+                    Cursor = Cursor.Default;
             }
             else
             {
-                env.Segments[_dragIndex].Duration = snappedDur;
+                Cursor = Cursor.Default;
             }
         }
-        var seg = env.Segments[_dragIndex];
-        KnobControl.RaiseHint($"Segment {_dragIndex + 1}: Level={seg.TargetLevel}, Duration={seg.Duration}");
-        InvalidateVisual();
-        e.Handled = true;
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
@@ -349,6 +435,127 @@ public class EnvelopeCanvas : Control
             ZoomLevel = ZoomLevels[currentIndex - 1];
 
         e.Handled = true;
+    }
+
+    #endregion
+
+    #region Keyboard interaction
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+
+        if (e.Key is Key.Delete or Key.Back)
+        {
+            var env = Envelope;
+            if (env is null || _selectedIndex < 0 || _selectedIndex >= env.Segments.Count) return;
+            if (env.Segments.Count <= 1) return;
+
+            env.RemoveSegmentAt(_selectedIndex);
+            _selectedIndex = Math.Min(_selectedIndex, env.Segments.Count - 1);
+            InvalidateVisual();
+            e.Handled = true;
+        }
+    }
+
+    #endregion
+
+    #region Context menu
+
+    private void ShowContextMenu(Point pos, EnvelopeGeometry geo, EnvelopeViewModel env)
+    {
+        var menu = new MenuFlyout();
+
+        var pointIndex = geo.HitTest(pos);
+        if (pointIndex >= 0)
+        {
+            _selectedIndex = pointIndex;
+            InvalidateVisual();
+
+            if (env.Segments.Count > 1)
+            {
+                var deleteItem = new MenuItem { Header = "Delete Point" };
+                var idx = pointIndex;
+                deleteItem.Click += (_, _) =>
+                {
+                    env.RemoveSegmentAt(idx);
+                    _selectedIndex = -1;
+                    InvalidateVisual();
+                };
+                menu.Items.Add(deleteItem);
+            }
+        }
+        else
+        {
+            var lineIndex = geo.LineHitTest(pos);
+            if (lineIndex >= 0)
+            {
+                var addItem = new MenuItem { Header = "Add Point Here" };
+                var li = lineIndex;
+                addItem.Click += (_, _) =>
+                {
+                    InsertPointOnLine(li, pos, geo, env);
+                };
+                menu.Items.Add(addItem);
+            }
+            else
+            {
+                var addEndItem = new MenuItem { Header = "Add Point at End" };
+                addEndItem.Click += (_, _) =>
+                {
+                    env.AddSegment(100, 0);
+                    _selectedIndex = env.Segments.Count - 1;
+                    InvalidateVisual();
+                };
+                menu.Items.Add(addEndItem);
+            }
+        }
+
+        if (menu.Items.Count > 0)
+            menu.ShowAt(this, true);
+    }
+
+    #endregion
+
+    #region Point insertion
+
+    private void InsertPointOnLine(int lineIndex, Point pos, EnvelopeGeometry geo, EnvelopeViewModel env)
+    {
+        var totalDuration = env.Segments.Sum(s => s.Duration);
+        if (totalDuration <= 0) return;
+
+        var clickTime = geo.XToTime(pos.X, totalDuration, ScrollOffset);
+
+        // Calculate cumulative time up to the start of the segment at lineIndex
+        double segStartTime = 0;
+        for (var i = 0; i < lineIndex; i++)
+            segStartTime += env.Segments[i].Duration;
+
+        var seg = env.Segments[lineIndex];
+        var segEndTime = segStartTime + seg.Duration;
+
+        // Clamp click time within the segment
+        clickTime = Math.Clamp(clickTime, segStartTime + 1, segEndTime - 1);
+
+        var firstDuration = (int)Math.Max(1, clickTime - segStartTime);
+        var secondDuration = Math.Max(1, seg.Duration - firstDuration);
+
+        // Interpolate level between the previous point and this segment's target
+        var prevLevel = lineIndex == 0 ? env.StartValue : env.Segments[lineIndex - 1].TargetLevel;
+        var t = (double)firstDuration / seg.Duration;
+        var interpolatedLevel = (int)(prevLevel + t * (seg.TargetLevel - prevLevel));
+
+        // Shorten existing segment to the first portion
+        env.Segments[lineIndex].Duration = firstDuration;
+
+        // Insert new segment with remainder duration and original target level
+        env.InsertSegment(lineIndex + 1, secondDuration, seg.TargetLevel);
+
+        // Set the shortened segment's target to the interpolated level
+        env.Segments[lineIndex].TargetLevel = interpolatedLevel;
+
+        _selectedIndex = lineIndex;
+        InvalidateVisual();
     }
 
     #endregion

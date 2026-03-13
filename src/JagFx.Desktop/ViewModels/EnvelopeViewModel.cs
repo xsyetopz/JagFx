@@ -112,6 +112,18 @@ public partial class EnvelopeViewModel : ObservableObject
         OnPropertyChanged(nameof(IsEmpty));
     }
 
+    public void InsertSegment(int index, int duration, int targetLevel)
+    {
+        Segments.Insert(index, new SegmentViewModel
+        {
+            Index = index,
+            Duration = duration,
+            TargetLevel = targetLevel
+        });
+        ReindexSegments();
+        OnPropertyChanged(nameof(IsEmpty));
+    }
+
     public void RemoveSegmentAt(int index)
     {
         if (index >= 0 && index < Segments.Count)
