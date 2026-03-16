@@ -9,6 +9,24 @@ public static class AudioFilter
 {
     private const int MaxCoefficients = 8;
     private const int ChunkSize = 128;
+    private const float AmplitudeDbScaleFactor = 0.0015258789f;
+    private const float PhaseScaleFactor = 1.2207031e-4f;
+    private const double C1BaseFrequencyHz = 32.703197;
+    private const float GainScaleFactor = 0.0030517578f;
+
+    private readonly ref struct FilterProcessingContext(
+        Span<int> inputSpan,
+        Span<int> outputSpan,
+        FilterState state,
+        EnvelopeGenerator? envelopeEval,
+        int sampleCount)
+    {
+        public Span<int> InputSpan { get; } = inputSpan;
+        public Span<int> OutputSpan { get; } = outputSpan;
+        public FilterState State { get; } = state;
+        public EnvelopeGenerator? EnvelopeEval { get; } = envelopeEval;
+        public int SampleCount { get; } = sampleCount;
+    }
 
     public static void Apply(int[] buffer, Filter filter, EnvelopeGenerator? envelopeEval, int sampleCount)
     {
@@ -39,56 +57,56 @@ public static class AudioFilter
             return;
         }
 
-        ProcessInitialBlock(inputCopySpan, outSpan, state, envelopeEval, ffCount, fbCount, sampleCount);
-        ProcessMainBlocks(inputCopySpan, outSpan, state, envelopeEval, sampleCount, ref ffCount, ref fbCount);
-        ProcessFinalBlock(inputCopySpan, outSpan, state, envelopeEval, sampleCount, ffCount, fbCount);
+        var ctx = new FilterProcessingContext(inputCopySpan, outSpan, state, envelopeEval, sampleCount);
+        ProcessInitialBlock(ctx, ffCount, fbCount);
+        ProcessMainBlocks(ctx, ref ffCount, ref fbCount);
+        ProcessFinalBlock(ctx, ffCount, fbCount);
 
         AudioBufferPool.Release(tempBuffer);
     }
 
-    private static void ProcessInitialBlock(Span<int> inputCopySpan, Span<int> outSpan, FilterState state, EnvelopeGenerator? envelopeEval, int ffCount, int fbCount, int sampleCount)
+    private static void ProcessInitialBlock(FilterProcessingContext ctx, int ffCount, int fbCount)
     {
-        ProcessSampleRange(inputCopySpan, outSpan, state, envelopeEval, 0, fbCount, ffCount, fbCount, sampleCount);
+        ProcessSampleRange(ctx, 0, fbCount, ffCount, fbCount);
     }
 
-    private static void ProcessMainBlocks(Span<int> inputCopySpan, Span<int> outSpan, FilterState state, EnvelopeGenerator? envelopeEval, int sampleCount, ref int ffCount, ref int fbCount)
+    private static void ProcessMainBlocks(FilterProcessingContext ctx, ref int ffCount, ref int fbCount)
     {
         int pos = fbCount;
 
-        while (pos < sampleCount - ffCount)
+        while (pos < ctx.SampleCount - ffCount)
         {
-            int chunkEnd = Math.Min(pos + ChunkSize, sampleCount - ffCount);
-            ProcessSampleRange(inputCopySpan, outSpan, state, envelopeEval, pos, chunkEnd, ffCount, fbCount, sampleCount);
+            int chunkEnd = Math.Min(pos + ChunkSize, ctx.SampleCount - ffCount);
+            ProcessSampleRange(ctx, pos, chunkEnd, ffCount, fbCount);
             pos = chunkEnd;
         }
     }
 
-    private static void ProcessFinalBlock(Span<int> inputCopySpan, Span<int> outSpan, FilterState state, EnvelopeGenerator? envelopeEval, int sampleCount, int ffCount, int fbCount)
+    private static void ProcessFinalBlock(FilterProcessingContext ctx, int ffCount, int fbCount)
     {
-        ProcessSampleRange(inputCopySpan, outSpan, state, envelopeEval, sampleCount - ffCount, sampleCount, ffCount, fbCount, sampleCount, isFinal: true);
+        ProcessSampleRange(ctx, ctx.SampleCount - ffCount, ctx.SampleCount, ffCount, fbCount, isFinal: true);
     }
 
-    private static int ProcessSampleRange(Span<int> inputCopySpan, Span<int> outSpan, FilterState state,
-        EnvelopeGenerator? envelopeEval, int start, int end, int ffCount, int fbCount, int sampleCount, bool isFinal = false)
+    private static int ProcessSampleRange(FilterProcessingContext ctx, int start, int end, int ffCount, int fbCount, bool isFinal = false)
     {
         int lastEnvelopeValue = AudioConstants.FixedPoint.Scale;
         for (var n = start; n < end; n++)
         {
             if (isFinal)
             {
-                ApplyFilterToFinalSample(inputCopySpan, outSpan, state, n, ffCount, fbCount, sampleCount);
+                ApplyFilterToFinalSample(ctx.InputSpan, ctx.OutputSpan, ctx.State, n, ffCount, fbCount, ctx.SampleCount);
             }
             else
             {
-                ApplyFilterToSample(inputCopySpan, outSpan, state, n, ffCount, fbCount);
+                ApplyFilterToSample(ctx.InputSpan, ctx.OutputSpan, ctx.State, n, ffCount, fbCount);
             }
-            lastEnvelopeValue = envelopeEval?.Evaluate(sampleCount) ?? AudioConstants.FixedPoint.Scale;
+            lastEnvelopeValue = ctx.EnvelopeEval?.Evaluate(ctx.SampleCount) ?? AudioConstants.FixedPoint.Scale;
 
-            if (n + 1 < sampleCount)
+            if (n + 1 < ctx.SampleCount)
             {
                 var envelopeFactor = lastEnvelopeValue / (float)AudioConstants.FixedPoint.Scale;
-                ffCount = state.ComputeCoefficients(0, envelopeFactor);
-                fbCount = state.ComputeCoefficients(1, envelopeFactor);
+                ffCount = ctx.State.ComputeCoefficients(0, envelopeFactor);
+                fbCount = ctx.State.ComputeCoefficients(1, envelopeFactor);
             }
         }
         return lastEnvelopeValue;
@@ -150,7 +168,7 @@ public static class AudioFilter
         var mag0 = filter.PoleMagnitude[direction][0][pole];
         var mag1 = filter.PoleMagnitude[direction][1][pole];
         var interpolatedMag = Interpolate(mag0, mag1, factor);
-        var dbValue = interpolatedMag * 0.0015258789f;
+        var dbValue = interpolatedMag * AmplitudeDbScaleFactor;
         return 1.0f - (float)AudioMath.DecibelToLinear(-dbValue);
     }
 
@@ -159,13 +177,13 @@ public static class AudioFilter
         var phase0 = filter.PolePhase[dir][0][pole];
         var phase1 = filter.PolePhase[dir][1][pole];
         var interpolatedPhase = Interpolate(phase0, phase1, factor);
-        var scaledPhase = interpolatedPhase * 1.2207031e-4f;
+        var scaledPhase = interpolatedPhase * PhaseScaleFactor;
         return GetOctavePhase(scaledPhase);
     }
 
     private static float GetOctavePhase(float pow2Value)
     {
-        var frequencyHz = Math.Pow(2.0, pow2Value) * 32.703197;
+        var frequencyHz = Math.Pow(2.0, pow2Value) * C1BaseFrequencyHz;
         return (float)(frequencyHz * AudioMath.TwoPi / AudioConstants.SampleRate);
     }
 
@@ -201,7 +219,7 @@ public static class AudioFilter
             var unityGainStart = _filterModel.UnityGain[0];
             var unityGainEnd = _filterModel.UnityGain[1];
             var interpGain = Interpolate(unityGainStart, unityGainEnd, envelopeFactor);
-            var gainDb = interpGain * 0.0030517578f;
+            var gainDb = interpGain * GainScaleFactor;
             var floatInvA0 = (float)Math.Pow(0.1, gainDb / 20.0);
             return (int)(floatInvA0 * AudioConstants.FixedPoint.Scale);
         }

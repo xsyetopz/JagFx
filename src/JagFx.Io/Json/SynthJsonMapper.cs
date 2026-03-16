@@ -179,23 +179,9 @@ public static class SynthJsonMapper
         return ImmutableArray.Create(channel0, channel1);
     }
 
-    private static string WaveformToString(Waveform waveform) => waveform switch
-    {
-        Waveform.Off => "off",
-        Waveform.Square => "square",
-        Waveform.Sine => "sine",
-        Waveform.Saw => "saw",
-        Waveform.Noise => "noise",
-        _ => "off"
-    };
+    private static string WaveformToString(Waveform waveform) =>
+        WaveformExtensions.Names.TryGetValue(waveform, out var name) ? name : "off";
 
-    private static Waveform WaveformFromString(string waveform) => waveform.ToLowerInvariant() switch
-    {
-        "off" => Waveform.Off,
-        "square" => Waveform.Square,
-        "sine" => Waveform.Sine,
-        "saw" => Waveform.Saw,
-        "noise" => Waveform.Noise,
-        _ => Waveform.Off
-    };
+    private static Waveform WaveformFromString(string waveform) =>
+        WaveformExtensions.FromName(waveform);
 }

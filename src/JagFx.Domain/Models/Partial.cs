@@ -14,12 +14,21 @@ public record class Partial(Percent Amplitude, int PitchOffsetSemitones, Millise
 
 public static class WaveformExtensions
 {
-    public static Waveform FromId(int id) => id switch
+    public static readonly Dictionary<Waveform, string> Names = new()
     {
-        1 => Waveform.Square,
-        2 => Waveform.Sine,
-        3 => Waveform.Saw,
-        4 => Waveform.Noise,
-        _ => Waveform.Off
+        [Waveform.Off]    = "off",
+        [Waveform.Square] = "square",
+        [Waveform.Sine]   = "sine",
+        [Waveform.Saw]    = "saw",
+        [Waveform.Noise]  = "noise",
     };
+
+    private static readonly Dictionary<string, Waveform> _byName =
+        Names.ToDictionary(kv => kv.Value, kv => kv.Key);
+
+    public static Waveform FromId(int id) =>
+        (id >= 1 && id <= 4) ? (Waveform)id : Waveform.Off;
+
+    public static Waveform FromName(string name) =>
+        _byName.TryGetValue(name.ToLowerInvariant(), out var w) ? w : Waveform.Off;
 }

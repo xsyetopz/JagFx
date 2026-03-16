@@ -121,7 +121,7 @@ public class SynthJsonSerializerTests
         var voiceWithFilter = patch.ActiveVoices
             .FirstOrDefault(v => v.Voice.Filter != null);
 
-        if (voiceWithFilter == default) return; // Skip if no filter in this file
+        Assert.True(voiceWithFilter != default, "Test fixture must contain a voice with a filter");
 
         var filter = voiceWithFilter.Voice.Filter!;
         var json = SynthJsonSerializer.Serialize(patch);

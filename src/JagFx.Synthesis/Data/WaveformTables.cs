@@ -50,22 +50,16 @@ public static class WaveformTables
         return table;
     }
 
-    private static double[] CreateUnitCircleXArray()
-    {
-        var table = new double[CircleSegments + 1];
-        for (var i = 0; i <= CircleSegments; i++)
-        {
-            table[i] = Math.Cos(i * AudioMath.TwoPi / CircleSegments);
-        }
-        return table;
-    }
+    private static double[] CreateUnitCircleXArray() => CreateUnitCircleArray(Math.Cos);
 
-    private static double[] CreateUnitCircleYArray()
+    private static double[] CreateUnitCircleYArray() => CreateUnitCircleArray(Math.Sin);
+
+    private static double[] CreateUnitCircleArray(Func<double, double> trigFunc)
     {
         var table = new double[CircleSegments + 1];
         for (var i = 0; i <= CircleSegments; i++)
         {
-            table[i] = Math.Sin(i * AudioMath.TwoPi / CircleSegments);
+            table[i] = trigFunc(i * AudioMath.TwoPi / CircleSegments);
         }
         return table;
     }

@@ -200,13 +200,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             // If looping playback is active, re-render the playback buffer too
             if (IsPlaying)
             {
-                // Default loop region to full patch when looping with no valid loop markers
-                if (IsLooping && model.Loop.BeginMs >= model.Loop.EndMs && model.ActiveVoices.Any())
-                {
-                    var maxMs = model.ActiveVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
-                    if (maxMs > 0)
-                        model = model with { Loop = new LoopSegment(0, maxMs) };
-                }
+                model = DefaultLoopIfUnset(model);
 
                 var playbackBuffer = await SynthesisService.RenderAsync(model, loopCount: EffectiveLoopCount, voiceFilter: voiceFilter, ct: cts.Token);
                 if (cts.Token.IsCancellationRequested) return;
@@ -216,6 +210,17 @@ public partial class MainViewModel : ObservableObject, IDisposable
             }
         }
         catch (OperationCanceledException) { }
+    }
+
+    private Patch DefaultLoopIfUnset(Patch model)
+    {
+        if (IsLooping && model.Loop.BeginMs >= model.Loop.EndMs && model.ActiveVoices.Any())
+        {
+            var maxMs = model.ActiveVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
+            if (maxMs > 0)
+                return model with { Loop = new LoopSegment(0, maxMs) };
+        }
+        return model;
     }
 
     private void NormalizeAndSetOutput(AudioBuffer buffer)
@@ -398,7 +403,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (entry.Getter is not null)
         {
             SelectedEnvelope = entry.Getter(voice);
-            SelectedEnvelopeColor = slot.DefaultColor();
+            SelectedEnvelopeColor = Controls.ThemeColors.SlotColor(slot);
         }
         else
         {
@@ -472,13 +477,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         var model = Patch.ToModel();
         var voiceFilter = PlaySingleVoice ? Patch.SelectedVoiceIndex : -1;
 
-        // Default loop region to full patch when looping with no valid loop markers
-        if (IsLooping && model.Loop.BeginMs >= model.Loop.EndMs && model.ActiveVoices.Any())
-        {
-            var maxMs = model.ActiveVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
-            if (maxMs > 0)
-                model = model with { Loop = new LoopSegment(0, maxMs) };
-        }
+        model = DefaultLoopIfUnset(model);
 
         var buffer = await SynthesisService.RenderAsync(model, loopCount: EffectiveLoopCount, voiceFilter: voiceFilter);
         _cachedBuffer = buffer;

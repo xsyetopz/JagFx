@@ -37,9 +37,4 @@ public static class SignalChainSlotExtensions
         _ => slot.ToString(),
     };
 
-    public static string DefaultColor(this SignalChainSlot slot) => slot switch
-    {
-        SignalChainSlot.PoleZero or SignalChainSlot.Bode or SignalChainSlot.Filter => "#0072B2",
-        _ => "#F0E442",
-    };
 }

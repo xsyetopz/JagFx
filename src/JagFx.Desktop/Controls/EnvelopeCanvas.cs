@@ -35,20 +35,16 @@ public class EnvelopeCanvas : Control
     public static readonly StyledProperty<EnvelopeDisplayMode> DisplayModeProperty =
         AvaloniaProperty.Register<EnvelopeCanvas, EnvelopeDisplayMode>(nameof(DisplayMode), EnvelopeDisplayMode.FullScale);
 
-    private static readonly int[] ZoomLevels = [1, 2, 4];
-
     private static readonly IPen SelectionPen = new Pen(ThemeColors.AccentBrush, 1.5).ToImmutable();
     private static readonly IBrush SelectionBrush = new SolidColorBrush(Color.FromArgb(80, 0, 158, 115)).ToImmutable();
+
+    private readonly CanvasInteractionHelper _interaction = new();
 
     private int _dragIndex = -1;
     private double _dragMinLevel;
     private double _dragRange;
     private double _dragTotalDuration;
     private EnvelopeViewModel? _subscribedEnvelope;
-
-    private bool _isPanning;
-    private double _panStartX;
-    private double _panStartOffset;
 
     private int _selectedIndex = -1;
 
@@ -262,64 +258,27 @@ public class EnvelopeCanvas : Control
         if (env is null || env.Segments.Count == 0) return;
 
         var pos = e.GetPosition(this);
-        var geo = EnvelopeGeometry.Compute(env, Bounds.Width, Bounds.Height, ZoomLevel, ScrollOffset, DisplayMode);
         var props = e.GetCurrentPoint(this).Properties;
 
-        // Right-click → context menu
         if (props.IsRightButtonPressed)
         {
-            ShowContextMenu(pos, geo, env);
-            e.Handled = true;
+            HandleContextMenu(e, pos, env);
             return;
         }
 
+        var geo = EnvelopeGeometry.Compute(env, Bounds.Width, Bounds.Height, ZoomLevel, ScrollOffset, DisplayMode);
         var hitIndex = geo.HitTest(pos);
 
-        // Double-click on empty space near a line → insert point
         if (e.ClickCount == 2 && hitIndex < 0)
         {
-            var lineIndex = geo.LineHitTest(pos);
-            if (lineIndex >= 0)
-            {
-                InsertPointOnLine(lineIndex, pos, geo, env);
-                e.Handled = true;
-                return;
-            }
+            HandlePointInsert(e, pos, geo, env);
+            return;
         }
 
-        _dragIndex = hitIndex;
-
-        if (_dragIndex >= 0)
-        {
-            _selectedIndex = _dragIndex;
-            Focus();
-
-            if (DisplayMode is EnvelopeDisplayMode.FullScale or EnvelopeDisplayMode.Normalized)
-            {
-                _dragMinLevel = 0;
-                _dragRange = 65535;
-            }
-            else
-            {
-                _dragMinLevel = Math.Min(env.StartValue, env.Segments.Min(s => s.TargetLevel));
-                _dragRange = Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel)) - _dragMinLevel;
-                if (_dragRange <= 0) _dragRange = 1;
-            }
-            _dragTotalDuration = env.Segments.Sum(s => s.Duration);
-            if (_dragTotalDuration <= 0) _dragTotalDuration = 1;
-            e.Pointer.Capture(this);
-            e.Handled = true;
-        }
+        if (hitIndex >= 0)
+            HandleDragStart(e, env, hitIndex);
         else if (ZoomLevel > 1)
-        {
-            _selectedIndex = -1;
-            InvalidateVisual();
-            _isPanning = true;
-            _panStartX = pos.X;
-            _panStartOffset = ScrollOffset;
-            e.Pointer.Capture(this);
-            e.Handled = true;
-        }
+            HandlePanStart(e, pos);
         else
         {
             _selectedIndex = -1;
@@ -327,14 +286,62 @@ public class EnvelopeCanvas : Control
         }
     }
 
+    private void HandleContextMenu(PointerPressedEventArgs e, Point pos, EnvelopeViewModel env)
+    {
+        var geo = EnvelopeGeometry.Compute(env, Bounds.Width, Bounds.Height, ZoomLevel, ScrollOffset, DisplayMode);
+        ShowContextMenu(pos, geo, env);
+        e.Handled = true;
+    }
+
+    private void HandlePointInsert(PointerPressedEventArgs e, Point pos, EnvelopeGeometry geo, EnvelopeViewModel env)
+    {
+        var lineIndex = geo.LineHitTest(pos);
+        if (lineIndex >= 0)
+        {
+            InsertPointOnLine(lineIndex, pos, geo, env);
+            e.Handled = true;
+        }
+    }
+
+    private void HandleDragStart(PointerPressedEventArgs e, EnvelopeViewModel env, int hitIndex)
+    {
+        _dragIndex = hitIndex;
+        _selectedIndex = hitIndex;
+        Focus();
+
+        if (DisplayMode is EnvelopeDisplayMode.FullScale or EnvelopeDisplayMode.Normalized)
+        {
+            _dragMinLevel = 0;
+            _dragRange = 65535;
+        }
+        else
+        {
+            _dragMinLevel = Math.Min(env.StartValue, env.Segments.Min(s => s.TargetLevel));
+            _dragRange = Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel)) - _dragMinLevel;
+            if (_dragRange <= 0) _dragRange = 1;
+        }
+        _dragTotalDuration = env.Segments.Sum(s => s.Duration);
+        if (_dragTotalDuration <= 0) _dragTotalDuration = 1;
+        e.Pointer.Capture(this);
+        e.Handled = true;
+    }
+
+    private void HandlePanStart(PointerPressedEventArgs e, Point pos)
+    {
+        _selectedIndex = -1;
+        InvalidateVisual();
+        _interaction.BeginPan(pos.X, ScrollOffset);
+        e.Pointer.Capture(this);
+        e.Handled = true;
+    }
+
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
 
-        if (_isPanning)
+        if (_interaction.IsPanning)
         {
-            var dx = _panStartX - e.GetPosition(this).X;
-            ScrollOffset = Math.Clamp(_panStartOffset + dx, 0, MaxScrollOffset);
+            ScrollOffset = _interaction.ComputePanOffset(e.GetPosition(this).X, MaxScrollOffset);
             e.Handled = true;
             return;
         }
@@ -403,10 +410,10 @@ public class EnvelopeCanvas : Control
     {
         base.OnPointerReleased(e);
 
-        if (_isPanning)
+        if (_interaction.IsPanning)
         {
             e.Pointer.Capture(null);
-            _isPanning = false;
+            _interaction.EndPan();
             return;
         }
 
@@ -426,13 +433,7 @@ public class EnvelopeCanvas : Control
         base.OnPointerWheelChanged(e);
         if (IsThumbnail) return;
 
-        var currentIndex = Array.IndexOf(ZoomLevels, ZoomLevel);
-        if (currentIndex < 0) currentIndex = 0;
-
-        if (e.Delta.Y > 0 && currentIndex < ZoomLevels.Length - 1)
-            ZoomLevel = ZoomLevels[currentIndex + 1];
-        else if (e.Delta.Y < 0 && currentIndex > 0)
-            ZoomLevel = ZoomLevels[currentIndex - 1];
+        ZoomLevel = _interaction.StepZoom(ZoomLevel, e.Delta.Y);
 
         e.Handled = true;
     }

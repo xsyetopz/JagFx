@@ -37,11 +37,8 @@ public class ToJsonCommand : Command
             return 1;
         }
 
-        if (!File.Exists(input))
-        {
-            Console.Error.WriteLine($"Error: File not found: {input}");
+        if (!CommandHelpers.ValidateInputFile(input))
             return 1;
-        }
 
         try
         {

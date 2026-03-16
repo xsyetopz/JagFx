@@ -50,7 +50,7 @@ public partial class SignalChainPanel : UserControl
             for (var col = 0; col < 4; col++)
             {
                 var (slot, slotType) = Matrix[row, col];
-                var color = slot.DefaultColor();
+                var color = ThemeColors.SlotColor(slot);
 
                 var titleBlock = new TextBlock
                 {

@@ -23,12 +23,12 @@ public static class AudioMath
 
     public static double Clamp(double value, double min, double max)
     {
-        return Math.Max(min, Math.Min(max, value));
+        return Math.Clamp(value, min, max);
     }
 
     public static int Clamp(int value, int min, int max)
     {
-        return Math.Max(min, Math.Min(max, value));
+        return Math.Clamp(value, min, max);
     }
 
     public static void ClipInt16(int[] buffer, int length = -1)

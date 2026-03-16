@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using JagFx.Domain.Models;
 
 namespace JagFx.Desktop.Controls;
 
@@ -35,6 +36,15 @@ public static class ThemeColors
     public static readonly IPen SectionTracePen = new Pen(new SolidColorBrush(Color.Parse("#56B4E9")).ToImmutable(), 1).ToImmutable();
     public static readonly IPen WaveformPen = new Pen(AccentBrush, 1).ToImmutable();
     public static readonly IPen MarkerPen = new Pen(Brushes.White, 1).ToImmutable();
+
+    public static readonly Color VoiceSlotColor = EnvelopeLine;
+    public static readonly Color FilterSlotColor = FilterLine;
+
+    public static string SlotColor(SignalChainSlot slot) => slot switch
+    {
+        SignalChainSlot.PoleZero or SignalChainSlot.Bode or SignalChainSlot.Filter => "#0072B2",
+        _ => "#F0E442",
+    };
 
     public static double Snap(double v) => Math.Floor(v) + 0.5;
 }

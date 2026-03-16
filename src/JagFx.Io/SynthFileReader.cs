@@ -124,16 +124,19 @@ public static class SynthFileReader
             var endValue = _buf.ReadInt32BigEndian();
             var waveform = (waveformId >= 0 && waveformId <= 4) ? (Waveform)waveformId : Waveform.Off;
             var segmentLength = _buf.ReadUInt8();
+            return new Envelope(waveform, startValue, endValue, ReadSegmentPairs(segmentLength));
+        }
 
-            var segments = new List<Segment>(segmentLength);
-            for (var i = 0; i < segmentLength; i++)
+        private ImmutableList<Segment> ReadSegmentPairs(int count)
+        {
+            var segments = new List<Segment>(count);
+            for (var i = 0; i < count; i++)
             {
                 segments.Add(new Segment(
                     _buf.ReadUInt16BigEndian(),
                     _buf.ReadUInt16BigEndian()));
             }
-
-            return new Envelope(waveform, startValue, endValue, [.. segments]);
+            return [.. segments];
         }
 
         private (Envelope? first, Envelope? second) ReadOptionalEnvelopePair()
@@ -251,16 +254,7 @@ public static class SynthFileReader
         private Envelope ReadEnvelopeSegments()
         {
             var length = _buf.ReadUInt8();
-            var segments = new List<Segment>(length);
-
-            for (var i = 0; i < length; i++)
-            {
-                segments.Add(new Segment(
-                    _buf.ReadUInt16BigEndian(),
-                    _buf.ReadUInt16BigEndian()));
-            }
-
-            return new Envelope(Waveform.Off, 0, 0, [.. segments]);
+            return new Envelope(Waveform.Off, 0, 0, ReadSegmentPairs(length));
         }
 
         private bool DetectFilterPresent()
@@ -314,13 +308,13 @@ public static class SynthFileReader
             var poleCounts = ImmutableArray.Create(poleCount0, poleCount1);
             var unityGain = ImmutableArray.Create(unityGain0, unityGain1);
 
-            var (polePhase, poleMagnitude) = BuildFilterCoeffientArrays(
+            var (polePhase, poleMagnitude) = BuildFilterCoefficientArrays(
                 frequencies, magnitudes, poleCount0, poleCount1);
 
             return new Filter(poleCounts, unityGain, polePhase, poleMagnitude, modulationEnvelope);
         }
 
-        private static (ImmutableArray<ImmutableArray<ImmutableArray<int>>> polePhase, ImmutableArray<ImmutableArray<ImmutableArray<int>>> poleMagnitude) BuildFilterCoeffientArrays(
+        private static (ImmutableArray<ImmutableArray<ImmutableArray<int>>> polePhase, ImmutableArray<ImmutableArray<ImmutableArray<int>>> poleMagnitude) BuildFilterCoefficientArrays(
             int[,,] frequencies, int[,,] magnitudes, int poleCount0, int poleCount1)
         {
             var freqArray = new ImmutableArray<int>[2][];
@@ -335,8 +329,8 @@ public static class SynthFileReader
 
                 for (var phase = 0; phase < 2; phase++)
                 {
-                    freqArray[channel][phase] = BuildCoeffientArray(frequencies, channel, phase, maxPoles);
-                    magArray[channel][phase] = BuildCoeffientArray(magnitudes, channel, phase, maxPoles);
+                    freqArray[channel][phase] = BuildCoefficientArray(frequencies, channel, phase, maxPoles);
+                    magArray[channel][phase] = BuildCoefficientArray(magnitudes, channel, phase, maxPoles);
                 }
             }
 
@@ -352,7 +346,7 @@ public static class SynthFileReader
             return (polePhase, poleMagnitude);
         }
 
-        private static ImmutableArray<int> BuildCoeffientArray(
+        private static ImmutableArray<int> BuildCoefficientArray(
             int[,,] coefficients, int channel, int phase, int poles)
         {
             var builder = ImmutableArray.CreateBuilder<int>(poles);

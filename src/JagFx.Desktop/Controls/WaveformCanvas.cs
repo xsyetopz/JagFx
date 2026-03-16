@@ -19,11 +19,7 @@ public class WaveformCanvas : Control
     public static readonly StyledProperty<double> ScrollOffsetProperty =
         AvaloniaProperty.Register<WaveformCanvas, double>(nameof(ScrollOffset));
 
-    private static readonly int[] ZoomLevels = [1, 2, 4];
-
-    private bool _isPanning;
-    private double _panStartX;
-    private double _panStartOffset;
+    private readonly CanvasInteractionHelper _interaction = new();
 
     public float[]? Samples
     {
@@ -132,9 +128,7 @@ public class WaveformCanvas : Control
         base.OnPointerPressed(e);
         if (ZoomLevel <= 1) return;
 
-        _isPanning = true;
-        _panStartX = e.GetPosition(this).X;
-        _panStartOffset = ScrollOffset;
+        _interaction.BeginPan(e.GetPosition(this).X, ScrollOffset);
         e.Pointer.Capture(this);
         e.Handled = true;
     }
@@ -142,35 +136,26 @@ public class WaveformCanvas : Control
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
-        if (!_isPanning) return;
+        if (!_interaction.IsPanning) return;
 
-        var dx = _panStartX - e.GetPosition(this).X;
-        ScrollOffset = Math.Clamp(_panStartOffset + dx, 0, MaxScrollOffset);
+        ScrollOffset = _interaction.ComputePanOffset(e.GetPosition(this).X, MaxScrollOffset);
         e.Handled = true;
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
-        if (_isPanning)
+        if (_interaction.IsPanning)
         {
             e.Pointer.Capture(null);
-            _isPanning = false;
+            _interaction.EndPan();
         }
     }
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         base.OnPointerWheelChanged(e);
-
-        var currentIndex = Array.IndexOf(ZoomLevels, ZoomLevel);
-        if (currentIndex < 0) currentIndex = 0;
-
-        if (e.Delta.Y > 0 && currentIndex < ZoomLevels.Length - 1)
-            ZoomLevel = ZoomLevels[currentIndex + 1];
-        else if (e.Delta.Y < 0 && currentIndex > 0)
-            ZoomLevel = ZoomLevels[currentIndex - 1];
-
+        ZoomLevel = _interaction.StepZoom(ZoomLevel, e.Delta.Y);
         e.Handled = true;
     }
 

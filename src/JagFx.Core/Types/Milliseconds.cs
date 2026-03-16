@@ -12,7 +12,7 @@ public readonly record struct Milliseconds
 
     public Milliseconds(int value) => Value = value;
 
-    public Milliseconds ToMilliseconds() => new(Value * AudioConstants.MillisecondsPerSample);
+    public static Milliseconds FromSamples(int samples) => new((int)(samples * AudioConstants.MillisecondsPerSample));
 
     public Samples ToSamples() => new((int)(Value * AudioConstants.SampleRatePerMillisecond));
 }

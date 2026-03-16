@@ -5,6 +5,8 @@ namespace JagFx.Cli.Commands;
 /// </summary>
 public static class CommandHelpers
 {
+    private const int ConsoleWidth = 78;
+
     /// <summary>
     /// Validates that the input file exists.
     /// </summary>
@@ -85,9 +87,9 @@ public static class CommandHelpers
     /// </summary>
     public static void PrintHeader(string title)
     {
-        var padding = Math.Max(0, 78 - title.Length) / 2;
+        var padding = Math.Max(0, ConsoleWidth - title.Length) / 2;
         var leftPad = new string('═', padding);
-        var rightPad = new string('═', 78 - title.Length - padding);
+        var rightPad = new string('═', ConsoleWidth - title.Length - padding);
 
         Console.WriteLine($"╔{leftPad}{title}{rightPad}╗");
     }
@@ -97,6 +99,6 @@ public static class CommandHelpers
     /// </summary>
     public static void PrintFooter()
     {
-        Console.WriteLine("╚" + new string('═', 78) + "╝");
+        Console.WriteLine("╚" + new string('═', ConsoleWidth) + "╝");
     }
 }
