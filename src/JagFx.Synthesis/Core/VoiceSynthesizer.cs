@@ -316,7 +316,7 @@ public static class VoiceSynthesizer
         }
     }
 
-    private class SynthesisState
+    private sealed class SynthesisState
     {
         public required EnvelopeGenerator FrequencyBaseEval { get; init; }
         public required EnvelopeGenerator AmplitudeBaseEval { get; init; }

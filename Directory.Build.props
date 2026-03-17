@@ -7,5 +7,19 @@
     <Company>JagFX</Company>
     <Product>JagFX</Product>
     <Copyright>Copyright © 2026 JagFX Contributors</Copyright>
+
+    <!-- Code analysis -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>8.0-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
   </PropertyGroup>
+
+  <!-- Auto-restore Husky.Net git hooks for contributors -->
+  <Target Name="HuskyRestore" BeforeTargets="Restore" Condition="'$(HUSKY)' != '0'">
+    <Exec Command="dotnet tool restore" StandardOutputImportance="Low" StandardErrorImportance="High" />
+    <Exec Command="dotnet husky install" StandardOutputImportance="Low" StandardErrorImportance="High" />
+  </Target>
 </Project>

@@ -252,7 +252,7 @@ public class InspectCommand : Command
         _ => $"?({id})"
     };
 
-    private class InspectorContext(byte[] data)
+    private sealed class InspectorContext(byte[] data)
     {
         public BinaryBuffer Buffer { get; } = new(data);
 

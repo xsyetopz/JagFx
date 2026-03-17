@@ -32,6 +32,7 @@ Cross-platform editor for Jagex Audio Synthesis (`.synth`) files -- the sound fo
 
 ```bash
 git clone https://github.com/xsyetopz/JagFx.git && cd JagFx
+dotnet tool restore   # installs Husky.Net + CommitLint.Net git hooks
 dotnet build && dotnet test
 ```
 

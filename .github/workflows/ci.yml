@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - run: dotnet restore
+
+      - run: dotnet build --no-restore
+
+      - run: dotnet test --no-build --verbosity normal
+
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - run: dotnet format --verify-no-changes
+
+  conventional-commits:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - run: dotnet tool restore
+
+      - name: Validate commit messages
+        run: |
+          failed=0
+          git log --format="%H" "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" | while read -r sha; do
+            git log -1 --format="%B" "$sha" > /tmp/commit-msg.txt
+            if ! dotnet commit-lint --commit-file /tmp/commit-msg.txt --commit-message-config-file .commitlintrc.json; then
+              echo "::error::Invalid commit message in $sha"
+              failed=1
+            fi
+          done
+          exit $failed
+
+  ci-gate:
+    needs: [build-and-test, format-check, conventional-commits]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check results
+        run: |
+          if [[ "${{ needs.build-and-test.result }}" == "failure" ]] || \
+             [[ "${{ needs.format-check.result }}" == "failure" ]] || \
+             [[ "${{ needs.conventional-commits.result }}" == "failure" ]]; then
+            echo "::error::One or more CI jobs failed"
+            exit 1
+          fi
+          echo "All CI checks passed"

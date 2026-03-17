@@ -1,6 +1,5 @@
 using System;
 using System.Buffers.Binary;
-using System.Globalization;
 
 namespace SmartInt;
 
@@ -273,11 +272,11 @@ public readonly struct USmart16(ushort value) : IEquatable<USmart16>, IComparabl
     /// Converts this instance to a string using the specified format and format provider.
     /// </summary>
     /// <param name="format">The format string.</param>
-    /// <param name="provider">The format provider.</param>
+    /// <param name="formatProvider">The format provider.</param>
     /// <returns>The string representation.</returns>
-    public string ToString(string? format, IFormatProvider? provider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
-        return _value.ToString(format, provider);
+        return _value.ToString(format, formatProvider);
     }
 
     /// <summary>

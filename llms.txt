@@ -1,6 +1,6 @@
 # JagFx
 
-> A .NET toolkit for parsing, synthesizing, and editing OSRS (OldSchool RuneScape) synthesizer instrument files (.synth). Includes a CLI, a desktop editor (Avalonia), and a JSON interchange format for programmatic patch creation.
+> A .NET 8 toolkit for parsing, synthesizing, and editing OSRS (OldSchool RuneScape) synthesizer instrument files (.synth). Includes a CLI, a desktop editor (Avalonia), and a JSON interchange format for programmatic patch creation.
 
 ## What is a .synth file?
 
@@ -80,25 +80,31 @@ A single-voice patch with just the required fields:
 
 ## Project Structure
 
-```text
-src/
-  JagFx.Core/          # Shared types (Percent, Milliseconds, AudioConstants)
-  JagFx.Domain/        # Domain models (Patch, Voice, Envelope, Filter, etc.)
-  JagFx.Io/            # Binary reader/writer + JSON serialization
-    Json/               # SynthJsonModels, SynthJsonMapper, SynthJsonSerializer
-  JagFx.Synthesis/      # Audio rendering engine
-  JagFx.Cli/           # Command-line interface
-  JagFx.Desktop/       # Avalonia desktop editor
-specs/
-  synth-format-spec.md  # Complete binary format specification
-  synth.schema.json     # JSON Schema (draft 2020-12)
-  examples/             # Example JSON patches
-tests/
-  JagFx.Io.Tests/       # Reader/writer/JSON round-trip tests
-  JagFx.Synthesis.Tests/ # Audio rendering tests
-references/
-  synths/               # Reference .synth files for testing
+| Project | Role |
+| --- | --- |
+| `JagFx.Core` | Value types (`Percent`, `Milliseconds`, `Samples`), `AudioConstants` |
+| `JagFx.Domain` | Immutable domain records (`Patch`, `Voice`, `Envelope`, `Filter`, etc.) |
+| `JagFx.Io` | Binary reader/writer, JSON serialization (`Json/`), WAV writer |
+| `JagFx.Synthesis` | DSP engine: `PatchRenderer`, `VoiceSynthesizer`, `AudioFilter` |
+| `JagFx.Cli` | CLI commands via `System.CommandLine`: `convert`, `inspect`, `to-json`, `from-json` |
+| `JagFx.Desktop` | Avalonia 11 MVVM desktop editor with custom canvas controls |
+| `JagFx.TestData` | Embedded hex resources for test fixtures |
+
+## Build & Test
+
+```bash
+dotnet build          # Must pass with 0 warnings
+dotnet test           # Must pass before committing
+dotnet format         # Auto-fix formatting
 ```
+
+## Tooling
+
+- **CI**: GitHub Actions — build, test, format check, conventional commits validation
+- **Security**: CodeQL analysis
+- **Dependencies**: Dependabot for NuGet + GitHub Actions updates
+- **Linting**: `.editorconfig` + Roslyn analyzers (`AnalysisLevel: 8.0-recommended`)
+- **Commit hooks**: Husky.Net + CommitLint.Net (conventional commits)
 
 ## Links
 

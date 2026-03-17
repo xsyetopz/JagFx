@@ -27,7 +27,7 @@ public static class SynthFileReader
         return Read(data);
     }
 
-    private class SynthParser(BinaryBuffer buf)
+    private sealed class SynthParser(BinaryBuffer buf)
     {
         private readonly BinaryBuffer _buf = buf;
         private readonly List<string> _warnings = [];

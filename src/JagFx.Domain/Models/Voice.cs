@@ -1,6 +1,9 @@
 using System.Collections.Immutable;
 namespace JagFx.Domain.Models;
 
+/// <summary>A single voice within a synthesizer patch.</summary>
+/// <param name="DurationMs">Voice duration in milliseconds.</param>
+/// <param name="OffsetMs">Voice start offset in milliseconds.</param>
 public record class Voice(
     Envelope FrequencyEnvelope,
     Envelope AmplitudeEnvelope,
@@ -10,9 +13,7 @@ public record class Voice(
     Envelope? GapOnEnvelope,
     ImmutableList<Partial> Partials,
     Echo Echo,
-    /// <summary>Voice duration in milliseconds.</summary>
     int DurationMs,
-    /// <summary>Voice start offset in milliseconds.</summary>
     int OffsetMs,
     Filter? Filter = null
 );

@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/JagFx.Core/JagFx.Core.csproj" />
-    <ProjectReference Include="../../src/JagFx.IO/JagFx.IO.csproj" />
+    <ProjectReference Include="../../src/JagFx.Io/JagFx.Io.csproj" />
     <ProjectReference Include="../../src/JagFx.Domain/JagFx.Domain.csproj" />
     <ProjectReference Include="../JagFx.TestData/JagFx.TestData.csproj" />
   </ItemGroup>
