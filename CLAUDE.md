@@ -17,17 +17,17 @@ make release-all      # Cross-platform distributable archives (see Makefile)
 
 ## Project Layout
 
-| Project | Role |
-| --- | --- |
-| `JagFx.Core` | Value types (`Percent`, `Milliseconds`, `Samples`), `AudioConstants` |
-| `JagFx.Domain` | Immutable domain records (`Patch`, `Voice`, `Envelope`, `Filter`, etc.) |
-| `JagFx.Io` | Binary reader/writer, JSON serialization (`Json/`), WAV writer |
-| `JagFx.Synthesis` | DSP engine: `PatchRenderer`, `VoiceSynthesizer`, `AudioFilter` |
-| `JagFx.Cli` | CLI commands via `System.CommandLine`: `convert`, `inspect`, `to-json`, `from-json` |
-| `JagFx.Desktop` | Avalonia 11 MVVM desktop editor with custom canvas controls |
-| `JagFx.TestData` | Embedded hex resources for test fixtures |
-| `JavaRandom` | Java-compatible RNG (for OSRS noise waveform) |
-| `SmartInt` | Variable-length integer codec |
+| Project           | Role                                                                                |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| `JagFx.Core`      | Value types (`Percent`, `Milliseconds`, `Samples`), `AudioConstants`                |
+| `JagFx.Domain`    | Immutable domain records (`Patch`, `Voice`, `Envelope`, `Filter`, etc.)             |
+| `JagFx.Io`        | Binary reader/writer, JSON serialization (`Json/`), WAV writer                      |
+| `JagFx.Synthesis` | DSP engine: `PatchRenderer`, `VoiceSynthesizer`, `AudioFilter`                      |
+| `JagFx.Cli`       | CLI commands via `System.CommandLine`: `convert`, `inspect`, `to-json`, `from-json` |
+| `JagFx.Desktop`   | Avalonia 11 MVVM desktop editor with custom canvas controls                         |
+| `JagFx.TestData`  | Embedded hex resources for test fixtures                                            |
+| `JavaRandom`      | Java-compatible RNG (for OSRS noise waveform)                                       |
+| `SmartInt`        | Variable-length integer codec                                                       |
 
 ## Key Patterns
 
@@ -44,16 +44,19 @@ make release-all      # Cross-platform distributable archives (see Makefile)
 ## Rules
 
 ### Always do
+
 - Run `dotnet test` before declaring work complete
 - Run `dotnet format` before committing
 - Follow existing code style in each file (nullable enabled, implicit usings, file-scoped namespaces)
 - Use conventional commits: `type(scope): description` — types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
 
 ### Ask first
+
 - Adding NuGet packages — justify why built-in alternatives won't work
 - Modifying `specs/synth-format-spec.md` — requires understanding of OSRS client behavior
 
 ### Never do
+
 - Break binary round-trip fidelity for files that currently round-trip cleanly
 - Commit secrets or `.env` files
 - Skip tests or bypass CI checks

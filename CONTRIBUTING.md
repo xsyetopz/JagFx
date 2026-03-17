@@ -52,6 +52,7 @@ Format: `type(scope): description`
 **Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
 
 Examples:
+
 - `feat: add loop region editing`
 - `fix(io): correct filter coefficient round-trip`
 - `docs: update CLI usage in README`
