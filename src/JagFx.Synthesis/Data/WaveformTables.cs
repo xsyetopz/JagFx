@@ -1,5 +1,4 @@
 using JagFx.Core.Constants;
-using JagFx.Domain;
 using JagFx.Domain.Utilities;
 using JavaRng = JagFx.JavaRandom.JavaRandom;
 

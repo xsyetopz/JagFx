@@ -16,11 +16,11 @@ public static class WaveformExtensions
 {
     public static readonly Dictionary<Waveform, string> Names = new()
     {
-        [Waveform.Off]    = "off",
+        [Waveform.Off] = "off",
         [Waveform.Square] = "square",
-        [Waveform.Sine]   = "sine",
-        [Waveform.Saw]    = "saw",
-        [Waveform.Noise]  = "noise",
+        [Waveform.Sine] = "sine",
+        [Waveform.Saw] = "saw",
+        [Waveform.Noise] = "noise",
     };
 
     private static readonly Dictionary<string, Waveform> _byName =

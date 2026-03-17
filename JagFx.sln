@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaRandom", "libs\JavaRand
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartInt", "libs\SmartInt\SmartInt.csproj", "{3CFF2272-A74F-493D-A189-16BB5F9AE22D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.IO.Tests", "tests\JagFx.IO.Tests\JagFx.IO.Tests.csproj", "{E30AF335-253C-4F3E-9F9C-CDD41D454FD2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.Io.Tests", "tests\JagFx.Io.Tests\JagFx.Io.Tests.csproj", "{E30AF335-253C-4F3E-9F9C-CDD41D454FD2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JagFx.Synthesis.Tests", "tests\JagFx.Synthesis.Tests\JagFx.Synthesis.Tests.csproj", "{901D87BC-0B29-4C2F-B44D-EBD1D179D0EC}"
 EndProject

@@ -152,18 +152,18 @@ public static class SynthJsonMapper
 
     private static FilterCoefficientsJson CoefficientsToJson(
         ImmutableArray<ImmutableArray<ImmutableArray<int>>> coefficients) => new()
-    {
-        Feedforward = new FilterPhasesJson
         {
-            Baseline = [.. coefficients[0][0]],
-            Modulated = [.. coefficients[0][1]]
-        },
-        Feedback = new FilterPhasesJson
-        {
-            Baseline = [.. coefficients[1][0]],
-            Modulated = [.. coefficients[1][1]]
-        }
-    };
+            Feedforward = new FilterPhasesJson
+            {
+                Baseline = [.. coefficients[0][0]],
+                Modulated = [.. coefficients[0][1]]
+            },
+            Feedback = new FilterPhasesJson
+            {
+                Baseline = [.. coefficients[1][0]],
+                Modulated = [.. coefficients[1][1]]
+            }
+        };
 
     private static ImmutableArray<ImmutableArray<ImmutableArray<int>>> CoefficientsFromJson(
         FilterCoefficientsJson json)

@@ -1,5 +1,4 @@
 using JagFx.Io;
-using JagFx.Synthesis;
 using JagFx.Synthesis.Core;
 using System.CommandLine;
 

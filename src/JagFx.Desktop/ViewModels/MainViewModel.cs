@@ -214,7 +214,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private Patch DefaultLoopIfUnset(Patch model)
     {
-        if (IsLooping && model.Loop.BeginMs >= model.Loop.EndMs && model.ActiveVoices.Any())
+        if (IsLooping && model.Loop.BeginMs >= model.Loop.EndMs && !model.ActiveVoices.IsEmpty)
         {
             var maxMs = model.ActiveVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
             if (maxMs > 0)
@@ -484,7 +484,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _bufferStale = false;
 
         // Always compute loop timing from model (loop region may have been defaulted above)
-        if (model.ActiveVoices.Any())
+        if (!model.ActiveVoices.IsEmpty)
         {
             var maxDurationMs = model.ActiveVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
             _singlePassDuration = maxDurationMs / 1000.0;

@@ -10,11 +10,12 @@ This guide keeps expectations clear and simple so you can move fast without gues
 
 1. Fork repository.
 2. Clone fork: `git clone https://github.com/<your-user>/JagFx.git`.
-3. Create topic branch: `git checkout -b feat/<short-description>`.
-4. Make focused changes.
-5. Run `dotnet build && dotnet test` to verify nothing is broken.
-6. Commit with clear message explaining *why* the change exists.
-7. Push and open a pull request describing behaviour changes and tests.
+3. Restore tools: `dotnet tool restore` (installs Husky.Net + CommitLint.Net git hooks automatically).
+4. Create topic branch: `git checkout -b feat/<short-description>`.
+5. Make focused changes.
+6. Run `dotnet build && dotnet test && dotnet format` to verify nothing is broken.
+7. Commit using [Conventional Commits](#commit-style) — the commit-msg hook validates automatically.
+8. Push and open a pull request describing behaviour changes and tests.
 
 ## Coding Guidelines
 
@@ -42,6 +43,22 @@ Domain model field names follow DSP conventions -- see `specs/synth-format-spec.
 - Comment to explain *why* a choice was made, not what the code already states.
 - Update documentation and examples whenever behaviour changes.
 
+## Commit Style
+
+This repository uses **Conventional Commits** enforced by [CommitLint.Net](https://github.com/tomwis/CommitLint.Net) via [Husky.Net](https://github.com/alirezanet/Husky.Net) git hooks.
+
+Format: `type(scope): description`
+
+**Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+
+Examples:
+- `feat: add loop region editing`
+- `fix(io): correct filter coefficient round-trip`
+- `docs: update CLI usage in README`
+- `refactor(synthesis): extract envelope generator`
+
+The `commit-msg` hook runs automatically after `dotnet tool restore`. CI also validates all commit messages on pull requests.
+
 ## Testing Expectations
 
 - Run `dotnet test` before every push.
@@ -59,8 +76,9 @@ You may use AI tooling but you remain responsible for code quality:
 ## Pull Request Checklist
 
 - [ ] Tests pass locally with `dotnet test`.
+- [ ] Code formatted with `dotnet format`.
+- [ ] Commit messages follow [Conventional Commits](#commit-style).
 - [ ] Docs and comments updated if behaviour changed.
-- [ ] Commit messages explain intent.
 - [ ] PR description covers motivation, approach, and testing.
 
 ## Reporting Issues

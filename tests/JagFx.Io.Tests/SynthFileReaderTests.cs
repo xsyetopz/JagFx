@@ -1,5 +1,4 @@
 using JagFx.Domain.Models;
-using JagFx.Io;
 using JagFx.TestData;
 using Xunit;
 

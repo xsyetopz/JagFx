@@ -1,6 +1,5 @@
 using System;
 using System.Buffers.Binary;
-using System.Globalization;
 
 namespace SmartInt;
 
@@ -24,7 +23,7 @@ public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
     /// The threshold for single-byte encoding (bytes 0-127).
     /// </summary>
     /// <remarks>
-    /// Java reference: peek < 128 ? readUnsignedByte() - 64 : readUnsignedShort() - 49152
+    /// Java reference: peek &lt; 128 ? readUnsignedByte() - 64 : readUnsignedShort() - 49152
     /// </remarks>
     public const int SmartOneByteThreshold = 128;
 
@@ -292,11 +291,11 @@ public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
     /// Converts this instance to a string using the specified format and format provider.
     /// </summary>
     /// <param name="format">The format string.</param>
-    /// <param name="provider">The format provider.</param>
+    /// <param name="formatProvider">The format provider.</param>
     /// <returns>The string representation.</returns>
-    public string ToString(string? format, IFormatProvider? provider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
-        return _value.ToString(format, provider);
+        return _value.ToString(format, formatProvider);
     }
 
     /// <summary>
