@@ -20,6 +20,6 @@
   <!-- Auto-restore Husky.Net git hooks for contributors -->
   <Target Name="HuskyRestore" BeforeTargets="Restore" Condition="'$(HUSKY)' != '0'">
     <Exec Command="dotnet tool restore" StandardOutputImportance="Low" StandardErrorImportance="High" />
-    <Exec Command="dotnet husky install" StandardOutputImportance="Low" StandardErrorImportance="High" />
+    <Exec Command="dotnet husky install" WorkingDirectory="$(MSBuildThisFileDirectory)" StandardOutputImportance="Low" StandardErrorImportance="High" />
   </Target>
 </Project>
