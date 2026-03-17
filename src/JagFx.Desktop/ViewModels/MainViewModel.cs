@@ -289,9 +289,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private static EnvelopeViewModel[] GetVoiceEnvelopes(VoiceViewModel v) =>
     [
-        v.Pitch, v.Volume, v.VibratoRate, v.VibratoDepth,
-        v.TremoloRate, v.TremoloDepth, v.FilterEnvelope,
-        v.GapOff, v.GapOn
+        v.Pitch,
+        v.Volume,
+        v.VibratoRate,
+        v.VibratoDepth,
+        v.TremoloRate,
+        v.TremoloDepth,
+        v.FilterEnvelope,
+        v.GapOff,
+        v.GapOn
     ];
 
     private void OnVoicePropertyChanged(object? s, PropertyChangedEventArgs e) => ScheduleRerender();
@@ -368,15 +374,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public static readonly (SignalChainSlot Slot, Func<VoiceViewModel, EnvelopeViewModel> Getter)[] SignalChain =
     [
-        (SignalChainSlot.Pitch,        v => v.Pitch),
-        (SignalChainSlot.VibratoRate,   v => v.VibratoRate),
-        (SignalChainSlot.VibratoDepth,  v => v.VibratoDepth),
-        (SignalChainSlot.Volume,        v => v.Volume),
-        (SignalChainSlot.TremoloRate,   v => v.TremoloRate),
-        (SignalChainSlot.TremoloDepth,  v => v.TremoloDepth),
-        (SignalChainSlot.GapOff,        v => v.GapOff),
-        (SignalChainSlot.GapOn,         v => v.GapOn),
-        (SignalChainSlot.Filter,        v => v.FilterEnvelope),
+        (SignalChainSlot.Pitch, v => v.Pitch),
+        (SignalChainSlot.VibratoRate, v => v.VibratoRate),
+        (SignalChainSlot.VibratoDepth, v => v.VibratoDepth),
+        (SignalChainSlot.Volume, v => v.Volume),
+        (SignalChainSlot.TremoloRate, v => v.TremoloRate),
+        (SignalChainSlot.TremoloDepth, v => v.TremoloDepth),
+        (SignalChainSlot.GapOff, v => v.GapOff),
+        (SignalChainSlot.GapOn, v => v.GapOn),
+        (SignalChainSlot.Filter, v => v.FilterEnvelope),
     ];
 
     private static (string Unit, double Min, double Max) GetStartEndMeta(SignalChainSlot slot) => slot switch
