@@ -38,6 +38,7 @@ PUBLISH_FLAGS := --self-contained /p:PublishSingleFile=true /p:IncludeNativeLibr
 .PHONY: run build test clean \
 	publish-desktop-macos-arm64 publish-desktop-macos-x64 publish-desktop-windows publish-desktop-linux \
 	publish-cli-macos-arm64 publish-cli-macos-x64 publish-cli-windows publish-cli-linux \
+	package-desktop-macos-arm64 package-desktop-macos-x64 \
 	release-desktop-macos-arm64 release-desktop-macos-x64 release-desktop-windows release-desktop-linux \
 	release-cli-macos-arm64 release-cli-macos-x64 release-cli-windows release-cli-linux \
 	release-macos release-cli release-all \
@@ -72,11 +73,15 @@ publish-desktop-linux:
 
 # -- Desktop installers --------------------------------------------------------
 
-release-desktop-macos-arm64: publish-desktop-macos-arm64
+package-desktop-macos-arm64:
 	tools/release/create-dmg.sh publish/desktop/osx-arm64/JagFx.app publish/JagFx-$(VERSION)-macos-arm64.dmg "JagFx macOS arm64"
 
-release-desktop-macos-x64: publish-desktop-macos-x64
+package-desktop-macos-x64:
 	tools/release/create-dmg.sh publish/desktop/osx-x64/JagFx.app publish/JagFx-$(VERSION)-macos-x64.dmg "JagFx macOS x64"
+
+release-desktop-macos-arm64: publish-desktop-macos-arm64 package-desktop-macos-arm64
+
+release-desktop-macos-x64: publish-desktop-macos-x64 package-desktop-macos-x64
 
 release-desktop-windows: publish-desktop-windows
 	@if command -v ISCC >/dev/null 2>&1; then \

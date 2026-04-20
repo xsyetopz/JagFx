@@ -84,7 +84,7 @@ jobs:
 
       - name: Create DMG
         run: |
-          make release-desktop-macos-$ARCH_LABEL
+          make package-desktop-macos-$ARCH_LABEL
 
       - name: Sign + notarize DMG
         if: ${{ env.HAS_MACOS_SIGNING == 'true' }}
