@@ -16,6 +16,13 @@ jobs:
   macos:
     name: macOS ${{ matrix.rid }}
     runs-on: macos-14
+    env:
+      HAS_MACOS_CERT: ${{ secrets.MACOS_CERT_P12_BASE64 != '' &&
+        secrets.MACOS_CERT_PASSWORD != '' }}
+      HAS_MACOS_SIGNING: ${{ secrets.MACOS_CERT_P12_BASE64 != '' &&
+        secrets.MACOS_CERT_PASSWORD != '' && secrets.MACOS_SIGN_IDENTITY != ''
+        && secrets.MACOS_NOTARY_APPLE_ID != '' && secrets.MACOS_NOTARY_TEAM_ID
+        != '' && secrets.MACOS_NOTARY_PASSWORD != '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -55,8 +62,7 @@ jobs:
           make release-cli-macos-$ARCH_LABEL
 
       - name: Import signing cert
-        if: ${{ secrets.MACOS_CERT_P12_BASE64 != '' && secrets.MACOS_CERT_PASSWORD != ''
-          }}
+        if: ${{ env.HAS_MACOS_CERT == 'true' }}
         env:
           MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
           MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
@@ -72,9 +78,7 @@ jobs:
           security find-identity -v -p codesigning "$KEYCHAIN_PATH"
 
       - name: Sign + notarize DMG
-        if: ${{ secrets.MACOS_SIGN_IDENTITY != '' && secrets.MACOS_NOTARY_APPLE_ID != ''
-          && secrets.MACOS_NOTARY_TEAM_ID != '' && secrets.MACOS_NOTARY_PASSWORD
-          != '' }}
+        if: ${{ env.HAS_MACOS_SIGNING == 'true' }}
         env:
           MACOS_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
           MACOS_NOTARY_APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}
