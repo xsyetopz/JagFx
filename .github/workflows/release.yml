@@ -137,7 +137,10 @@ jobs:
           MACOS_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
         run: |
           APP_PATH="publish/desktop/${{ matrix.rid }}/JagFx.app"
-          codesign --force --deep --options runtime --entitlements src/JagFx.Desktop/macOS/entitlements.plist --sign "$MACOS_SIGN_IDENTITY" "$APP_PATH"
+          ENTITLEMENTS_PATH="$RUNNER_TEMP/jagfx-entitlements.plist"
+          plutil -convert xml1 -o "$ENTITLEMENTS_PATH" src/JagFx.Desktop/macOS/entitlements.plist
+          cat "$ENTITLEMENTS_PATH"
+          codesign --force --deep --options runtime --entitlements "$ENTITLEMENTS_PATH" --sign "$MACOS_SIGN_IDENTITY" "$APP_PATH"
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
           codesign -d --entitlements :- "$APP_PATH"
 
