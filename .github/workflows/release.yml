@@ -1,0 +1,174 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  DOTNET_VERSION: "8.0.x"
+
+jobs:
+  macos:
+    name: macOS ${{ matrix.rid }}
+    runs-on: macos-14
+    strategy:
+      fail-fast: false
+      matrix:
+        rid: [ osx-arm64, osx-x64 ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build + test
+        run: |
+          dotnet restore
+          dotnet build --no-restore --nologo
+          dotnet test --no-build --nologo
+
+      - name: Resolve arch label
+        run: |
+          if [[ "${{ matrix.rid }}" == "osx-arm64" ]]; then
+            echo "ARCH_LABEL=arm64" >> "$GITHUB_ENV"
+          else
+            echo "ARCH_LABEL=x64" >> "$GITHUB_ENV"
+          fi
+
+      - name: Publish desktop + cli
+        run: |
+          make publish-desktop-macos-$ARCH_LABEL
+          make publish-cli-macos-$ARCH_LABEL
+
+      - name: Create DMG
+        run: |
+          make release-desktop-macos-$ARCH_LABEL
+
+      - name: Create CLI archive
+        run: |
+          make release-cli-macos-$ARCH_LABEL
+
+      - name: Import signing cert
+        if: ${{ secrets.MACOS_CERT_P12_BASE64 != '' && secrets.MACOS_CERT_PASSWORD != ''
+          }}
+        env:
+          MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH="$RUNNER_TEMP/jagfx-signing.keychain-db"
+          CERT_PATH="$RUNNER_TEMP/macos-signing.p12"
+          echo "$MACOS_CERT_P12_BASE64" | base64 --decode > "$CERT_PATH"
+          security create-keychain -p "" "$KEYCHAIN_PATH"
+          security set-keychain-settings "$KEYCHAIN_PATH"
+          security unlock-keychain -p "" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+          security find-identity -v -p codesigning "$KEYCHAIN_PATH"
+
+      - name: Sign + notarize DMG
+        if: ${{ secrets.MACOS_SIGN_IDENTITY != '' && secrets.MACOS_NOTARY_APPLE_ID != ''
+          && secrets.MACOS_NOTARY_TEAM_ID != '' && secrets.MACOS_NOTARY_PASSWORD
+          != '' }}
+        env:
+          MACOS_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+          MACOS_NOTARY_APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}
+          MACOS_NOTARY_TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAM_ID }}
+          MACOS_NOTARY_PASSWORD: ${{ secrets.MACOS_NOTARY_PASSWORD }}
+        run: |
+          VERSION="$(grep -oE '<Version>[^<]+' Directory.Build.props | head -1 | sed 's/<Version>//')"
+          APP_PATH="publish/desktop/${{ matrix.rid }}/JagFx.app"
+          DMG_PATH="publish/JagFx-${VERSION}-macos-${ARCH_LABEL}.dmg"
+          tools/release/sign-notarize-macos.sh "$APP_PATH" "$DMG_PATH"
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: jagfx-macos-${{ matrix.rid }}
+          path: |
+            publish/*.dmg
+            publish/JagFx.Cli-*-macos-*.tar.gz
+
+  windows:
+    name: Windows win-x64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress
+
+      - name: Build + test
+        run: |
+          dotnet restore
+          dotnet build --no-restore --nologo
+          dotnet test --no-build --nologo
+
+      - name: Publish desktop + cli
+        run: |
+          dotnet publish src/JagFx.Desktop -c Release -r win-x64 -o publish/desktop/win-x64 --nologo --self-contained /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true /p:IncludeAllContentForSelfExtract=true /p:DebugSymbols=false /p:DebugType=None
+          dotnet publish src/JagFx.Cli -c Release -r win-x64 -o publish/cli/win-x64 --nologo --self-contained /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true /p:IncludeAllContentForSelfExtract=true /p:DebugSymbols=false /p:DebugType=None
+
+      - name: Build installer + CLI archive
+        run: |
+          $version = (Select-Xml -Path Directory.Build.props -XPath "/Project/PropertyGroup/Version").Node.InnerText
+          ISCC /DAppVersion=$version /DSourceDir="$pwd\publish\desktop\win-x64" /DOutputDir="$pwd\publish" /DIconFile="$pwd\assets\jagfx-icon.ico" packaging/windows/JagFx.iss
+          Compress-Archive -Path publish/cli/win-x64/JagFx.Cli.exe -DestinationPath "publish/JagFx.Cli-$version-win-x64.zip"
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: jagfx-windows-win-x64
+          path: |
+            publish/*win-x64-setup.exe
+            publish/JagFx.Cli-*-win-x64.zip
+
+  linux:
+    name: Linux linux-x64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install AppImage tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfuse2
+          curl -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -o /usr/local/bin/appimagetool
+          sudo chmod +x /usr/local/bin/appimagetool
+
+      - name: Build + test
+        run: |
+          dotnet restore
+          dotnet build --no-restore --nologo
+          dotnet test --no-build --nologo
+
+      - name: Publish desktop + cli
+        run: |
+          make publish-desktop-linux
+          make publish-cli-linux
+
+      - name: Build AppImage + CLI archive
+        run: |
+          make release-desktop-linux
+          make release-cli-linux
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: jagfx-linux-x64
+          path: |
+            publish/*.AppImage
+            publish/*linux-x64.tar.gz

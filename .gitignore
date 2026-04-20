@@ -16,6 +16,8 @@ x86/
 bld/
 artifacts/
 publish/
+!tools/release/
+!tools/release/*.sh
 
 # .NET Core
 project.lock.json

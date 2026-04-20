@@ -1,50 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <RootNamespace>JagFx.Desktop</RootNamespace>
-    <AssemblyName>JagFx.Desktop</AssemblyName>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
-
-  <!--
-    Any RID publish → single file with native libs embedded.
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>JagFx.Desktop</RootNamespace>
+        <AssemblyName>JagFx.Desktop</AssemblyName>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <ApplicationIcon>..\..\assets\jagfx-icon.ico</ApplicationIcon>
+    </PropertyGroup>
+    <!-- Any RID publish → single file with native libs embedded.
     Avalonia bundles SkiaSharp and other native dylibs/so/dlls;
     IncludeNativeLibrariesForSelfExtract packs them into the executable
     so the output is truly one file on all platforms.
-    PublishSingleFile only fires during `dotnet publish`, not `dotnet build`.
-  -->
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
-    <PublishSingleFile>true</PublishSingleFile>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-  </PropertyGroup>
-
-  <!-- macOS: also force SelfContained so the script does not need the flag -->
-  <PropertyGroup Condition="$(RuntimeIdentifier.StartsWith('osx'))">
-    <SelfContained>true</SelfContained>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.12" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.12" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.12" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\JagFx.Core\JagFx.Core.csproj" />
-    <ProjectReference Include="..\JagFx.Domain\JagFx.Domain.csproj" />
-    <ProjectReference Include="..\JagFx.Io\JagFx.Io.csproj" />
-    <ProjectReference Include="..\JagFx.Synthesis\JagFx.Synthesis.csproj" />
-  </ItemGroup>
-
-  <!--
-    After publishing for an osx RID, assemble a standard .app bundle:
+    PublishSingleFile only fires during `dotnet publish`, not `dotnet build`. -->
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
+        <SelfContained>true</SelfContained>
+        <PublishSingleFile>true</PublishSingleFile>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Avalonia"
+                          Version="11.3.14" />
+        <PackageReference Include="Avalonia.Desktop"
+                          Version="11.3.14" />
+        <PackageReference Include="Avalonia.Themes.Fluent"
+                          Version="11.3.14" />
+        <PackageReference Include="Avalonia.Fonts.Inter"
+                          Version="11.3.14" />
+        <PackageReference Include="CommunityToolkit.Mvvm"
+                          Version="8.4.2" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\JagFx.Core\JagFx.Core.csproj" />
+        <ProjectReference Include="..\JagFx.Domain\JagFx.Domain.csproj" />
+        <ProjectReference Include="..\JagFx.Io\JagFx.Io.csproj" />
+        <ProjectReference Include="..\JagFx.Synthesis\JagFx.Synthesis.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <AvaloniaResource Include="..\..\assets\jagfx-icon.ico"
+                          Link="Assets\jagfx-icon.ico" />
+        <AvaloniaResource Include="..\..\assets\jagfx-icon.png"
+                          Link="Assets\jagfx-icon.png" />
+    </ItemGroup>
+    <!-- After publishing for an osx RID, assemble a standard .app bundle:
 
       publish/osx-arm64/
         JagFx.Desktop           (single-file binary)
@@ -52,69 +54,35 @@
           Contents/
             MacOS/
               JagFx.Desktop
-              lib*.dylib
             Resources/
             Info.plist
 
       publish/osx-x64/
         JagFx.Desktop
         JagFx.app/
-          ...
-  -->
-  <Target Name="BundleMacApp" AfterTargets="Publish"
-          Condition="$(RuntimeIdentifier.StartsWith('osx'))">
-
-    <PropertyGroup>
-      <_AppName>JagFx</_AppName>
-      <_BundleDir>$(PublishDir)$(_AppName).app/</_BundleDir>
-      <_MacOSDir>$(_BundleDir)Contents/MacOS/</_MacOSDir>
-      <_ResourcesDir>$(_BundleDir)Contents/Resources/</_ResourcesDir>
-      <_InfoPlist>$(_BundleDir)Contents/Info.plist</_InfoPlist>
-      <_Binary>$(PublishDir)$(AssemblyName)</_Binary>
-    </PropertyGroup>
-
-    <MakeDir Directories="$(_MacOSDir);$(_ResourcesDir)" />
-
-    <!-- Copy all publish output (binary + any loose native dylibs) into MacOS/ -->
-    <ItemGroup>
-      <_BundleFiles Include="$(PublishDir)**/*" Exclude="$(PublishDir)**/*.pdb" />
-    </ItemGroup>
-    <Copy SourceFiles="@(_BundleFiles)"
-          DestinationFiles="@(_BundleFiles->'$(_MacOSDir)%(RecursiveDir)%(Filename)%(Extension)')" />
-
-    <Exec Command="chmod +x '$(_MacOSDir)$(AssemblyName)'" />
-
-    <WriteLinesToFile File="$(_InfoPlist)" Overwrite="true" Lines="
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
-&lt;plist version=&quot;1.0&quot;&gt;
-&lt;dict&gt;
-    &lt;key&gt;CFBundleExecutable&lt;/key&gt;
-    &lt;string&gt;$(AssemblyName)&lt;/string&gt;
-    &lt;key&gt;CFBundleIdentifier&lt;/key&gt;
-    &lt;string&gt;com.jagfx.desktop&lt;/string&gt;
-    &lt;key&gt;CFBundleName&lt;/key&gt;
-    &lt;string&gt;$(_AppName)&lt;/string&gt;
-    &lt;key&gt;CFBundleDisplayName&lt;/key&gt;
-    &lt;string&gt;$(_AppName)&lt;/string&gt;
-    &lt;key&gt;CFBundleVersion&lt;/key&gt;
-    &lt;string&gt;$(Version)&lt;/string&gt;
-    &lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
-    &lt;string&gt;$(Version)&lt;/string&gt;
-    &lt;key&gt;CFBundlePackageType&lt;/key&gt;
-    &lt;string&gt;APPL&lt;/string&gt;
-    &lt;key&gt;NSHighResolutionCapable&lt;/key&gt;
-    &lt;true/&gt;
-    &lt;key&gt;NSPrincipalClass&lt;/key&gt;
-    &lt;string&gt;NSApplication&lt;/string&gt;
-    &lt;key&gt;LSMinimumSystemVersion&lt;/key&gt;
-    &lt;string&gt;12.0&lt;/string&gt;
-&lt;/dict&gt;
-&lt;/plist&gt;
-" />
-
-    <Message Importance="high" Text="macOS app bundle: $(_BundleDir)" />
-
-  </Target>
-
+          ... -->
+    <Target Name="BundleMacApp"
+            AfterTargets="Publish"
+            Condition="$(RuntimeIdentifier.StartsWith('osx'))">
+        <PropertyGroup>
+            <_AppName>JagFx</_AppName>
+            <_BundleDir>$(PublishDir)$(_AppName).app/</_BundleDir>
+            <_MacOSDir>$(_BundleDir)Contents/MacOS/</_MacOSDir>
+            <_ResourcesDir>$(_BundleDir)Contents/Resources/</_ResourcesDir>
+            <_InfoPlist>$(_BundleDir)Contents/Info.plist</_InfoPlist>
+            <_Binary>$(PublishDir)$(AssemblyName)</_Binary>
+            <_IconIcns>$(MSBuildThisFileDirectory)..\..\assets\jagfx-icon.icns</_IconIcns>
+        </PropertyGroup>
+        <MakeDir Directories="$(_MacOSDir);$(_ResourcesDir)" />
+        <Copy SourceFiles="$(_Binary)"
+              DestinationFiles="$(_MacOSDir)$(AssemblyName)" />
+        <Copy SourceFiles="$(_IconIcns)"
+              DestinationFiles="$(_ResourcesDir)jagfx-icon.icns" />
+        <Exec Command="chmod +x '$(_MacOSDir)$(AssemblyName)'" />
+        <WriteLinesToFile File="$(_InfoPlist)"
+                          Overwrite="true"
+                          Lines="&#xA;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;>&#xA;&lt;plist version=&quot;1.0&quot;>&#xA;&lt;dict>&#xA;    &lt;key>CFBundleExecutable&lt;/key>&#xA;    &lt;string>$(AssemblyName)&lt;/string>&#xA;    &lt;key>CFBundleIdentifier&lt;/key>&#xA;    &lt;string>com.jagfx.desktop&lt;/string>&#xA;    &lt;key>CFBundleName&lt;/key>&#xA;    &lt;string>$(_AppName)&lt;/string>&#xA;    &lt;key>CFBundleDisplayName&lt;/key>&#xA;    &lt;string>$(_AppName)&lt;/string>&#xA;    &lt;key>CFBundleVersion&lt;/key>&#xA;    &lt;string>$(Version)&lt;/string>&#xA;    &lt;key>CFBundleShortVersionString&lt;/key>&#xA;    &lt;string>$(Version)&lt;/string>&#xA;    &lt;key>CFBundlePackageType&lt;/key>&#xA;    &lt;string>APPL&lt;/string>&#xA;    &lt;key>NSHighResolutionCapable&lt;/key>&#xA;    &lt;true/>&#xA;    &lt;key>NSPrincipalClass&lt;/key>&#xA;    &lt;string>NSApplication&lt;/string>&#xA;    &lt;key>CFBundleIconFile&lt;/key>&#xA;    &lt;string>jagfx-icon&lt;/string>&#xA;    &lt;key>LSMinimumSystemVersion&lt;/key>&#xA;    &lt;string>12.0&lt;/string>&#xA;&lt;/dict>&#xA;&lt;/plist>&#xA;" />
+        <Message Importance="high"
+                 Text="macOS app bundle: $(_BundleDir)" />
+    </Target>
 </Project>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:JagFx.Desktop.ViewModels"
@@ -8,34 +9,38 @@
         x:Class="JagFx.Desktop.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Title="{Binding WindowTitle}"
-        Width="1400" Height="800"
-        MinWidth="800" MinHeight="600"
+        Icon="/Assets/jagfx-icon.ico"
+        Width="1400"
+        Height="800"
+        MinWidth="800"
+        MinHeight="600"
         Background="{StaticResource SurfaceBaseBrush}"
         WindowStartupLocation="CenterScreen">
-
     <DockPanel LastChildFill="True">
         <!-- Header Bar -->
-        <header:HeaderBar DockPanel.Dock="Top" DataContext="{Binding}" />
-
+        <header:HeaderBar DockPanel.Dock="Top"
+                          DataContext="{Binding}" />
         <!-- Status Bar -->
-        <Border DockPanel.Dock="Bottom" Background="{StaticResource SurfaceCellHeaderBrush}"
-                Height="20" Padding="6,0">
-            <TextBlock Text="{Binding StatusHint}" FontSize="10"
+        <Border DockPanel.Dock="Bottom"
+                Background="{StaticResource SurfaceCellHeaderBrush}"
+                Height="20"
+                Padding="6,0">
+            <TextBlock Text="{Binding StatusHint}"
+                       FontSize="10"
                        Foreground="{StaticResource TextSecondaryBrush}"
                        VerticalAlignment="Center" />
         </Border>
-
         <!-- Partials Footer -->
-        <footer:PartialsFooter DockPanel.Dock="Bottom" DataContext="{Binding}" />
-
+        <footer:PartialsFooter DockPanel.Dock="Bottom"
+                               DataContext="{Binding}" />
         <!-- Main content area: Inspector left, Matrix right -->
         <Grid ColumnDefinitions="160,*">
             <!-- Left: Inspector Panel -->
-            <inspector:InspectorPanel Grid.Column="0" DataContext="{Binding}" />
-
+            <inspector:InspectorPanel Grid.Column="0"
+                                      DataContext="{Binding}" />
             <!-- Right: Full-screen Signal Chain Matrix -->
-            <signalchain:SignalChainPanel Grid.Column="1" DataContext="{Binding}" />
+            <signalchain:SignalChainPanel Grid.Column="1"
+                                          DataContext="{Binding}" />
         </Grid>
     </DockPanel>
-
 </Window>

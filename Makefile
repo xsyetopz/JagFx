@@ -1,34 +1,48 @@
-# JagFx build targets
+# JagFx build and release targets (KISS matrix)
 #
 # Development
-#   make run            run the desktop GUI
-#   make build          build (debug)
-#   make test           run all tests
+#   make run
+#   make build
+#   make test
 #
-# Release -- single-file publish (unsigned)
-#   make publish-macos-arm64
-#   make publish-macos-x64
-#   make publish-windows
-#   make publish-linux
+# Desktop publish (single-file, self-contained)
+#   make publish-desktop-macos-arm64
+#   make publish-desktop-macos-x64
+#   make publish-desktop-windows
+#   make publish-desktop-linux
 #
-# Release -- distributable archives
-#   make release-macos-arm64    .tar.gz (.app bundle, Apple Silicon)
-#   make release-macos-x64      .tar.gz (.app bundle, Intel)
-#   make release-macos           both arches
-#   make release-linux           .tar.gz
-#   make release-windows         .zip
-#   make release-all             all platforms
+# Desktop installers
+#   make release-desktop-macos-arm64   # .dmg
+#   make release-desktop-macos-x64     # .dmg
+#   make release-desktop-windows       # Inno Setup .exe
+#   make release-desktop-linux         # .AppImage + .tar.gz
+#
+# CLI artifacts
+#   make release-cli-macos-arm64
+#   make release-cli-macos-x64
+#   make release-cli-windows
+#   make release-cli-linux
+#
+# Convenience
+#   make release-macos
+#   make release-cli
+#   make release-all
 
-DESKTOP  := src/JagFx.Desktop
-CONF     := Release
-VERSION  := $(shell grep -oE '<Version>[^<]+' Directory.Build.props | head -1 | sed 's/<Version>//')
+DESKTOP := src/JagFx.Desktop
+CLI     := src/JagFx.Cli
+CONF    := Release
+VERSION := $(shell grep -oE '<Version>[^<]+' Directory.Build.props | head -1 | sed 's/<Version>//')
 
-.PHONY: run build test \
-        publish-macos-arm64 publish-macos-x64 publish-windows publish-linux \
-        release-macos-arm64 release-macos-x64 release-macos \
-        release-linux release-windows release-all
+PUBLISH_FLAGS := --self-contained /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true /p:IncludeAllContentForSelfExtract=true /p:DebugSymbols=false /p:DebugType=None
 
-# -- Development --------------------------------------------------------------
+.PHONY: run build test clean \
+	publish-desktop-macos-arm64 publish-desktop-macos-x64 publish-desktop-windows publish-desktop-linux \
+	publish-cli-macos-arm64 publish-cli-macos-x64 publish-cli-windows publish-cli-linux \
+	release-desktop-macos-arm64 release-desktop-macos-x64 release-desktop-windows release-desktop-linux \
+	release-cli-macos-arm64 release-cli-macos-x64 release-cli-windows release-cli-linux \
+	release-macos release-cli release-all \
+	publish-macos-arm64 publish-macos-x64 publish-windows publish-linux \
+	release-macos-arm64 release-macos-x64 release-linux release-windows
 
 run:
 	dotnet run --project $(DESKTOP)
@@ -39,38 +53,91 @@ build:
 test:
 	dotnet test --nologo
 
-# -- Unsigned publish ---------------------------------------------------------
+clean:
+	rm -rf publish
 
-publish-macos-arm64:
-	dotnet publish $(DESKTOP) -c $(CONF) -r osx-arm64 -o publish/osx-arm64 --nologo
+# -- Desktop publish -----------------------------------------------------------
 
-publish-macos-x64:
-	dotnet publish $(DESKTOP) -c $(CONF) -r osx-x64 -o publish/osx-x64 --nologo
+publish-desktop-macos-arm64:
+	dotnet publish $(DESKTOP) -c $(CONF) -r osx-arm64 -o publish/desktop/osx-arm64 --nologo $(PUBLISH_FLAGS)
 
-publish-windows:
-	dotnet publish $(DESKTOP) -c $(CONF) -r win-x64 --self-contained -o publish/win-x64 --nologo
+publish-desktop-macos-x64:
+	dotnet publish $(DESKTOP) -c $(CONF) -r osx-x64 -o publish/desktop/osx-x64 --nologo $(PUBLISH_FLAGS)
 
-publish-linux:
-	dotnet publish $(DESKTOP) -c $(CONF) -r linux-x64 --self-contained -o publish/linux-x64 --nologo
+publish-desktop-windows:
+	dotnet publish $(DESKTOP) -c $(CONF) -r win-x64 -o publish/desktop/win-x64 --nologo $(PUBLISH_FLAGS)
 
-# -- Distributable archives ---------------------------------------------------
+publish-desktop-linux:
+	dotnet publish $(DESKTOP) -c $(CONF) -r linux-x64 -o publish/desktop/linux-x64 --nologo $(PUBLISH_FLAGS)
 
-release-macos-arm64: publish-macos-arm64
-	rm -f publish/osx-arm64/JagFx.app/Contents/MacOS/*.pdb
-	tar -czf publish/JagFx-$(VERSION)-osx-arm64.tar.gz -C publish/osx-arm64 JagFx.app
+# -- Desktop installers --------------------------------------------------------
 
-release-macos-x64: publish-macos-x64
-	rm -f publish/osx-x64/JagFx.app/Contents/MacOS/*.pdb
-	tar -czf publish/JagFx-$(VERSION)-osx-x64.tar.gz -C publish/osx-x64 JagFx.app
+release-desktop-macos-arm64: publish-desktop-macos-arm64
+	tools/release/create-dmg.sh publish/desktop/osx-arm64/JagFx.app publish/JagFx-$(VERSION)-macos-arm64.dmg "JagFx macOS arm64"
 
-release-macos: release-macos-arm64 release-macos-x64
+release-desktop-macos-x64: publish-desktop-macos-x64
+	tools/release/create-dmg.sh publish/desktop/osx-x64/JagFx.app publish/JagFx-$(VERSION)-macos-x64.dmg "JagFx macOS x64"
 
-release-linux: publish-linux
-	rm -f publish/linux-x64/*.pdb
-	tar -czf publish/JagFx-$(VERSION)-linux-x64.tar.gz -C publish/linux-x64 .
+release-desktop-windows: publish-desktop-windows
+	@if command -v ISCC >/dev/null 2>&1; then \
+	  ISCC /DAppVersion=$(VERSION) /DSourceDir="$(CURDIR)\publish\desktop\win-x64" /DOutputDir="$(CURDIR)\publish" /DIconFile="$(CURDIR)\assets\jagfx-icon.ico" packaging/windows/JagFx.iss; \
+	else \
+	  echo "ISCC not found. Install Inno Setup and ensure ISCC is on PATH."; \
+	  exit 1; \
+	fi
 
-release-windows: publish-windows
-	rm -f publish/win-x64/*.pdb
-	cd publish/win-x64 && zip -rq ../JagFx-$(VERSION)-win-x64.zip .
+release-desktop-linux: publish-desktop-linux
+	@if command -v appimagetool >/dev/null 2>&1; then \
+	  tools/release/create-appimage.sh publish/desktop/linux-x64/JagFx.Desktop publish/JagFx-$(VERSION)-linux-x64.AppImage $(VERSION); \
+	else \
+	  echo "appimagetool not found; skipping AppImage and producing .tar.gz fallback only."; \
+	fi
+	tar -czf publish/JagFx-$(VERSION)-linux-x64.tar.gz -C publish/desktop/linux-x64 JagFx.Desktop
 
-release-all: release-macos release-linux release-windows
+# -- CLI publish ---------------------------------------------------------------
+
+publish-cli-macos-arm64:
+	dotnet publish $(CLI) -c $(CONF) -r osx-arm64 -o publish/cli/osx-arm64 --nologo $(PUBLISH_FLAGS)
+
+publish-cli-macos-x64:
+	dotnet publish $(CLI) -c $(CONF) -r osx-x64 -o publish/cli/osx-x64 --nologo $(PUBLISH_FLAGS)
+
+publish-cli-windows:
+	dotnet publish $(CLI) -c $(CONF) -r win-x64 -o publish/cli/win-x64 --nologo $(PUBLISH_FLAGS)
+
+publish-cli-linux:
+	dotnet publish $(CLI) -c $(CONF) -r linux-x64 -o publish/cli/linux-x64 --nologo $(PUBLISH_FLAGS)
+
+# -- CLI artifacts -------------------------------------------------------------
+
+release-cli-macos-arm64: publish-cli-macos-arm64
+	tar -czf publish/JagFx.Cli-$(VERSION)-macos-arm64.tar.gz -C publish/cli/osx-arm64 JagFx.Cli
+
+release-cli-macos-x64: publish-cli-macos-x64
+	tar -czf publish/JagFx.Cli-$(VERSION)-macos-x64.tar.gz -C publish/cli/osx-x64 JagFx.Cli
+
+release-cli-windows: publish-cli-windows
+	cd publish/cli/win-x64 && zip -rq ../../JagFx.Cli-$(VERSION)-win-x64.zip JagFx.Cli.exe
+
+release-cli-linux: publish-cli-linux
+	tar -czf publish/JagFx.Cli-$(VERSION)-linux-x64.tar.gz -C publish/cli/linux-x64 JagFx.Cli
+
+# -- Convenience ---------------------------------------------------------------
+
+release-macos: release-desktop-macos-arm64 release-desktop-macos-x64
+
+release-cli: release-cli-macos-arm64 release-cli-macos-x64 release-cli-windows release-cli-linux
+
+release-all: release-macos release-desktop-windows release-desktop-linux release-cli
+
+# -- Backwards-compatible aliases ---------------------------------------------
+
+publish-macos-arm64: publish-desktop-macos-arm64
+publish-macos-x64: publish-desktop-macos-x64
+publish-windows: publish-desktop-windows
+publish-linux: publish-desktop-linux
+
+release-macos-arm64: release-desktop-macos-arm64
+release-macos-x64: release-desktop-macos-x64
+release-windows: release-desktop-windows
+release-linux: release-desktop-linux
