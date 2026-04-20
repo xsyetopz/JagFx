@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -64,7 +64,7 @@ jobs:
           exit $failed
 
   ci-gate:
-    needs: [build-and-test, format-check, conventional-commits]
+    needs: [ build-and-test, format-check, conventional-commits ]
     if: always()
     runs-on: ubuntu-latest
     steps:

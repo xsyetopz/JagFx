@@ -1,15 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <RootNamespace>JagFx.Core</RootNamespace>
-    <AssemblyName>JagFx.Core</AssemblyName>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../../libs/SmartInt/SmartInt.csproj" />
-  </ItemGroup>
-
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>JagFx.Core</RootNamespace>
+        <AssemblyName>JagFx.Core</AssemblyName>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../libs/SmartInt/SmartInt.csproj" />
+    </ItemGroup>
 </Project>

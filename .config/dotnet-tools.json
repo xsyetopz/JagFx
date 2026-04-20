@@ -1,14 +1,18 @@
 {
-	"version": 1,
-	"isRoot": true,
-	"tools": {
-		"husky": {
-			"version": "0.9.1",
-			"commands": ["husky"]
-		},
-		"commitlint.net": {
-			"version": "0.8.0",
-			"commands": ["commit-lint"]
-		}
-	}
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "husky": {
+      "version": "0.9.1",
+      "commands": [
+        "husky"
+      ]
+    },
+    "commitlint.net": {
+      "version": "0.8.0",
+      "commands": [
+        "commit-lint"
+      ]
+    }
+  }
 }

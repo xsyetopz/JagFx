@@ -1,10 +1,14 @@
 {
-	"tasks": [
-		{
-			"name": "commitlint",
-			"command": "dotnet",
-			"args": ["commit-lint", "--commit-file", "${args}"],
-			"group": "commit-msg"
-		}
-	]
+  "tasks": [
+    {
+      "name": "commitlint",
+      "command": "dotnet",
+      "args": [
+        "commit-lint",
+        "--commit-file",
+        "${args}"
+      ],
+      "group": "commit-msg"
+    }
+  ]
 }

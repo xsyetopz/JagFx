@@ -1,22 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>12.0</LangVersion>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <RootNamespace>SmartInt</RootNamespace>
-    <AssemblyName>SmartInt</AssemblyName>
-    <Version>0.1.0</Version>
-    <Title>SmartInt</Title>
-    <Description>Jagex Smart encoding for OSRS cache integers</Description>
-    <Authors>JagFx Team</Authors>
-    <PackageTags>osrs;smart;encoding;runescape</PackageTags>
-    <IsPackable>true</IsPackable>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="tests\**" />
-    <EmbeddedResource Remove="tests\**" />
-    <None Remove="tests\**" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>12.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <RootNamespace>SmartInt</RootNamespace>
+        <AssemblyName>SmartInt</AssemblyName>
+        <Version>0.1.0</Version>
+        <Title>SmartInt</Title>
+        <Description>Jagex Smart encoding for OSRS cache integers</Description>
+        <Authors>JagFx Team</Authors>
+        <PackageTags>osrs;smart;encoding;runescape</PackageTags>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Remove="tests\**" />
+        <EmbeddedResource Remove="tests\**" />
+        <None Remove="tests\**" />
+    </ItemGroup>
 </Project>

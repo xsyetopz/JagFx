@@ -1,16 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <RootNamespace>JagFx.TestData</RootNamespace>
-    <AssemblyName>JagFx.TestData</AssemblyName>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\*.hex" />
-  </ItemGroup>
-
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>JagFx.TestData</RootNamespace>
+        <AssemblyName>JagFx.TestData</AssemblyName>
+    </PropertyGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\*.hex" />
+    </ItemGroup>
 </Project>
