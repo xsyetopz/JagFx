@@ -4,7 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [2.2.2]
+
+### Added
+
+- **Modern app icon** -- added a waveform-first JagFx icon in SVG, PNG, ICO, and ICNS formats, then wired it into the desktop window, Windows installer, macOS app bundle, and Linux AppImage metadata.
+- **Publishing guide** -- added `PUBLISHING.md` with host-OS-specific release steps, GitHub secret setup, signing/notarization notes, and troubleshooting for macOS, Windows, and Linux.
+
+### Changed
+
+- **Cross-platform release packaging** -- replaced archive-only desktop release targets with installer targets for macOS DMG, Windows Inno Setup EXE, Linux AppImage/tar fallback, plus separate CLI artifacts.
+- **Self-contained single-file publishing** -- desktop and CLI RID publishes now embed runtime, content, and native dependencies into self-contained single-file outputs.
+- **macOS app bundle metadata** -- macOS bundles now include the app icon and `CFBundleIconFile` metadata.
+
+### Fixed
+
+- **macOS DMG creation** -- fixed false `No space left on device` failures by using deterministic APFS DMG sizing, controlled local temporary output, stale mount cleanup, and retry headroom.
+- **Icon raster generation** -- added `tools/release/render-icon.sh` so raster icons match the SVG source and preserve transparent corners instead of rendering with a white background.
 
 ## [2.2.0]
 

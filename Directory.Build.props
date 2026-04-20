@@ -1,25 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Project>
-  <PropertyGroup>
-    <Version>2.2.1</Version>
-    <AssemblyVersion>2.2.1.0</AssemblyVersion>
-    <FileVersion>2.2.1.0</FileVersion>
-    <InformationalVersion>2.2.1</InformationalVersion>
-    <Company>JagFX</Company>
-    <Product>JagFX</Product>
-    <Copyright>Copyright © 2025-2026 JagFX Contributors</Copyright>
-
-    <!-- Code analysis -->
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <AnalysisLevel>8.0-recommended</AnalysisLevel>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
-  </PropertyGroup>
-
-  <!-- Auto-restore Husky.Net git hooks for contributors -->
-  <Target Name="HuskyRestore" BeforeTargets="Restore" Condition="'$(HUSKY)' != '0'">
-    <Exec Command="dotnet tool restore" StandardOutputImportance="Low" StandardErrorImportance="High" />
-    <Exec Command="dotnet husky install" WorkingDirectory="$(MSBuildThisFileDirectory)" StandardOutputImportance="Low" StandardErrorImportance="High" />
-  </Target>
+    <PropertyGroup>
+        <Version>2.2.2</Version>
+        <AssemblyVersion>2.2.2.0</AssemblyVersion>
+        <FileVersion>2.2.2.0</FileVersion>
+        <InformationalVersion>2.2.2</InformationalVersion>
+        <Company>JagFX</Company>
+        <Product>JagFX</Product>
+        <Copyright>Copyright © 2025-2026 JagFX Contributors</Copyright>
+        <!-- Code analysis -->
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisLevel>8.0-recommended</AnalysisLevel>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
+    </PropertyGroup>
+    <!-- Auto-restore Husky.Net git hooks for contributors -->
+    <Target Name="HuskyRestore"
+            BeforeTargets="Restore"
+            Condition="'$(HUSKY)' != '0'">
+        <Exec Command="dotnet tool restore"
+              StandardOutputImportance="Low"
+              StandardErrorImportance="High" />
+        <Exec Command="dotnet husky install"
+              WorkingDirectory="$(MSBuildThisFileDirectory)"
+              StandardOutputImportance="Low"
+              StandardErrorImportance="High" />
+    </Target>
 </Project>
