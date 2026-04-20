@@ -1,6 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
     <!-- Base surface colors -->
     <Color x:Key="SurfaceBase">#1a1a1a</Color>
     <Color x:Key="SurfaceGraph">#000000</Color>
@@ -10,72 +10,85 @@
     <Color x:Key="SurfaceCellHeader">#2e2e2e</Color>
     <Color x:Key="SurfaceInput">#000000</Color>
     <Color x:Key="SurfaceFooter">#1a1a1a</Color>
-
     <!-- Border colors -->
     <Color x:Key="BorderDefault">#3a3a3a</Color>
     <Color x:Key="BorderSubtle">#2e2e2e</Color>
     <Color x:Key="BorderAccent">#009E73</Color>
-
     <!-- Text colors -->
     <Color x:Key="TextPrimary">#ffffff</Color>
     <Color x:Key="TextSecondary">#cccccc</Color>
     <Color x:Key="TextMuted">#999999</Color>
     <Color x:Key="TextButton">#ffffff</Color>
     <Color x:Key="TextAccent">#009E73</Color>
-
     <!-- Envelope line colors -->
     <Color x:Key="LineEnvelope">#F0E442</Color>
     <Color x:Key="LineFilter">#0072B2</Color>
-
     <!-- Breakpoint colors -->
     <Color x:Key="BreakpointFill">#F0E442</Color>
     <Color x:Key="BreakpointSelected">#ffffff</Color>
-
     <!-- Grid line color -->
     <Color x:Key="GridLine">#1a1a1a</Color>
     <Color x:Key="GridMidline">#333333</Color>
-
     <!-- Button colors -->
     <Color x:Key="ButtonDefault">#6a6a6a</Color>
     <Color x:Key="ButtonBorder">#808080</Color>
     <Color x:Key="ButtonHover">#787878</Color>
     <Color x:Key="ButtonActive">#555555</Color>
     <Color x:Key="ButtonActiveBorder">#009E73</Color>
-
     <!-- Voice strip active/inactive -->
     <Color x:Key="VoiceActive">#009E73</Color>
     <Color x:Key="VoiceInactive">#555555</Color>
-
     <!-- Voice button states -->
     <Color x:Key="VoiceInactiveBg">#505050</Color>
     <Color x:Key="VoiceInactiveText">#666666</Color>
     <Color x:Key="VoiceInactiveBorder">#555555</Color>
     <Color x:Key="VoiceEnabledBg">#555555</Color>
     <Color x:Key="VoiceEnabledBorder">#666666</Color>
-
     <!-- SolidColorBrushes for direct binding -->
-    <SolidColorBrush x:Key="SurfaceBaseBrush" Color="{StaticResource SurfaceBase}" />
-    <SolidColorBrush x:Key="SurfaceGraphBrush" Color="{StaticResource SurfaceGraph}" />
-    <SolidColorBrush x:Key="SurfaceHeaderBrush" Color="{StaticResource SurfaceHeader}" />
-    <SolidColorBrush x:Key="SurfacePanelBrush" Color="{StaticResource SurfacePanel}" />
-    <SolidColorBrush x:Key="SurfaceCellBrush" Color="{StaticResource SurfaceCell}" />
-    <SolidColorBrush x:Key="SurfaceCellHeaderBrush" Color="{StaticResource SurfaceCellHeader}" />
-    <SolidColorBrush x:Key="SurfaceInputBrush" Color="{StaticResource SurfaceInput}" />
-    <SolidColorBrush x:Key="SurfaceFooterBrush" Color="{StaticResource SurfaceFooter}" />
-    <SolidColorBrush x:Key="BorderDefaultBrush" Color="{StaticResource BorderDefault}" />
-    <SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtle}" />
-    <SolidColorBrush x:Key="BorderAccentBrush" Color="{StaticResource BorderAccent}" />
-    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}" />
-    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
-    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
-    <SolidColorBrush x:Key="TextButtonBrush" Color="{StaticResource TextButton}" />
-    <SolidColorBrush x:Key="TextAccentBrush" Color="{StaticResource TextAccent}" />
-    <SolidColorBrush x:Key="LineEnvelopeBrush" Color="{StaticResource LineEnvelope}" />
-    <SolidColorBrush x:Key="LineFilterBrush" Color="{StaticResource LineFilter}" />
-    <SolidColorBrush x:Key="GridLineBrush" Color="{StaticResource GridLine}" />
-    <SolidColorBrush x:Key="GridMidlineBrush" Color="{StaticResource GridMidline}" />
-    <SolidColorBrush x:Key="ButtonDefaultBrush" Color="{StaticResource ButtonDefault}" />
-    <SolidColorBrush x:Key="ButtonBorderBrush" Color="{StaticResource ButtonBorder}" />
-    <SolidColorBrush x:Key="ButtonHoverBrush" Color="{StaticResource ButtonHover}" />
-
+    <SolidColorBrush x:Key="SurfaceBaseBrush"
+                     Color="{StaticResource SurfaceBase}" />
+    <SolidColorBrush x:Key="SurfaceGraphBrush"
+                     Color="{StaticResource SurfaceGraph}" />
+    <SolidColorBrush x:Key="SurfaceHeaderBrush"
+                     Color="{StaticResource SurfaceHeader}" />
+    <SolidColorBrush x:Key="SurfacePanelBrush"
+                     Color="{StaticResource SurfacePanel}" />
+    <SolidColorBrush x:Key="SurfaceCellBrush"
+                     Color="{StaticResource SurfaceCell}" />
+    <SolidColorBrush x:Key="SurfaceCellHeaderBrush"
+                     Color="{StaticResource SurfaceCellHeader}" />
+    <SolidColorBrush x:Key="SurfaceInputBrush"
+                     Color="{StaticResource SurfaceInput}" />
+    <SolidColorBrush x:Key="SurfaceFooterBrush"
+                     Color="{StaticResource SurfaceFooter}" />
+    <SolidColorBrush x:Key="BorderDefaultBrush"
+                     Color="{StaticResource BorderDefault}" />
+    <SolidColorBrush x:Key="BorderSubtleBrush"
+                     Color="{StaticResource BorderSubtle}" />
+    <SolidColorBrush x:Key="BorderAccentBrush"
+                     Color="{StaticResource BorderAccent}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush"
+                     Color="{StaticResource TextPrimary}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush"
+                     Color="{StaticResource TextSecondary}" />
+    <SolidColorBrush x:Key="TextMutedBrush"
+                     Color="{StaticResource TextMuted}" />
+    <SolidColorBrush x:Key="TextButtonBrush"
+                     Color="{StaticResource TextButton}" />
+    <SolidColorBrush x:Key="TextAccentBrush"
+                     Color="{StaticResource TextAccent}" />
+    <SolidColorBrush x:Key="LineEnvelopeBrush"
+                     Color="{StaticResource LineEnvelope}" />
+    <SolidColorBrush x:Key="LineFilterBrush"
+                     Color="{StaticResource LineFilter}" />
+    <SolidColorBrush x:Key="GridLineBrush"
+                     Color="{StaticResource GridLine}" />
+    <SolidColorBrush x:Key="GridMidlineBrush"
+                     Color="{StaticResource GridMidline}" />
+    <SolidColorBrush x:Key="ButtonDefaultBrush"
+                     Color="{StaticResource ButtonDefault}" />
+    <SolidColorBrush x:Key="ButtonBorderBrush"
+                     Color="{StaticResource ButtonBorder}" />
+    <SolidColorBrush x:Key="ButtonHoverBrush"
+                     Color="{StaticResource ButtonHover}" />
 </ResourceDictionary>

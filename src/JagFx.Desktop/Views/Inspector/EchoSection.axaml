@@ -1,25 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:JagFx.Desktop.ViewModels"
              xmlns:controls="using:JagFx.Desktop.Controls"
              x:Class="JagFx.Desktop.Views.Inspector.EchoSection"
              x:DataType="vm:VoiceViewModel">
-
     <StackPanel Spacing="0">
         <!-- Section Header -->
-        <Border Background="{StaticResource SurfaceCellHeaderBrush}" Padding="6,3"
-                BorderBrush="{StaticResource BorderDefaultBrush}" BorderThickness="0,1,0,1">
-            <TextBlock Text="ECHO" FontSize="8" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" />
+        <Border Background="{StaticResource SurfaceCellHeaderBrush}"
+                Padding="6,3"
+                BorderBrush="{StaticResource BorderDefaultBrush}"
+                BorderThickness="0,1,0,1">
+            <TextBlock Text="ECHO"
+                       FontSize="8"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource TextSecondaryBrush}" />
         </Border>
-
         <Border Padding="4,4">
             <StackPanel Spacing="4">
-                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                    <controls:KnobControl Value="{Binding EchoDelay}" Minimum="0" Maximum="500" Label="DELAY" Unit="ms" />
-                    <controls:KnobControl Value="{Binding EchoFeedback}" Minimum="0" Maximum="100" Label="FDBK" Unit="%" />
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8"
+                            HorizontalAlignment="Center">
+                    <controls:KnobControl Value="{Binding EchoDelay}"
+                                          Minimum="0"
+                                          Maximum="500"
+                                          Label="DELAY"
+                                          Unit="ms" />
+                    <controls:KnobControl Value="{Binding EchoFeedback}"
+                                          Minimum="0"
+                                          Maximum="100"
+                                          Label="FDBK"
+                                          Unit="%" />
                 </StackPanel>
             </StackPanel>
         </Border>
     </StackPanel>
-
 </UserControl>

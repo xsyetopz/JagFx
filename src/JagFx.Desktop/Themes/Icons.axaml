@@ -1,6 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
     <!-- Material Design Icons as StreamGeometry resources -->
     <!-- mdi-play -->
     <StreamGeometry x:Key="IconPlay">M8,5.14V19.14L19,12.14L8,5.14Z</StreamGeometry>
@@ -22,5 +22,4 @@
     <StreamGeometry x:Key="IconPlus">M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z</StreamGeometry>
     <!-- mdi-close -->
     <StreamGeometry x:Key="IconClose">M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z</StreamGeometry>
-
 </ResourceDictionary>

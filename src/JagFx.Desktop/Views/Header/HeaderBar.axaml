@@ -1,26 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:JagFx.Desktop.ViewModels"
              x:Class="JagFx.Desktop.Views.Header.HeaderBar"
              x:DataType="vm:MainViewModel"
              Height="40">
-
-    <Border Background="{StaticResource SurfaceHeaderBrush}" BorderBrush="{StaticResource BorderDefaultBrush}"
-            BorderThickness="0,0,0,1" Padding="3,0">
-        <StackPanel Orientation="Horizontal" Spacing="1" VerticalAlignment="Center">
+    <Border Background="{StaticResource SurfaceHeaderBrush}"
+            BorderBrush="{StaticResource BorderDefaultBrush}"
+            BorderThickness="0,0,0,1"
+            Padding="3,0">
+        <StackPanel Orientation="Horizontal"
+                    Spacing="1"
+                    VerticalAlignment="Center">
             <!-- Patch Navigation -->
             <Button Theme="{StaticResource JagToolButton}"
                     Command="{Binding NavigatePatchCommand}"
                     CommandParameter="-1"
                     ToolTip.Tip="Previous patch">
-                <PathIcon Data="{StaticResource IconChevronLeft}" Width="14" Height="14" />
+                <PathIcon Data="{StaticResource IconChevronLeft}"
+                          Width="14"
+                          Height="14" />
             </Button>
-            <Border Background="{StaticResource SurfaceInputBrush}" BorderBrush="{StaticResource BorderAccentBrush}"
-                    BorderThickness="1" Padding="4,0" Width="100" Height="20"
+            <Border Background="{StaticResource SurfaceInputBrush}"
+                    BorderBrush="{StaticResource BorderAccentBrush}"
+                    BorderThickness="1"
+                    Padding="4,0"
+                    Width="100"
+                    Height="20"
                     VerticalAlignment="Center">
                 <TextBlock Text="{Binding PatchName}"
                            Foreground="{StaticResource TextAccentBrush}"
-                           FontWeight="Bold" FontSize="10"
+                           FontWeight="Bold"
+                           FontSize="10"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            TextTrimming="CharacterEllipsis" />
@@ -29,57 +40,92 @@
                     Command="{Binding NavigatePatchCommand}"
                     CommandParameter="1"
                     ToolTip.Tip="Next patch">
-                <PathIcon Data="{StaticResource IconChevronRight}" Width="14" Height="14" />
+                <PathIcon Data="{StaticResource IconChevronRight}"
+                          Width="14"
+                          Height="14" />
             </Button>
-
             <!-- Separator -->
-            <Border Width="1" Height="20" Background="{StaticResource BorderDefaultBrush}" Margin="2,0" />
-
+            <Border Width="1"
+                    Height="20"
+                    Background="{StaticResource BorderDefaultBrush}"
+                    Margin="2,0" />
             <!-- File Operations -->
             <Button Theme="{StaticResource JagToolButton}"
-                    Command="{Binding OpenCommand}" ToolTip.Tip="Open file (Ctrl+O)">
-                <PathIcon Data="{StaticResource IconFolderOpen}" Width="14" Height="14" />
+                    Command="{Binding OpenCommand}"
+                    ToolTip.Tip="Open file (Ctrl+O)">
+                <PathIcon Data="{StaticResource IconFolderOpen}"
+                          Width="14"
+                          Height="14" />
             </Button>
             <Button Theme="{StaticResource JagToolButton}"
-                    Command="{Binding SaveCommand}" ToolTip.Tip="Save file (Ctrl+S)">
-                <PathIcon Data="{StaticResource IconContentSave}" Width="14" Height="14" />
+                    Command="{Binding SaveCommand}"
+                    ToolTip.Tip="Save file (Ctrl+S)">
+                <PathIcon Data="{StaticResource IconContentSave}"
+                          Width="14"
+                          Height="14" />
             </Button>
-
             <!-- Separator -->
-            <Border Width="1" Height="20" Background="{StaticResource BorderDefaultBrush}" Margin="2,0" />
-
+            <Border Width="1"
+                    Height="20"
+                    Background="{StaticResource BorderDefaultBrush}"
+                    Margin="2,0" />
             <!-- Transport -->
             <Button Theme="{StaticResource JagToolButton}"
                     Command="{Binding TogglePlayCommand}"
                     ToolTip.Tip="Play (Space)">
-                <PathIcon Data="{StaticResource IconPlay}" Width="14" Height="14" />
+                <PathIcon Data="{StaticResource IconPlay}"
+                          Width="14"
+                          Height="14" />
             </Button>
             <Button Theme="{StaticResource JagToolButton}"
                     Command="{Binding StopCommand}"
                     ToolTip.Tip="Stop">
-                <PathIcon Data="{StaticResource IconStop}" Width="14" Height="14" />
+                <PathIcon Data="{StaticResource IconStop}"
+                          Width="14"
+                          Height="14" />
             </Button>
-
             <!-- Separator -->
-            <Border Width="1" Height="20" Background="{StaticResource BorderDefaultBrush}" Margin="2,0" />
-
+            <Border Width="1"
+                    Height="20"
+                    Background="{StaticResource BorderDefaultBrush}"
+                    Margin="2,0" />
             <!-- Loop group -->
-            <Button x:Name="BtnLoop" Theme="{StaticResource JagVoiceButton}" Content="LOOP" MinWidth="32" Height="18"
-                    FontSize="8" ToolTip.Tip="Loop playback"
+            <Button x:Name="BtnLoop"
+                    Theme="{StaticResource JagVoiceButton}"
+                    Content="LOOP"
+                    MinWidth="32"
+                    Height="18"
+                    FontSize="8"
+                    ToolTip.Tip="Loop playback"
                     Classes.enabled="True"
                     Classes.selected="{Binding IsLooping}" />
-            <TextBlock Text="CNT" FontSize="8" Foreground="{StaticResource TextSecondaryBrush}"
-                       VerticalAlignment="Center" Margin="4,0,2,0" />
-            <NumericUpDown Value="{Binding LoopCount}" Minimum="0" Maximum="999" Width="48" />
-            <TextBlock Text="BGN" FontSize="8" Foreground="{StaticResource TextSecondaryBrush}"
-                       VerticalAlignment="Center" Margin="4,0,2,0" />
+            <TextBlock Text="CNT"
+                       FontSize="8"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       VerticalAlignment="Center"
+                       Margin="4,0,2,0" />
+            <NumericUpDown Value="{Binding LoopCount}"
+                           Minimum="0"
+                           Maximum="999"
+                           Width="48" />
+            <TextBlock Text="BGN"
+                       FontSize="8"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       VerticalAlignment="Center"
+                       Margin="4,0,2,0" />
             <NumericUpDown Value="{Binding Patch.LoopBegin, TargetNullValue=0, FallbackValue=0}"
-                           Minimum="0" Maximum="65535" Width="56" />
-            <TextBlock Text="END" FontSize="8" Foreground="{StaticResource TextSecondaryBrush}"
-                       VerticalAlignment="Center" Margin="4,0,2,0" />
+                           Minimum="0"
+                           Maximum="65535"
+                           Width="56" />
+            <TextBlock Text="END"
+                       FontSize="8"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       VerticalAlignment="Center"
+                       Margin="4,0,2,0" />
             <NumericUpDown Value="{Binding Patch.LoopEnd, TargetNullValue=0, FallbackValue=0}"
-                           Minimum="0" Maximum="65535" Width="56" />
+                           Minimum="0"
+                           Maximum="65535"
+                           Width="56" />
         </StackPanel>
     </Border>
-
 </UserControl>
