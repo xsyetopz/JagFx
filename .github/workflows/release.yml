@@ -53,10 +53,6 @@ jobs:
           make publish-desktop-macos-$ARCH_LABEL
           make publish-cli-macos-$ARCH_LABEL
 
-      - name: Create DMG
-        run: |
-          make release-desktop-macos-$ARCH_LABEL
-
       - name: Create CLI archive
         run: |
           make release-cli-macos-$ARCH_LABEL
@@ -76,6 +72,19 @@ jobs:
           security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
           security list-keychains -d user -s "$KEYCHAIN_PATH"
           security find-identity -v -p codesigning "$KEYCHAIN_PATH"
+
+      - name: Sign app
+        if: ${{ env.HAS_MACOS_SIGNING == 'true' }}
+        env:
+          MACOS_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+        run: |
+          APP_PATH="publish/desktop/${{ matrix.rid }}/JagFx.app"
+          codesign --force --deep --options runtime --sign "$MACOS_SIGN_IDENTITY" "$APP_PATH"
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+
+      - name: Create DMG
+        run: |
+          make release-desktop-macos-$ARCH_LABEL
 
       - name: Sign + notarize DMG
         if: ${{ env.HAS_MACOS_SIGNING == 'true' }}
