@@ -18,9 +18,60 @@ env:
   DOTNET_VERSION: "8.0.x"
 
 jobs:
+  resolve-release-ref:
+    name: Resolve release ref
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      ref: ${{ steps.resolve.outputs.ref }}
+      tag: ${{ steps.resolve.outputs.tag }}
+      is_release: ${{ steps.resolve.outputs.is_release }}
+    steps:
+      - id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF_VALUE: ${{ github.ref }}
+          GITHUB_REF_NAME_VALUE: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          if [[ "$GITHUB_REF_VALUE" == refs/tags/* ]]; then
+            echo "ref=$GITHUB_REF_VALUE" >> "$GITHUB_OUTPUT"
+            echo "tag=$GITHUB_REF_NAME_VALUE" >> "$GITHUB_OUTPUT"
+            echo "is_release=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "$EVENT_NAME" == "workflow_dispatch" && -n "$RELEASE_TAG" ]]; then
+            if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Invalid release_tag: $RELEASE_TAG"
+              echo "Use format like v2.2.2"
+              exit 1
+            fi
+
+            if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$RELEASE_TAG" >/dev/null; then
+              echo "Release tag does not exist on origin: $RELEASE_TAG"
+              echo "Create/push it first:"
+              echo "git tag -a $RELEASE_TAG -m \"JagFx ${RELEASE_TAG#v}\""
+              echo "git push origin $RELEASE_TAG"
+              exit 1
+            fi
+
+            echo "ref=refs/tags/$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+            echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+            echo "is_release=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "ref=$GITHUB_REF_VALUE" >> "$GITHUB_OUTPUT"
+          echo "tag=" >> "$GITHUB_OUTPUT"
+          echo "is_release=false" >> "$GITHUB_OUTPUT"
+
   macos:
     name: macOS ${{ matrix.rid }}
     runs-on: macos-14
+    needs: resolve-release-ref
     env:
       HAS_MACOS_CERT: ${{ secrets.MACOS_CERT_P12_BASE64 != '' &&
         secrets.MACOS_CERT_PASSWORD != '' }}
@@ -35,8 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag ||
-            github.ref }}
+          ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
       - uses: actions/setup-dotnet@v5
         with:
@@ -119,11 +169,11 @@ jobs:
   windows:
     name: Windows win-x64
     runs-on: windows-latest
+    needs: resolve-release-ref
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag ||
-            github.ref }}
+          ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
       - uses: actions/setup-dotnet@v5
         with:
@@ -160,11 +210,11 @@ jobs:
   linux:
     name: Linux linux-x64
     runs-on: ubuntu-latest
+    needs: resolve-release-ref
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag ||
-            github.ref }}
+          ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
       - uses: actions/setup-dotnet@v5
         with:
@@ -204,16 +254,14 @@ jobs:
   publish-release:
     name: Publish GitHub release
     runs-on: ubuntu-latest
-    needs: [ macos, windows, linux ]
-    if: ${{ startsWith(github.ref, 'refs/tags/') || (github.event_name ==
-      'workflow_dispatch' && inputs.release_tag != '') }}
+    needs: [ resolve-release-ref, macos, windows, linux ]
+    if: ${{ needs.resolve-release-ref.outputs.is_release == 'true' }}
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag ||
-            github.ref }}
+          ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
       - uses: actions/download-artifact@v4
         with:
@@ -223,8 +271,7 @@ jobs:
       - name: Create or update release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag ||
-            github.ref_name }}
+          TAG_NAME: ${{ needs.resolve-release-ref.outputs.tag }}
         run: |
           mapfile -t ASSETS < <(find release-artifacts -type f | sort)
 
