@@ -328,7 +328,7 @@ public class InspectCommand : Command
                 hex = hex[..15] + "...";
             var paddedMnemonic = mnemonic.PadRight(10);
             var comma = comment.Length > 0 && mnemonic.Length > 0 ? ", " : "";
-            Console.WriteLine($"{pos:X4}: {hex, -18} {paddedMnemonic}{comma}{comment}");
+            Console.WriteLine($"{pos:X4}: {hex,-18} {paddedMnemonic}{comma}{comment}");
         }
     }
 }
