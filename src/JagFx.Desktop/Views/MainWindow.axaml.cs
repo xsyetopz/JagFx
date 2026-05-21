@@ -23,18 +23,21 @@ public partial class MainWindow : Window
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
-        if (DataContext is not MainViewModel vm) return;
+        if (DataContext is not MainViewModel vm)
+            return;
 
         vm.RequestOpenDialog = async () =>
         {
             var path = await FileDialogService.OpenSynthFileAsync(this);
-            if (path is not null) vm.LoadFromPath(path);
+            if (path is not null)
+                vm.TryLoadFromPath(path);
         };
 
         vm.RequestSaveAsDialog = async () =>
         {
             var path = await FileDialogService.SaveSynthFileAsync(this, vm.PatchName);
-            if (path is null) return;
+            if (path is null)
+                return;
 
             if (path.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
                 await vm.ExportToPathAsync(path);
@@ -48,10 +51,12 @@ public partial class MainWindow : Window
 
     private void OnWindowKeyDown(object? sender, KeyEventArgs e)
     {
-        if (DataContext is not MainViewModel vm) return;
+        if (DataContext is not MainViewModel vm)
+            return;
 
         // Don't handle shortcuts when a text input is focused
-        if (FocusManager?.GetFocusedElement() is TextBox or NumericUpDown) return;
+        if (FocusManager?.GetFocusedElement() is TextBox or NumericUpDown)
+            return;
 
         switch (e.Key)
         {

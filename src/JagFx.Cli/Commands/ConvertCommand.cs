@@ -1,6 +1,6 @@
+using System.CommandLine;
 using JagFx.Io;
 using JagFx.Synthesis.Core;
-using System.CommandLine;
 
 namespace JagFx.Cli.Commands;
 
@@ -15,18 +15,9 @@ public static class ConvertCommand
 
     public static void Configure(RootCommand root)
     {
-        var inputOpt = new Option<string?>("-i", "--input")
-        {
-            Description = "Input .synth file"
-        };
-        var outputOpt = new Option<string?>("-o", "--output")
-        {
-            Description = "Output .wav file"
-        };
-        var loopsOpt = new Option<int?>("-l", "--loops")
-        {
-            Description = "Loop count"
-        };
+        var inputOpt = new Option<string?>("-i", "--input") { Description = "Input .synth file" };
+        var outputOpt = new Option<string?>("-o", "--output") { Description = "Output .wav file" };
+        var loopsOpt = new Option<int?>("-l", "--loops") { Description = "Loop count" };
 
         root.Options.Add(inputOpt);
         root.Options.Add(outputOpt);
@@ -62,7 +53,14 @@ public static class ConvertCommand
         if (!CommandHelpers.ValidateInputFile(inputPath))
             return 1;
 
-        if (!CommandHelpers.ValidateFormats(inputPath, outputPath, SupportedInputFormats, SupportedOutputFormats))
+        if (
+            !CommandHelpers.ValidateFormats(
+                inputPath,
+                outputPath,
+                SupportedInputFormats,
+                SupportedOutputFormats
+            )
+        )
             return 1;
 
         return ProcessConversion(inputPath, outputPath, loopCount);

@@ -1,31 +1,34 @@
+using System.CommandLine;
 using JagFx.Io;
 using JagFx.Io.Json;
-using System.CommandLine;
 
 namespace JagFx.Cli.Commands;
 
 public class FromJsonCommand : Command
 {
-    public FromJsonCommand() : base("from-json", "Convert JSON to .synth binary format")
+    public FromJsonCommand()
+        : base("from-json", "Convert JSON to .synth binary format")
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to input .json file"
+            Description = "Path to input .json file",
         };
         var outputArgument = new Argument<string>("output")
         {
-            Description = "Path to output .synth file"
+            Description = "Path to output .synth file",
         };
 
         Arguments.Add(inputArgument);
         Arguments.Add(outputArgument);
 
-        SetAction((parseResult) =>
-        {
-            var input = parseResult.GetValue(inputArgument);
-            var output = parseResult.GetValue(outputArgument);
-            return Execute(input, output);
-        });
+        SetAction(
+            (parseResult) =>
+            {
+                var input = parseResult.GetValue(inputArgument);
+                var output = parseResult.GetValue(outputArgument);
+                return Execute(input, output);
+            }
+        );
     }
 
     private static int Execute(string? input, string? output)

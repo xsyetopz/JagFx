@@ -18,7 +18,8 @@ public static class TestResources
     public static string GetHexString(string name)
     {
         var resourceName = $"{ResourcePrefix}.{name}.hex";
-        using var stream = Assembly.GetManifestResourceStream(resourceName)
+        using var stream =
+            Assembly.GetManifestResourceStream(resourceName)
             ?? throw new FileNotFoundException($"Resource not found: {resourceName}");
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd().Trim();
@@ -59,12 +60,16 @@ public static class TestResources
     public static byte[] RelicUnlockSpinningHover => GetBytes("relic_unlock_spinning_hover");
     public static byte[] SpawnBoneCrack2 => GetBytes("spawn_bone_crack_2");
     public static byte[] ToaZebakAttackJawShut02 => GetBytes("toa_zebak_attack_jaw_shut_02");
-    public static byte[] ToaZebakAttackMeleeEnragedJawSnap01 => GetBytes("toa_zebak_attack_melee_enranged_jaw_snap_01");
-    public static byte[] ToaZebakAttackMeleeHighRoar02 => GetBytes("toa_zebak_attack_melee_high_roar_02");
-    public static byte[] ToaZebakAttackMeleeJawSnapShut01 => GetBytes("toa_zebak_attack_melee_jaw_snap_shut_01");
+    public static byte[] ToaZebakAttackMeleeEnragedJawSnap01 =>
+        GetBytes("toa_zebak_attack_melee_enranged_jaw_snap_01");
+    public static byte[] ToaZebakAttackMeleeHighRoar02 =>
+        GetBytes("toa_zebak_attack_melee_high_roar_02");
+    public static byte[] ToaZebakAttackMeleeJawSnapShut01 =>
+        GetBytes("toa_zebak_attack_melee_jaw_snap_shut_01");
     public static byte[] ToaZebakAttackMeleeRoar01 => GetBytes("toa_zebak_attack_melee_roar_01");
     public static byte[] ToaZebakAttackRoar05 => GetBytes("toa_zebak_attack_roar_05");
-    public static byte[] ToaZebakRangedEnragedGulp02 => GetBytes("toa_zebak_ranged_enranged_gulp_02");
+    public static byte[] ToaZebakRangedEnragedGulp02 =>
+        GetBytes("toa_zebak_ranged_enranged_gulp_02");
     public static byte[] WardOfArceuusCast => GetBytes("ward_of_arceuus_cast");
 
     #endregion

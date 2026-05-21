@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:JagFx.Desktop.ViewModels"
              xmlns:conv="using:JagFx.Desktop.Converters"
-             xmlns:controls="using:JagFx.Desktop.Controls"
+             xmlns:controls="using:JagFx.Desktop.Controls.Canvases"
              x:Class="JagFx.Desktop.Views.Footer.PartialsFooter"
              x:DataType="vm:MainViewModel">
     <UserControl.Resources>

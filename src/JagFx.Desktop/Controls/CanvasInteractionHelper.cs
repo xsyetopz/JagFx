@@ -34,7 +34,8 @@ public sealed class CanvasInteractionHelper
     public int StepZoom(int currentZoom, double wheelDelta)
     {
         var index = Array.IndexOf(ZoomLevels, currentZoom);
-        if (index < 0) index = 0;
+        if (index < 0)
+            index = 0;
 
         if (wheelDelta > 0 && index < ZoomLevels.Length - 1)
             return ZoomLevels[index + 1];

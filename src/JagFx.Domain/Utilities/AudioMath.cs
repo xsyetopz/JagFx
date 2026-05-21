@@ -9,11 +9,13 @@ public static class AudioMath
         Raw16,
         Percent,
         Normalized,
-        Decicents
+        Decicents,
     }
 
-    public const double TwoPi = /* 2.0 * Math.PI */ 6.283185307179586;
-    public const double HalfPi = /* Math.PI / 2.0 */ 1.5707963267948966;
+    public const double TwoPi = /* 2.0 * Math.PI */
+        6.283185307179586;
+    public const double HalfPi = /* Math.PI / 2.0 */
+        1.5707963267948966;
 
     private const double DecibelDivisor = 20.0;
     private const double PercentScale = 100.0;
@@ -65,7 +67,13 @@ public static class AudioMath
         return a + (b - a) * t;
     }
 
-    public static double MapRange(double value, double inMin, double inMax, double outMin, double outMax)
+    public static double MapRange(
+        double value,
+        double inMin,
+        double inMax,
+        double outMin,
+        double outMax
+    )
     {
         return outMin + (value - inMin) / (inMax - inMin) * (outMax - outMin);
     }
@@ -91,7 +99,7 @@ public static class AudioMath
             UnitType.Percent => value / PercentScale,
             UnitType.Normalized => value,
             UnitType.Decicents => value / DecicentsScale,
-            _ => value
+            _ => value,
         };
 
         return targetUnit switch
@@ -100,7 +108,7 @@ public static class AudioMath
             UnitType.Percent => normalized * PercentScale,
             UnitType.Normalized => normalized,
             UnitType.Decicents => normalized * DecicentsScale,
-            _ => normalized
+            _ => normalized,
         };
     }
 
@@ -113,7 +121,7 @@ public static class AudioMath
             UnitType.Percent => $"{string.Format(formattedDecimalString, value)}%",
             UnitType.Normalized => string.Format(formattedDecimalString, value),
             UnitType.Decicents => $"{string.Format(formattedDecimalString, value / 10.0)} st",
-            _ => value.ToString()
+            _ => value.ToString(),
         };
     }
 }

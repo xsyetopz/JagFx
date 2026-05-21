@@ -60,10 +60,18 @@ public partial class FilterViewModel : ObservableObject
 
     public void UpdatePole(int channel, int phase, int index, int newPhase, int newMagnitude)
     {
-        if (_polePhase.IsDefault || _poleMagnitude.IsDefault) return;
-        if (channel < 0 || channel >= _polePhase.Length) return;
-        if (_polePhase[channel].IsDefault || phase < 0 || phase >= _polePhase[channel].Length) return;
-        if (_polePhase[channel][phase].IsDefault || index < 0 || index >= _polePhase[channel][phase].Length) return;
+        if (_polePhase.IsDefault || _poleMagnitude.IsDefault)
+            return;
+        if (channel < 0 || channel >= _polePhase.Length)
+            return;
+        if (_polePhase[channel].IsDefault || phase < 0 || phase >= _polePhase[channel].Length)
+            return;
+        if (
+            _polePhase[channel][phase].IsDefault
+            || index < 0
+            || index >= _polePhase[channel][phase].Length
+        )
+            return;
 
         // Rebuild immutable arrays with the updated value
         var phaseArr = _polePhase[channel][phase].SetItem(index, newPhase);
@@ -78,18 +86,25 @@ public partial class FilterViewModel : ObservableObject
         OnPropertyChanged(nameof(PoleMagnitude));
     }
 
-    partial void OnPoleCount0Changed(int oldValue, int newValue) => ResizePoleArrays(0, oldValue, newValue);
-    partial void OnPoleCount1Changed(int oldValue, int newValue) => ResizePoleArrays(1, oldValue, newValue);
+    partial void OnPoleCount0Changed(int oldValue, int newValue) =>
+        ResizePoleArrays(0, oldValue, newValue);
+
+    partial void OnPoleCount1Changed(int oldValue, int newValue) =>
+        ResizePoleArrays(1, oldValue, newValue);
 
     private void ResizePoleArrays(int channel, int oldCount, int newCount)
     {
-        if (_polePhase.IsDefault || _poleMagnitude.IsDefault) return;
-        if (channel < 0 || channel >= _polePhase.Length) return;
-        if (_polePhase[channel].IsDefault) return;
+        if (_polePhase.IsDefault || _poleMagnitude.IsDefault)
+            return;
+        if (channel < 0 || channel >= _polePhase.Length)
+            return;
+        if (_polePhase[channel].IsDefault)
+            return;
 
         for (var phase = 0; phase < _polePhase[channel].Length; phase++)
         {
-            if (_polePhase[channel][phase].IsDefault) continue;
+            if (_polePhase[channel][phase].IsDefault)
+                continue;
 
             var phaseArr = _polePhase[channel][phase];
             var magArr = _poleMagnitude[channel][phase];
@@ -127,13 +142,15 @@ public partial class FilterViewModel : ObservableObject
 
     public Filter? ToModel()
     {
-        if (!HasFilter) return null;
+        if (!HasFilter)
+            return null;
 
         return new Filter(
             ImmutableArray.Create(PoleCount0, PoleCount1),
             ImmutableArray.Create(UnityGain0, UnityGain1),
             _polePhase,
             _poleMagnitude,
-            null);
+            null
+        );
     }
 }

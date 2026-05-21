@@ -3,7 +3,12 @@ using JagFx.Desktop.ViewModels;
 
 namespace JagFx.Desktop.Controls;
 
-public enum EnvelopeDisplayMode { AutoScale, FullScale, Normalized }
+public enum EnvelopeDisplayMode
+{
+    AutoScale,
+    FullScale,
+    Normalized,
+}
 
 /// <summary>
 /// Computes breakpoint positions for an envelope within a given plot area.
@@ -25,7 +30,14 @@ public readonly struct EnvelopeGeometry
         PlotHeight = plotHeight;
     }
 
-    public static EnvelopeGeometry Compute(EnvelopeViewModel env, double canvasWidth, double canvasHeight, int zoomLevel = 1, double scrollOffset = 0, EnvelopeDisplayMode displayMode = EnvelopeDisplayMode.FullScale)
+    public static EnvelopeGeometry Compute(
+        EnvelopeViewModel env,
+        double canvasWidth,
+        double canvasHeight,
+        int zoomLevel = 1,
+        double scrollOffset = 0,
+        EnvelopeDisplayMode displayMode = EnvelopeDisplayMode.FullScale
+    )
     {
         var segments = env.Segments;
         var plotW = (canvasWidth - Padding * 2) * zoomLevel;
@@ -35,9 +47,12 @@ public readonly struct EnvelopeGeometry
             return new EnvelopeGeometry([], plotW, plotH);
 
         var totalDuration = segments.Sum(s => s.Duration);
-        if (totalDuration <= 0) totalDuration = 1;
+        if (totalDuration <= 0)
+            totalDuration = 1;
 
-        double minLevel, maxLevel, range;
+        double minLevel,
+            maxLevel,
+            range;
         if (displayMode is EnvelopeDisplayMode.FullScale or EnvelopeDisplayMode.Normalized)
         {
             minLevel = 0;
@@ -49,7 +64,8 @@ public readonly struct EnvelopeGeometry
             minLevel = Math.Min(env.StartValue, segments.Min(s => s.TargetLevel));
             maxLevel = Math.Max(env.StartValue, segments.Max(s => s.TargetLevel));
             range = maxLevel - minLevel;
-            if (range <= 0) range = 1;
+            if (range <= 0)
+                range = 1;
         }
 
         var points = new Point[segments.Count + 1];
@@ -124,7 +140,8 @@ public readonly struct EnvelopeGeometry
     /// </summary>
     public double XToTime(double canvasX, double totalDuration, double scrollOffset)
     {
-        if (PlotWidth <= 0 || totalDuration <= 0) return 0;
+        if (PlotWidth <= 0 || totalDuration <= 0)
+            return 0;
         return (canvasX + scrollOffset - Padding) / PlotWidth * totalDuration;
     }
 
@@ -132,11 +149,19 @@ public readonly struct EnvelopeGeometry
     /// Adjusts the duration of the segment at segmentIndex based on the canvas X position,
     /// compensating the next segment to keep total duration constant.
     /// </summary>
-    public static void AdjustDuration(double canvasX, double canvasWidth, int segmentIndex,
-        EnvelopeViewModel env, double totalDuration, int zoomLevel = 1, double scrollOffset = 0)
+    public static void AdjustDuration(
+        double canvasX,
+        double canvasWidth,
+        int segmentIndex,
+        EnvelopeViewModel env,
+        double totalDuration,
+        int zoomLevel = 1,
+        double scrollOffset = 0
+    )
     {
         var plotW = (canvasWidth - Padding * 2) * zoomLevel;
-        if (plotW <= 0 || totalDuration <= 0) return;
+        if (plotW <= 0 || totalDuration <= 0)
+            return;
 
         var segments = env.Segments;
 
@@ -157,7 +182,8 @@ public readonly struct EnvelopeGeometry
         if (segmentIndex + 1 < segments.Count)
         {
             var nextDur = segments[segmentIndex + 1].Duration - delta;
-            if (nextDur < 1) return;
+            if (nextDur < 1)
+                return;
             segments[segmentIndex].Duration = newDur;
             segments[segmentIndex + 1].Duration = nextDur;
         }
@@ -170,9 +196,15 @@ public readonly struct EnvelopeGeometry
     /// <summary>
     /// Converts a canvas Y position to a peak level value for the current envelope scaling.
     /// </summary>
-    public static int YToPeakLevel(double canvasY, double canvasHeight, EnvelopeViewModel env, EnvelopeDisplayMode displayMode = EnvelopeDisplayMode.FullScale)
+    public static int YToPeakLevel(
+        double canvasY,
+        double canvasHeight,
+        EnvelopeViewModel env,
+        EnvelopeDisplayMode displayMode = EnvelopeDisplayMode.FullScale
+    )
     {
-        double minLevel, range;
+        double minLevel,
+            range;
         if (displayMode is EnvelopeDisplayMode.FullScale or EnvelopeDisplayMode.Normalized)
         {
             minLevel = 0;
@@ -183,7 +215,8 @@ public readonly struct EnvelopeGeometry
             minLevel = Math.Min(env.StartValue, env.Segments.Min(s => s.TargetLevel));
             var maxLevel = Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel));
             range = maxLevel - minLevel;
-            if (range <= 0) range = 1;
+            if (range <= 0)
+                range = 1;
         }
         return YToPeakLevel(canvasY, canvasHeight, minLevel, range);
     }
@@ -192,9 +225,15 @@ public readonly struct EnvelopeGeometry
     /// Converts a canvas Y position to a peak level using pre-computed min/range.
     /// Use during drag operations to avoid feedback loops from changing range.
     /// </summary>
-    public static int YToPeakLevel(double canvasY, double canvasHeight, double minLevel, double range)
+    public static int YToPeakLevel(
+        double canvasY,
+        double canvasHeight,
+        double minLevel,
+        double range
+    )
     {
-        if (range <= 0) range = 1;
+        if (range <= 0)
+            range = 1;
         var plotH = canvasHeight - Padding * 2;
         var normalizedY = 1.0 - (canvasY - Padding) / plotH;
         return Math.Clamp((int)(normalizedY * range + minLevel), -65535, 65535);
@@ -205,9 +244,11 @@ public readonly struct EnvelopeGeometry
     /// </summary>
     public static int SnapLevel(int raw, double minLevel, double range, int zoomLevel)
     {
-        if (range <= 0) return raw;
+        if (range <= 0)
+            return raw;
         var step = range / (4.0 * zoomLevel);
-        if (step <= 0) return raw;
+        if (step <= 0)
+            return raw;
         var snapped = Math.Round((raw - minLevel) / step) * step + minLevel;
         return Math.Clamp((int)snapped, -65535, 65535);
     }
@@ -217,11 +258,13 @@ public readonly struct EnvelopeGeometry
     /// </summary>
     public static int SnapDuration(int raw, double totalDuration, int zoomLevel)
     {
-        if (totalDuration <= 0) return raw;
+        if (totalDuration <= 0)
+            return raw;
         // Grid has 8*zoomLevel divisions across visibleW, but plotW = visibleW * zoomLevel,
         // so the total grid cells across the plot is 8 * zoomLevel². Match snap to that.
         var step = totalDuration / (8.0 * zoomLevel * zoomLevel);
-        if (step <= 0) return raw;
+        if (step <= 0)
+            return raw;
         var snapped = Math.Max(1, (int)(Math.Round(raw / step) * step));
         return snapped;
     }

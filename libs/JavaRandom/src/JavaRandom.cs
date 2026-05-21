@@ -18,9 +18,8 @@ public class JavaRandom(long seed)
     /// <summary>
     /// Creates a new random number generator using a seed based on the current time.
     /// </summary>
-    public JavaRandom() : this(DateTime.UtcNow.Ticks)
-    {
-    }
+    public JavaRandom()
+        : this(DateTime.UtcNow.Ticks) { }
 
     /// <summary>
     /// Returns the next pseudorandom, uniformly distributed int value from this random number generator's sequence.
@@ -41,7 +40,8 @@ public class JavaRandom(long seed)
         if ((maxValue & -maxValue) == maxValue)
             return (int)((maxValue * (long)NextInt()) >> 31) & int.MaxValue;
 
-        int bits, val;
+        int bits,
+            val;
         do
         {
             bits = NextInt() >>> 1;
@@ -57,7 +57,10 @@ public class JavaRandom(long seed)
     public int Next(int minValue, int maxValue)
     {
         if (minValue >= maxValue)
-            throw new ArgumentOutOfRangeException(nameof(minValue), "minValue must be less than maxValue");
+            throw new ArgumentOutOfRangeException(
+                nameof(minValue),
+                "minValue must be less than maxValue"
+            );
 
         return minValue + Next(maxValue - minValue);
     }

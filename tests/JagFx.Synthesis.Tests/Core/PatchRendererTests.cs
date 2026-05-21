@@ -39,10 +39,7 @@ public class PatchRendererTests
     [Fact]
     public void EmptyFileProducesEmptyBuffer()
     {
-        var emptyFile = new Patch(
-            voices: [],
-            loop: new LoopSegment(0, 0)
-        );
+        var emptyFile = new Patch(voices: [], loop: new LoopSegment(0, 0));
         var audio = PatchRenderer.Synthesize(emptyFile, 1);
         Assert.Equal(0, audio.Length);
     }

@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
 using JagFx.Desktop.Controls;
+using JagFx.Desktop.Controls.Canvases;
 using JagFx.Desktop.ViewModels;
 using JagFx.Domain.Models;
 
@@ -17,20 +18,48 @@ public partial class SignalChainPanel : UserControl
     private PatchViewModel? _subscribedPatch;
 
     private abstract record SlotBase(SignalChainSlot Slot, Border Container);
-    private sealed record EnvelopeSlot(SignalChainSlot Slot, Border Container, EnvelopeCanvas Canvas) : SlotBase(Slot, Container);
-    private sealed record SpecialSlot(SignalChainSlot Slot, Border Container, Control Canvas) : SlotBase(Slot, Container);
+
+    private sealed record EnvelopeSlot(
+        SignalChainSlot Slot,
+        Border Container,
+        EnvelopeCanvas Canvas
+    ) : SlotBase(Slot, Container);
+
+    private sealed record SpecialSlot(SignalChainSlot Slot, Border Container, Control Canvas)
+        : SlotBase(Slot, Container);
 
     private readonly List<SlotBase> _slots = [];
 
     // 3×4 matrix layout: [row][col] = (slot, type)
     private static readonly (SignalChainSlot Slot, SlotType Type)[,] Matrix =
     {
-        { (SignalChainSlot.Pitch, SlotType.Envelope), (SignalChainSlot.VibratoRate, SlotType.Envelope), (SignalChainSlot.VibratoDepth, SlotType.Envelope), (SignalChainSlot.PoleZero, SlotType.PoleZero) },
-        { (SignalChainSlot.Volume, SlotType.Envelope), (SignalChainSlot.TremoloRate, SlotType.Envelope), (SignalChainSlot.TremoloDepth, SlotType.Envelope), (SignalChainSlot.Filter, SlotType.Envelope) },
-        { (SignalChainSlot.GapOff, SlotType.Envelope), (SignalChainSlot.GapOn, SlotType.Envelope), (SignalChainSlot.Output, SlotType.Waveform), (SignalChainSlot.Bode, SlotType.Bode) },
+        {
+            (SignalChainSlot.Pitch, SlotType.Envelope),
+            (SignalChainSlot.VibratoRate, SlotType.Envelope),
+            (SignalChainSlot.VibratoDepth, SlotType.Envelope),
+            (SignalChainSlot.PoleZero, SlotType.PoleZero),
+        },
+        {
+            (SignalChainSlot.Volume, SlotType.Envelope),
+            (SignalChainSlot.TremoloRate, SlotType.Envelope),
+            (SignalChainSlot.TremoloDepth, SlotType.Envelope),
+            (SignalChainSlot.Filter, SlotType.Envelope),
+        },
+        {
+            (SignalChainSlot.GapOff, SlotType.Envelope),
+            (SignalChainSlot.GapOn, SlotType.Envelope),
+            (SignalChainSlot.Output, SlotType.Waveform),
+            (SignalChainSlot.Bode, SlotType.Bode),
+        },
     };
 
-    private enum SlotType { Envelope, PoleZero, Waveform, Bode }
+    private enum SlotType
+    {
+        Envelope,
+        PoleZero,
+        Waveform,
+        Bode,
+    }
 
     private WaveformCanvas? _outCanvas;
     private PoleZeroCanvas? _pzCanvas;
@@ -64,13 +93,20 @@ public partial class SignalChainPanel : UserControl
                 };
 
                 var canvas = CreateSlotCanvas(slotType, color);
-                if (canvas is null) continue;
+                if (canvas is null)
+                    continue;
 
                 switch (canvas)
                 {
-                    case PoleZeroCanvas pzc: _pzCanvas = pzc; break;
-                    case WaveformCanvas wc: _outCanvas = wc; break;
-                    case FrequencyResponseCanvas frc: _bodeCanvas = frc; break;
+                    case PoleZeroCanvas pzc:
+                        _pzCanvas = pzc;
+                        break;
+                    case WaveformCanvas wc:
+                        _outCanvas = wc;
+                        break;
+                    case FrequencyResponseCanvas frc:
+                        _bodeCanvas = frc;
+                        break;
                 }
 
                 var container = WrapInCell(titleBlock, canvas, row, col, slot, slotType);
@@ -83,20 +119,28 @@ public partial class SignalChainPanel : UserControl
         }
     }
 
-    private Control? CreateSlotCanvas(SlotType slotType, string color) => slotType switch
-    {
-        SlotType.Envelope => new EnvelopeCanvas
+    private Control? CreateSlotCanvas(SlotType slotType, string color) =>
+        slotType switch
         {
-            IsThumbnail = false,
-            LineColor = new SolidColorBrush(Color.Parse(color)),
-        },
-        SlotType.PoleZero => new PoleZeroCanvas(),
-        SlotType.Waveform => new WaveformCanvas(),
-        SlotType.Bode => new FrequencyResponseCanvas(),
-        _ => null,
-    };
+            SlotType.Envelope => new EnvelopeCanvas
+            {
+                IsThumbnail = false,
+                LineColor = new SolidColorBrush(Color.Parse(color)),
+            },
+            SlotType.PoleZero => new PoleZeroCanvas(),
+            SlotType.Waveform => new WaveformCanvas(),
+            SlotType.Bode => new FrequencyResponseCanvas(),
+            _ => null,
+        };
 
-    private Border WrapInCell(TextBlock titleBlock, Control canvas, int row, int col, SignalChainSlot slot, SlotType slotType)
+    private Border WrapInCell(
+        TextBlock titleBlock,
+        Control canvas,
+        int row,
+        int col,
+        SignalChainSlot slot,
+        SlotType slotType
+    )
     {
         var innerGrid = new Grid();
         innerGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
@@ -104,7 +148,9 @@ public partial class SignalChainPanel : UserControl
 
         // Header row: title (Star) + toolbar (Auto)
         var headerGrid = new Grid { ClipToBounds = true };
-        headerGrid.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
+        headerGrid.ColumnDefinitions.Add(
+            new ColumnDefinition(new GridLength(1, GridUnitType.Star))
+        );
         headerGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
 
         titleBlock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
@@ -202,11 +248,13 @@ public partial class SignalChainPanel : UserControl
                 Tag = level,
             };
 
-            if (level == 1) activeToggle = btn;
+            if (level == 1)
+                activeToggle = btn;
 
             btn.Click += (s, _) =>
             {
-                if (s is not ToggleButton toggled) return;
+                if (s is not ToggleButton toggled)
+                    return;
 
                 // Uncheck siblings
                 foreach (var child in group.Children)
@@ -236,7 +284,8 @@ public partial class SignalChainPanel : UserControl
                 WaveformCanvas => e.Property == WaveformCanvas.ZoomLevelProperty,
                 _ => false,
             };
-            if (!isZoomProp) return;
+            if (!isZoomProp)
+                return;
 
             var newZoom = (int)(e.NewValue ?? 1);
             foreach (var child in groupRef.Children)
@@ -275,7 +324,8 @@ public partial class SignalChainPanel : UserControl
 
         btn.Click += (s, _) =>
         {
-            if (s is not ToggleButton toggled) return;
+            if (s is not ToggleButton toggled)
+                return;
             if (canvas is EnvelopeCanvas ec)
                 ec.IsSnapEnabled = toggled.IsChecked == true;
         };
@@ -295,7 +345,8 @@ public partial class SignalChainPanel : UserControl
 
         btn.Click += (s, _) =>
         {
-            if (s is not Button button) return;
+            if (s is not Button button)
+                return;
 
             var menu = new ContextMenu();
 
@@ -323,9 +374,10 @@ public partial class SignalChainPanel : UserControl
                     {
                         if (menu.Items[i] is MenuItem mi)
                         {
-                            mi.Icon = ecRef.DisplayMode == modes[i].Mode
-                                ? new TextBlock { Text = "\u2713", FontSize = 9 }
-                                : null;
+                            mi.Icon =
+                                ecRef.DisplayMode == modes[i].Mode
+                                    ? new TextBlock { Text = "\u2713", FontSize = 9 }
+                                    : null;
                         }
                     }
                 };
@@ -348,7 +400,8 @@ public partial class SignalChainPanel : UserControl
 
     private EnvelopeViewModel? FindEnvelopeForSlot(SignalChainSlot slot)
     {
-        if (_subscribedVm is null) return null;
+        if (_subscribedVm is null)
+            return null;
         var voice = _subscribedVm.Patch.SelectedVoice;
         var entry = MainViewModel.SignalChain.FirstOrDefault(e => e.Slot == slot);
         return entry.Getter?.Invoke(voice);
@@ -404,7 +457,8 @@ public partial class SignalChainPanel : UserControl
 
     private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (_subscribedVm is null) return;
+        if (_subscribedVm is null)
+            return;
 
         if (e.PropertyName == nameof(MainViewModel.SelectedSlot))
             UpdateSelection(_subscribedVm.SelectedSlot);
@@ -426,7 +480,8 @@ public partial class SignalChainPanel : UserControl
             if (slot is EnvelopeSlot envSlot)
             {
                 var entry = MainViewModel.SignalChain.FirstOrDefault(e => e.Slot == envSlot.Slot);
-                if (entry.Getter is null) continue;
+                if (entry.Getter is null)
+                    continue;
                 var envelope = entry.Getter(voice);
                 envSlot.Canvas.Envelope = envelope;
                 envelope.PropertyChanged += OnEnvelopePropertyChanged;
@@ -467,8 +522,10 @@ public partial class SignalChainPanel : UserControl
 
     private void OnEnvelopePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(EnvelopeViewModel.IsEmpty)) return;
-        if (sender is not EnvelopeViewModel env) return;
+        if (e.PropertyName != nameof(EnvelopeViewModel.IsEmpty))
+            return;
+        if (sender is not EnvelopeViewModel env)
+            return;
 
         foreach (var slot in _slots)
         {
@@ -493,7 +550,12 @@ public partial class SignalChainPanel : UserControl
     }
 
     // Column 3 cells (filter-related)
-    private static readonly HashSet<SignalChainSlot> FilterCells = [SignalChainSlot.PoleZero, SignalChainSlot.Filter, SignalChainSlot.Bode];
+    private static readonly HashSet<SignalChainSlot> FilterCells =
+    [
+        SignalChainSlot.PoleZero,
+        SignalChainSlot.Filter,
+        SignalChainSlot.Bode,
+    ];
 
     private void UpdateGridMode(GridMode mode)
     {

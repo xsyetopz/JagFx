@@ -19,7 +19,8 @@ public static class AudioFilter
         Span<int> outputSpan,
         FilterState state,
         EnvelopeGenerator? envelopeEval,
-        int sampleCount)
+        int sampleCount
+    )
     {
         public Span<int> InputSpan { get; } = inputSpan;
         public Span<int> OutputSpan { get; } = outputSpan;
@@ -28,7 +29,12 @@ public static class AudioFilter
         public int SampleCount { get; } = sampleCount;
     }
 
-    public static void Apply(int[] buffer, Filter filter, EnvelopeGenerator? envelopeEval, int sampleCount)
+    public static void Apply(
+        int[] buffer,
+        Filter filter,
+        EnvelopeGenerator? envelopeEval,
+        int sampleCount
+    )
     {
         if (filter.PoleCounts[0] == 0 && filter.PoleCounts[1] == 0)
         {
@@ -57,7 +63,13 @@ public static class AudioFilter
             return;
         }
 
-        var ctx = new FilterProcessingContext(inputCopySpan, outSpan, state, envelopeEval, sampleCount);
+        var ctx = new FilterProcessingContext(
+            inputCopySpan,
+            outSpan,
+            state,
+            envelopeEval,
+            sampleCount
+        );
         ProcessInitialBlock(ctx, ffCount, fbCount);
         ProcessMainBlocks(ctx, ref ffCount, ref fbCount);
         ProcessFinalBlock(ctx, ffCount, fbCount);
@@ -70,7 +82,11 @@ public static class AudioFilter
         ProcessSampleRange(ctx, 0, fbCount, ffCount, fbCount);
     }
 
-    private static void ProcessMainBlocks(FilterProcessingContext ctx, ref int ffCount, ref int fbCount)
+    private static void ProcessMainBlocks(
+        FilterProcessingContext ctx,
+        ref int ffCount,
+        ref int fbCount
+    )
     {
         int pos = fbCount;
 
@@ -84,23 +100,46 @@ public static class AudioFilter
 
     private static void ProcessFinalBlock(FilterProcessingContext ctx, int ffCount, int fbCount)
     {
-        ProcessSampleRange(ctx, ctx.SampleCount - ffCount, ctx.SampleCount, ffCount, fbCount, isFinal: true);
+        ProcessSampleRange(
+            ctx,
+            ctx.SampleCount - ffCount,
+            ctx.SampleCount,
+            ffCount,
+            fbCount,
+            isFinal: true
+        );
     }
 
-    private static int ProcessSampleRange(FilterProcessingContext ctx, int start, int end, int ffCount, int fbCount, bool isFinal = false)
+    private static int ProcessSampleRange(
+        FilterProcessingContext ctx,
+        int start,
+        int end,
+        int ffCount,
+        int fbCount,
+        bool isFinal = false
+    )
     {
         int lastEnvelopeValue = AudioConstants.FixedPoint.Scale;
         for (var n = start; n < end; n++)
         {
             if (isFinal)
             {
-                ApplyFilterToFinalSample(ctx.InputSpan, ctx.OutputSpan, ctx.State, n, ffCount, fbCount, ctx.SampleCount);
+                ApplyFilterToFinalSample(
+                    ctx.InputSpan,
+                    ctx.OutputSpan,
+                    ctx.State,
+                    n,
+                    ffCount,
+                    fbCount,
+                    ctx.SampleCount
+                );
             }
             else
             {
                 ApplyFilterToSample(ctx.InputSpan, ctx.OutputSpan, ctx.State, n, ffCount, fbCount);
             }
-            lastEnvelopeValue = ctx.EnvelopeEval?.Evaluate(ctx.SampleCount) ?? AudioConstants.FixedPoint.Scale;
+            lastEnvelopeValue =
+                ctx.EnvelopeEval?.Evaluate(ctx.SampleCount) ?? AudioConstants.FixedPoint.Scale;
 
             if (n + 1 < ctx.SampleCount)
             {
@@ -112,7 +151,14 @@ public static class AudioFilter
         return lastEnvelopeValue;
     }
 
-    private static void ApplyFilterToSample(Span<int> inputCopySpan, Span<int> outSpan, FilterState state, int sampleIndex, int ffCount, int fbCount)
+    private static void ApplyFilterToSample(
+        Span<int> inputCopySpan,
+        Span<int> outSpan,
+        FilterState state,
+        int sampleIndex,
+        int ffCount,
+        int fbCount
+    )
     {
         var acc = 0L;
         AddFeedforward(inputCopySpan, state, sampleIndex, ffCount, ref acc);
@@ -120,7 +166,15 @@ public static class AudioFilter
         outSpan[sampleIndex] = (int)acc;
     }
 
-    private static void ApplyFilterToFinalSample(Span<int> inputCopySpan, Span<int> outSpan, FilterState state, int sampleIndex, int ffCount, int fbCount, int sampleCount)
+    private static void ApplyFilterToFinalSample(
+        Span<int> inputCopySpan,
+        Span<int> outSpan,
+        FilterState state,
+        int sampleIndex,
+        int ffCount,
+        int fbCount,
+        int sampleCount
+    )
     {
         var acc = 0L;
         AddFeedforwardFinal(inputCopySpan, state, sampleIndex, ffCount, sampleCount, ref acc);
@@ -128,16 +182,30 @@ public static class AudioFilter
         outSpan[sampleIndex] = (int)acc;
     }
 
-    private static void AddFeedforward(Span<int> inputCopySpan, FilterState state, int sampleIndex, int ffCount, ref long acc)
+    private static void AddFeedforward(
+        Span<int> inputCopySpan,
+        FilterState state,
+        int sampleIndex,
+        int ffCount,
+        ref long acc
+    )
     {
         acc += ((long)inputCopySpan[sampleIndex + ffCount] * state.InverseA0) >> 16;
         for (var k = 0; k < ffCount; k++)
         {
-            acc += ((long)inputCopySpan[sampleIndex + ffCount - 1 - k] * state.Feedforward[k]) >> 16;
+            acc +=
+                ((long)inputCopySpan[sampleIndex + ffCount - 1 - k] * state.Feedforward[k]) >> 16;
         }
     }
 
-    private static void AddFeedforwardFinal(Span<int> inputCopySpan, FilterState state, int sampleIndex, int ffCount, int sampleCount, ref long acc)
+    private static void AddFeedforwardFinal(
+        Span<int> inputCopySpan,
+        FilterState state,
+        int sampleIndex,
+        int ffCount,
+        int sampleCount,
+        ref long acc
+    )
     {
         var startK = sampleIndex + ffCount - sampleCount;
         for (var k = startK; k < ffCount; k++)
@@ -147,7 +215,13 @@ public static class AudioFilter
         }
     }
 
-    private static void AddFeedback(Span<int> outSpan, FilterState state, int sampleIndex, int fbCount, ref long acc)
+    private static void AddFeedback(
+        Span<int> outSpan,
+        FilterState state,
+        int sampleIndex,
+        int fbCount,
+        ref long acc
+    )
     {
         var actualFb = Math.Min(sampleIndex, fbCount);
         for (var k = 0; k < actualFb; k++)
@@ -243,12 +317,17 @@ public static class AudioFilter
                 var term1 = -2.0f * ampP * cosPhaseP;
                 var term2 = ampP * ampP;
 
-                _sosCoefficients[dir, section * 2 + 1] = _sosCoefficients[dir, section * 2 - 1] * term2;
-                _sosCoefficients[dir, section * 2] = _sosCoefficients[dir, section * 2 - 1] * term1 + _sosCoefficients[dir, section * 2 - 2] * term2;
+                _sosCoefficients[dir, section * 2 + 1] =
+                    _sosCoefficients[dir, section * 2 - 1] * term2;
+                _sosCoefficients[dir, section * 2] =
+                    _sosCoefficients[dir, section * 2 - 1] * term1
+                    + _sosCoefficients[dir, section * 2 - 2] * term2;
 
                 for (var coeffIndex = section * 2 - 1; coeffIndex >= 2; coeffIndex--)
                 {
-                    _sosCoefficients[dir, coeffIndex] += _sosCoefficients[dir, coeffIndex - 1] * term1 + _sosCoefficients[dir, coeffIndex - 2] * term2;
+                    _sosCoefficients[dir, coeffIndex] +=
+                        _sosCoefficients[dir, coeffIndex - 1] * term1
+                        + _sosCoefficients[dir, coeffIndex - 2] * term2;
                 }
 
                 _sosCoefficients[dir, 1] += _sosCoefficients[dir, 0] * term1 + term2;

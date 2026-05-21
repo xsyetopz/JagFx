@@ -8,6 +8,10 @@ public partial class HeaderBar : UserControl
     public HeaderBar()
     {
         InitializeComponent();
-        BtnLoop.Click += (_, _) => { if (DataContext is MainViewModel vm) vm.IsLooping = !vm.IsLooping; };
+        BtnLoop.Click += (_, _) =>
+        {
+            if (DataContext is MainViewModel vm)
+                vm.IsLooping = !vm.IsLooping;
+        };
     }
 }

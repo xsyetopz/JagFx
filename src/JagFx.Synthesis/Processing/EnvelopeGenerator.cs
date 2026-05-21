@@ -51,9 +51,13 @@ public class EnvelopeGenerator(Envelope envelope)
             _position = Envelope.Segments.Count - 1;
         }
 
-        _threshold = (int)(Envelope.Segments[_position].Duration / (double)AudioConstants.FixedPoint.Scale * period);
-        _delta = _threshold > _ticks
-            ? ((Envelope.Segments[_position].TargetLevel << EnvelopeScaleFactor) - _amplitude) / (_threshold - _ticks)
-            : 0;
+        _threshold = (int)(
+            Envelope.Segments[_position].Duration / (double)AudioConstants.FixedPoint.Scale * period
+        );
+        _delta =
+            _threshold > _ticks
+                ? ((Envelope.Segments[_position].TargetLevel << EnvelopeScaleFactor) - _amplitude)
+                    / (_threshold - _ticks)
+                : 0;
     }
 }

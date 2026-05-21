@@ -1,7 +1,7 @@
+using System.Collections.Immutable;
 using JagFx.Core.Constants;
 using JagFx.Domain.Models;
 using JagFx.Io.Buffers;
-using System.Collections.Immutable;
 
 namespace JagFx.Io;
 
@@ -95,7 +95,11 @@ public static class SynthFileWriter
         }
     }
 
-    private static void WriteOptionalEnvelopePair(BinaryBuffer buffer, Envelope? env1, Envelope? env2)
+    private static void WriteOptionalEnvelopePair(
+        BinaryBuffer buffer,
+        Envelope? env1,
+        Envelope? env2
+    )
     {
         if (env1 == null || env2 == null)
         {
@@ -142,7 +146,12 @@ public static class SynthFileWriter
         }
     }
 
-    private static void WriteFilterCoefficients(BinaryBuffer buffer, Filter filter, int phase, int modulationMask)
+    private static void WriteFilterCoefficients(
+        BinaryBuffer buffer,
+        Filter filter,
+        int phase,
+        int modulationMask
+    )
     {
         for (var channel = 0; channel < 2; channel++)
         {

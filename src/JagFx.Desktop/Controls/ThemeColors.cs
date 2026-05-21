@@ -17,34 +17,59 @@ public static class ThemeColors
     public static readonly Color FilterLine = Color.Parse("#0072B2");
     public static readonly Color EnvelopeLine = Color.Parse("#F0E442");
 
-    public static readonly IBrush CanvasBackgroundBrush = new SolidColorBrush(CanvasBackground).ToImmutable();
+    public static readonly IBrush CanvasBackgroundBrush = new SolidColorBrush(
+        CanvasBackground
+    ).ToImmutable();
     public static readonly IBrush AccentBrush = new SolidColorBrush(Accent).ToImmutable();
     public static readonly IBrush FilterBrush = new SolidColorBrush(FilterLine).ToImmutable();
-    public static readonly IBrush EnvelopeLineBrush = new SolidColorBrush(EnvelopeLine).ToImmutable();
+    public static readonly IBrush EnvelopeLineBrush = new SolidColorBrush(
+        EnvelopeLine
+    ).ToImmutable();
 
     private static readonly DashStyle DotDash = new([1, 4], 0);
-    public static readonly IPen GridFaintPen = new Pen(new SolidColorBrush(GridLineFaint).ToImmutable(), 0.5, DotDash).ToImmutable();
-    public static readonly IPen GridPen = new Pen(new SolidColorBrush(GridLine).ToImmutable(), 0.5, DotDash).ToImmutable();
-    public static readonly IPen UnitCirclePen = new Pen(new SolidColorBrush(UnitCircle).ToImmutable(), 1).ToImmutable();
-    public static readonly IPen MidPen = new Pen(new SolidColorBrush(MidLine).ToImmutable(), 1).ToImmutable();
+    public static readonly IPen GridFaintPen = new Pen(
+        new SolidColorBrush(GridLineFaint).ToImmutable(),
+        0.5,
+        DotDash
+    ).ToImmutable();
+    public static readonly IPen GridPen = new Pen(
+        new SolidColorBrush(GridLine).ToImmutable(),
+        0.5,
+        DotDash
+    ).ToImmutable();
+    public static readonly IPen UnitCirclePen = new Pen(
+        new SolidColorBrush(UnitCircle).ToImmutable(),
+        1
+    ).ToImmutable();
+    public static readonly IPen MidPen = new Pen(
+        new SolidColorBrush(MidLine).ToImmutable(),
+        1
+    ).ToImmutable();
     public static readonly IPen AccentPen2 = new Pen(AccentBrush, 2).ToImmutable();
     public static readonly IPen AccentPen1 = new Pen(AccentBrush, 1).ToImmutable();
     public static readonly IPen FilterPen = new Pen(FilterBrush, 1.5).ToImmutable();
-    public static readonly IPen DimmedFilterPen = new Pen(new SolidColorBrush(Color.FromArgb(128, 0, 114, 178)).ToImmutable(), 1.5).ToImmutable();
+    public static readonly IPen DimmedFilterPen = new Pen(
+        new SolidColorBrush(Color.FromArgb(128, 0, 114, 178)).ToImmutable(),
+        1.5
+    ).ToImmutable();
     public static readonly IPen EnvelopeLinePen = new Pen(EnvelopeLineBrush, 1.5).ToImmutable();
     public static readonly IPen AccentPen1_5 = new Pen(AccentBrush, 1.5).ToImmutable();
-    public static readonly IPen SectionTracePen = new Pen(new SolidColorBrush(Color.Parse("#56B4E9")).ToImmutable(), 1).ToImmutable();
+    public static readonly IPen SectionTracePen = new Pen(
+        new SolidColorBrush(Color.Parse("#56B4E9")).ToImmutable(),
+        1
+    ).ToImmutable();
     public static readonly IPen WaveformPen = new Pen(AccentBrush, 1).ToImmutable();
     public static readonly IPen MarkerPen = new Pen(Brushes.White, 1).ToImmutable();
 
     public static readonly Color VoiceSlotColor = EnvelopeLine;
     public static readonly Color FilterSlotColor = FilterLine;
 
-    public static string SlotColor(SignalChainSlot slot) => slot switch
-    {
-        SignalChainSlot.PoleZero or SignalChainSlot.Bode or SignalChainSlot.Filter => "#0072B2",
-        _ => "#F0E442",
-    };
+    public static string SlotColor(SignalChainSlot slot) =>
+        slot switch
+        {
+            SignalChainSlot.PoleZero or SignalChainSlot.Bode or SignalChainSlot.Filter => "#0072B2",
+            _ => "#F0E442",
+        };
 
     public static double Snap(double v) => Math.Floor(v) + 0.5;
 }

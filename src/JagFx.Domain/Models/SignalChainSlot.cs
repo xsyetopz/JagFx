@@ -20,21 +20,21 @@ public enum SignalChainSlot
 
 public static class SignalChainSlotExtensions
 {
-    public static string DisplayName(this SignalChainSlot slot) => slot switch
-    {
-        SignalChainSlot.Pitch => "PITCH",
-        SignalChainSlot.VibratoRate => "V.RATE",
-        SignalChainSlot.VibratoDepth => "V.DEPTH",
-        SignalChainSlot.Volume => "VOLUME",
-        SignalChainSlot.TremoloRate => "T.RATE",
-        SignalChainSlot.TremoloDepth => "T.DEPTH",
-        SignalChainSlot.GapOff => "GAP OFF",
-        SignalChainSlot.GapOn => "GAP ON",
-        SignalChainSlot.Filter => "FILTER",
-        SignalChainSlot.PoleZero => "P/Z",
-        SignalChainSlot.Output => "OUT",
-        SignalChainSlot.Bode => "BODE",
-        _ => slot.ToString(),
-    };
-
+    public static string DisplayName(this SignalChainSlot slot) =>
+        slot switch
+        {
+            SignalChainSlot.Pitch => "PITCH",
+            SignalChainSlot.VibratoRate => "V.RATE",
+            SignalChainSlot.VibratoDepth => "V.DEPTH",
+            SignalChainSlot.Volume => "VOLUME",
+            SignalChainSlot.TremoloRate => "T.RATE",
+            SignalChainSlot.TremoloDepth => "T.DEPTH",
+            SignalChainSlot.GapOff => "GAP OFF",
+            SignalChainSlot.GapOn => "GAP ON",
+            SignalChainSlot.Filter => "FILTER",
+            SignalChainSlot.PoleZero => "P/Z",
+            SignalChainSlot.Output => "OUT",
+            SignalChainSlot.Bode => "BODE",
+            _ => slot.ToString(),
+        };
 }

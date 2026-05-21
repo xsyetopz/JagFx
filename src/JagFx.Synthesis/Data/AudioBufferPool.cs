@@ -1,5 +1,5 @@
-using JagFx.Core.Constants;
 using System.Collections.Concurrent;
+using JagFx.Core.Constants;
 
 namespace JagFx.Synthesis.Data;
 

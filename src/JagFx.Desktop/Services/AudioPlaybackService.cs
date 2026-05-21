@@ -7,7 +7,10 @@ namespace JagFx.Desktop.Services;
 public class AudioPlaybackService : IDisposable
 {
     private Process? _playbackProcess;
-    private readonly string _tempWavPath = Path.Combine(Path.GetTempPath(), $"jagfx_{Environment.ProcessId}.wav");
+    private readonly string _tempWavPath = Path.Combine(
+        Path.GetTempPath(),
+        $"jagfx_{Environment.ProcessId}.wav"
+    );
 
     public event Action? PlaybackFinished;
 
@@ -18,7 +21,9 @@ public class AudioPlaybackService : IDisposable
     public async Task PlayAsync(AudioBuffer buffer)
     {
         Stop();
-        await Task.Run(() => WaveFileWriter.WriteToPath(buffer.ToBytes16LE(), _tempWavPath, bitsPerSample: 16));
+        await Task.Run(() =>
+            WaveFileWriter.WriteToPath(buffer.ToBytes16LE(), _tempWavPath, bitsPerSample: 16)
+        );
         StartAndWatch();
     }
 
@@ -30,15 +35,22 @@ public class AudioPlaybackService : IDisposable
 
     public async Task UpdateWavAsync(AudioBuffer buffer)
     {
-        await Task.Run(() => WaveFileWriter.WriteToPath(buffer.ToBytes16LE(), _tempWavPath, bitsPerSample: 16));
+        await Task.Run(() =>
+            WaveFileWriter.WriteToPath(buffer.ToBytes16LE(), _tempWavPath, bitsPerSample: 16)
+        );
     }
 
     public void ReplayFromExistingFile()
     {
         if (_playbackProcess is { HasExited: false })
         {
-            try { _playbackProcess.Kill(); }
-            catch { /* process may have exited */ }
+            try
+            {
+                _playbackProcess.Kill();
+            }
+            catch
+            { /* process may have exited */
+            }
         }
 
         _playbackProcess?.Dispose();
@@ -49,8 +61,13 @@ public class AudioPlaybackService : IDisposable
     {
         if (_playbackProcess is { HasExited: false })
         {
-            try { _playbackProcess.Kill(); }
-            catch { /* process may have exited */ }
+            try
+            {
+                _playbackProcess.Kill();
+            }
+            catch
+            { /* process may have exited */
+            }
         }
 
         _playbackProcess?.Dispose();
@@ -71,7 +88,9 @@ public class AudioPlaybackService : IDisposable
                     await process.WaitForExitAsync();
                     PlaybackFinished?.Invoke();
                 }
-                catch { /* process may have been killed */ }
+                catch
+                { /* process may have been killed */
+                }
             });
         }
     }
@@ -88,8 +107,13 @@ public class AudioPlaybackService : IDisposable
     public void Dispose()
     {
         Stop();
-        try { File.Delete(_tempWavPath); }
-        catch { /* best effort */ }
+        try
+        {
+            File.Delete(_tempWavPath);
+        }
+        catch
+        { /* best effort */
+        }
         GC.SuppressFinalize(this);
     }
 }

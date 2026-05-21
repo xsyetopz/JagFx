@@ -18,10 +18,7 @@ public class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var mainVm = new MainViewModel();
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = mainVm
-            };
+            desktop.MainWindow = new MainWindow { DataContext = mainVm };
         }
 
         base.OnFrameworkInitializationCompleted();

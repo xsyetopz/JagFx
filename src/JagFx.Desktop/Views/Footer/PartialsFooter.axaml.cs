@@ -15,8 +15,16 @@ public partial class PartialsFooter : UserControl
         InitializeComponent();
         BtnBankPrev.Click += (_, _) => CycleBank(-1);
         BtnBankNext.Click += (_, _) => CycleBank(1);
-        BtnOne.Click += (_, _) => { if (DataContext is MainViewModel vm) vm.PlaySingleVoice = true; };
-        BtnAll.Click += (_, _) => { if (DataContext is MainViewModel vm) vm.PlaySingleVoice = false; };
+        BtnOne.Click += (_, _) =>
+        {
+            if (DataContext is MainViewModel vm)
+                vm.PlaySingleVoice = true;
+        };
+        BtnAll.Click += (_, _) =>
+        {
+            if (DataContext is MainViewModel vm)
+                vm.PlaySingleVoice = false;
+        };
         BtnCopy.Click += (_, _) => CopyVoice();
         BtnReset.Click += (_, _) => ResetVoice();
         BtnMain.Click += (_, _) => SetGridMode(GridMode.Main);
@@ -30,7 +38,8 @@ public partial class PartialsFooter : UserControl
         if (_subscribedVm is not null)
             _subscribedVm.PropertyChanged -= OnMainVmPropertyChanged;
 
-        if (DataContext is not MainViewModel vm) return;
+        if (DataContext is not MainViewModel vm)
+            return;
 
         _subscribedVm = vm;
         vm.PropertyChanged += OnMainVmPropertyChanged;
@@ -38,9 +47,7 @@ public partial class PartialsFooter : UserControl
         BindPartialSlots();
     }
 
-    private void OnMainVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-    }
+    private void OnMainVmPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
     private void SubscribeToVoiceChanges(MainViewModel vm)
     {
@@ -60,7 +67,8 @@ public partial class PartialsFooter : UserControl
 
     private void OnPatchPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(PatchViewModel.SelectedVoice)) return;
+        if (e.PropertyName != nameof(PatchViewModel.SelectedVoice))
+            return;
 
         if (DataContext is MainViewModel vm)
             SubscribeToVoiceChanges(vm);
@@ -76,10 +84,12 @@ public partial class PartialsFooter : UserControl
 
     private void CycleBank(int direction)
     {
-        if (DataContext is not MainViewModel vm) return;
+        if (DataContext is not MainViewModel vm)
+            return;
         var voice = vm.Patch.SelectedVoice;
         var newOffset = voice.PartialBankOffset + direction * 5;
-        if (newOffset < 0 || newOffset > 5) return;
+        if (newOffset < 0 || newOffset > 5)
+            return;
         voice.PartialBankOffset = newOffset;
         BindPartialSlots();
     }
@@ -104,7 +114,8 @@ public partial class PartialsFooter : UserControl
 
     private void BindPartialSlots()
     {
-        if (DataContext is not MainViewModel vm) return;
+        if (DataContext is not MainViewModel vm)
+            return;
 
         var partials = vm.Patch.SelectedVoice.VisiblePartials.ToArray();
         ContentControl[] slots = [Slot0, Slot1, Slot2, Slot3, Slot4];

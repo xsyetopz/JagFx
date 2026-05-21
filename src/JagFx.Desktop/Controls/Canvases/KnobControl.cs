@@ -4,33 +4,49 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
 
-namespace JagFx.Desktop.Controls;
+namespace JagFx.Desktop.Controls.Canvases;
 
 public class KnobControl : Control
 {
-    public static readonly StyledProperty<double> ValueProperty =
-        AvaloniaProperty.Register<KnobControl, double>(nameof(Value), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
+    public static readonly StyledProperty<double> ValueProperty = AvaloniaProperty.Register<
+        KnobControl,
+        double
+    >(nameof(Value), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
-    public static readonly StyledProperty<double> MinimumProperty =
-        AvaloniaProperty.Register<KnobControl, double>(nameof(Minimum), defaultValue: 0.0);
+    public static readonly StyledProperty<double> MinimumProperty = AvaloniaProperty.Register<
+        KnobControl,
+        double
+    >(nameof(Minimum), defaultValue: 0.0);
 
-    public static readonly StyledProperty<double> MaximumProperty =
-        AvaloniaProperty.Register<KnobControl, double>(nameof(Maximum), defaultValue: 1.0);
+    public static readonly StyledProperty<double> MaximumProperty = AvaloniaProperty.Register<
+        KnobControl,
+        double
+    >(nameof(Maximum), defaultValue: 1.0);
 
-    public static readonly StyledProperty<string> LabelProperty =
-        AvaloniaProperty.Register<KnobControl, string>(nameof(Label), defaultValue: string.Empty);
+    public static readonly StyledProperty<string> LabelProperty = AvaloniaProperty.Register<
+        KnobControl,
+        string
+    >(nameof(Label), defaultValue: string.Empty);
 
-    public static readonly StyledProperty<double> StepProperty =
-        AvaloniaProperty.Register<KnobControl, double>(nameof(Step), defaultValue: 1.0);
+    public static readonly StyledProperty<double> StepProperty = AvaloniaProperty.Register<
+        KnobControl,
+        double
+    >(nameof(Step), defaultValue: 1.0);
 
-    public static readonly StyledProperty<string> FormatStringProperty =
-        AvaloniaProperty.Register<KnobControl, string>(nameof(FormatString), defaultValue: "F0");
+    public static readonly StyledProperty<string> FormatStringProperty = AvaloniaProperty.Register<
+        KnobControl,
+        string
+    >(nameof(FormatString), defaultValue: "F0");
 
-    public static readonly StyledProperty<string> UnitProperty =
-        AvaloniaProperty.Register<KnobControl, string>(nameof(Unit), defaultValue: string.Empty);
+    public static readonly StyledProperty<string> UnitProperty = AvaloniaProperty.Register<
+        KnobControl,
+        string
+    >(nameof(Unit), defaultValue: string.Empty);
 
-    public static readonly StyledProperty<double> DefaultValueProperty =
-        AvaloniaProperty.Register<KnobControl, double>(nameof(DefaultValue), defaultValue: double.NaN);
+    public static readonly StyledProperty<double> DefaultValueProperty = AvaloniaProperty.Register<
+        KnobControl,
+        double
+    >(nameof(DefaultValue), defaultValue: double.NaN);
 
     public double Value
     {
@@ -82,8 +98,14 @@ public class KnobControl : Control
 
     static KnobControl()
     {
-        AffectsRender<KnobControl>(ValueProperty, MinimumProperty, MaximumProperty,
-            LabelProperty, FormatStringProperty, UnitProperty);
+        AffectsRender<KnobControl>(
+            ValueProperty,
+            MinimumProperty,
+            MaximumProperty,
+            LabelProperty,
+            FormatStringProperty,
+            UnitProperty
+        );
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -117,29 +139,49 @@ public class KnobControl : Control
         var cx = w / 2.0;
         var cy = h / 2.0;
         var r = Math.Min(cx - 3, cy - 2);
-        if (r < 6) r = 6;
+        if (r < 6)
+            r = 6;
 
         var dimmed = !IsEffectivelyEnabled;
-        var arcBrush = dimmed ? new SolidColorBrush(Color.Parse("#555555")) : ThemeColors.AccentBrush;
+        var arcBrush = dimmed
+            ? new SolidColorBrush(Color.Parse("#555555"))
+            : ThemeColors.AccentBrush;
 
         // Track arc background
-        DrawArc(context, cx, cy, r + 2, StartAngleDeg, SweepDeg,
-            new Pen(new SolidColorBrush(Color.Parse("#333333")), 3));
+        DrawArc(
+            context,
+            cx,
+            cy,
+            r + 2,
+            StartAngleDeg,
+            SweepDeg,
+            new Pen(new SolidColorBrush(Color.Parse("#333333")), 3)
+        );
 
         // Filled arc
         var range = Maximum - Minimum;
         var fraction = range > 0 ? Math.Clamp((Value - Minimum) / range, 0, 1) : 0;
         if (fraction > 0)
         {
-            DrawArc(context, cx, cy, r + 2, StartAngleDeg, SweepDeg * fraction,
-                new Pen(arcBrush, 3));
+            DrawArc(
+                context,
+                cx,
+                cy,
+                r + 2,
+                StartAngleDeg,
+                SweepDeg * fraction,
+                new Pen(arcBrush, 3)
+            );
         }
 
         // Knob body
         context.DrawEllipse(
             new SolidColorBrush(Color.Parse("#1a1a1a")),
             new Pen(new SolidColorBrush(Color.Parse("#444444")), 1),
-            new Point(cx, cy), r, r);
+            new Point(cx, cy),
+            r,
+            r
+        );
 
         // Indicator line
         var indicatorAngleDeg = StartAngleDeg + SweepDeg * fraction;
@@ -148,8 +190,11 @@ public class KnobControl : Control
         var lineStartY = cy + Math.Sin(indicatorAngleRad) * (r * 0.35);
         var lineEndX = cx + Math.Cos(indicatorAngleRad) * (r * 0.85);
         var lineEndY = cy + Math.Sin(indicatorAngleRad) * (r * 0.85);
-        context.DrawLine(new Pen(arcBrush, 2),
-            new Point(lineStartX, lineStartY), new Point(lineEndX, lineEndY));
+        context.DrawLine(
+            new Pen(arcBrush, 2),
+            new Point(lineStartX, lineStartY),
+            new Point(lineEndX, lineEndY)
+        );
 
         // Draw label in the dead zone below the knob arc
         if (!string.IsNullOrEmpty(Label))
@@ -160,17 +205,26 @@ public class KnobControl : Control
                 FlowDirection.LeftToRight,
                 new Typeface("Consolas, Monaco, Courier New, monospace"),
                 7,
-                new SolidColorBrush(Color.Parse("#aaaaaa")));
+                new SolidColorBrush(Color.Parse("#aaaaaa"))
+            );
             var labelX = cx - labelText.Width / 2;
             var labelY = h - labelText.Height;
             context.DrawText(labelText, new Point(labelX, labelY));
         }
     }
 
-    private static void DrawArc(DrawingContext context, double cx, double cy, double r,
-        double startDeg, double sweepDeg, IPen pen)
+    private static void DrawArc(
+        DrawingContext context,
+        double cx,
+        double cy,
+        double r,
+        double startDeg,
+        double sweepDeg,
+        IPen pen
+    )
     {
-        if (sweepDeg <= 0) return;
+        if (sweepDeg <= 0)
+            return;
 
         var startRad = startDeg * Math.PI / 180.0;
         var endRad = (startDeg + sweepDeg) * Math.PI / 180.0;
@@ -185,14 +239,19 @@ public class KnobControl : Control
         using (var ctx = geometry.Open())
         {
             ctx.BeginFigure(new Point(startX, startY), false);
-            ctx.ArcTo(new Point(endX, endY), new Size(r, r), 0, isLargeArc, SweepDirection.Clockwise);
+            ctx.ArcTo(
+                new Point(endX, endY),
+                new Size(r, r),
+                0,
+                isLargeArc,
+                SweepDirection.Clockwise
+            );
         }
 
         context.DrawGeometry(null, pen, geometry);
     }
 
-    private string FormatHint() =>
-        $"{Label}: {Value.ToString(FormatString)}{Unit}";
+    private string FormatHint() => $"{Label}: {Value.ToString(FormatString)}{Unit}";
 
     protected override void OnPointerEntered(PointerEventArgs e)
     {
@@ -211,7 +270,8 @@ public class KnobControl : Control
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        if (!IsEffectivelyEnabled) return;
+        if (!IsEffectivelyEnabled)
+            return;
 
         if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
         {
@@ -220,7 +280,8 @@ public class KnobControl : Control
             return;
         }
 
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            return;
 
         if (e.ClickCount == 2)
         {
@@ -255,11 +316,7 @@ public class KnobControl : Control
             Value = Math.Clamp((double)newVal, Minimum, Maximum);
         };
 
-        var flyout = new Flyout
-        {
-            Content = nud,
-            Placement = PlacementMode.Bottom,
-        };
+        var flyout = new Flyout { Content = nud, Placement = PlacementMode.Bottom };
 
         FlyoutBase.SetAttachedFlyout(this, flyout);
         FlyoutBase.ShowAttachedFlyout(this);
@@ -268,7 +325,8 @@ public class KnobControl : Control
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
-        if (!_isDragging) return;
+        if (!_isDragging)
+            return;
 
         var pos = e.GetPosition(this);
         var deltaY = _lastPointerPos.Y - pos.Y;
@@ -292,9 +350,13 @@ public class KnobControl : Control
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         base.OnPointerWheelChanged(e);
-        if (!IsEffectivelyEnabled) return;
+        if (!IsEffectivelyEnabled)
+            return;
 
-        var delta = e.Delta.Y > 0 ? Step : e.Delta.Y < 0 ? -Step : 0;
+        var delta =
+            e.Delta.Y > 0 ? Step
+            : e.Delta.Y < 0 ? -Step
+            : 0;
         if (delta != 0)
         {
             Value = Math.Clamp(Value + delta, Minimum, Maximum);

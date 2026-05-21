@@ -56,8 +56,10 @@ public partial class VoiceViewModel : ObservableObject
     public VoiceViewModel()
     {
         Partials = new ObservableCollection<PartialViewModel>(
-            Enumerable.Range(0, AudioConstants.MaxOscillators)
-                .Select(i => new PartialViewModel { DisplayIndex = i + 1 }));
+            Enumerable
+                .Range(0, AudioConstants.MaxOscillators)
+                .Select(i => new PartialViewModel { DisplayIndex = i + 1 })
+        );
     }
 
     public void Load(Voice? voice)
@@ -129,20 +131,23 @@ public partial class VoiceViewModel : ObservableObject
 
     public Voice? ToModel()
     {
-        if (!IsEnabled) return null;
+        if (!IsEnabled)
+            return null;
 
         var activePartials = Partials
             .Where(p => p.IsActive)
             .Select(p => p.ToModel())
             .ToImmutableList();
 
-        var pitchLfo = (!VibratoRate.IsEmpty && !VibratoDepth.IsEmpty)
-            ? new LowFrequencyOscillator(VibratoRate.ToModel(), VibratoDepth.ToModel())
-            : null;
+        var pitchLfo =
+            (!VibratoRate.IsEmpty && !VibratoDepth.IsEmpty)
+                ? new LowFrequencyOscillator(VibratoRate.ToModel(), VibratoDepth.ToModel())
+                : null;
 
-        var ampLfo = (!TremoloRate.IsEmpty && !TremoloDepth.IsEmpty)
-            ? new LowFrequencyOscillator(TremoloRate.ToModel(), TremoloDepth.ToModel())
-            : null;
+        var ampLfo =
+            (!TremoloRate.IsEmpty && !TremoloDepth.IsEmpty)
+                ? new LowFrequencyOscillator(TremoloRate.ToModel(), TremoloDepth.ToModel())
+                : null;
 
         var gapOff = GapOff.IsEmpty ? null : GapOff.ToModel();
         var gapOn = GapOn.IsEmpty ? null : GapOn.ToModel();
@@ -164,7 +169,8 @@ public partial class VoiceViewModel : ObservableObject
             new Echo(EchoDelay, EchoFeedback),
             DurationMs,
             OffsetMs,
-            filter);
+            filter
+        );
     }
 
     private void ClearModulationEnvelopes()

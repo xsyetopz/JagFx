@@ -1,7 +1,7 @@
+using System.Collections.Immutable;
 using JagFx.Domain.Models;
 using JagFx.Io.Json;
 using JagFx.TestData;
-using System.Collections.Immutable;
 using Xunit;
 
 namespace JagFx.Io.Tests.Json;
@@ -61,29 +61,29 @@ public class SynthJsonSerializerTests
     public void Deserialize_MinimalJson_AppliesDefaults()
     {
         const string minimalJson = """
-        {
-            "voices": [
-                {
-                    "frequencyEnvelope": {
-                        "waveform": "sine",
-                        "startValue": 32768,
-                        "endValue": 32768,
-                        "segments": []
-                    },
-                    "amplitudeEnvelope": {
-                        "waveform": "off",
-                        "startValue": 0,
-                        "endValue": 65535,
-                        "segments": [
-                            { "duration": 16384, "targetLevel": 65535 },
-                            { "duration": 49152, "targetLevel": 0 }
-                        ]
-                    },
-                    "durationMs": 500
-                }
-            ]
-        }
-        """;
+            {
+                "voices": [
+                    {
+                        "frequencyEnvelope": {
+                            "waveform": "sine",
+                            "startValue": 32768,
+                            "endValue": 32768,
+                            "segments": []
+                        },
+                        "amplitudeEnvelope": {
+                            "waveform": "off",
+                            "startValue": 0,
+                            "endValue": 65535,
+                            "segments": [
+                                { "duration": 16384, "targetLevel": 65535 },
+                                { "duration": 49152, "targetLevel": 0 }
+                            ]
+                        },
+                        "durationMs": 500
+                    }
+                ]
+            }
+            """;
 
         var patch = SynthJsonSerializer.Deserialize(minimalJson);
 
@@ -118,8 +118,7 @@ public class SynthJsonSerializerTests
         var originalBytes = TestResources.GetBytes("toa_zebak_attack_melee_roar_01");
         var patch = SynthFileReader.Read(originalBytes);
 
-        var voiceWithFilter = patch.ActiveVoices
-            .FirstOrDefault(v => v.Voice.Filter != null);
+        var voiceWithFilter = patch.ActiveVoices.FirstOrDefault(v => v.Voice.Filter != null);
 
         Assert.True(voiceWithFilter != default, "Test fixture must contain a voice with a filter");
 
@@ -127,8 +126,7 @@ public class SynthJsonSerializerTests
         var json = SynthJsonSerializer.Serialize(patch);
         var roundTripped = SynthJsonSerializer.Deserialize(json);
 
-        var rtVoice = roundTripped.ActiveVoices
-            .First(v => v.Voice.Filter != null);
+        var rtVoice = roundTripped.ActiveVoices.First(v => v.Voice.Filter != null);
         var rtFilter = rtVoice.Voice.Filter!;
 
         Assert.Equal(filter.PoleCounts[0], rtFilter.PoleCounts[0]);
@@ -142,10 +140,12 @@ public class SynthJsonSerializerTests
             {
                 Assert.Equal(
                     filter.PolePhase[ch][ph].ToArray(),
-                    rtFilter.PolePhase[ch][ph].ToArray());
+                    rtFilter.PolePhase[ch][ph].ToArray()
+                );
                 Assert.Equal(
                     filter.PoleMagnitude[ch][ph].ToArray(),
-                    rtFilter.PoleMagnitude[ch][ph].ToArray());
+                    rtFilter.PoleMagnitude[ch][ph].ToArray()
+                );
             }
         }
     }
@@ -176,7 +176,8 @@ public class SynthJsonSerializerTests
     {
         var emptyPatch = new Patch(
             voices: ImmutableList<Voice?>.Empty,
-            loop: new LoopSegment(0, 0));
+            loop: new LoopSegment(0, 0)
+        );
 
         var json = SynthJsonSerializer.Serialize(emptyPatch);
         var roundTripped = SynthJsonSerializer.Deserialize(json);

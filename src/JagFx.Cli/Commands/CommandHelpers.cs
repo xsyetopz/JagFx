@@ -27,7 +27,8 @@ public static class CommandHelpers
         string inputPath,
         string outputPath,
         string[] supportedInputFormats,
-        string[] supportedOutputFormats)
+        string[] supportedOutputFormats
+    )
     {
         var inputExt = GetExtension(inputPath);
         var outputExt = GetExtension(outputPath);
@@ -43,13 +44,17 @@ public static class CommandHelpers
         if (!supportedInputFormats.Contains(inputExt))
         {
             Console.Error.WriteLine($"Error: Unsupported input format: {inputExt}");
-            Console.Error.WriteLine($"Supported formats: {string.Join(", ", supportedInputFormats)}");
+            Console.Error.WriteLine(
+                $"Supported formats: {string.Join(", ", supportedInputFormats)}"
+            );
             return false;
         }
         if (!supportedOutputFormats.Contains(outputExt))
         {
             Console.Error.WriteLine($"Error: Unsupported output format: {outputExt}");
-            Console.Error.WriteLine($"Supported formats: {string.Join(", ", supportedOutputFormats)}");
+            Console.Error.WriteLine(
+                $"Supported formats: {string.Join(", ", supportedOutputFormats)}"
+            );
             return false;
         }
 

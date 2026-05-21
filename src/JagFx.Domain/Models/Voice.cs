@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+
 namespace JagFx.Domain.Models;
 
 /// <summary>A single voice within a synthesizer patch.</summary>

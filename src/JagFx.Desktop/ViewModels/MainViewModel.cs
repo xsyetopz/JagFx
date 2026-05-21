@@ -3,7 +3,7 @@ using System.ComponentModel;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using JagFx.Desktop.Controls;
+using JagFx.Desktop.Controls.Canvases;
 using JagFx.Desktop.Services;
 using JagFx.Domain.Models;
 using JagFx.Io;
@@ -11,7 +11,12 @@ using JagFx.Synthesis.Data;
 
 namespace JagFx.Desktop.ViewModels;
 
-public enum GridMode { Main, Filter, Both }
+public enum GridMode
+{
+    Main,
+    Filter,
+    Both,
+}
 
 public partial class MainViewModel : ObservableObject, IDisposable
 {
@@ -85,9 +90,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             if (string.IsNullOrEmpty(FilePath))
                 return $"JagFx: {PatchName}{dirty}";
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var display = FilePath.StartsWith(home)
-                ? "~" + FilePath[home.Length..]
-                : FilePath;
+            var display = FilePath.StartsWith(home) ? "~" + FilePath[home.Length..] : FilePath;
             return $"JagFx: {display}{dirty}";
         }
     }
@@ -132,17 +135,23 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void OnHintChanged(string hint) => StatusHint = hint;
 
     partial void OnPatchNameChanged(string value) => OnPropertyChanged(nameof(WindowTitle));
+
     partial void OnIsDirtyChanged(bool value) => OnPropertyChanged(nameof(WindowTitle));
+
     partial void OnFilePathChanged(string? value) => OnPropertyChanged(nameof(WindowTitle));
 
     private int EffectiveLoopCount => IsLooping ? (LoopCount == 0 ? 50 : LoopCount) : 1;
 
     partial void OnPlaySingleVoiceChanged(bool value) => ScheduleRerender();
+
     partial void OnIsLoopingChanged(bool value) => ScheduleRerender();
+
     partial void OnLoopCountChanged(int value) => ScheduleRerender();
+
     partial void OnTrueWaveEnabledChanged(bool value)
     {
-        if (value) ScheduleRerender();
+        if (value)
+            ScheduleRerender();
     }
 
     private void ScheduleRerender()
@@ -158,12 +167,22 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         _debounceTimer?.Dispose();
         _debounceTimer = new System.Threading.Timer(
-            _ => Dispatcher.UIThread.Post(async () =>
-            {
-                try { await RenderAndCacheAsync(); }
-                catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Render failed: {ex}"); }
-            }),
-            null, 100, Timeout.Infinite);
+            _ =>
+                Dispatcher.UIThread.Post(async () =>
+                {
+                    try
+                    {
+                        await RenderAndCacheAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Render failed: {ex}");
+                    }
+                }),
+            null,
+            100,
+            Timeout.Infinite
+        );
     }
 
     private async Task RenderAndCacheAsync()
@@ -177,8 +196,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
             var voiceFilter = PlaySingleVoice ? Patch.SelectedVoiceIndex : -1;
 
             // Always render single pass for waveform display
-            var buffer = await SynthesisService.RenderAsync(model, loopCount: 1, voiceFilter: voiceFilter, ct: cts.Token);
-            if (cts.Token.IsCancellationRequested) return;
+            var buffer = await SynthesisService.RenderAsync(
+                model,
+                loopCount: 1,
+                voiceFilter: voiceFilter,
+                ct: cts.Token
+            );
+            if (cts.Token.IsCancellationRequested)
+                return;
 
             _singlePassDuration = buffer.Length / (double)buffer.SampleRate;
             var loopBeginMs = Patch.LoopBegin;
@@ -202,8 +227,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 model = DefaultLoopIfUnset(model);
 
-                var playbackBuffer = await SynthesisService.RenderAsync(model, loopCount: EffectiveLoopCount, voiceFilter: voiceFilter, ct: cts.Token);
-                if (cts.Token.IsCancellationRequested) return;
+                var playbackBuffer = await SynthesisService.RenderAsync(
+                    model,
+                    loopCount: EffectiveLoopCount,
+                    voiceFilter: voiceFilter,
+                    ct: cts.Token
+                );
+                if (cts.Token.IsCancellationRequested)
+                    return;
                 _cachedBuffer = playbackBuffer;
                 _bufferStale = false;
                 await _playback.UpdateWavAsync(playbackBuffer);
@@ -226,13 +257,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void NormalizeAndSetOutput(AudioBuffer buffer)
     {
         var samples = buffer.Samples;
-        if (samples.Length <= 0) return;
+        if (samples.Length <= 0)
+            return;
 
         var maxAbs = 0;
         foreach (var s in samples)
         {
             var abs = Math.Abs(s);
-            if (abs > maxAbs) maxAbs = abs;
+            if (abs > maxAbs)
+                maxAbs = abs;
         }
 
         var output = new float[samples.Length];
@@ -269,11 +302,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
             foreach (var seg in env.Segments)
                 seg.PropertyChanged += OnNestedPropertyChanged;
         }
+
+        voice.Filter.PropertyChanged += OnNestedPropertyChanged;
+        foreach (var partial in voice.Partials)
+            partial.PropertyChanged += OnNestedPropertyChanged;
     }
 
     private void UnsubscribeVoiceChanges()
     {
-        if (_subscribedVoice is null) return;
+        if (_subscribedVoice is null)
+            return;
         _subscribedVoice.PropertyChanged -= OnVoicePropertyChanged;
 
         foreach (var env in GetVoiceEnvelopes(_subscribedVoice))
@@ -284,25 +322,31 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 seg.PropertyChanged -= OnNestedPropertyChanged;
         }
 
+        _subscribedVoice.Filter.PropertyChanged -= OnNestedPropertyChanged;
+        foreach (var partial in _subscribedVoice.Partials)
+            partial.PropertyChanged -= OnNestedPropertyChanged;
+
         _subscribedVoice = null;
     }
 
     private static EnvelopeViewModel[] GetVoiceEnvelopes(VoiceViewModel v) =>
-    [
-        v.Pitch,
-        v.Volume,
-        v.VibratoRate,
-        v.VibratoDepth,
-        v.TremoloRate,
-        v.TremoloDepth,
-        v.FilterEnvelope,
-        v.GapOff,
-        v.GapOn
-    ];
+        [
+            v.Pitch,
+            v.Volume,
+            v.VibratoRate,
+            v.VibratoDepth,
+            v.TremoloRate,
+            v.TremoloDepth,
+            v.FilterEnvelope,
+            v.GapOff,
+            v.GapOn,
+        ];
 
-    private void OnVoicePropertyChanged(object? s, PropertyChangedEventArgs e) => ScheduleRerender();
+    private void OnVoicePropertyChanged(object? s, PropertyChangedEventArgs e) =>
+        ScheduleRerender();
 
-    private void OnNestedPropertyChanged(object? s, PropertyChangedEventArgs e) => ScheduleRerender();
+    private void OnNestedPropertyChanged(object? s, PropertyChangedEventArgs e) =>
+        ScheduleRerender();
 
     private void OnSegmentsCollectionChanged(object? s, NotifyCollectionChangedEventArgs e)
     {
@@ -321,6 +365,27 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     private void Open() => _ = RequestOpenDialog?.Invoke();
+
+    public bool TryLoadFromPath(string path)
+    {
+        try
+        {
+            _fileManager.LoadFromPath(path);
+            StatusHint = $"Loaded {Path.GetFileName(path)}";
+            return true;
+        }
+        catch (Exception ex)
+            when (ex
+                    is IOException
+                        or UnauthorizedAccessException
+                        or InvalidDataException
+                        or ArgumentException
+            )
+        {
+            StatusHint = $"Could not open {Path.GetFileName(path)}: {ex.Message}";
+            return false;
+        }
+    }
 
     public void LoadFromPath(string path) => _fileManager.LoadFromPath(path);
 
@@ -341,7 +406,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public void SaveToPath(string path) => _fileManager.SaveToPath(path);
 
     [RelayCommand]
-    private void NavigatePatch(string direction) => _fileManager.NavigatePatch(int.Parse(direction));
+    private void NavigatePatch(string direction) =>
+        _fileManager.NavigatePatch(int.Parse(direction));
 
     public async Task ExportToPathAsync(string path)
     {
@@ -372,7 +438,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    public static readonly (SignalChainSlot Slot, Func<VoiceViewModel, EnvelopeViewModel> Getter)[] SignalChain =
+    public static readonly (
+        SignalChainSlot Slot,
+        Func<VoiceViewModel, EnvelopeViewModel> Getter
+    )[] SignalChain =
     [
         (SignalChainSlot.Pitch, v => v.Pitch),
         (SignalChainSlot.VibratoRate, v => v.VibratoRate),
@@ -385,16 +454,20 @@ public partial class MainViewModel : ObservableObject, IDisposable
         (SignalChainSlot.Filter, v => v.FilterEnvelope),
     ];
 
-    private static (string Unit, double Min, double Max) GetStartEndMeta(SignalChainSlot slot) => slot switch
-    {
-        SignalChainSlot.Pitch or SignalChainSlot.VibratoRate or SignalChainSlot.TremoloRate
-            => ("Hz", -5000, 5000),
-        SignalChainSlot.Volume or SignalChainSlot.VibratoDepth or SignalChainSlot.TremoloDepth
-            => ("%", -100, 100),
-        SignalChainSlot.GapOff or SignalChainSlot.GapOn
-            => ("Gap", -65535, 65535),
-        _ => ("", -65535, 65535),
-    };
+    private static (string Unit, double Min, double Max) GetStartEndMeta(SignalChainSlot slot) =>
+        slot switch
+        {
+            SignalChainSlot.Pitch or SignalChainSlot.VibratoRate or SignalChainSlot.TremoloRate => (
+                "Hz",
+                -5000,
+                5000
+            ),
+            SignalChainSlot.Volume
+            or SignalChainSlot.VibratoDepth
+            or SignalChainSlot.TremoloDepth => ("%", -100, 100),
+            SignalChainSlot.GapOff or SignalChainSlot.GapOn => ("Gap", -65535, 65535),
+            _ => ("", -65535, 65535),
+        };
 
     public string StartEndUnit => GetStartEndMeta(SelectedSlot).Unit;
     public double StartEndMin => GetStartEndMeta(SelectedSlot).Min;
@@ -424,7 +497,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public void SelectEnvelopeByOffset(int offset)
     {
         var currentIndex = Array.FindIndex(SignalChain, e => e.Slot == SelectedSlot);
-        if (currentIndex < 0) currentIndex = 0;
+        if (currentIndex < 0)
+            currentIndex = 0;
         var newIndex = Math.Clamp(currentIndex + offset, 0, SignalChain.Length - 1);
         SelectEnvelope(SignalChain[newIndex].Slot);
     }
@@ -485,7 +559,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         model = DefaultLoopIfUnset(model);
 
-        var buffer = await SynthesisService.RenderAsync(model, loopCount: EffectiveLoopCount, voiceFilter: voiceFilter);
+        var buffer = await SynthesisService.RenderAsync(
+            model,
+            loopCount: EffectiveLoopCount,
+            voiceFilter: voiceFilter
+        );
         _cachedBuffer = buffer;
         _bufferStale = false;
 
@@ -548,7 +626,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 // Subsequent passes: cycle through loop region only
                 var loopElapsed = elapsed - _singlePassDuration;
                 var cyclePos = (loopElapsed % _loopCycleDuration) / _loopCycleDuration;
-                PlaybackPosition = _loopStartNormalized + cyclePos * (_loopEndNormalized - _loopStartNormalized);
+                PlaybackPosition =
+                    _loopStartNormalized + cyclePos * (_loopEndNormalized - _loopStartNormalized);
             }
         }
         else if (IsLooping && LoopCount == 0 && _singlePassDuration > 0)
@@ -582,7 +661,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         Dispatcher.UIThread.Post(() =>
         {
-            if (IsLooping && LoopCount == 0 && !_stoppingManually && _cachedBuffer is { Length: > 0 })
+            if (
+                IsLooping
+                && LoopCount == 0
+                && !_stoppingManually
+                && _cachedBuffer is { Length: > 0 }
+            )
             {
                 // Silently restart afplay — position continues cycling via modulo
                 _playback.ReplayFromExistingFile();
@@ -607,5 +691,4 @@ public partial class MainViewModel : ObservableObject, IDisposable
         UnsubscribeVoiceChanges();
         GC.SuppressFinalize(this);
     }
-
 }

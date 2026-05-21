@@ -1,5 +1,5 @@
-using SmartInt;
 using System.Buffers.Binary;
+using SmartInt;
 
 namespace JagFx.Io.Buffers;
 
@@ -8,7 +8,9 @@ public class BinaryBuffer
     private int _position;
     private bool _truncated;
 
-    public BinaryBuffer(byte[] data) => Data = data ?? throw new ArgumentNullException(nameof(data));
+    public BinaryBuffer(byte[] data) =>
+        Data = data ?? throw new ArgumentNullException(nameof(data));
+
     public BinaryBuffer(int size) => Data = new byte[size];
 
     public byte[] Data { get; }
@@ -38,7 +40,8 @@ public class BinaryBuffer
 
     public int ReadUInt8()
     {
-        if (CheckTruncation(1)) return 0;
+        if (CheckTruncation(1))
+            return 0;
 
         var unsignedByte = Data[_position] & 0xFF;
         _position++;
@@ -48,7 +51,8 @@ public class BinaryBuffer
 
     public int ReadInt8()
     {
-        if (CheckTruncation(1)) return 0;
+        if (CheckTruncation(1))
+            return 0;
 
         var signedByte = Data[_position];
         _position++;
@@ -58,7 +62,8 @@ public class BinaryBuffer
 
     public int ReadUInt16BigEndian()
     {
-        if (CheckTruncation(2)) return 0;
+        if (CheckTruncation(2))
+            return 0;
 
         var unsignedShort = BinaryPrimitives.ReadUInt16BigEndian(Data.AsSpan(_position, 2));
         _position += 2;
@@ -68,7 +73,8 @@ public class BinaryBuffer
 
     public int ReadUInt16LittleEndian()
     {
-        if (CheckTruncation(2)) return 0;
+        if (CheckTruncation(2))
+            return 0;
 
         var unsignedShort = BinaryPrimitives.ReadUInt16LittleEndian(Data.AsSpan(_position, 2));
         _position += 2;
@@ -78,7 +84,8 @@ public class BinaryBuffer
 
     public int ReadInt16BigEndian()
     {
-        if (CheckTruncation(2)) return 0;
+        if (CheckTruncation(2))
+            return 0;
 
         var signedShort = BinaryPrimitives.ReadInt16BigEndian(Data.AsSpan(_position, 2));
         _position += 2;
@@ -88,7 +95,8 @@ public class BinaryBuffer
 
     public int ReadInt32BigEndian()
     {
-        if (CheckTruncation(4)) return 0;
+        if (CheckTruncation(4))
+            return 0;
 
         var signedInt = BinaryPrimitives.ReadInt32BigEndian(Data.AsSpan(_position, 4));
         _position += 4;

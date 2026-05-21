@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+
 namespace JagFx.Domain.Models;
 
 public record Filter(

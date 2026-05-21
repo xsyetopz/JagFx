@@ -44,8 +44,10 @@ public class SynthFileReaderTests
     {
         var result = SynthFileReader.Read(TestResources.CowDeath);
         var (_, voice) = result.ActiveVoices.First();
-        Assert.True(voice.AmplitudeEnvelope.Segments.Count > 0,
-            "cow_death amplitude envelope must have at least one segment");
+        Assert.True(
+            voice.AmplitudeEnvelope.Segments.Count > 0,
+            "cow_death amplitude envelope must have at least one segment"
+        );
     }
 
     #endregion
@@ -79,12 +81,17 @@ public class SynthFileReaderTests
     {
         var result = SynthFileReader.Read(TestResources.ToaZebakAttackMeleeRoar01);
         var voiceWithFilter = result.ActiveVoices.FirstOrDefault(v => v.Voice.Filter != null);
-        Assert.True(voiceWithFilter != default, "toa_zebak_attack_melee_roar_01 must contain a voice with a filter");
+        Assert.True(
+            voiceWithFilter != default,
+            "toa_zebak_attack_melee_roar_01 must contain a voice with a filter"
+        );
 
         var filter = voiceWithFilter.Voice.Filter!;
         Assert.Equal(2, filter.PoleCounts.Length);
-        Assert.True(filter.PoleCounts[0] > 0 || filter.PoleCounts[1] > 0,
-            "Filter must have at least one pole in one channel");
+        Assert.True(
+            filter.PoleCounts[0] > 0 || filter.PoleCounts[1] > 0,
+            "Filter must have at least one pole in one channel"
+        );
     }
 
     #endregion

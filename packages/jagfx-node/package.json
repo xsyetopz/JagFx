@@ -1,0 +1,30 @@
+{
+  "name": "@xsyetopz/jagfx-node",
+  "version": "2.3.0",
+  "description": "Node native bindings for JagFx.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "binding.gyp",
+    "dist",
+    "prebuilds",
+    "src"
+  ],
+  "scripts": {
+    "build": "node-gyp rebuild",
+    "test": "node --test test/index.test.mjs"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.15.0"
+  }
+}

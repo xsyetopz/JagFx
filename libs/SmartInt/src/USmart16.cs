@@ -11,8 +11,12 @@ namespace SmartInt;
 /// </remarks>
 /// <param name="value">The value to store.</param>
 /// <exception cref="ArgumentOutOfRangeException">Thrown when value is outside the valid range.</exception>
-public readonly struct USmart16(ushort value) : IEquatable<USmart16>, IComparable<USmart16>,
-    IFormattable, ISpanFormattable, ISpanParsable<USmart16>
+public readonly struct USmart16(ushort value)
+    : IEquatable<USmart16>,
+        IComparable<USmart16>,
+        IFormattable,
+        ISpanFormattable,
+        ISpanParsable<USmart16>
 {
     /// <summary>
     /// The maximum value that can be represented by USmart16.
@@ -64,7 +68,10 @@ public readonly struct USmart16(ushort value) : IEquatable<USmart16>, IComparabl
         else
         {
             if (data.Length < 2)
-                throw new ArgumentOutOfRangeException(nameof(data), "Data is too short for 2-byte encoding.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(data),
+                    "Data is too short for 2-byte encoding."
+                );
 
             bytesRead = 2;
             var encoded = BinaryPrimitives.ReadUInt16BigEndian(data);
@@ -92,7 +99,10 @@ public readonly struct USmart16(ushort value) : IEquatable<USmart16>, IComparabl
         else
         {
             if (buffer.Length < 2)
-                throw new ArgumentOutOfRangeException(nameof(buffer), "Buffer is too small for 2-byte encoding.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(buffer),
+                    "Buffer is too small for 2-byte encoding."
+                );
 
             var encoded = (ushort)(value + USmartTwoByteOffset);
             BinaryPrimitives.WriteUInt16BigEndian(buffer, encoded);
@@ -144,7 +154,9 @@ public readonly struct USmart16(ushort value) : IEquatable<USmart16>, IComparabl
     /// <exception cref="FormatException">Thrown when s cannot be parsed.</exception>
     public static USmart16 Parse(ReadOnlySpan<char> s)
     {
-        return TryParse(s, out var result) ? result : throw new FormatException($"Cannot parse '{s.ToString()}' as a USmart16.");
+        return TryParse(s, out var result)
+            ? result
+            : throw new FormatException($"Cannot parse '{s.ToString()}' as a USmart16.");
     }
 
     /// <summary>
@@ -207,7 +219,9 @@ public readonly struct USmart16(ushort value) : IEquatable<USmart16>, IComparabl
     /// <returns>A value indicating relative ordering.</returns>
     public int CompareTo(object? obj)
     {
-        return obj is USmart16 other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(USmart16)}.");
+        return obj is USmart16 other
+            ? CompareTo(other)
+            : throw new ArgumentException($"Object must be of type {nameof(USmart16)}.");
     }
 
     /// <summary>
@@ -287,7 +301,12 @@ public readonly struct USmart16(ushort value) : IEquatable<USmart16>, IComparabl
     /// <param name="format">The format string.</param>
     /// <param name="provider">The format provider.</param>
     /// <returns>True if formatting succeeded; otherwise, false.</returns>
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = null)
+    public bool TryFormat(
+        Span<char> destination,
+        out int charsWritten,
+        ReadOnlySpan<char> format = default,
+        IFormatProvider? provider = null
+    )
     {
 #if NET8_0_OR_GREATER
         var spanFormattable = (ISpanFormattable)_value;
@@ -311,7 +330,11 @@ public readonly struct USmart16(ushort value) : IEquatable<USmart16>, IComparabl
         return Parse(s);
     }
 
-    static bool ISpanParsable<USmart16>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out USmart16 result)
+    static bool ISpanParsable<USmart16>.TryParse(
+        ReadOnlySpan<char> s,
+        IFormatProvider? provider,
+        out USmart16 result
+    )
     {
         return TryParse(s, out result);
     }
@@ -321,7 +344,11 @@ public readonly struct USmart16(ushort value) : IEquatable<USmart16>, IComparabl
         return Parse(s);
     }
 
-    static bool IParsable<USmart16>.TryParse(string? s, IFormatProvider? provider, out USmart16 result)
+    static bool IParsable<USmart16>.TryParse(
+        string? s,
+        IFormatProvider? provider,
+        out USmart16 result
+    )
     {
         return TryParse(s ?? string.Empty, out result);
     }

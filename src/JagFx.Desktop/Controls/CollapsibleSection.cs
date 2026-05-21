@@ -5,8 +5,10 @@ namespace JagFx.Desktop.Controls;
 
 public class CollapsibleSection : HeaderedContentControl
 {
-    public static readonly StyledProperty<bool> IsExpandedProperty =
-        AvaloniaProperty.Register<CollapsibleSection, bool>(nameof(IsExpanded), true);
+    public static readonly StyledProperty<bool> IsExpandedProperty = AvaloniaProperty.Register<
+        CollapsibleSection,
+        bool
+    >(nameof(IsExpanded), true);
 
     public bool IsExpanded
     {

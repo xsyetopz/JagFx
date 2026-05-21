@@ -1,0 +1,27 @@
+{
+  "name": "@xsyetopz/jagfx-wasm",
+  "version": "2.3.0",
+  "description": "Browser WebAssembly bindings for JagFx.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test test/index.test.mjs"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.15.0"
+  }
+}

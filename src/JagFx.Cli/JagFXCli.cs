@@ -1,5 +1,5 @@
-using JagFx.Cli.Commands;
 using System.CommandLine;
+using JagFx.Cli.Commands;
 
 namespace JagFx.Cli;
 

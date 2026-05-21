@@ -1,32 +1,35 @@
+using System.CommandLine;
 using JagFx.Io;
 using JagFx.Io.Json;
-using System.CommandLine;
 
 namespace JagFx.Cli.Commands;
 
 public class ToJsonCommand : Command
 {
-    public ToJsonCommand() : base("to-json", "Convert .synth binary to JSON format")
+    public ToJsonCommand()
+        : base("to-json", "Convert .synth binary to JSON format")
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to input .synth file"
+            Description = "Path to input .synth file",
         };
         var outputArgument = new Argument<string?>("output")
         {
             Description = "Path to output .json file (stdout if omitted)",
-            Arity = ArgumentArity.ZeroOrOne
+            Arity = ArgumentArity.ZeroOrOne,
         };
 
         Arguments.Add(inputArgument);
         Arguments.Add(outputArgument);
 
-        SetAction((parseResult) =>
-        {
-            var input = parseResult.GetValue(inputArgument);
-            var output = parseResult.GetValue(outputArgument);
-            return Execute(input, output);
-        });
+        SetAction(
+            (parseResult) =>
+            {
+                var input = parseResult.GetValue(inputArgument);
+                var output = parseResult.GetValue(outputArgument);
+                return Execute(input, output);
+            }
+        );
     }
 
     private static int Execute(string? input, string? output)

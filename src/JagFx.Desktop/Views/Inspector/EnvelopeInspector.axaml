@@ -4,7 +4,7 @@
              xmlns:vm="using:JagFx.Desktop.ViewModels"
              xmlns:insp="using:JagFx.Desktop.Views.Inspector"
              xmlns:conv="using:JagFx.Desktop.Converters"
-             xmlns:controls="using:JagFx.Desktop.Controls"
+             xmlns:controls="using:JagFx.Desktop.Controls.Canvases"
              x:Class="JagFx.Desktop.Views.Inspector.EnvelopeInspector"
              x:DataType="vm:MainViewModel">
     <UserControl.Resources>

@@ -3,21 +3,27 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 
-namespace JagFx.Desktop.Controls;
+namespace JagFx.Desktop.Controls.Canvases;
 
 public class WaveformCanvas : Control
 {
-    public static readonly StyledProperty<float[]?> SamplesProperty =
-        AvaloniaProperty.Register<WaveformCanvas, float[]?>(nameof(Samples));
+    public static readonly StyledProperty<float[]?> SamplesProperty = AvaloniaProperty.Register<
+        WaveformCanvas,
+        float[]?
+    >(nameof(Samples));
 
     public static readonly StyledProperty<double> PlaybackPositionProperty =
         AvaloniaProperty.Register<WaveformCanvas, double>(nameof(PlaybackPosition));
 
-    public static readonly StyledProperty<int> ZoomLevelProperty =
-        AvaloniaProperty.Register<WaveformCanvas, int>(nameof(ZoomLevel), 1);
+    public static readonly StyledProperty<int> ZoomLevelProperty = AvaloniaProperty.Register<
+        WaveformCanvas,
+        int
+    >(nameof(ZoomLevel), 1);
 
-    public static readonly StyledProperty<double> ScrollOffsetProperty =
-        AvaloniaProperty.Register<WaveformCanvas, double>(nameof(ScrollOffset));
+    public static readonly StyledProperty<double> ScrollOffsetProperty = AvaloniaProperty.Register<
+        WaveformCanvas,
+        double
+    >(nameof(ScrollOffset));
 
     private readonly CanvasInteractionHelper _interaction = new();
 
@@ -47,7 +53,12 @@ public class WaveformCanvas : Control
 
     static WaveformCanvas()
     {
-        AffectsRender<WaveformCanvas>(SamplesProperty, PlaybackPositionProperty, ZoomLevelProperty, ScrollOffsetProperty);
+        AffectsRender<WaveformCanvas>(
+            SamplesProperty,
+            PlaybackPositionProperty,
+            ZoomLevelProperty,
+            ScrollOffsetProperty
+        );
     }
 
     private double MaxScrollOffset => Math.Max(0, Bounds.Width * ZoomLevel - Bounds.Width);
@@ -75,7 +86,8 @@ public class WaveformCanvas : Control
         context.DrawLine(ThemeColors.MidPen, new Point(0, cy), new Point(w, cy));
 
         var samples = Samples;
-        if (samples is null || samples.Length == 0) return;
+        if (samples is null || samples.Length == 0)
+            return;
 
         using var clip = context.PushClip(new Rect(0, 0, w, h));
 
@@ -91,17 +103,23 @@ public class WaveformCanvas : Control
             var sampleStart = (int)((px + offset) * step);
             var sampleEnd = (int)((px + 1 + offset) * step);
             sampleEnd = Math.Min(sampleEnd, samples.Length);
-            if (sampleStart >= samples.Length) break;
-            if (sampleStart < 0) continue;
+            if (sampleStart >= samples.Length)
+                break;
+            if (sampleStart < 0)
+                continue;
 
-            float min = float.MaxValue, max = float.MinValue;
+            float min = float.MaxValue,
+                max = float.MinValue;
             for (int j = sampleStart; j < sampleEnd; j++)
             {
-                if (samples[j] < min) min = samples[j];
-                if (samples[j] > max) max = samples[j];
+                if (samples[j] < min)
+                    min = samples[j];
+                if (samples[j] > max)
+                    max = samples[j];
             }
 
-            if (min == float.MaxValue) continue;
+            if (min == float.MaxValue)
+                continue;
 
             var yMin = cy - min * scale;
             var yMax = cy - max * scale;
@@ -126,7 +144,8 @@ public class WaveformCanvas : Control
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        if (ZoomLevel <= 1) return;
+        if (ZoomLevel <= 1)
+            return;
 
         _interaction.BeginPan(e.GetPosition(this).X, ScrollOffset);
         e.Pointer.Capture(this);
@@ -136,7 +155,8 @@ public class WaveformCanvas : Control
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
-        if (!_interaction.IsPanning) return;
+        if (!_interaction.IsPanning)
+            return;
 
         ScrollOffset = _interaction.ComputePanOffset(e.GetPosition(this).X, MaxScrollOffset);
         e.Handled = true;

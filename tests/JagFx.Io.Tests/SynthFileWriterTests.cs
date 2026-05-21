@@ -30,7 +30,10 @@ public class SynthFileWriterTests
         var (_, origVoice) = original.ActiveVoices.First();
         var (_, rereadVoice) = reread.ActiveVoices.First();
 
-        Assert.Equal(origVoice.AmplitudeEnvelope.Segments.Count, rereadVoice.AmplitudeEnvelope.Segments.Count);
+        Assert.Equal(
+            origVoice.AmplitudeEnvelope.Segments.Count,
+            rereadVoice.AmplitudeEnvelope.Segments.Count
+        );
         Assert.Equal(origVoice.FrequencyEnvelope.Waveform, rereadVoice.FrequencyEnvelope.Waveform);
         Assert.Equal(origVoice.Partials.Count, rereadVoice.Partials.Count);
         Assert.Equal(origVoice.Partials[0].Amplitude, rereadVoice.Partials[0].Amplitude);
@@ -59,7 +62,10 @@ public class SynthFileWriterTests
         var rereadFilterVoice = reread.ActiveVoices.FirstOrDefault(v => v.Voice.Filter != null);
 
         Assert.True(origFilterVoice != default, "Test fixture must contain a voice with a filter");
-        Assert.True(rereadFilterVoice != default, "Round-tripped fixture must contain a voice with a filter");
+        Assert.True(
+            rereadFilterVoice != default,
+            "Round-tripped fixture must contain a voice with a filter"
+        );
 
         var origFilter = origFilterVoice.Voice.Filter!;
         var rereadFilter = rereadFilterVoice.Voice.Filter!;
@@ -75,10 +81,7 @@ public class SynthFileWriterTests
     [Fact]
     public void WritesEmptyFileCorrectly()
     {
-        var emptyFile = new Patch(
-            voices: [],
-            loop: new LoopSegment(100, 200)
-        );
+        var emptyFile = new Patch(voices: [], loop: new LoopSegment(100, 200));
         var written = SynthFileWriter.Write(emptyFile);
         Assert.Equal(14, written.Length);
         var reread = SynthFileReader.Read(written);

@@ -1,6 +1,7 @@
-using JagFx.Core.Constants;
-using JagFx.Io.Buffers;
 using System.CommandLine;
+using JagFx.Core.Constants;
+using JagFx.Io;
+using JagFx.Io.Buffers;
 
 namespace JagFx.Cli.Commands;
 
@@ -9,20 +10,20 @@ namespace JagFx.Cli.Commands;
 /// </summary>
 public class InspectCommand : Command
 {
-    public InspectCommand() : base("inspect", "Inspect synth file structure")
+    public InspectCommand()
+        : base("inspect", "Inspect synth file structure")
     {
-        var fileArgument = new Argument<string>("file")
-        {
-            Description = "Path to .synth file"
-        };
+        var fileArgument = new Argument<string>("file") { Description = "Path to .synth file" };
 
         Arguments.Add(fileArgument);
 
-        SetAction((parseResult) =>
-        {
-            var filePath = parseResult.GetValue(fileArgument);
-            return Execute(filePath);
-        });
+        SetAction(
+            (parseResult) =>
+            {
+                var filePath = parseResult.GetValue(fileArgument);
+                return Execute(filePath);
+            }
+        );
     }
 
     private static int Execute(string? filePath)
@@ -48,6 +49,7 @@ public class InspectCommand : Command
 
         try
         {
+            SynthFileReader.Read(bytes);
             InspectVoices(context);
             InspectLoop(context);
             PrintSummary(context);
@@ -64,7 +66,8 @@ public class InspectCommand : Command
     {
         for (var i = 0; i < AudioConstants.MaxVoices; i++)
         {
-            if (context.Buffer.Remaining == 0) break;
+            if (context.Buffer.Remaining == 0)
+                break;
             var marker = context.Buffer.Peek();
             if (marker == 0)
             {
@@ -178,7 +181,8 @@ public class InspectCommand : Command
         for (var channel = 0; channel < 2; channel++)
         {
             var pairs = channel == 0 ? pair0 : pair1;
-            if (pairs == 0) continue;
+            if (pairs == 0)
+                continue;
 
             for (var p = 0; p < pairs; p++)
             {
@@ -188,9 +192,15 @@ public class InspectCommand : Command
         }
     }
 
-    private static void InspectFilterModulation(InspectorContext context, int pair0, int pair1, int modmask)
+    private static void InspectFilterModulation(
+        InspectorContext context,
+        int pair0,
+        int pair1,
+        int modmask
+    )
     {
-        if (modmask == 0) return;
+        if (modmask == 0)
+            return;
 
         for (var channel = 0; channel < 2; channel++)
         {
@@ -230,7 +240,9 @@ public class InspectCommand : Command
 
     private static void PrintSummary(InspectorContext context)
     {
-        Console.WriteLine($"; Parsed {context.Buffer.Position}/{context.Buffer.Data.Length} bytes ({context.Buffer.Position * 100.0 / context.Buffer.Data.Length:F1}%)");
+        Console.WriteLine(
+            $"; Parsed {context.Buffer.Position}/{context.Buffer.Data.Length} bytes ({context.Buffer.Position * 100.0 / context.Buffer.Data.Length:F1}%)"
+        );
         if (context.Buffer.Remaining > 0)
         {
             Console.WriteLine($"; Remaining: {context.Buffer.Remaining} bytes unparsed");
@@ -242,15 +254,16 @@ public class InspectCommand : Command
         Console.WriteLine($"; ERROR at 0x{context.Buffer.Position:X4}: {ex.Message}");
     }
 
-    private static string GetWaveformName(byte id) => id switch
-    {
-        0 => "off",
-        1 => "square",
-        2 => "sine",
-        3 => "saw",
-        4 => "noise",
-        _ => $"?({id})"
-    };
+    private static string GetWaveformName(byte id) =>
+        id switch
+        {
+            0 => "off",
+            1 => "square",
+            2 => "sine",
+            3 => "saw",
+            4 => "noise",
+            _ => $"?({id})",
+        };
 
     private sealed class InspectorContext(byte[] data)
     {
@@ -262,18 +275,17 @@ public class InspectCommand : Command
             return value;
         }
 
-        public int ReadSmart(string mnemonic, string comment)
-            => ReadVariableLength(() => Buffer.ReadSmart(), mnemonic, comment);
+        public int ReadSmart(string mnemonic, string comment) =>
+            ReadVariableLength(() => Buffer.ReadSmart(), mnemonic, comment);
 
-        public int ReadUSmart(string mnemonic, string comment)
-            => ReadVariableLength(() => Buffer.ReadUSmart(), mnemonic, comment);
+        public int ReadUSmart(string mnemonic, string comment) =>
+            ReadVariableLength(() => Buffer.ReadUSmart(), mnemonic, comment);
 
+        public int ReadInt32(string mnemonic, string comment) =>
+            ReadAndPrint(4, mnemonic, comment, Buffer.ReadInt32BigEndian);
 
-        public int ReadInt32(string mnemonic, string comment)
-            => ReadAndPrint(4, mnemonic, comment, Buffer.ReadInt32BigEndian);
-
-        public int ReadUInt16(string mnemonic, string comment)
-            => ReadAndPrint(2, mnemonic, comment, Buffer.ReadUInt16BigEndian);
+        public int ReadUInt16(string mnemonic, string comment) =>
+            ReadAndPrint(2, mnemonic, comment, Buffer.ReadUInt16BigEndian);
 
         private int ReadVariableLength(Func<int> readFunc, string mnemonic, string comment)
         {
@@ -281,7 +293,12 @@ public class InspectCommand : Command
             var value = readFunc();
             var lengthFromStart = Buffer.Position - startPosition;
             var bytes = Buffer.Data.Skip(startPosition).Take(lengthFromStart).ToArray();
-            PrintLine(startPosition, bytes, mnemonic, comment.Length > 0 ? $"{comment}={value}" : value.ToString());
+            PrintLine(
+                startPosition,
+                bytes,
+                mnemonic,
+                comment.Length > 0 ? $"{comment}={value}" : value.ToString()
+            );
             return value;
         }
 
@@ -290,7 +307,12 @@ public class InspectCommand : Command
             var startPosition = Buffer.Position;
             var value = readFunc();
             var bytes = Buffer.Data.Skip(startPosition).Take(byteCount).ToArray();
-            PrintLine(startPosition, bytes, mnemonic, comment.Length > 0 ? $"{comment}={value}" : value.ToString());
+            PrintLine(
+                startPosition,
+                bytes,
+                mnemonic,
+                comment.Length > 0 ? $"{comment}={value}" : value.ToString()
+            );
             return value;
         }
 
@@ -302,10 +324,11 @@ public class InspectCommand : Command
         private static void PrintLine(int pos, byte[] bytes, string mnemonic, string comment)
         {
             var hex = bytes.Length > 0 ? string.Join(" ", bytes.Select(b => b.ToString("X2"))) : "";
-            if (hex.Length > 18) hex = hex[..15] + "...";
+            if (hex.Length > 18)
+                hex = hex[..15] + "...";
             var paddedMnemonic = mnemonic.PadRight(10);
             var comma = comment.Length > 0 && mnemonic.Length > 0 ? ", " : "";
-            Console.WriteLine($"{pos:X4}: {hex,-18} {paddedMnemonic}{comma}{comment}");
+            Console.WriteLine($"{pos:X4}: {hex, -18} {paddedMnemonic}{comma}{comment}");
         }
     }
 }

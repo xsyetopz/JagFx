@@ -5,15 +5,17 @@ using Avalonia.Input;
 using Avalonia.Media;
 using JagFx.Desktop.ViewModels;
 
-namespace JagFx.Desktop.Controls;
+namespace JagFx.Desktop.Controls.Canvases;
 
 public class PoleZeroCanvas : Control
 {
     public static readonly StyledProperty<FilterViewModel?> FilterProperty =
         AvaloniaProperty.Register<PoleZeroCanvas, FilterViewModel?>(nameof(Filter));
 
-    public static readonly StyledProperty<int> ZoomLevelProperty =
-        AvaloniaProperty.Register<PoleZeroCanvas, int>(nameof(ZoomLevel), 1);
+    public static readonly StyledProperty<int> ZoomLevelProperty = AvaloniaProperty.Register<
+        PoleZeroCanvas,
+        int
+    >(nameof(ZoomLevel), 1);
 
     public FilterViewModel? Filter
     {
@@ -55,7 +57,8 @@ public class PoleZeroCanvas : Control
 
     private void UnsubscribeFilter()
     {
-        if (_subscribedFilter is null) return;
+        if (_subscribedFilter is null)
+            return;
         _subscribedFilter.PropertyChanged -= OnFilterChanged;
         _subscribedFilter = null;
     }
@@ -66,12 +69,15 @@ public class PoleZeroCanvas : Control
     {
         base.OnPointerPressed(e);
         var filter = Filter;
-        if (filter is null || !filter.HasFilter) return;
-        if (filter.PolePhase.IsDefault || filter.PoleMagnitude.IsDefault) return;
+        if (filter is null || !filter.HasFilter)
+            return;
+        if (filter.PolePhase.IsDefault || filter.PoleMagnitude.IsDefault)
+            return;
 
         var pos = e.GetPosition(this);
         var (cx, cy, radius) = GetCircleParams();
-        if (radius <= 0) return;
+        if (radius <= 0)
+            return;
 
         const double hitThreshold = 10;
         double bestDist = hitThreshold;
@@ -82,14 +88,21 @@ public class PoleZeroCanvas : Control
             for (var channel = 0; channel < 2 && channel < filter.PolePhase.Length; channel++)
             {
                 var poleCount = channel == 0 ? filter.PoleCount0 : filter.PoleCount1;
-                if (filter.PolePhase[channel].IsDefault) continue;
-                if (phase >= filter.PolePhase[channel].Length) continue;
-                if (filter.PolePhase[channel][phase].IsDefault) continue;
+                if (filter.PolePhase[channel].IsDefault)
+                    continue;
+                if (phase >= filter.PolePhase[channel].Length)
+                    continue;
+                if (filter.PolePhase[channel][phase].IsDefault)
+                    continue;
 
                 for (var p = 0; p < poleCount && p < filter.PolePhase[channel][phase].Length; p++)
                 {
-                    var r = FilterResponseCalculator.RawMagnitudeToRadius(filter.PoleMagnitude[channel][phase][p]);
-                    var theta = FilterResponseCalculator.RawPhaseToAngle(filter.PolePhase[channel][phase][p]);
+                    var r = FilterResponseCalculator.RawMagnitudeToRadius(
+                        filter.PoleMagnitude[channel][phase][p]
+                    );
+                    var theta = FilterResponseCalculator.RawPhaseToAngle(
+                        filter.PolePhase[channel][phase][p]
+                    );
                     var px = cx + Math.Cos(theta) * r * radius;
                     var py = cy - Math.Sin(theta) * r * radius;
 
@@ -114,21 +127,25 @@ public class PoleZeroCanvas : Control
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
-        if (!_isDragging || _dragTarget is null) return;
+        if (!_isDragging || _dragTarget is null)
+            return;
 
         var filter = Filter;
-        if (filter is null) return;
+        if (filter is null)
+            return;
 
         var pos = e.GetPosition(this);
         var (cx, cy, radius) = GetCircleParams();
-        if (radius <= 0) return;
+        if (radius <= 0)
+            return;
 
         var dx = pos.X - cx;
         var dy = -(pos.Y - cy);
         var r = Math.Sqrt(dx * dx + dy * dy) / radius;
         r = Math.Clamp(r, 0, 0.9999);
         var theta = Math.Atan2(dy, dx);
-        if (theta < 0) theta += 2 * Math.PI;
+        if (theta < 0)
+            theta += 2 * Math.PI;
 
         var newPhase = FilterResponseCalculator.AngleToRawPhase(theta);
         var newMagnitude = FilterResponseCalculator.RadiusToRawMagnitude(r);
@@ -176,12 +193,22 @@ public class PoleZeroCanvas : Control
         // Axes
         var snappedCx = ThemeColors.Snap(cx);
         var snappedCy = ThemeColors.Snap(cy);
-        context.DrawLine(ThemeColors.UnitCirclePen, new Point(cx - radius, snappedCy), new Point(cx + radius, snappedCy));
-        context.DrawLine(ThemeColors.UnitCirclePen, new Point(snappedCx, cy - radius), new Point(snappedCx, cy + radius));
+        context.DrawLine(
+            ThemeColors.UnitCirclePen,
+            new Point(cx - radius, snappedCy),
+            new Point(cx + radius, snappedCy)
+        );
+        context.DrawLine(
+            ThemeColors.UnitCirclePen,
+            new Point(snappedCx, cy - radius),
+            new Point(snappedCx, cy + radius)
+        );
 
         var filter = Filter;
-        if (filter is null || !filter.HasFilter) return;
-        if (filter.PolePhase.IsDefault || filter.PoleMagnitude.IsDefault) return;
+        if (filter is null || !filter.HasFilter)
+            return;
+        if (filter.PolePhase.IsDefault || filter.PoleMagnitude.IsDefault)
+            return;
 
         const double s = 3;
 
@@ -193,14 +220,21 @@ public class PoleZeroCanvas : Control
             for (var channel = 0; channel < 2 && channel < filter.PolePhase.Length; channel++)
             {
                 var poleCount = channel == 0 ? filter.PoleCount0 : filter.PoleCount1;
-                if (filter.PolePhase[channel].IsDefault) continue;
-                if (phase >= filter.PolePhase[channel].Length) continue;
-                if (filter.PolePhase[channel][phase].IsDefault) continue;
+                if (filter.PolePhase[channel].IsDefault)
+                    continue;
+                if (phase >= filter.PolePhase[channel].Length)
+                    continue;
+                if (filter.PolePhase[channel][phase].IsDefault)
+                    continue;
 
                 for (var p = 0; p < poleCount && p < filter.PolePhase[channel][phase].Length; p++)
                 {
-                    var r = FilterResponseCalculator.RawMagnitudeToRadius(filter.PoleMagnitude[channel][phase][p]);
-                    var theta = FilterResponseCalculator.RawPhaseToAngle(filter.PolePhase[channel][phase][p]);
+                    var r = FilterResponseCalculator.RawMagnitudeToRadius(
+                        filter.PoleMagnitude[channel][phase][p]
+                    );
+                    var theta = FilterResponseCalculator.RawPhaseToAngle(
+                        filter.PolePhase[channel][phase][p]
+                    );
                     var px = cx + Math.Cos(theta) * r * radius;
                     var py = cy - Math.Sin(theta) * r * radius;
 

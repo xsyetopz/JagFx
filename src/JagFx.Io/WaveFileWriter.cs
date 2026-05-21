@@ -1,5 +1,5 @@
-using JagFx.Core.Constants;
 using System.Buffers.Binary;
+using JagFx.Core.Constants;
 
 namespace JagFx.Io;
 
@@ -62,11 +62,26 @@ public static class WaveFileWriter
         BinaryPrimitives.WriteInt32BigEndian(buffer.AsSpan(FmtMagicOffset), FmtMagic);
         BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(FmtSizeOffset), FmtChunkSize);
         BinaryPrimitives.WriteInt16LittleEndian(buffer.AsSpan(PcmFormatOffset), PcmFormat);
-        BinaryPrimitives.WriteInt16LittleEndian(buffer.AsSpan(ChannelsOffset), AudioConstants.AudioChannelCount);
-        BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(SampleRateOffset), AudioConstants.SampleRate);
-        BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(ByteRateOffset), AudioConstants.SampleRate * AudioConstants.AudioChannelCount * bitsPerSample / 8);
-        BinaryPrimitives.WriteInt16LittleEndian(buffer.AsSpan(BlockAlignOffset), (short)(AudioConstants.AudioChannelCount * bitsPerSample / 8));
-        BinaryPrimitives.WriteInt16LittleEndian(buffer.AsSpan(BitsPerSampleOffset), (short)bitsPerSample);
+        BinaryPrimitives.WriteInt16LittleEndian(
+            buffer.AsSpan(ChannelsOffset),
+            AudioConstants.AudioChannelCount
+        );
+        BinaryPrimitives.WriteInt32LittleEndian(
+            buffer.AsSpan(SampleRateOffset),
+            AudioConstants.SampleRate
+        );
+        BinaryPrimitives.WriteInt32LittleEndian(
+            buffer.AsSpan(ByteRateOffset),
+            AudioConstants.SampleRate * AudioConstants.AudioChannelCount * bitsPerSample / 8
+        );
+        BinaryPrimitives.WriteInt16LittleEndian(
+            buffer.AsSpan(BlockAlignOffset),
+            (short)(AudioConstants.AudioChannelCount * bitsPerSample / 8)
+        );
+        BinaryPrimitives.WriteInt16LittleEndian(
+            buffer.AsSpan(BitsPerSampleOffset),
+            (short)bitsPerSample
+        );
     }
 
     private static void WriteDataChunk(byte[] buffer, int dataSize)

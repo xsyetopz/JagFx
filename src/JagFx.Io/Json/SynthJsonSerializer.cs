@@ -9,7 +9,7 @@ public static class SynthJsonSerializer
     {
         WriteIndented = true,
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
     };
 
     public static string Serialize(Patch patch)
@@ -20,7 +20,8 @@ public static class SynthJsonSerializer
 
     public static Patch Deserialize(string json)
     {
-        var patchJson = JsonSerializer.Deserialize<PatchJson>(json, Options)
+        var patchJson =
+            JsonSerializer.Deserialize<PatchJson>(json, Options)
             ?? throw new JsonException("Failed to deserialize JSON: result was null");
         return SynthJsonMapper.FromJson(patchJson);
     }

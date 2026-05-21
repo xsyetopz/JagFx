@@ -46,13 +46,16 @@ public static class VoiceSynthesizer
         freqBaseEval.Reset();
         ampBaseEval.Reset();
 
-        var (freqModRateEval, freqModRangeEval, vibratoStep, vibratoBase) =
-            CreateFrequencyEnvelope(voice, samplesPerStep);
-        var (ampModRateEval, amplModRangeEval, tremoloStep, tremoloBase) =
-            CreateAmplitudeEnvelope(voice, samplesPerStep);
+        var (freqModRateEval, freqModRangeEval, vibratoStep, vibratoBase) = CreateFrequencyEnvelope(
+            voice,
+            samplesPerStep
+        );
+        var (ampModRateEval, amplModRangeEval, tremoloStep, tremoloBase) = CreateAmplitudeEnvelope(
+            voice,
+            samplesPerStep
+        );
 
-        var (delays, volumes, semitones, starts) =
-            CreatePartials(voice, samplesPerStep);
+        var (delays, volumes, semitones, starts) = CreatePartials(voice, samplesPerStep);
 
         EnvelopeGenerator? filterEnvelopeEval = null;
         if (voice.Filter != null && voice.Filter.ModulationEnvelope != null)
@@ -77,20 +80,32 @@ public static class VoiceSynthesizer
             PartialVolumes = volumes,
             PartialSemitones = semitones,
             PartialStarts = starts,
-            FilterEnvelopeEval = filterEnvelopeEval
+            FilterEnvelopeEval = filterEnvelopeEval,
         };
     }
 
-    private static (EnvelopeGenerator? rateEval, EnvelopeGenerator? rangeEval, int step, int baseValue)
-        CreateFrequencyEnvelope(Voice voice, double samplesPerStep)
-        => CreateModulationEnvelope(voice.PitchLfo, samplesPerStep);
+    private static (
+        EnvelopeGenerator? rateEval,
+        EnvelopeGenerator? rangeEval,
+        int step,
+        int baseValue
+    ) CreateFrequencyEnvelope(Voice voice, double samplesPerStep) =>
+        CreateModulationEnvelope(voice.PitchLfo, samplesPerStep);
 
-    private static (EnvelopeGenerator? rateEval, EnvelopeGenerator? rangeEval, int step, int baseValue)
-        CreateAmplitudeEnvelope(Voice voice, double samplesPerStep)
-        => CreateModulationEnvelope(voice.AmplitudeLfo, samplesPerStep);
+    private static (
+        EnvelopeGenerator? rateEval,
+        EnvelopeGenerator? rangeEval,
+        int step,
+        int baseValue
+    ) CreateAmplitudeEnvelope(Voice voice, double samplesPerStep) =>
+        CreateModulationEnvelope(voice.AmplitudeLfo, samplesPerStep);
 
-    private static (EnvelopeGenerator? rateEval, EnvelopeGenerator? rangeEval, int step, int baseValue)
-        CreateModulationEnvelope(LowFrequencyOscillator? lfo, double samplesPerStep)
+    private static (
+        EnvelopeGenerator? rateEval,
+        EnvelopeGenerator? rangeEval,
+        int step,
+        int baseValue
+    ) CreateModulationEnvelope(LowFrequencyOscillator? lfo, double samplesPerStep)
     {
         if (lfo != null)
         {
@@ -99,8 +114,14 @@ public static class VoiceSynthesizer
             rateEval.Reset();
             rangeEval.Reset();
 
-            var step = (int)((lfo.RateEnvelope.EndValue - lfo.RateEnvelope.StartValue) * AudioConstants.PhaseScale / samplesPerStep);
-            var baseValue = (int)(lfo.RateEnvelope.StartValue * AudioConstants.PhaseScale / samplesPerStep);
+            var step = (int)(
+                (lfo.RateEnvelope.EndValue - lfo.RateEnvelope.StartValue)
+                * AudioConstants.PhaseScale
+                / samplesPerStep
+            );
+            var baseValue = (int)(
+                lfo.RateEnvelope.StartValue * AudioConstants.PhaseScale / samplesPerStep
+            );
 
             return (rateEval, rangeEval, step, baseValue);
         }
@@ -108,8 +129,10 @@ public static class VoiceSynthesizer
         return (null, null, 0, 0);
     }
 
-    private static (int[] delays, int[] volumes, int[] semitones, int[] starts)
-        CreatePartials(Voice voice, double samplesPerStep)
+    private static (int[] delays, int[] volumes, int[] semitones, int[] starts) CreatePartials(
+        Voice voice,
+        double samplesPerStep
+    )
     {
         var delays = new int[AudioConstants.MaxOscillators];
         var volumes = new int[AudioConstants.MaxOscillators];
@@ -125,9 +148,14 @@ public static class VoiceSynthesizer
                 delays[partial] = (int)(height.Delay.Value * samplesPerStep);
                 volumes[partial] = (height.Amplitude.Value << 14) / 100;
                 semitones[partial] = (int)(
-                    (voice.FrequencyEnvelope.EndValue - voice.FrequencyEnvelope.StartValue) * AudioConstants.PhaseScale *
-                    WaveformTables.GetPitchMultiplier(height.PitchOffsetSemitones) / samplesPerStep);
-                starts[partial] = (int)(voice.FrequencyEnvelope.StartValue * AudioConstants.PhaseScale / samplesPerStep);
+                    (voice.FrequencyEnvelope.EndValue - voice.FrequencyEnvelope.StartValue)
+                    * AudioConstants.PhaseScale
+                    * WaveformTables.GetPitchMultiplier(height.PitchOffsetSemitones)
+                    / samplesPerStep
+                );
+                starts[partial] = (int)(
+                    voice.FrequencyEnvelope.StartValue * AudioConstants.PhaseScale / samplesPerStep
+                );
 
                 if (partial == 0)
                 {
@@ -147,7 +175,8 @@ public static class VoiceSynthesizer
         int[] buffer,
         Voice voice,
         SynthesisState state,
-        int sampleCount)
+        int sampleCount
+    )
     {
         var phases = new int[AudioConstants.MaxOscillators];
         var frequencyPhase = 0;
@@ -158,18 +187,22 @@ public static class VoiceSynthesizer
             var frequency = state.FrequencyBaseEval.Evaluate(sampleCount);
             var amplitude = state.AmplitudeBaseEval.Evaluate(sampleCount);
 
-            (frequency, frequencyPhase) = ApplyVibrato(frequency, frequencyPhase, sampleCount, state, voice);
-            (amplitude, amplitudePhase) = ApplyTremolo(amplitude, amplitudePhase, sampleCount, state, voice);
-
-            RenderPartials(
-                buffer,
-                voice,
-                state,
-                sample,
-                sampleCount,
+            (frequency, frequencyPhase) = ApplyVibrato(
                 frequency,
+                frequencyPhase,
+                sampleCount,
+                state,
+                voice
+            );
+            (amplitude, amplitudePhase) = ApplyTremolo(
                 amplitude,
-                phases);
+                amplitudePhase,
+                sampleCount,
+                state,
+                voice
+            );
+
+            RenderPartials(buffer, voice, state, sample, sampleCount, frequency, amplitude, phases);
         }
     }
 
@@ -181,7 +214,8 @@ public static class VoiceSynthesizer
         int sampleCount,
         int frequency,
         int amplitude,
-        int[] phases)
+        int[] phases
+    )
     {
         var partialCount = Math.Min(AudioConstants.MaxOscillators, voice.Partials.Count);
         for (var partial = 0; partial < partialCount; partial++)
@@ -194,11 +228,13 @@ public static class VoiceSynthesizer
                     var sampleValue = GenerateSample(
                         amplitude * state.PartialVolumes[partial] >> 15,
                         phases[partial],
-                        voice.FrequencyEnvelope.Waveform);
+                        voice.FrequencyEnvelope.Waveform
+                    );
 
                     buffer[position] += sampleValue;
-                    phases[partial] += (frequency * state.PartialSemitones[partial] >> 16) +
-                        state.PartialStarts[partial];
+                    phases[partial] +=
+                        (frequency * state.PartialSemitones[partial] >> 16)
+                        + state.PartialStarts[partial];
                 }
             }
         }
@@ -209,15 +245,21 @@ public static class VoiceSynthesizer
         int phase,
         int sampleCount,
         SynthesisState state,
-        Voice voice)
+        Voice voice
+    )
     {
         if (state.FrequencyModulationRateEval == null || state.FrequencyModulationRangeEval == null)
             return (frequency, phase);
 
         var (mod, nextPhase) = EvaluateModulation(
-            state.FrequencyModulationRateEval, state.FrequencyModulationRangeEval,
-            state.FrequencyBase, state.FrequencyStep,
-            phase, sampleCount, voice.PitchLfo!.RateEnvelope.Waveform);
+            state.FrequencyModulationRateEval,
+            state.FrequencyModulationRangeEval,
+            state.FrequencyBase,
+            state.FrequencyStep,
+            phase,
+            sampleCount,
+            voice.PitchLfo!.RateEnvelope.Waveform
+        );
 
         return (frequency + mod, nextPhase);
     }
@@ -227,15 +269,21 @@ public static class VoiceSynthesizer
         int phase,
         int sampleCount,
         SynthesisState state,
-        Voice voice)
+        Voice voice
+    )
     {
         if (state.AmplitudeModulationRateEval == null || state.AmplitudeModulationRangeEval == null)
             return (amplitude, phase);
 
         var (mod, nextPhase) = EvaluateModulation(
-            state.AmplitudeModulationRateEval, state.AmplitudeModulationRangeEval,
-            state.AmplitudeBase, state.AmplitudeStep,
-            phase, sampleCount, voice.AmplitudeLfo!.RateEnvelope.Waveform);
+            state.AmplitudeModulationRateEval,
+            state.AmplitudeModulationRangeEval,
+            state.AmplitudeBase,
+            state.AmplitudeStep,
+            phase,
+            sampleCount,
+            voice.AmplitudeLfo!.RateEnvelope.Waveform
+        );
 
         return (amplitude * (mod + AudioConstants.FixedPoint.Offset) >> 15, nextPhase);
     }
@@ -247,7 +295,8 @@ public static class VoiceSynthesizer
         int step,
         int phase,
         int sampleCount,
-        Waveform waveform)
+        Waveform waveform
+    )
     {
         var rate = rateEval.Evaluate(sampleCount);
         var range = rangeEval.Evaluate(sampleCount);
@@ -260,12 +309,19 @@ public static class VoiceSynthesizer
     {
         return waveform switch
         {
-            Waveform.Square => (phase & AudioConstants.PhaseMask) < AudioConstants.FixedPoint.Quarter ? amplitude : -amplitude,
-            Waveform.Sine => (WaveformTables.SineWaveTable[phase & AudioConstants.PhaseMask] * amplitude) >> 14,
+            Waveform.Square => (phase & AudioConstants.PhaseMask)
+            < AudioConstants.FixedPoint.Quarter
+                ? amplitude
+                : -amplitude,
+            Waveform.Sine => (
+                WaveformTables.SineWaveTable[phase & AudioConstants.PhaseMask] * amplitude
+            ) >> 14,
             Waveform.Saw => (((phase & AudioConstants.PhaseMask) * amplitude) >> 14) - amplitude,
-            Waveform.Noise => WaveformTables.NoiseTable[(phase / AudioConstants.NoisePhaseDiv) & AudioConstants.PhaseMask] * amplitude,
+            Waveform.Noise => WaveformTables.NoiseTable[
+                (phase / AudioConstants.NoisePhaseDiv) & AudioConstants.PhaseMask
+            ] * amplitude,
             Waveform.Off => 0,
-            _ => 0
+            _ => 0,
         };
     }
 
@@ -286,8 +342,18 @@ public static class VoiceSynthesizer
                 var stepOn = silenceEval.Evaluate(sampleCount);
                 var stepOff = durationEval.Evaluate(sampleCount);
                 var threshold = muted
-                    ? voice.GapOffEnvelope.StartValue + ((voice.GapOffEnvelope.EndValue - voice.GapOffEnvelope.StartValue) * stepOn >> 8)
-                    : voice.GapOffEnvelope.StartValue + ((voice.GapOffEnvelope.EndValue - voice.GapOffEnvelope.StartValue) * stepOff >> 8);
+                    ? voice.GapOffEnvelope.StartValue
+                        + (
+                            (voice.GapOffEnvelope.EndValue - voice.GapOffEnvelope.StartValue)
+                                * stepOn
+                            >> 8
+                        )
+                    : voice.GapOffEnvelope.StartValue
+                        + (
+                            (voice.GapOffEnvelope.EndValue - voice.GapOffEnvelope.StartValue)
+                                * stepOff
+                            >> 8
+                        );
 
                 counter += 256;
                 if (counter >= threshold)

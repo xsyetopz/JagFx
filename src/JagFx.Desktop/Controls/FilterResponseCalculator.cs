@@ -11,17 +11,26 @@ public static class FilterResponseCalculator
     private const int SampleRate = 22050;
     private const int MaxCoefficients = 8;
 
-    public static double[] ComputeMagnitudeResponse(FilterViewModel filter, int numPoints = NumPoints)
-        => ComputeMagnitudeResponse(filter, 0, numPoints);
+    public static double[] ComputeMagnitudeResponse(
+        FilterViewModel filter,
+        int numPoints = NumPoints
+    ) => ComputeMagnitudeResponse(filter, 0, numPoints);
 
-    public static double[] ComputeMagnitudeResponse(FilterViewModel filter, int phaseIndex, int numPoints = NumPoints)
-        => ComputeMagnitudeResponse(filter, (double)phaseIndex, numPoints);
+    public static double[] ComputeMagnitudeResponse(
+        FilterViewModel filter,
+        int phaseIndex,
+        int numPoints = NumPoints
+    ) => ComputeMagnitudeResponse(filter, (double)phaseIndex, numPoints);
 
     /// <summary>
     /// Computes the combined magnitude response at an envelope interpolation factor (0.0–1.0).
     /// Interpolation is performed on raw integer values before conversion, matching AudioFilter.GetAmplitude.
     /// </summary>
-    public static double[] ComputeMagnitudeResponse(FilterViewModel filter, double envelopeFactor, int numPoints = NumPoints)
+    public static double[] ComputeMagnitudeResponse(
+        FilterViewModel filter,
+        double envelopeFactor,
+        int numPoints = NumPoints
+    )
     {
         var result = new double[numPoints];
 
@@ -70,9 +79,8 @@ public static class FilterResponseCalculator
                 zPow *= zInv;
             }
 
-            var h = denominator.Magnitude > 1e-10
-                ? inverseA0 * numerator / denominator
-                : Complex.Zero;
+            var h =
+                denominator.Magnitude > 1e-10 ? inverseA0 * numerator / denominator : Complex.Zero;
 
             result[i] = 20.0 * Math.Log10(Math.Max(h.Magnitude, 1e-10));
         }
@@ -105,7 +113,8 @@ public static class FilterResponseCalculator
     internal static int RadiusToRawMagnitude(double r)
     {
         r = Math.Clamp(r, 0, 0.9999);
-        if (r <= 0) return 0;
+        if (r <= 0)
+            return 0;
         var raw = (int)(-20.0 * Math.Log10(1.0 - r) / 0.0015258789);
         return Math.Clamp(raw, 0, 65535);
     }
@@ -122,11 +131,19 @@ public static class FilterResponseCalculator
         return Math.Clamp(raw, 0, 65535);
     }
 
-    private static int GetRawMagnitude(FilterViewModel filter, int direction, int pole, int phaseIndex)
+    private static int GetRawMagnitude(
+        FilterViewModel filter,
+        int direction,
+        int pole,
+        int phaseIndex
+    )
     {
         if (direction >= filter.PoleMagnitude.Length || filter.PoleMagnitude[direction].IsDefault)
             return 0;
-        if (phaseIndex >= filter.PoleMagnitude[direction].Length || filter.PoleMagnitude[direction][phaseIndex].IsDefault)
+        if (
+            phaseIndex >= filter.PoleMagnitude[direction].Length
+            || filter.PoleMagnitude[direction][phaseIndex].IsDefault
+        )
             return 0;
         if (pole >= filter.PoleMagnitude[direction][phaseIndex].Length)
             return 0;
@@ -138,7 +155,10 @@ public static class FilterResponseCalculator
     {
         if (direction >= filter.PolePhase.Length || filter.PolePhase[direction].IsDefault)
             return 0;
-        if (phaseIndex >= filter.PolePhase[direction].Length || filter.PolePhase[direction][phaseIndex].IsDefault)
+        if (
+            phaseIndex >= filter.PolePhase[direction].Length
+            || filter.PolePhase[direction][phaseIndex].IsDefault
+        )
             return 0;
         if (pole >= filter.PolePhase[direction][phaseIndex].Length)
             return 0;
@@ -146,7 +166,12 @@ public static class FilterResponseCalculator
         return filter.PolePhase[direction][phaseIndex][pole];
     }
 
-    private static double GetAmplitudeInterp(FilterViewModel filter, int direction, int pole, double factor)
+    private static double GetAmplitudeInterp(
+        FilterViewModel filter,
+        int direction,
+        int pole,
+        double factor
+    )
     {
         var raw0 = GetRawMagnitude(filter, direction, pole, 0);
         var raw1 = GetRawMagnitude(filter, direction, pole, 1);
@@ -154,7 +179,12 @@ public static class FilterResponseCalculator
         return RawMagnitudeToRadius((int)rawInterp);
     }
 
-    private static double GetPhaseInterp(FilterViewModel filter, int direction, int pole, double factor)
+    private static double GetPhaseInterp(
+        FilterViewModel filter,
+        int direction,
+        int pole,
+        double factor
+    )
     {
         var raw0 = GetRawPhase(filter, direction, pole, 0);
         var raw1 = GetRawPhase(filter, direction, pole, 1);
@@ -162,12 +192,17 @@ public static class FilterResponseCalculator
         return RawPhaseToAngle((int)rawInterp);
     }
 
-    private static double[] BuildSosCoefficientsInterp(FilterViewModel filter, int direction, double factor)
+    private static double[] BuildSosCoefficientsInterp(
+        FilterViewModel filter,
+        int direction,
+        double factor
+    )
     {
         var coeffs = new double[MaxCoefficients];
         var poleCount = direction == 0 ? filter.PoleCount0 : filter.PoleCount1;
 
-        if (poleCount == 0) return coeffs;
+        if (poleCount == 0)
+            return coeffs;
 
         var amp = GetAmplitudeInterp(filter, direction, 0, factor);
         var phase = GetPhaseInterp(filter, direction, 0, factor);

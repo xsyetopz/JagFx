@@ -4,15 +4,17 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using JagFx.Desktop.ViewModels;
 
-namespace JagFx.Desktop.Controls;
+namespace JagFx.Desktop.Controls.Canvases;
 
 public class FrequencyResponseCanvas : Control
 {
     public static readonly StyledProperty<FilterViewModel?> FilterProperty =
         AvaloniaProperty.Register<FrequencyResponseCanvas, FilterViewModel?>(nameof(Filter));
 
-    public static readonly StyledProperty<int> ZoomLevelProperty =
-        AvaloniaProperty.Register<FrequencyResponseCanvas, int>(nameof(ZoomLevel), 1);
+    public static readonly StyledProperty<int> ZoomLevelProperty = AvaloniaProperty.Register<
+        FrequencyResponseCanvas,
+        int
+    >(nameof(ZoomLevel), 1);
 
     public FilterViewModel? Filter
     {
@@ -56,7 +58,8 @@ public class FrequencyResponseCanvas : Control
 
     private void UnsubscribeFilter()
     {
-        if (_subscribedFilter is null) return;
+        if (_subscribedFilter is null)
+            return;
         _subscribedFilter.PropertyChanged -= OnFilterChanged;
         _subscribedFilter = null;
     }
@@ -67,7 +70,8 @@ public class FrequencyResponseCanvas : Control
     {
         var w = Bounds.Width;
         var h = Bounds.Height;
-        if (w < 1 || h < 1) return;
+        if (w < 1 || h < 1)
+            return;
 
         context.FillRectangle(ThemeColors.CanvasBackgroundBrush, new Rect(0, 0, w, h));
 
@@ -94,40 +98,88 @@ public class FrequencyResponseCanvas : Control
         }
 
         var filter = Filter;
-        if (filter is null || !filter.HasFilter) return;
+        if (filter is null || !filter.HasFilter)
+            return;
 
         var numPoints = Math.Max((int)w, 50);
 
-        var hasPhase1 = !filter.PolePhase.IsDefault
-                        && !filter.PolePhase[0].IsDefault
-                        && filter.PolePhase[0].Length > 1
-                        && !filter.PolePhase[0][1].IsDefault;
+        var hasPhase1 =
+            !filter.PolePhase.IsDefault
+            && !filter.PolePhase[0].IsDefault
+            && filter.PolePhase[0].Length > 1
+            && !filter.PolePhase[0][1].IsDefault;
 
         // Layer 1 (back): intermediate envelope traces at f=0.25, 0.5, 0.75
         if (hasPhase1)
         {
             double[] intermediateFactors = [0.25, 0.5, 0.75];
             foreach (var factor in intermediateFactors)
-                DrawResponseTrace(context, filter, factor, numPoints, w, h, dbRange, ThemeColors.SectionTracePen);
+                DrawResponseTrace(
+                    context,
+                    filter,
+                    factor,
+                    numPoints,
+                    w,
+                    h,
+                    dbRange,
+                    ThemeColors.SectionTracePen
+                );
         }
 
         // Layer 2: green combined H(z) at envelope factor 1.0 (phase 1 endpoint)
         if (hasPhase1)
-            DrawResponseTrace(context, filter, 1.0, numPoints, w, h, dbRange, ThemeColors.AccentPen1_5);
+            DrawResponseTrace(
+                context,
+                filter,
+                1.0,
+                numPoints,
+                w,
+                h,
+                dbRange,
+                ThemeColors.AccentPen1_5
+            );
 
         // Layer 3 (front): yellow combined H(z) at envelope factor 0.0 (phase 0 endpoint)
-        DrawResponseTrace(context, filter, 0.0, numPoints, w, h, dbRange, ThemeColors.EnvelopeLinePen);
+        DrawResponseTrace(
+            context,
+            filter,
+            0.0,
+            numPoints,
+            w,
+            h,
+            dbRange,
+            ThemeColors.EnvelopeLinePen
+        );
     }
 
-    private static void DrawResponseTrace(DrawingContext context, FilterViewModel filter,
-        double envelopeFactor, int numPoints, double w, double h, double dbRange, IPen pen)
+    private static void DrawResponseTrace(
+        DrawingContext context,
+        FilterViewModel filter,
+        double envelopeFactor,
+        int numPoints,
+        double w,
+        double h,
+        double dbRange,
+        IPen pen
+    )
     {
-        var dBValues = FilterResponseCalculator.ComputeMagnitudeResponse(filter, envelopeFactor, numPoints);
+        var dBValues = FilterResponseCalculator.ComputeMagnitudeResponse(
+            filter,
+            envelopeFactor,
+            numPoints
+        );
         DrawTrace(context, dBValues, numPoints, w, h, dbRange, pen);
     }
 
-    private static void DrawTrace(DrawingContext context, double[] dBValues,
-        int numPoints, double w, double h, double dbRange, IPen pen)
+    private static void DrawTrace(
+        DrawingContext context,
+        double[] dBValues,
+        int numPoints,
+        double w,
+        double h,
+        double dbRange,
+        IPen pen
+    )
     {
         Point? prev = null;
         for (var i = 0; i < dBValues.Length; i++)

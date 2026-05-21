@@ -82,7 +82,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rid: [ osx-arm64, osx-x64 ]
+        rid: [osx-arm64, osx-x64]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -257,7 +257,7 @@ jobs:
   publish-release:
     name: Publish GitHub release
     runs-on: ubuntu-latest
-    needs: [ resolve-release-ref, macos, windows, linux ]
+    needs: [resolve-release-ref, macos, windows, linux]
     if: ${{ needs.resolve-release-ref.outputs.is_release == 'true' }}
     permissions:
       contents: write

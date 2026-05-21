@@ -6,37 +6,53 @@ using Avalonia.Input;
 using Avalonia.Media;
 using JagFx.Desktop.ViewModels;
 
-namespace JagFx.Desktop.Controls;
+namespace JagFx.Desktop.Controls.Canvases;
 
 public class EnvelopeCanvas : Control
 {
     public static readonly StyledProperty<EnvelopeViewModel?> EnvelopeProperty =
         AvaloniaProperty.Register<EnvelopeCanvas, EnvelopeViewModel?>(nameof(Envelope));
 
-    public static readonly StyledProperty<IBrush?> LineColorProperty =
-        AvaloniaProperty.Register<EnvelopeCanvas, IBrush?>(nameof(LineColor),
-            new SolidColorBrush(ThemeColors.Accent));
+    public static readonly StyledProperty<IBrush?> LineColorProperty = AvaloniaProperty.Register<
+        EnvelopeCanvas,
+        IBrush?
+    >(nameof(LineColor), new SolidColorBrush(ThemeColors.Accent));
 
-    public static readonly StyledProperty<bool> IsSelectedProperty =
-        AvaloniaProperty.Register<EnvelopeCanvas, bool>(nameof(IsSelected));
+    public static readonly StyledProperty<bool> IsSelectedProperty = AvaloniaProperty.Register<
+        EnvelopeCanvas,
+        bool
+    >(nameof(IsSelected));
 
-    public static readonly StyledProperty<bool> IsThumbnailProperty =
-        AvaloniaProperty.Register<EnvelopeCanvas, bool>(nameof(IsThumbnail));
+    public static readonly StyledProperty<bool> IsThumbnailProperty = AvaloniaProperty.Register<
+        EnvelopeCanvas,
+        bool
+    >(nameof(IsThumbnail));
 
-    public static readonly StyledProperty<int> ZoomLevelProperty =
-        AvaloniaProperty.Register<EnvelopeCanvas, int>(nameof(ZoomLevel), 1);
+    public static readonly StyledProperty<int> ZoomLevelProperty = AvaloniaProperty.Register<
+        EnvelopeCanvas,
+        int
+    >(nameof(ZoomLevel), 1);
 
-    public static readonly StyledProperty<double> ScrollOffsetProperty =
-        AvaloniaProperty.Register<EnvelopeCanvas, double>(nameof(ScrollOffset));
+    public static readonly StyledProperty<double> ScrollOffsetProperty = AvaloniaProperty.Register<
+        EnvelopeCanvas,
+        double
+    >(nameof(ScrollOffset));
 
-    public static readonly StyledProperty<bool> IsSnapEnabledProperty =
-        AvaloniaProperty.Register<EnvelopeCanvas, bool>(nameof(IsSnapEnabled));
+    public static readonly StyledProperty<bool> IsSnapEnabledProperty = AvaloniaProperty.Register<
+        EnvelopeCanvas,
+        bool
+    >(nameof(IsSnapEnabled));
 
     public static readonly StyledProperty<EnvelopeDisplayMode> DisplayModeProperty =
-        AvaloniaProperty.Register<EnvelopeCanvas, EnvelopeDisplayMode>(nameof(DisplayMode), EnvelopeDisplayMode.FullScale);
+        AvaloniaProperty.Register<EnvelopeCanvas, EnvelopeDisplayMode>(
+            nameof(DisplayMode),
+            EnvelopeDisplayMode.FullScale
+        );
 
     private static readonly IPen SelectionPen = new Pen(ThemeColors.AccentBrush, 1.5).ToImmutable();
-    private static readonly IBrush SelectionBrush = new SolidColorBrush(Color.FromArgb(80, 0, 158, 115)).ToImmutable();
+    private static readonly IBrush SelectionBrush = new SolidColorBrush(
+        Color.FromArgb(80, 0, 158, 115)
+    ).ToImmutable();
 
     private readonly CanvasInteractionHelper _interaction = new();
 
@@ -103,7 +119,15 @@ public class EnvelopeCanvas : Control
 
     static EnvelopeCanvas()
     {
-        AffectsRender<EnvelopeCanvas>(EnvelopeProperty, LineColorProperty, IsSelectedProperty, IsThumbnailProperty, ZoomLevelProperty, ScrollOffsetProperty, DisplayModeProperty);
+        AffectsRender<EnvelopeCanvas>(
+            EnvelopeProperty,
+            LineColorProperty,
+            IsSelectedProperty,
+            IsThumbnailProperty,
+            ZoomLevelProperty,
+            ScrollOffsetProperty,
+            DisplayModeProperty
+        );
     }
 
     private double MaxScrollOffset
@@ -147,7 +171,8 @@ public class EnvelopeCanvas : Control
 
     private void UnsubscribeEnvelope()
     {
-        if (_subscribedEnvelope is null) return;
+        if (_subscribedEnvelope is null)
+            return;
         _subscribedEnvelope.Segments.CollectionChanged -= OnSegmentsCollectionChanged;
         _subscribedEnvelope.PropertyChanged -= OnEnvelopeVmChanged;
         foreach (var seg in _subscribedEnvelope.Segments)
@@ -167,6 +192,7 @@ public class EnvelopeCanvas : Control
     }
 
     private void OnSegmentChanged(object? s, PropertyChangedEventArgs e) => InvalidateVisual();
+
     private void OnEnvelopeVmChanged(object? s, PropertyChangedEventArgs e) => InvalidateVisual();
 
     #endregion
@@ -188,13 +214,20 @@ public class EnvelopeCanvas : Control
         DrawGrid(context, w, h, ZoomLevel, ScrollOffset);
 
         var env = Envelope;
-        if (env is null || env.Segments.Count == 0) return;
+        if (env is null || env.Segments.Count == 0)
+            return;
 
         var geometry = EnvelopeGeometry.Compute(env, w, h, ZoomLevel, ScrollOffset, DisplayMode);
         DrawEnvelope(context, geometry);
     }
 
-    private static void DrawGrid(DrawingContext context, double w, double h, int zoomLevel, double scrollOffset)
+    private static void DrawGrid(
+        DrawingContext context,
+        double w,
+        double h,
+        int zoomLevel,
+        double scrollOffset
+    )
     {
         // Horizontal grid: scale subdivisions with zoom
         // 1x -> 4 divisions (25% steps, 3 lines), 2x -> 8 (12.5%, 7 lines), 4x -> 16 (6.25%, 15 lines)
@@ -214,7 +247,8 @@ public class EnvelopeCanvas : Control
         for (var i = 0; i <= vDivisions; i++)
         {
             var x = ThemeColors.Snap(EnvelopeGeometry.Padding + i * step - offsetMod);
-            if (x < EnvelopeGeometry.Padding || x > w - EnvelopeGeometry.Padding) continue;
+            if (x < EnvelopeGeometry.Padding || x > w - EnvelopeGeometry.Padding)
+                continue;
             context.DrawLine(ThemeColors.GridFaintPen, new Point(x, 0), new Point(x, h));
         }
     }
@@ -240,8 +274,16 @@ public class EnvelopeCanvas : Control
                 context.DrawEllipse(SelectionBrush, SelectionPen, pt, selR, selR);
             }
 
-            context.DrawLine(ThemeColors.MarkerPen, new Point(pt.X - s, pt.Y - s), new Point(pt.X + s, pt.Y + s));
-            context.DrawLine(ThemeColors.MarkerPen, new Point(pt.X - s, pt.Y + s), new Point(pt.X + s, pt.Y - s));
+            context.DrawLine(
+                ThemeColors.MarkerPen,
+                new Point(pt.X - s, pt.Y - s),
+                new Point(pt.X + s, pt.Y + s)
+            );
+            context.DrawLine(
+                ThemeColors.MarkerPen,
+                new Point(pt.X - s, pt.Y + s),
+                new Point(pt.X + s, pt.Y - s)
+            );
         }
     }
 
@@ -252,10 +294,12 @@ public class EnvelopeCanvas : Control
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        if (IsThumbnail) return;
+        if (IsThumbnail)
+            return;
 
         var env = Envelope;
-        if (env is null || env.Segments.Count == 0) return;
+        if (env is null || env.Segments.Count == 0)
+            return;
 
         var pos = e.GetPosition(this);
         var props = e.GetCurrentPoint(this).Properties;
@@ -266,7 +310,14 @@ public class EnvelopeCanvas : Control
             return;
         }
 
-        var geo = EnvelopeGeometry.Compute(env, Bounds.Width, Bounds.Height, ZoomLevel, ScrollOffset, DisplayMode);
+        var geo = EnvelopeGeometry.Compute(
+            env,
+            Bounds.Width,
+            Bounds.Height,
+            ZoomLevel,
+            ScrollOffset,
+            DisplayMode
+        );
         var hitIndex = geo.HitTest(pos);
 
         if (e.ClickCount == 2 && hitIndex < 0)
@@ -288,12 +339,24 @@ public class EnvelopeCanvas : Control
 
     private void HandleContextMenu(PointerPressedEventArgs e, Point pos, EnvelopeViewModel env)
     {
-        var geo = EnvelopeGeometry.Compute(env, Bounds.Width, Bounds.Height, ZoomLevel, ScrollOffset, DisplayMode);
+        var geo = EnvelopeGeometry.Compute(
+            env,
+            Bounds.Width,
+            Bounds.Height,
+            ZoomLevel,
+            ScrollOffset,
+            DisplayMode
+        );
         ShowContextMenu(pos, geo, env);
         e.Handled = true;
     }
 
-    private void HandlePointInsert(PointerPressedEventArgs e, Point pos, EnvelopeGeometry geo, EnvelopeViewModel env)
+    private void HandlePointInsert(
+        PointerPressedEventArgs e,
+        Point pos,
+        EnvelopeGeometry geo,
+        EnvelopeViewModel env
+    )
     {
         var lineIndex = geo.LineHitTest(pos);
         if (lineIndex >= 0)
@@ -317,11 +380,14 @@ public class EnvelopeCanvas : Control
         else
         {
             _dragMinLevel = Math.Min(env.StartValue, env.Segments.Min(s => s.TargetLevel));
-            _dragRange = Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel)) - _dragMinLevel;
-            if (_dragRange <= 0) _dragRange = 1;
+            _dragRange =
+                Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel)) - _dragMinLevel;
+            if (_dragRange <= 0)
+                _dragRange = 1;
         }
         _dragTotalDuration = env.Segments.Sum(s => s.Duration);
-        if (_dragTotalDuration <= 0) _dragTotalDuration = 1;
+        if (_dragTotalDuration <= 0)
+            _dragTotalDuration = 1;
         e.Pointer.Capture(this);
         e.Handled = true;
     }
@@ -349,18 +415,36 @@ public class EnvelopeCanvas : Control
         if (_dragIndex >= 0)
         {
             var env = Envelope;
-            if (env is null || _dragIndex >= env.Segments.Count) return;
+            if (env is null || _dragIndex >= env.Segments.Count)
+                return;
 
             var pos = e.GetPosition(this);
-            var level = EnvelopeGeometry.YToPeakLevel(pos.Y, Bounds.Height, _dragMinLevel, _dragRange);
+            var level = EnvelopeGeometry.YToPeakLevel(
+                pos.Y,
+                Bounds.Height,
+                _dragMinLevel,
+                _dragRange
+            );
             if (IsSnapEnabled)
                 level = EnvelopeGeometry.SnapLevel(level, _dragMinLevel, _dragRange, ZoomLevel);
             env.Segments[_dragIndex].TargetLevel = level;
-            EnvelopeGeometry.AdjustDuration(pos.X, Bounds.Width, _dragIndex, env, _dragTotalDuration, ZoomLevel, ScrollOffset);
+            EnvelopeGeometry.AdjustDuration(
+                pos.X,
+                Bounds.Width,
+                _dragIndex,
+                env,
+                _dragTotalDuration,
+                ZoomLevel,
+                ScrollOffset
+            );
             if (IsSnapEnabled)
             {
                 var preDur = env.Segments[_dragIndex].Duration;
-                var snappedDur = EnvelopeGeometry.SnapDuration(preDur, _dragTotalDuration, ZoomLevel);
+                var snappedDur = EnvelopeGeometry.SnapDuration(
+                    preDur,
+                    _dragTotalDuration,
+                    ZoomLevel
+                );
                 if (_dragIndex + 1 < env.Segments.Count)
                 {
                     var snapDelta = snappedDur - preDur;
@@ -377,7 +461,9 @@ public class EnvelopeCanvas : Control
                 }
             }
             var seg = env.Segments[_dragIndex];
-            KnobControl.RaiseHint($"Segment {_dragIndex + 1}: Level={seg.TargetLevel}, Duration={seg.Duration}");
+            KnobControl.RaiseHint(
+                $"Segment {_dragIndex + 1}: Level={seg.TargetLevel}, Duration={seg.Duration}"
+            );
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -390,7 +476,14 @@ public class EnvelopeCanvas : Control
             if (env is not null && env.Segments.Count > 0)
             {
                 var pos = e.GetPosition(this);
-                var geo = EnvelopeGeometry.Compute(env, Bounds.Width, Bounds.Height, ZoomLevel, ScrollOffset, DisplayMode);
+                var geo = EnvelopeGeometry.Compute(
+                    env,
+                    Bounds.Width,
+                    Bounds.Height,
+                    ZoomLevel,
+                    ScrollOffset,
+                    DisplayMode
+                );
 
                 if (geo.HitTest(pos) >= 0)
                     Cursor = new Cursor(StandardCursorType.Hand);
@@ -431,7 +524,8 @@ public class EnvelopeCanvas : Control
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         base.OnPointerWheelChanged(e);
-        if (IsThumbnail) return;
+        if (IsThumbnail)
+            return;
 
         ZoomLevel = _interaction.StepZoom(ZoomLevel, e.Delta.Y);
 
@@ -449,8 +543,10 @@ public class EnvelopeCanvas : Control
         if (e.Key is Key.Delete or Key.Back)
         {
             var env = Envelope;
-            if (env is null || _selectedIndex < 0 || _selectedIndex >= env.Segments.Count) return;
-            if (env.Segments.Count <= 1) return;
+            if (env is null || _selectedIndex < 0 || _selectedIndex >= env.Segments.Count)
+                return;
+            if (env.Segments.Count <= 1)
+                return;
 
             env.RemoveSegmentAt(_selectedIndex);
             _selectedIndex = Math.Min(_selectedIndex, env.Segments.Count - 1);
@@ -520,10 +616,16 @@ public class EnvelopeCanvas : Control
 
     #region Point insertion
 
-    private void InsertPointOnLine(int lineIndex, Point pos, EnvelopeGeometry geo, EnvelopeViewModel env)
+    private void InsertPointOnLine(
+        int lineIndex,
+        Point pos,
+        EnvelopeGeometry geo,
+        EnvelopeViewModel env
+    )
     {
         var totalDuration = env.Segments.Sum(s => s.Duration);
-        if (totalDuration <= 0) return;
+        if (totalDuration <= 0)
+            return;
 
         var clickTime = geo.XToTime(pos.X, totalDuration, ScrollOffset);
 

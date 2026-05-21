@@ -6,8 +6,12 @@ namespace SmartInt;
 /// <summary>
 /// Represents a signed 16-bit smart integer value (-32768 to 16383).
 /// </summary>
-public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
-    IFormattable, ISpanFormattable, ISpanParsable<Smart16>
+public readonly struct Smart16
+    : IEquatable<Smart16>,
+        IComparable<Smart16>,
+        IFormattable,
+        ISpanFormattable,
+        ISpanParsable<Smart16>
 {
     /// <summary>
     /// The maximum value that can be represented by Smart16.
@@ -55,7 +59,11 @@ public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
     public Smart16(short value)
     {
         if (value < MinValue || value > MaxValue)
-            throw new ArgumentOutOfRangeException(nameof(value), value, $"Value must be between {MinValue} and {MaxValue}.");
+            throw new ArgumentOutOfRangeException(
+                nameof(value),
+                value,
+                $"Value must be between {MinValue} and {MaxValue}."
+            );
         _value = value;
     }
 
@@ -82,7 +90,10 @@ public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
         else
         {
             if (data.Length < 2)
-                throw new ArgumentOutOfRangeException(nameof(data), "Data is too short for 2-byte encoding.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(data),
+                    "Data is too short for 2-byte encoding."
+                );
 
             bytesRead = 2;
             var encoded = BinaryPrimitives.ReadUInt16BigEndian(data);
@@ -110,7 +121,10 @@ public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
         else
         {
             if (buffer.Length < 2)
-                throw new ArgumentOutOfRangeException(nameof(buffer), "Buffer is too small for 2-byte encoding.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(buffer),
+                    "Buffer is too small for 2-byte encoding."
+                );
 
             var encoded = (ushort)(value + SmartTwoByteOffset);
             BinaryPrimitives.WriteUInt16BigEndian(buffer, encoded);
@@ -163,7 +177,9 @@ public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
     /// <exception cref="FormatException">Thrown when s cannot be parsed.</exception>
     public static Smart16 Parse(ReadOnlySpan<char> s)
     {
-        return TryParse(s, out var result) ? result : throw new FormatException($"Cannot parse '{s.ToString()}' as a Smart16.");
+        return TryParse(s, out var result)
+            ? result
+            : throw new FormatException($"Cannot parse '{s.ToString()}' as a Smart16.");
     }
 
     /// <summary>
@@ -226,7 +242,9 @@ public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
     /// <returns>A value indicating relative ordering.</returns>
     public int CompareTo(object? obj)
     {
-        return obj is Smart16 other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(Smart16)}.");
+        return obj is Smart16 other
+            ? CompareTo(other)
+            : throw new ArgumentException($"Object must be of type {nameof(Smart16)}.");
     }
 
     /// <summary>
@@ -306,7 +324,12 @@ public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
     /// <param name="format">The format string.</param>
     /// <param name="provider">The format provider.</param>
     /// <returns>True if formatting succeeded; otherwise, false.</returns>
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = null)
+    public bool TryFormat(
+        Span<char> destination,
+        out int charsWritten,
+        ReadOnlySpan<char> format = default,
+        IFormatProvider? provider = null
+    )
     {
 #if NET8_0_OR_GREATER
         var spanFormattable = (ISpanFormattable)_value;
@@ -330,7 +353,11 @@ public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
         return Parse(s);
     }
 
-    static bool ISpanParsable<Smart16>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Smart16 result)
+    static bool ISpanParsable<Smart16>.TryParse(
+        ReadOnlySpan<char> s,
+        IFormatProvider? provider,
+        out Smart16 result
+    )
     {
         return TryParse(s, out result);
     }
@@ -340,7 +367,11 @@ public readonly struct Smart16 : IEquatable<Smart16>, IComparable<Smart16>,
         return Parse(s);
     }
 
-    static bool IParsable<Smart16>.TryParse(string? s, IFormatProvider? provider, out Smart16 result)
+    static bool IParsable<Smart16>.TryParse(
+        string? s,
+        IFormatProvider? provider,
+        out Smart16 result
+    )
     {
         return TryParse(s ?? string.Empty, out result);
     }

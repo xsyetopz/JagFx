@@ -24,8 +24,10 @@ public partial class PatchViewModel : ObservableObject
     public PatchViewModel()
     {
         Voices = new ObservableCollection<VoiceViewModel>(
-            Enumerable.Range(0, AudioConstants.MaxVoices)
-                .Select(i => new VoiceViewModel { Index = i }));
+            Enumerable
+                .Range(0, AudioConstants.MaxVoices)
+                .Select(i => new VoiceViewModel { Index = i })
+        );
         SyncVoiceSelection();
     }
 
@@ -68,9 +70,7 @@ public partial class PatchViewModel : ObservableObject
 
     public Patch ToModel()
     {
-        var voices = Voices
-            .Select(v => v.ToModel())
-            .ToImmutableList();
+        var voices = Voices.Select(v => v.ToModel()).ToImmutableList();
 
         return new Patch(voices, new LoopSegment(LoopBegin, LoopEnd), ImmutableList<string>.Empty);
     }

@@ -31,7 +31,8 @@ public class PatchFileManager
 
     public void Save()
     {
-        if (FilePath is null) return;
+        if (FilePath is null)
+            return;
         var model = _patch.ToModel();
         SynthFileWriter.WriteToPath(model, FilePath);
         FileChanged?.Invoke();
@@ -48,17 +49,18 @@ public class PatchFileManager
 
     public void NavigatePatch(int direction)
     {
-        if (FilePath is null) return;
+        if (FilePath is null)
+            return;
 
         var dir = Path.GetDirectoryName(FilePath);
-        if (dir is null) return;
+        if (dir is null)
+            return;
 
-        var files = Directory.GetFiles(dir, "*.synth")
-            .OrderBy(f => f)
-            .ToArray();
+        var files = Directory.GetFiles(dir, "*.synth").OrderBy(f => f).ToArray();
 
         var currentIndex = Array.IndexOf(files, FilePath);
-        if (currentIndex < 0) return;
+        if (currentIndex < 0)
+            return;
 
         var newIndex = currentIndex + direction;
         if (newIndex >= 0 && newIndex < files.Length)

@@ -12,5 +12,6 @@ public readonly record struct Samples
 
     public Samples(int value) => Value = value;
 
-    public Milliseconds ToMilliseconds() => new((int)(Value / AudioConstants.SampleRatePerMillisecond));
+    public Milliseconds ToMilliseconds() =>
+        new((int)(Value / AudioConstants.SampleRatePerMillisecond));
 }
