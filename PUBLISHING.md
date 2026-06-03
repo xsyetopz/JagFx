@@ -32,11 +32,11 @@ Use this if you develop on macOS, Windows, or Linux.
 
 ## Host OS matrix (what you can do locally)
 
-| You develop on | Can build app binaries locally                        | Can build installer locally                        | Can sign/notarize locally                                                  | Recommended path                                         |
-| -------------- | ----------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- |
-| macOS          | macOS / Windows / Linux binaries via `dotnet publish` | macOS DMG (`make release-desktop-macos-*`)         | macOS signing + notarization: **yes** (with Apple cert + creds)            | Build/test locally, rely on CI for full multi-OS release |
-| Windows        | macOS / Windows / Linux binaries via `dotnet publish` | Windows setup EXE (`make release-desktop-windows`) | Windows signing: **yes** (with code-sign cert), macOS notarization: **no** | Build/test locally, rely on CI for macOS notarization    |
-| Linux          | macOS / Windows / Linux binaries via `dotnet publish` | Linux AppImage/tar (`make release-desktop-linux`)  | macOS notarization: **no**, Windows signing: usually **no**                | Build/test locally, rely on CI for signed installers     |
+| You develop on | Can build app binaries locally                        | Can build installer locally                         | Can sign/notarize locally                                                  | Recommended path                                         |
+| -------------- | ----------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- |
+| macOS          | macOS / Windows / Linux binaries via `dotnet publish` | macOS DMG (`just  release-desktop-macos-*`)         | macOS signing + notarization: **yes** (with Apple cert + creds)            | Build/test locally, rely on CI for full multi-OS release |
+| Windows        | macOS / Windows / Linux binaries via `dotnet publish` | Windows setup EXE (`just  release-desktop-windows`) | Windows signing: **yes** (with code-sign cert), macOS notarization: **no** | Build/test locally, rely on CI for macOS notarization    |
+| Linux          | macOS / Windows / Linux binaries via `dotnet publish` | Linux AppImage/tar (`just  release-desktop-linux`)  | macOS notarization: **no**, Windows signing: usually **no**                | Build/test locally, rely on CI for signed installers     |
 
 **Key truth:** developing on one OS is fine. Final trusted installers come from CI runners for each target OS.
 
@@ -53,8 +53,8 @@ Use this if you develop on macOS, Windows, or Linux.
    ```
 2. Build local macOS installers:
    ```bash
-   make release-desktop-macos-arm64
-   make release-desktop-macos-x64
+   just release-desktop-macos-arm64
+   just release-desktop-macos-x64
    ```
 3. Verify DMGs:
    ```bash
@@ -72,7 +72,7 @@ Use this if you develop on macOS, Windows, or Linux.
    ```
 2. Build local Windows installer:
    ```powershell
-   make release-desktop-windows
+   just release-desktop-windows
    ```
 3. Optional local signing (if cert available). Otherwise CI handles release artifacts.
 4. Push tag. CI handles macOS notarization + Linux artifacts.
@@ -86,7 +86,7 @@ Use this if you develop on macOS, Windows, or Linux.
    ```
 2. Build local Linux artifacts:
    ```bash
-   make release-desktop-linux
+   just release-desktop-linux
    ```
 3. Push tag. CI handles macOS and Windows installer trust steps.
 
@@ -209,7 +209,7 @@ Not in this workflow. Notarization runs on macOS runner.
 DMG creator already uses explicit size + retry. Re-run:
 
 ```bash
-make release-desktop-macos-arm64
+just release-desktop-macos-arm64
 ```
 
 ### `ISCC not found`

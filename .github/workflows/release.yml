@@ -108,12 +108,12 @@ jobs:
 
       - name: Publish desktop + cli
         run: |
-          make publish-desktop-macos-$ARCH_LABEL
-          make publish-cli-macos-$ARCH_LABEL
+          just publish-desktop-macos-$ARCH_LABEL
+          just publish-cli-macos-$ARCH_LABEL
 
       - name: Create CLI archive
         run: |
-          make release-cli-macos-$ARCH_LABEL
+          just release-cli-macos-$ARCH_LABEL
 
       - name: Import signing cert
         if: ${{ env.HAS_MACOS_CERT == 'true' }}
@@ -146,7 +146,7 @@ jobs:
 
       - name: Create DMG
         run: |
-          make package-desktop-macos-$ARCH_LABEL
+          just package-desktop-macos-$ARCH_LABEL
 
       - name: Sign + notarize DMG
         if: ${{ env.HAS_MACOS_SIGNING == 'true' }}
@@ -238,13 +238,13 @@ jobs:
 
       - name: Publish desktop + cli
         run: |
-          make publish-desktop-linux
-          make publish-cli-linux
+          just publish-desktop-linux
+          just publish-cli-linux
 
       - name: Build AppImage + CLI archive
         run: |
-          make release-desktop-linux
-          make release-cli-linux
+          just release-desktop-linux
+          just release-cli-linux
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v7

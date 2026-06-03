@@ -12,7 +12,7 @@ dotnet test           # Must pass before committing
 dotnet format         # Auto-fix formatting; CI checks --verify-no-changes
 dotnet run --project src/JagFx.Cli -- <command> [args]
 dotnet run --project src/JagFx.Desktop
-make release-all      # Cross-platform distributable archives (see Makefile)
+just release-all      # Cross-platform distributable archives (see Makefile)
 ```
 
 ## Project Layout

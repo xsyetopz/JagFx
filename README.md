@@ -136,16 +136,16 @@ See `specs/synth.schema.json` for the JSON interchange schema and `specs/example
 
 | Target                             | Output                                                            |
 | ---------------------------------- | ----------------------------------------------------------------- |
-| `make publish-desktop-macos-arm64` | `publish/desktop/osx-arm64/JagFx.app` -- single-file app bundle   |
-| `make publish-desktop-macos-x64`   | `publish/desktop/osx-x64/JagFx.app` -- single-file app bundle     |
-| `make publish-desktop-windows`     | `publish/desktop/win-x64/JagFx.Desktop.exe` -- single executable  |
-| `make publish-desktop-linux`       | `publish/desktop/linux-x64/JagFx.Desktop` -- single executable    |
-| `make release-desktop-macos-arm64` | `publish/JagFx-<ver>-macos-arm64.dmg`                             |
-| `make release-desktop-macos-x64`   | `publish/JagFx-<ver>-macos-x64.dmg`                               |
-| `make release-desktop-windows`     | `publish/JagFx-<ver>-win-x64-setup.exe` (Inno Setup)              |
-| `make release-desktop-linux`       | `publish/JagFx-<ver>-linux-x64.AppImage` + `.tar.gz` fallback     |
-| `make release-cli`                 | Separate CLI archives for macOS arm64/x64, Windows x64, Linux x64 |
-| `make release-all`                 | Desktop installers + all CLI artifacts                            |
+| `just publish-desktop-macos-arm64` | `publish/desktop/osx-arm64/JagFx.app` -- single-file app bundle   |
+| `just publish-desktop-macos-x64`   | `publish/desktop/osx-x64/JagFx.app` -- single-file app bundle     |
+| `just publish-desktop-windows`     | `publish/desktop/win-x64/JagFx.Desktop.exe` -- single executable  |
+| `just publish-desktop-linux`       | `publish/desktop/linux-x64/JagFx.Desktop` -- single executable    |
+| `just release-desktop-macos-arm64` | `publish/JagFx-<ver>-macos-arm64.dmg`                             |
+| `just release-desktop-macos-x64`   | `publish/JagFx-<ver>-macos-x64.dmg`                               |
+| `just release-desktop-windows`     | `publish/JagFx-<ver>-win-x64-setup.exe` (Inno Setup)              |
+| `just release-desktop-linux`       | `publish/JagFx-<ver>-linux-x64.AppImage` + `.tar.gz` fallback     |
+| `just release-cli`                 | Separate CLI archives for macOS arm64/x64, Windows x64, Linux x64 |
+| `just release-all`                 | Desktop installers + all CLI artifacts                            |
 
 Release version is read from `Directory.Build.props` (currently 2.2.2). Official release workflow signs and notarizes macOS DMGs when required GitHub secrets are configured.
 
