@@ -11,7 +11,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>..\..\assets\jagfx-icon.ico</ApplicationIcon>
   </PropertyGroup>
-  <!-- Any RID publish → single file with native libs embedded.
+  <!-- Any RID publish -> single file with native libs embedded.
     Avalonia bundles SkiaSharp and other native dylibs/so/dlls;
     IncludeNativeLibrariesForSelfExtract packs them into the executable
     so the output is truly one file on all platforms.

@@ -32,8 +32,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- **Darker UI theme** -- all surface colors shifted darker (`SurfaceBase` #333→#1a1a, `SurfaceCell` #404040→#2a2a2a, etc.), subtler borders, brighter text (#f0f0f0→#ffffff)
-- **Knob visuals** -- darker background arc (#505050→#333333), darker fill (#4a4a4a→#1a1a1a), brighter labels (#888→#aaa); re-renders on `IsEnabled` change
+- **Darker UI theme** -- all surface colors shifted darker (`SurfaceBase` #333->#1a1a, `SurfaceCell` #404040->#2a2a2a, etc.), subtler borders, brighter text (#f0f0f0->#ffffff)
+- **Knob visuals** -- darker background arc (#505050->#333333), darker fill (#4a4a4a->#1a1a1a), brighter labels (#888->#aaa); re-renders on `IsEnabled` change
 - **Waveform center line** -- drawn before clip region so it's visible even with no samples
 - **Partials footer** -- knobs gain `DefaultValue` bindings (PIT=0, VOL=100, DLY=0)
 
@@ -61,7 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - **`AGENTS.md`** -- agent-oriented project context for AI coding agents with build/test commands, project layout, key patterns, and rules.
 
-- **JSON round-trip tests** -- parametrized xUnit tests covering all 15 reference `.synth` files (binary → JSON → binary), minimal JSON with defaults, filter coefficient mapping, waveform string serialization, and empty patch handling.
+- **JSON round-trip tests** -- parametrized xUnit tests covering all 15 reference `.synth` files (binary -> JSON -> binary), minimal JSON with defaults, filter coefficient mapping, waveform string serialization, and empty patch handling.
 
 - **Status bar** -- a thin bar at the bottom of the main window shows live knob hints (label + current value + unit) as the user hovers or drags any `KnobControl`, and clears when the pointer leaves. `KnobControl.HintChanged` is a static event wired into `MainViewModel.StatusHint`.
 
