@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using JagFx.Domain.Models;
 using JagFx.Io.Json;
 using JagFx.TestData;
@@ -87,7 +86,7 @@ public class SynthJsonSerializerTests
 
         var patch = SynthJsonSerializer.Deserialize(minimalJson);
 
-        Assert.Single(patch.ActiveVoices);
+        _ = Assert.Single(patch.ActiveVoices);
         var voice = patch.ActiveVoices[0].Voice;
 
         // Defaults applied
@@ -138,13 +137,10 @@ public class SynthJsonSerializerTests
         {
             for (var ph = 0; ph < 2; ph++)
             {
+                Assert.Equal([.. filter.PolePhase[ch][ph]], [.. rtFilter.PolePhase[ch][ph]]);
                 Assert.Equal(
-                    filter.PolePhase[ch][ph].ToArray(),
-                    rtFilter.PolePhase[ch][ph].ToArray()
-                );
-                Assert.Equal(
-                    filter.PoleMagnitude[ch][ph].ToArray(),
-                    rtFilter.PoleMagnitude[ch][ph].ToArray()
+                    [.. filter.PoleMagnitude[ch][ph]],
+                    [.. rtFilter.PoleMagnitude[ch][ph]]
                 );
             }
         }
@@ -174,10 +170,7 @@ public class SynthJsonSerializerTests
     [Fact]
     public void RoundTripEmptyPatch()
     {
-        var emptyPatch = new Patch(
-            voices: ImmutableList<Voice?>.Empty,
-            loop: new LoopSegment(0, 0)
-        );
+        var emptyPatch = new Patch(voices: [], loop: new LoopSegment(0, 0));
 
         var json = SynthJsonSerializer.Serialize(emptyPatch);
         var roundTripped = SynthJsonSerializer.Deserialize(json);

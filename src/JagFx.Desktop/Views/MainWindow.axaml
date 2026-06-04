@@ -20,16 +20,6 @@
         <!-- Header Bar -->
         <header:HeaderBar DockPanel.Dock="Top"
                           DataContext="{Binding}" />
-        <!-- Status Bar -->
-        <Border DockPanel.Dock="Bottom"
-                Background="{StaticResource SurfaceCellHeaderBrush}"
-                Height="24"
-                Padding="6,0">
-            <TextBlock Text="{Binding StatusHint}"
-                       FontSize="12"
-                       Foreground="{StaticResource TextSecondaryBrush}"
-                       VerticalAlignment="Center" />
-        </Border>
         <!-- Partials Footer -->
         <footer:PartialsFooter DockPanel.Dock="Bottom"
                                DataContext="{Binding}" />

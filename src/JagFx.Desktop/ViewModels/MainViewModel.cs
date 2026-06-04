@@ -56,7 +56,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private SignalChainSlot _selectedSlot;
 
     public string SelectedEnvelopeTitle =>
-        Loc.Format("SelectedEnvelopeTitle", Loc.Get($"Slot{SelectedSlot}"));
+        Loc.Format("SelectedEnvelopeTitle", Loc.Get($"Slot{SelectedSlot}"))
+            .ToUpper(Loc.CurrentCulture);
 
     [ObservableProperty]
     private float[]? _outputSamples;

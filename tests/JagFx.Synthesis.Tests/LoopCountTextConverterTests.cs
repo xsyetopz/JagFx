@@ -9,23 +9,23 @@ public class LoopCountTextConverterTests
     private static readonly LoopCountTextConverter Converter = new();
 
     [Fact]
-    public void Convert_formats_zero_as_infinity()
+    public void ConvertFormatsZeroAsZero()
     {
         var result = Converter.Convert(0, typeof(string), null, CultureInfo.InvariantCulture);
 
-        Assert.Equal("∞", result);
+        Assert.Equal("0", result);
     }
 
     [Fact]
-    public void ConvertBack_parses_infinity_as_zero()
+    public void ConvertBackParsesZeroAsZero()
     {
-        var result = Converter.ConvertBack("∞", typeof(int), null, CultureInfo.InvariantCulture);
+        var result = Converter.ConvertBack("0", typeof(int), null, CultureInfo.InvariantCulture);
 
         Assert.Equal(0, result);
     }
 
     [Fact]
-    public void ConvertBack_clamps_large_values()
+    public void ConvertBackClampsLargeValues()
     {
         var result = Converter.ConvertBack("1000", typeof(int), null, CultureInfo.InvariantCulture);
 

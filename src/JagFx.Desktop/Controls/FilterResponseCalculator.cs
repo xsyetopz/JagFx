@@ -6,9 +6,9 @@ namespace JagFx.Desktop.Controls;
 public static class FilterResponseCalculator
 {
     private const int NumPoints = 200;
-    private const double MinFreq = 20.0;
-    private const double MaxFreq = 11025.0;
-    private const int SampleRate = 22050;
+    private const double MinFreq = FilterFrequencyScale.MinimumFrequencyHz;
+    private const double MaxFreq = FilterFrequencyScale.MaximumFrequencyHz;
+    private const double SampleRate = FilterFrequencyScale.SampleRate;
     private const int MaxCoefficients = 8;
 
     public static double[] ComputeMagnitudeResponse(

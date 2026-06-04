@@ -11,7 +11,7 @@ public class JagFxNativeRendererTests
     {
         var status = JagFxNativeRenderer.RenderPcm16Le(
             TestResources.CowDeath,
-            Span<byte>.Empty,
+            [],
             out var bytesWritten
         );
 
@@ -25,7 +25,7 @@ public class JagFxNativeRendererTests
     {
         var probe = JagFxNativeRenderer.RenderPcm16Le(
             TestResources.CowDeath,
-            Span<byte>.Empty,
+            [],
             out var requiredBytes
         );
 
@@ -46,11 +46,7 @@ public class JagFxNativeRendererTests
     [Fact]
     public void RenderPcm16LeRejectsEmptyInput()
     {
-        var status = JagFxNativeRenderer.RenderPcm16Le(
-            ReadOnlySpan<byte>.Empty,
-            Span<byte>.Empty,
-            out var bytesWritten
-        );
+        var status = JagFxNativeRenderer.RenderPcm16Le([], [], out var bytesWritten);
 
         Assert.Equal(JagFxNativeStatus.InvalidArgument, status);
         Assert.Equal(0, bytesWritten);

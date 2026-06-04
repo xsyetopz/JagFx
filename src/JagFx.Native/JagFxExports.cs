@@ -28,7 +28,7 @@ public static unsafe class JagFxExports
 
         var input = new ReadOnlySpan<byte>(synthData, (int)synthLength);
         var output = outputBuffer is null
-            ? Span<byte>.Empty
+            ? []
             : new Span<byte>(outputBuffer, (int)outputBufferLength);
 
         var status = JagFxNativeRenderer.RenderPcm16Le(

@@ -34,6 +34,12 @@ public class FrequencyResponseCanvas : Control
     private const double DbMax = 80;
     private const double Pad = 4;
 
+    public FrequencyResponseCanvas()
+    {
+        UseLayoutRounding = true;
+        RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+    }
+
     static FrequencyResponseCanvas()
     {
         AffectsRender<FrequencyResponseCanvas>(FilterProperty, ZoomLevelProperty);
@@ -168,7 +174,7 @@ public class FrequencyResponseCanvas : Control
             var normalized = (dBValues[i] - DbMin) / dbRange;
             var y = h - Pad - normalized * (h - 2 * Pad);
             y = Math.Clamp(y, Pad, Math.Max(Pad, h - Pad));
-            var pt = new Point(x, y);
+            var pt = ThemeColors.Snap(new Point(x, y));
             if (prev.HasValue)
                 context.DrawLine(pen, prev.Value, pt);
             prev = pt;

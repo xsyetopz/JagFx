@@ -74,7 +74,7 @@
   <data name="StartLabel" xml:space="preserve"><value>Inicio</value></data>
   <data name="EndLabel" xml:space="preserve"><value>Fin</value></data>
   <data name="SegmentDurationLabel" xml:space="preserve"><value>DUR</value></data>
-  <data name="SegmentLevelLabel" xml:space="preserve"><value>Nivel</value></data>
+  <data name="SegmentLevelLabel" xml:space="preserve"><value>LVL</value></data>
   <data name="AddSegment" xml:space="preserve"><value>Añadir segmento</value></data>
 
   <data name="PartialLabel" xml:space="preserve"><value>OSC</value></data>
@@ -94,18 +94,18 @@
   <data name="Snap" xml:space="preserve"><value>Ajustar</value></data>
   <data name="Mode" xml:space="preserve"><value>Modo</value></data>
 
-  <data name="SlotPitch" xml:space="preserve"><value>Tono</value></data>
-  <data name="SlotVibratoRate" xml:space="preserve"><value>Vel. vibrato</value></data>
-  <data name="SlotVibratoDepth" xml:space="preserve"><value>Prof. vibrato</value></data>
-  <data name="SlotVolume" xml:space="preserve"><value>Volumen</value></data>
-  <data name="SlotTremoloRate" xml:space="preserve"><value>Vel. trémolo</value></data>
-  <data name="SlotTremoloDepth" xml:space="preserve"><value>Prof. trémolo</value></data>
-  <data name="SlotGapOff" xml:space="preserve"><value>Intervalo desactivado</value></data>
-  <data name="SlotGapOn" xml:space="preserve"><value>Intervalo activado</value></data>
-  <data name="SlotFilter" xml:space="preserve"><value>Filtro</value></data>
-  <data name="SlotPoleZero" xml:space="preserve"><value>Polo / Cero</value></data>
-  <data name="SlotOutput" xml:space="preserve"><value>Salida</value></data>
-  <data name="SlotBode" xml:space="preserve"><value>Respuesta en frecuencia</value></data>
+  <data name="SlotPitch" xml:space="preserve"><value>Pitch</value></data>
+  <data name="SlotVibratoRate" xml:space="preserve"><value>Vib Rate</value></data>
+  <data name="SlotVibratoDepth" xml:space="preserve"><value>Vib Depth</value></data>
+  <data name="SlotVolume" xml:space="preserve"><value>Volume</value></data>
+  <data name="SlotTremoloRate" xml:space="preserve"><value>Trem Rate</value></data>
+  <data name="SlotTremoloDepth" xml:space="preserve"><value>Trem Depth</value></data>
+  <data name="SlotGapOff" xml:space="preserve"><value>Gap Off</value></data>
+  <data name="SlotGapOn" xml:space="preserve"><value>Gap On</value></data>
+  <data name="SlotFilter" xml:space="preserve"><value>Filter Curve</value></data>
+  <data name="SlotPoleZero" xml:space="preserve"><value>Pole / Zero</value></data>
+  <data name="SlotOutput" xml:space="preserve"><value>Output</value></data>
+  <data name="SlotBode" xml:space="preserve"><value>Freq Response</value></data>
 
   <data name="TooltipZoom" xml:space="preserve"><value>Zoom {0}X</value></data>
   <data name="TooltipSnapGrid" xml:space="preserve"><value>Snap to grid (S)</value></data>

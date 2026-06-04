@@ -13,7 +13,7 @@ public class SynthFileReaderTests
     {
         var result = SynthFileReader.Read(TestResources.CowDeath);
         Assert.NotNull(result);
-        Assert.Single(result.ActiveVoices);
+        _ = Assert.Single(result.ActiveVoices);
         Assert.Equal(0, result.Loop.BeginMs);
         Assert.Equal(0, result.Loop.EndMs);
     }
@@ -102,7 +102,7 @@ public class SynthFileReaderTests
     [InlineData("cow_death")]
     [InlineData("noa_melee_attack_movement")]
     [InlineData("ward_of_arceuus_cast")]
-    public void AllResources_AreValidSynthFiles(string resourceName)
+    public void AllResourcesAreValidSynthFiles(string resourceName)
     {
         var bytes = TestResources.GetBytes(resourceName);
         var result = SynthFileReader.Read(bytes);

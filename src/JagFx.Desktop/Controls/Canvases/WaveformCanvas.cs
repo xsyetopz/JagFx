@@ -51,6 +51,12 @@ public class WaveformCanvas : Control
         set => SetValue(ScrollOffsetProperty, value);
     }
 
+    public WaveformCanvas()
+    {
+        UseLayoutRounding = true;
+        RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+    }
+
     static WaveformCanvas()
     {
         AffectsRender<WaveformCanvas>(
@@ -82,7 +88,7 @@ public class WaveformCanvas : Control
 
         context.FillRectangle(ThemeColors.CanvasBackgroundBrush, new Rect(0, 0, w, h));
 
-        var cy = h / 2;
+        var cy = ThemeColors.Snap(h / 2);
         context.DrawLine(ThemeColors.MidPen, new Point(0, cy), new Point(w, cy));
 
         var samples = Samples;
@@ -121,9 +127,10 @@ public class WaveformCanvas : Control
             if (min == float.MaxValue)
                 continue;
 
-            var yMin = cy - min * scale;
-            var yMax = cy - max * scale;
-            context.DrawLine(pen, new Point(px, yMin), new Point(px, yMax));
+            var x = ThemeColors.Snap(px);
+            var yMin = ThemeColors.Snap(cy - min * scale);
+            var yMax = ThemeColors.Snap(cy - max * scale);
+            context.DrawLine(pen, new Point(x, yMin), new Point(x, yMax));
         }
 
         // Playback position marker
@@ -133,8 +140,12 @@ public class WaveformCanvas : Control
             var px = pos * effectiveW - offset;
             if (px >= 0 && px <= w)
             {
-                var markerPen = new Pen(Brushes.White, 1);
-                context.DrawLine(markerPen, new Point(px, 0), new Point(px, h));
+                var snappedX = ThemeColors.Snap(px);
+                context.DrawLine(
+                    ThemeColors.MarkerPen,
+                    new Point(snappedX, 0),
+                    new Point(snappedX, h)
+                );
             }
         }
     }

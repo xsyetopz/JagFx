@@ -10,10 +10,10 @@ namespace JagFx.Desktop.Controls.Canvases;
 public class PoleZeroCanvas : Control
 {
     private const double MaximumRawValue = ushort.MaxValue;
-    private const double PhaseScaleFactor = 1.2207031e-4;
     private const double MagnitudeDbScaleFactor = 0.0015258789;
     private const double GainDbScaleFactor = 0.0030517578;
-    private static readonly IPen SelectionPen = new Pen(ThemeColors.AccentBrush, 1.5).ToImmutable();
+    private const int MagnitudeSnapDivisions = 32;
+    private static readonly IPen SelectionPen = new Pen(ThemeColors.AccentBrush, 1).ToImmutable();
     private static readonly IBrush SelectionBrush = new SolidColorBrush(
         Color.FromArgb(80, 0, 158, 115)
     ).ToImmutable();
@@ -25,6 +25,11 @@ public class PoleZeroCanvas : Control
         PoleZeroCanvas,
         int
     >(nameof(ZoomLevel), 1);
+
+    public static readonly StyledProperty<bool> IsSnapEnabledProperty = AvaloniaProperty.Register<
+        PoleZeroCanvas,
+        bool
+    >(nameof(IsSnapEnabled));
 
     public FilterViewModel? Filter
     {
@@ -38,14 +43,26 @@ public class PoleZeroCanvas : Control
         set => SetValue(ZoomLevelProperty, value);
     }
 
+    public bool IsSnapEnabled
+    {
+        get => GetValue(IsSnapEnabledProperty);
+        set => SetValue(IsSnapEnabledProperty, value);
+    }
+
     private FilterViewModel? _subscribedFilter;
     private (int Channel, int Phase, int Index)? _dragTarget;
     private (int Channel, int Phase, int Index)? _selectedPoint;
     private bool _isDragging;
 
+    public PoleZeroCanvas()
+    {
+        UseLayoutRounding = true;
+        RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+    }
+
     static PoleZeroCanvas()
     {
-        AffectsRender<PoleZeroCanvas>(FilterProperty, ZoomLevelProperty);
+        AffectsRender<PoleZeroCanvas>(FilterProperty, ZoomLevelProperty, IsSnapEnabledProperty);
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -107,7 +124,7 @@ public class PoleZeroCanvas : Control
 
                 for (var p = 0; p < poleCount && p < filter.PolePhase[channel][phase].Length; p++)
                 {
-                    var point = PolePoint(filter, channel, phase, p, plotBounds);
+                    var point = PolePoint(filter, channel, phase, p, plotBounds, ZoomLevel);
 
                     var dist = Math.Sqrt(
                         (pos.X - point.X) * (pos.X - point.X)
@@ -153,8 +170,13 @@ public class PoleZeroCanvas : Control
         if (plotBounds.Width <= 0 || plotBounds.Height <= 0)
             return;
 
-        var newPhase = XToRawPhase(pos.X, plotBounds);
+        var newPhase = XToRawPhase(pos.X, plotBounds, ZoomLevel);
         var newMagnitude = YToRawMagnitude(pos.Y, plotBounds);
+        if (IsSnapEnabled)
+        {
+            newPhase = SnapRawPhase(newPhase);
+            newMagnitude = SnapRawMagnitude(newMagnitude);
+        }
 
         var (channel, phase, index) = _dragTarget.Value;
         filter.UpdatePole(channel, phase, index, newPhase, newMagnitude);
@@ -193,7 +215,12 @@ public class PoleZeroCanvas : Control
         var h = Bounds.Height;
 
         context.FillRectangle(ThemeColors.CanvasBackgroundBrush, new Rect(0, 0, w, h));
-        AnalysisGridRenderer.Draw(context, new Rect(0, 0, w, h), includeVertical: true);
+        AnalysisGridRenderer.Draw(
+            context,
+            new Rect(0, 0, w, h),
+            includeVertical: true,
+            zoomLevel: ZoomLevel
+        );
 
         var filter = Filter;
         if (filter is null || !filter.HasFilter)
@@ -203,7 +230,7 @@ public class PoleZeroCanvas : Control
 
         var plotBounds = PlotBounds;
         DrawDirectionRails(context, filter, plotBounds);
-        DrawPhaseVectors(context, filter, plotBounds);
+        DrawPhaseVectors(context, filter, plotBounds, ZoomLevel);
 
         const double s = 3;
 
@@ -222,7 +249,7 @@ public class PoleZeroCanvas : Control
 
                 for (var p = 0; p < poleCount && p < filter.PolePhase[channel][phase].Length; p++)
                 {
-                    var point = PolePoint(filter, channel, phase, p, plotBounds);
+                    var point = PolePoint(filter, channel, phase, p, plotBounds, ZoomLevel);
                     if (_selectedPoint == (channel, phase, p))
                         context.DrawEllipse(SelectionBrush, SelectionPen, point, 5, 5);
 
@@ -274,7 +301,8 @@ public class PoleZeroCanvas : Control
     private static void DrawPhaseVectors(
         DrawingContext context,
         FilterViewModel filter,
-        Rect plotBounds
+        Rect plotBounds,
+        int zoomLevel
     )
     {
         for (var channel = 0; channel < 2 && channel < filter.PolePhase.Length; channel++)
@@ -294,8 +322,8 @@ public class PoleZeroCanvas : Control
 
             for (var index = 0; index < count; index++)
             {
-                var start = PolePoint(filter, channel, 0, index, plotBounds);
-                var end = PolePoint(filter, channel, 1, index, plotBounds);
+                var start = PolePoint(filter, channel, 0, index, plotBounds, zoomLevel);
+                var end = PolePoint(filter, channel, 1, index, plotBounds, zoomLevel);
                 context.DrawLine(ThemeColors.SectionTracePen, start, end);
             }
         }
@@ -306,30 +334,31 @@ public class PoleZeroCanvas : Control
         int channel,
         int phase,
         int index,
-        Rect plotBounds
+        Rect plotBounds,
+        int zoomLevel
     )
     {
         var phaseRaw = filter.PolePhase[channel][phase][index];
         var magnitudeRaw = filter.PoleMagnitude[channel][phase][index];
-        return new Point(
-            RawPhaseToX(phaseRaw, plotBounds),
-            RawMagnitudeToY(magnitudeRaw, plotBounds)
+        return ThemeColors.Snap(
+            new Point(
+                RawPhaseToX(phaseRaw, plotBounds, zoomLevel),
+                RawMagnitudeToY(magnitudeRaw, plotBounds)
+            )
         );
     }
 
-    private static double RawPhaseToX(int rawPhase, Rect plotBounds)
+    private static double RawPhaseToX(int rawPhase, Rect plotBounds, int zoomLevel)
     {
-        var octave = Math.Clamp(rawPhase, 0, ushort.MaxValue) * PhaseScaleFactor;
-        var maxOctave = MaximumRawValue * PhaseScaleFactor;
-        var normalized = Math.Clamp(octave / maxOctave, 0.0, 1.0);
-        return plotBounds.Left + plotBounds.Width * normalized;
+        var normalized = FilterFrequencyScale.RawPhaseToNormalizedX(rawPhase);
+        return plotBounds.Left + plotBounds.Width * Math.Max(1, zoomLevel) * normalized;
     }
 
-    private static int XToRawPhase(double x, Rect plotBounds)
+    private static int XToRawPhase(double x, Rect plotBounds, int zoomLevel)
     {
-        var normalized = Math.Clamp((x - plotBounds.Left) / plotBounds.Width, 0.0, 1.0);
-        var maxOctave = MaximumRawValue * PhaseScaleFactor;
-        return (int)Math.Round(normalized * maxOctave / PhaseScaleFactor);
+        var effectiveWidth = plotBounds.Width * Math.Max(1, zoomLevel);
+        var normalized = Math.Clamp((x - plotBounds.Left) / effectiveWidth, 0.0, 1.0);
+        return FilterFrequencyScale.NormalizedXToRawPhase(normalized);
     }
 
     private static double RawMagnitudeToY(int rawMagnitude, Rect plotBounds)
@@ -345,6 +374,29 @@ public class PoleZeroCanvas : Control
         var normalized = Math.Clamp((plotBounds.Bottom - y) / plotBounds.Height, 0.0, 1.0);
         var maxMagnitudeDb = MaximumRawValue * MagnitudeDbScaleFactor;
         return (int)Math.Round(normalized * maxMagnitudeDb / MagnitudeDbScaleFactor);
+    }
+
+    private static int SnapRawPhase(int rawPhase)
+    {
+        var frequency = FilterFrequencyScale.RawPhaseToFrequency(rawPhase);
+        var semitone = Math.Round(
+            FilterFrequencyScale.SemitonesPerOctave
+                * Math.Log2(frequency / FilterFrequencyScale.BaseFrequencyHz)
+        );
+        var snappedFrequency = FilterFrequencyScale.SemitoneToFrequency((int)semitone);
+        return FilterFrequencyScale.NormalizedXToRawPhase(
+            FilterFrequencyScale.FrequencyToNormalizedX(snappedFrequency)
+        );
+    }
+
+    private static int SnapRawMagnitude(int rawMagnitude)
+    {
+        var step = ushort.MaxValue / (double)MagnitudeSnapDivisions;
+        return Math.Clamp(
+            (int)Math.Round(Math.Round(rawMagnitude / step) * step),
+            0,
+            ushort.MaxValue
+        );
     }
 
     private static double NormalizedMagnitudeToY(double normalized, Rect plotBounds)

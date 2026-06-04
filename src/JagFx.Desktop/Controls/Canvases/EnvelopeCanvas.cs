@@ -54,7 +54,7 @@ public class EnvelopeCanvas : Control
             EnvelopeDisplayMode.FullScale
         );
 
-    private static readonly IPen SelectionPen = new Pen(ThemeColors.AccentBrush, 1.5).ToImmutable();
+    private static readonly IPen SelectionPen = new Pen(ThemeColors.AccentBrush, 1).ToImmutable();
     private static readonly IBrush SelectionBrush = new SolidColorBrush(
         Color.FromArgb(80, 0, 158, 115)
     ).ToImmutable();
@@ -126,6 +126,8 @@ public class EnvelopeCanvas : Control
     public EnvelopeCanvas()
     {
         Focusable = true;
+        UseLayoutRounding = true;
+        RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
     }
 
     static EnvelopeCanvas()
@@ -271,8 +273,10 @@ public class EnvelopeCanvas : Control
     private void DrawEnvelope(DrawingContext context, EnvelopeGeometry geo)
     {
         var lineBrush = LineColor ?? ThemeColors.AccentBrush;
-        var linePen = new Pen(lineBrush, 1.5);
-        var points = geo.Points;
+        var linePen = new Pen(lineBrush, 1);
+        var points = new Point[geo.Points.Length];
+        for (var i = 0; i < geo.Points.Length; i++)
+            points[i] = ThemeColors.Snap(geo.Points[i]);
 
         for (var i = 0; i < points.Length - 1; i++)
             context.DrawLine(linePen, points[i], points[i + 1]);

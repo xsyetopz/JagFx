@@ -5,7 +5,7 @@ using JagFx.Synthesis.Core;
 using JagFx.TestData;
 using Xunit;
 
-namespace JagFx.Synthesis.Tests;
+namespace JagFx.Synthesis.Tests.Core;
 
 public class PatchRendererTests
 {
@@ -45,7 +45,7 @@ public class PatchRendererTests
     }
 
     [Fact]
-    public void CancellationToken_StopsSynthesis()
+    public void CancellationTokenStopsSynthesis()
     {
         var file = SynthFileReader.Read(TestResources.CowDeath);
         Assert.NotNull(file);
@@ -53,7 +53,7 @@ public class PatchRendererTests
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
-        Assert.Throws<OperationCanceledException>(() =>
+        _ = Assert.Throws<OperationCanceledException>(() =>
             PatchRenderer.Synthesize(file, 1, ct: cts.Token)
         );
     }
@@ -66,7 +66,7 @@ public class PatchRendererTests
     [InlineData("cow_death")]
     [InlineData("noa_melee_attack_movement")]
     [InlineData("ward_of_arceuus_cast")]
-    public void VariousFiles_ProduceValidAudio(string resourceName)
+    public void VariousFilesProduceValidAudio(string resourceName)
     {
         var bytes = TestResources.GetBytes(resourceName);
         var file = SynthFileReader.Read(bytes);

@@ -10,6 +10,7 @@
              x:DataType="vm:MainViewModel">
     <UserControl.Resources>
         <conv:RawToPercentConverter x:Key="RawToPercentConverter" />
+        <conv:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
         <ControlTheme x:Key="FooterBankButton"
                       TargetType="Button">
             <Setter Property="Background"
@@ -71,7 +72,8 @@
                     BorderThickness="1"
                     CornerRadius="2"
                     Margin="1,2"
-                    Padding="2">
+                    Padding="2"
+                    Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacityConverter}}">
                 <Grid RowDefinitions="Auto,*,3">
                     <Border Background="{StaticResource SurfaceCellHeaderBrush}"
                             Padding="2,1"

@@ -17,7 +17,7 @@ public sealed class LoopCountTextConverter : IValueConverter
             _ => 0,
         };
 
-        return count == 0 ? "∞" : count.ToString(culture);
+        return count.ToString(culture);
     }
 
     public object ConvertBack(
@@ -30,8 +30,6 @@ public sealed class LoopCountTextConverter : IValueConverter
         if (value is string text)
         {
             var trimmed = text.Trim();
-            if (trimmed == "∞" || trimmed.Equals("inf", StringComparison.OrdinalIgnoreCase))
-                return 0;
             if (int.TryParse(trimmed, NumberStyles.Integer, culture, out var parsed))
                 return Math.Clamp(parsed, 0, 999);
         }

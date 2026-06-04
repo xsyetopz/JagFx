@@ -15,7 +15,7 @@ public class LocalizationTests
     [InlineData("it-CH", "it")]
     [InlineData("pt-PT", "pt-BR")]
     [InlineData("en-US", "en")]
-    public void ResolveCulture_maps_supported_system_languages(
+    public void ResolveCultureMapsSupportedSystemLanguages(
         string requestedName,
         string expectedName
     )
@@ -25,7 +25,7 @@ public class LocalizationTests
     }
 
     [Fact]
-    public void Get_uses_the_fallback_language_resource_for_fr_ca()
+    public void GetUsesFallbackLanguageResourceForFrCa()
     {
         lock (CultureLock)
         {
@@ -44,7 +44,7 @@ public class LocalizationTests
     }
 
     [Fact]
-    public void Get_uses_the_pt_br_resource_for_pt_pt()
+    public void GetUsesPtBrResourceForPtPt()
     {
         lock (CultureLock)
         {

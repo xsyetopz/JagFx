@@ -18,8 +18,6 @@ public class SignalChainSlotTests
     [InlineData(SignalChainSlot.PoleZero, "Pole / Zero")]
     [InlineData(SignalChainSlot.Output, "Output")]
     [InlineData(SignalChainSlot.Bode, "Frequency Response")]
-    public void DisplayName_returns_human_readable_labels(SignalChainSlot slot, string expected)
-    {
+    public void DisplayNameReturnsHumanReadableLabels(SignalChainSlot slot, string expected) =>
         Assert.Equal(expected, slot.DisplayName());
-    }
 }

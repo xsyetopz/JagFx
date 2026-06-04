@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Media;
 using JagFx.Domain.Models;
 
@@ -9,33 +10,65 @@ namespace JagFx.Desktop.Controls;
 public static class ThemeColors
 {
     public static readonly Color CanvasBackground = Color.Parse("#000000");
-    public static readonly Color GridLineFaint = Color.Parse("#2a2a2a");
-    public static readonly Color GridLine = Color.Parse("#1a1a1a");
-    public static readonly Color UnitCircle = Color.Parse("#555555");
-    public static readonly Color MidLine = Color.Parse("#7a7a7a");
-    public static readonly Color AnalysisGridMajorBoundary = Color.FromArgb(132, 122, 122, 122);
-    public static readonly Color AnalysisGridProminentStruct = Color.FromArgb(92, 122, 122, 122);
-    public static readonly Color AnalysisGridStandardDivider = Color.FromArgb(66, 122, 122, 122);
-    public static readonly Color AnalysisGridDimAnchor = Color.FromArgb(42, 122, 122, 122);
-    public static readonly Color AnalysisGridMicroStep = Color.FromArgb(22, 122, 122, 122);
-    public static readonly Color AnalysisGridMajorBand = Color.FromArgb(24, 122, 122, 122);
-    public static readonly Color AnalysisGridProminentBand = Color.FromArgb(18, 122, 122, 122);
-    public static readonly Color AnalysisGridStandardBand = Color.FromArgb(12, 122, 122, 122);
-    public static readonly Color AnalysisGridDimBand = Color.FromArgb(8, 122, 122, 122);
-    public static readonly Color AnalysisGridHorizontalPrimary = Color.Parse("#323232");
-    public static readonly Color AnalysisGridHorizontalSecondary = Color.Parse("#202120");
+    public static readonly Color GridLineFaint = Color.Parse("#333333");
+    public static readonly Color GridLine = Color.Parse("#1A1A1A");
+    public static readonly Color UnitCircle = Color.Parse("#666666");
+    public static readonly Color MidLine = Color.Parse("#808080");
+
+    private const double AnalysisGridHorizontalPrimaryOpacity = 0.12;
+    private const double AnalysisGridHorizontalSecondaryOpacity = 0.065;
+    private const double AnalysisGridMajorBoundaryOpacity = 0.13;
+    private const double AnalysisGridProminentStructOpacity = 0.06;
+    private const double AnalysisGridStandardDividerOpacity = 0.055;
+    private const double AnalysisGridDimAnchorOpacity = 0.045;
+    private const double AnalysisGridMicroStepOpacity = 0.026;
+    private const double AnalysisGridMajorBandOpacity = 0.055;
+    private const double AnalysisGridProminentBandOpacity = 0.045;
+    private const double AnalysisGridStandardBandOpacity = 0.04;
+    private const double AnalysisGridDimBandOpacity = 0.03;
+    public static readonly Color AnalysisGridMajorBoundary = WhiteWithOpacity(
+        AnalysisGridMajorBoundaryOpacity
+    );
+    public static readonly Color AnalysisGridProminentStruct = WhiteWithOpacity(
+        AnalysisGridProminentStructOpacity
+    );
+    public static readonly Color AnalysisGridStandardDivider = WhiteWithOpacity(
+        AnalysisGridStandardDividerOpacity
+    );
+    public static readonly Color AnalysisGridDimAnchor = WhiteWithOpacity(
+        AnalysisGridDimAnchorOpacity
+    );
+    public static readonly Color AnalysisGridMicroStep = WhiteWithOpacity(
+        AnalysisGridMicroStepOpacity
+    );
+    public static readonly Color AnalysisGridMajorBand = WhiteWithOpacity(
+        AnalysisGridMajorBandOpacity
+    );
+    public static readonly Color AnalysisGridProminentBand = WhiteWithOpacity(
+        AnalysisGridProminentBandOpacity
+    );
+    public static readonly Color AnalysisGridStandardBand = WhiteWithOpacity(
+        AnalysisGridStandardBandOpacity
+    );
+    public static readonly Color AnalysisGridDimBand = WhiteWithOpacity(AnalysisGridDimBandOpacity);
+    public static readonly Color AnalysisGridHorizontalPrimary = WhiteWithOpacity(
+        AnalysisGridHorizontalPrimaryOpacity
+    );
+    public static readonly Color AnalysisGridHorizontalSecondary = WhiteWithOpacity(
+        AnalysisGridHorizontalSecondaryOpacity
+    );
     public static readonly Color PoleAxisA = Color.Parse("#F0E442");
     public static readonly Color PoleAxisB = Color.Parse("#009E73");
     public static readonly Color Accent = Color.Parse("#009E73");
     public static readonly Color AccentSecondary = Color.Parse("#0072B2");
-    public static readonly Color VoiceInactive = Color.Parse("#555555");
+    public static readonly Color VoiceInactive = Color.Parse("#666666");
     public static readonly Color FilterLine = AccentSecondary;
     public static readonly Color EnvelopeLine = Color.Parse("#F0E442");
-    public static readonly Color CellBorder = Color.Parse("#4a4a4a");
-    public static readonly Color KnobTrack = Color.Parse("#2a2f36");
-    public static readonly Color KnobBody = Color.Parse("#171a1f");
-    public static readonly Color KnobBorder = Color.Parse("#454b55");
-    public static readonly Color KnobLabel = Color.Parse("#bac2cc");
+    public static readonly Color CellBorder = Color.Parse("#4D4D4D");
+    public static readonly Color KnobTrack = Color.Parse("#4D4D4D");
+    public static readonly Color KnobBody = Color.Parse("#0D0D0D");
+    public static readonly Color KnobBorder = Color.Parse("#666666");
+    public static readonly Color KnobLabel = Color.Parse("#CCCCCC");
 
     public static readonly IBrush CanvasBackgroundBrush = new SolidColorBrush(
         CanvasBackground
@@ -117,35 +150,38 @@ public static class ThemeColors
     ).ToImmutable();
     public static readonly IPen PoleAxisAPen = new Pen(
         new SolidColorBrush(
-            Color.FromArgb(112, PoleAxisA.R, PoleAxisA.G, PoleAxisA.B)
+            Color.FromArgb(96, PoleAxisA.R, PoleAxisA.G, PoleAxisA.B)
         ).ToImmutable(),
         2
     ).ToImmutable();
     public static readonly IPen PoleAxisBPen = new Pen(
         new SolidColorBrush(
-            Color.FromArgb(112, PoleAxisB.R, PoleAxisB.G, PoleAxisB.B)
+            Color.FromArgb(96, PoleAxisB.R, PoleAxisB.G, PoleAxisB.B)
         ).ToImmutable(),
         2
     ).ToImmutable();
     public static readonly IPen AccentPen2 = new Pen(AccentBrush, 2).ToImmutable();
     public static readonly IPen AccentPen1 = new Pen(AccentBrush, 1).ToImmutable();
-    public static readonly IPen FilterPen = new Pen(FilterBrush, 1.5).ToImmutable();
+    public static readonly IPen FilterPen = new Pen(FilterBrush, 1).ToImmutable();
     public static readonly IPen DimmedFilterPen = new Pen(
         new SolidColorBrush(Color.FromArgb(128, 0, 114, 178)).ToImmutable(),
-        1.5
+        1
     ).ToImmutable();
     public static readonly IPen DimmedEnvelopeLinePen = new Pen(
         new SolidColorBrush(Color.FromArgb(128, 240, 228, 66)).ToImmutable(),
-        1.5
+        1
     ).ToImmutable();
-    public static readonly IPen EnvelopeLinePen = new Pen(EnvelopeLineBrush, 1.5).ToImmutable();
-    public static readonly IPen AccentPenOnePointFive = new Pen(AccentBrush, 1.5).ToImmutable();
+    public static readonly IPen EnvelopeLinePen = new Pen(EnvelopeLineBrush, 1).ToImmutable();
+    public static readonly IPen AccentPenOnePointFive = new Pen(AccentBrush, 1).ToImmutable();
     public static readonly IPen SectionTracePen = new Pen(
         new SolidColorBrush(Color.Parse("#56B4E9")).ToImmutable(),
         1
     ).ToImmutable();
     public static readonly IPen WaveformPen = new Pen(AccentBrush, 1).ToImmutable();
-    public static readonly IPen MarkerPen = new Pen(Brushes.White, 1).ToImmutable();
+    public static readonly IPen MarkerPen = new Pen(
+        new SolidColorBrush(Color.Parse("#F5F5F5")).ToImmutable(),
+        1
+    ).ToImmutable();
 
     public static readonly Color VoiceSlotColor = EnvelopeLine;
     public static readonly Color FilterSlotColor = FilterLine;
@@ -168,5 +204,15 @@ public static class ThemeColors
             _ => EnvelopeLine,
         };
 
+    private static Color WhiteWithOpacity(double opacity) =>
+        Color.FromArgb(
+            (byte)Math.Round(byte.MaxValue * opacity),
+            byte.MaxValue,
+            byte.MaxValue,
+            byte.MaxValue
+        );
+
     public static double Snap(double v) => Math.Floor(v) + 0.5;
+
+    public static Point Snap(Point point) => new(Snap(point.X), Snap(point.Y));
 }

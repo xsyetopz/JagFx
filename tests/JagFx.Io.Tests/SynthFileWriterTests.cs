@@ -16,7 +16,7 @@ public class SynthFileWriterTests
         var written = SynthFileWriter.Write(original);
         var reread = SynthFileReader.Read(written);
         Assert.NotNull(reread);
-        Assert.Single(reread.ActiveVoices);
+        _ = Assert.Single(reread.ActiveVoices);
         Assert.Equal(original.Loop, reread.Loop);
     }
 

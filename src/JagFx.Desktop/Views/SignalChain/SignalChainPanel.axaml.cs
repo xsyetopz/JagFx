@@ -81,7 +81,7 @@ public partial class SignalChainPanel : UserControl
             {
                 var (slot, slotType) = Matrix[row, col];
                 var color = ThemeColors.SlotColor(slot);
-                var slotLabel = Loc.Get($"Slot{slot}");
+                var slotLabel = Loc.GetUpper($"Slot{slot}");
 
                 var titleBlock = CreateSlotHeader(slotLabel);
 
@@ -227,7 +227,7 @@ public partial class SignalChainPanel : UserControl
         };
 
         // Zoom buttons only for canvases that support zoom
-        if (slotType != SlotType.PoleZero && slotType != SlotType.Bode)
+        if (slotType != SlotType.Bode)
         {
             if (slot == SignalChainSlot.Output)
                 toolbar.Children.Add(CreateTrueWaveToggle());
@@ -236,8 +236,8 @@ public partial class SignalChainPanel : UserControl
             toolbar.Children.Add(zoomGroup);
         }
 
-        // Envelope cells get snap toggle
-        if (slotType == SlotType.Envelope)
+        // Editable cells get snap toggle
+        if (slotType is SlotType.Envelope or SlotType.PoleZero)
         {
             var snapBtn = CreateSnapButton(canvas);
             toolbar.Children.Add(snapBtn);
@@ -301,6 +301,7 @@ public partial class SignalChainPanel : UserControl
             {
                 EnvelopeCanvas => e.Property == EnvelopeCanvas.ZoomLevelProperty,
                 WaveformCanvas => e.Property == WaveformCanvas.ZoomLevelProperty,
+                PoleZeroCanvas => e.Property == PoleZeroCanvas.ZoomLevelProperty,
                 _ => false,
             };
             if (!isZoomProp)
@@ -348,6 +349,9 @@ public partial class SignalChainPanel : UserControl
             case WaveformCanvas wc:
                 wc.ZoomLevel = zoomLevel;
                 break;
+            case PoleZeroCanvas pzc:
+                pzc.ZoomLevel = zoomLevel;
+                break;
             default:
                 break;
         }
@@ -374,8 +378,17 @@ public partial class SignalChainPanel : UserControl
         {
             if (s is not ToggleButton toggled)
                 return;
-            if (canvas is EnvelopeCanvas ec)
-                ec.IsSnapEnabled = toggled.IsChecked == true;
+            switch (canvas)
+            {
+                case EnvelopeCanvas ec:
+                    ec.IsSnapEnabled = toggled.IsChecked == true;
+                    break;
+                case PoleZeroCanvas pzc:
+                    pzc.IsSnapEnabled = toggled.IsChecked == true;
+                    break;
+                default:
+                    break;
+            }
         };
 
         return btn;
@@ -511,7 +524,7 @@ public partial class SignalChainPanel : UserControl
     }
 
     private static void UpdateDimming(EnvelopeSlot slot, EnvelopeViewModel envelope) =>
-        slot.Container.Opacity = envelope.IsEmpty ? 0.35 : 1.0;
+        slot.Container.Opacity = envelope.IsEmpty ? 0.22 : 1.0;
 
     private void UpdateSelection(SignalChainSlot selectedSlot)
     {
