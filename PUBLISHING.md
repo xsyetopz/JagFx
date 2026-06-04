@@ -1,8 +1,8 @@
-# Publishing Guide (host-OS aware)
+# Publishing Guide
 
-Use this if you develop on macOS, Windows, or Linux.
+Release steps for macOS, Windows, and Linux hosts.
 
-## 10-minute quick path
+## Quick path
 
 1. Confirm required GitHub secrets exist (section **Secrets**).
 2. Bump version in `Directory.Build.props`.
@@ -11,38 +11,38 @@ Use this if you develop on macOS, Windows, or Linux.
    dotnet build --nologo
    dotnet test --nologo
    ```
-4. Build local installers you can build on your host OS (see matrix below).
+4. Build the installers supported by your host OS (see matrix below).
 5. Tag + push:
    ```bash
    git tag v2.2.2
    git push origin v2.2.2
    ```
 6. Watch `Actions -> Release`.
-7. Download release artifacts from workflow run.
+7. Download artifacts from the workflow run.
 
 ---
 
-## Safety rule
+## Secret handling
 
 - Never commit secrets to git.
-- Put secrets only in GitHub Actions Secrets.
-- Path: `Repo -> Settings -> Secrets and variables -> Actions -> New repository secret`
+- Store secrets only in GitHub Actions Secrets.
+- GitHub path: `Repo -> Settings -> Secrets and variables -> Actions -> New repository secret`
 
 ---
 
 ## Host OS matrix (what you can do locally)
 
-| You develop on | Can build app binaries locally                        | Can build installer locally                         | Can sign/notarize locally                                                  | Recommended path                                         |
-| -------------- | ----------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- |
-| macOS          | macOS / Windows / Linux binaries via `dotnet publish` | macOS DMG (`just  release-desktop-macos-*`)         | macOS signing + notarization: **yes** (with Apple cert + creds)            | Build/test locally, rely on CI for full multi-OS release |
-| Windows        | macOS / Windows / Linux binaries via `dotnet publish` | Windows setup EXE (`just  release-desktop-windows`) | Windows signing: **yes** (with code-sign cert), macOS notarization: **no** | Build/test locally, rely on CI for macOS notarization    |
-| Linux          | macOS / Windows / Linux binaries via `dotnet publish` | Linux AppImage/tar (`just  release-desktop-linux`)  | macOS notarization: **no**, Windows signing: usually **no**                | Build/test locally, rely on CI for signed installers     |
+| Host OS | Local app binaries                                    | Local installer                                    | Local signing/notarization                                                 | Release path                                             |
+| ------- | ----------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- |
+| macOS   | macOS / Windows / Linux binaries via `dotnet publish` | macOS DMG (`just release-desktop-macos-*`)         | macOS signing + notarization: **yes** (with Apple cert + credentials)      | Build/test locally, use CI for the full multi-OS release |
+| Windows | macOS / Windows / Linux binaries via `dotnet publish` | Windows setup EXE (`just release-desktop-windows`) | Windows signing: **yes** (with code-sign cert), macOS notarization: **no** | Build/test locally, use CI for macOS notarization        |
+| Linux   | macOS / Windows / Linux binaries via `dotnet publish` | Linux AppImage/tar (`just release-desktop-linux`)  | macOS notarization: **no**, Windows signing: usually **no**                | Build/test locally, use CI for signed installers         |
 
-**Key truth:** developing on one OS is fine. Final trusted installers come from CI runners for each target OS.
+Develop on any supported OS. CI produces the trusted release installers on target OS runners.
 
 ---
 
-## Quick playbooks by host OS
+## Host OS playbooks
 
 ### If you develop on macOS
 
@@ -61,7 +61,7 @@ Use this if you develop on macOS, Windows, or Linux.
    hdiutil verify publish/JagFx-*-macos-arm64.dmg
    hdiutil verify publish/JagFx-*-macos-x64.dmg
    ```
-4. Push tag. Let CI build all platforms and run signing steps.
+4. Push the tag. CI builds all platforms and runs signing steps.
 
 ### If you develop on Windows
 
@@ -74,8 +74,8 @@ Use this if you develop on macOS, Windows, or Linux.
    ```powershell
    just release-desktop-windows
    ```
-3. Optional local signing (if cert available). Otherwise CI handles release artifacts.
-4. Push tag. CI handles macOS notarization + Linux artifacts.
+3. Sign locally only if the certificate is available. Otherwise, CI signs release artifacts.
+4. Push the tag. CI handles macOS notarization and Linux artifacts.
 
 ### If you develop on Linux
 
@@ -88,13 +88,13 @@ Use this if you develop on macOS, Windows, or Linux.
    ```bash
    just release-desktop-linux
    ```
-3. Push tag. CI handles macOS and Windows installer trust steps.
+3. Push the tag. CI handles macOS and Windows installer trust steps.
 
 ---
 
 ## Secrets
 
-## Required now (macOS signing + notarization in CI)
+### Required for macOS signing and notarization in CI
 
 1. `MACOS_CERT_P12_BASE64`
 2. `MACOS_CERT_PASSWORD`
@@ -103,7 +103,7 @@ Use this if you develop on macOS, Windows, or Linux.
 5. `MACOS_NOTARY_TEAM_ID`
 6. `MACOS_NOTARY_PASSWORD`
 
-### Where these come from
+### Secret sources
 
 #### `MACOS_CERT_P12_BASE64`
 
@@ -129,7 +129,7 @@ Use exact value like:
 
 #### `MACOS_NOTARY_APPLE_ID`
 
-Apple ID email used for Developer account.
+Apple ID email for the Developer account.
 
 #### `MACOS_NOTARY_TEAM_ID`
 
@@ -137,14 +137,14 @@ Apple Developer Team ID.
 
 #### `MACOS_NOTARY_PASSWORD`
 
-Apple app-specific password (not your normal login password):
+Apple app-specific password, not the normal login password:
 
 - <https://account.apple.com/account/manage>
 - Sign-In and Security -> App-Specific Passwords
 
-### Optional/future (Windows signing)
+### Optional Windows signing
 
-Not required by current workflow. Use when you add Windows signing step:
+The workflow does not require these unless Windows signing is enabled:
 
 - `WIN_CERT_PFX_BASE64`
 - `WIN_CERT_PASSWORD`
@@ -171,16 +171,16 @@ Example patch bump:
 
 Workflow file: `.github/workflows/release.yml`
 
-Option A (normal):
+Tag push:
 
 ```bash
 git tag v2.2.2
 git push origin v2.2.2
 ```
 
-Option B:
+Manual run:
 
-- GitHub -> `Actions` -> `Release` -> `Run workflow`
+- GitHub -> `Actions` -> `Release` -> `Run workflow`.
 
 ---
 
@@ -198,15 +198,15 @@ Option B:
 
 ### “Can I sign Windows apps from macOS?”
 
-Not directly in this setup. Sign on Windows runner (CI) or Windows machine.
+Not with the current local setup. Sign on a Windows runner in CI or on a Windows machine.
 
 ### “Can I notarize macOS app from Linux/Windows?”
 
-Not in this workflow. Notarization runs on macOS runner.
+No. This workflow runs notarization on a macOS runner.
 
 ### `No space left on device` while building DMG
 
-DMG creator already uses explicit size + retry. Re-run:
+The DMG recipe already sets an explicit size and retries. Re-run:
 
 ```bash
 just release-desktop-macos-arm64
@@ -214,4 +214,4 @@ just release-desktop-macos-arm64
 
 ### `ISCC not found`
 
-Install Inno Setup and ensure `ISCC` in PATH.
+Install Inno Setup and put `ISCC` on PATH.
