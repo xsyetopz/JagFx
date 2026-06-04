@@ -31,7 +31,7 @@
   <data name="TooltipPlay" xml:space="preserve"><value>Play (Space)</value></data>
   <data name="TooltipStop" xml:space="preserve"><value>Stop</value></data>
   <data name="TooltipLoopPlayback" xml:space="preserve"><value>Loop playback</value></data>
-  <data name="TooltipLoopCount" xml:space="preserve"><value>∞ bedeutet wiederholen bis Stopp</value></data>
+  <data name="TooltipLoopCount" xml:space="preserve"><value>0 bedeutet wiederholen bis Stopp</value></data>
   <data name="TooltipPartialActive" xml:space="preserve"><value>Oszillator ein-/ausschalten</value></data>
   <data name="TooltipPlaySelectedVoice" xml:space="preserve"><value>Play selected voice only (V)</value></data>
   <data name="TooltipPlayAllVoices" xml:space="preserve"><value>Play all voices (V)</value></data>
