@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -80,19 +81,11 @@ public partial class SignalChainPanel : UserControl
             {
                 var (slot, slotType) = Matrix[row, col];
                 var color = ThemeColors.SlotColor(slot);
+                var slotLabel = Loc.Get($"Slot{slot}");
 
-                var titleBlock = new TextBlock
-                {
-                    Text = slot.DisplayName(),
-                    FontSize = 10,
-                    FontWeight = FontWeight.Bold,
-                    Foreground = new SolidColorBrush(Color.Parse("#f0f0f0")),
-                    Opacity = 0.7,
-                    Margin = new Thickness(4, 1, 0, 0),
-                    TextTrimming = TextTrimming.CharacterEllipsis,
-                };
+                var titleBlock = CreateSlotHeader(slotLabel);
 
-                var canvas = CreateSlotCanvas(slotType, color);
+                var canvas = CreateSlotCanvas(slot, slotType, color);
                 if (canvas is null)
                     continue;
 
@@ -107,6 +100,8 @@ public partial class SignalChainPanel : UserControl
                     case FrequencyResponseCanvas frc:
                         _bodeCanvas = frc;
                         break;
+                    default:
+                        break;
                 }
 
                 var container = WrapInCell(titleBlock, canvas, row, col, slot, slotType);
@@ -119,22 +114,23 @@ public partial class SignalChainPanel : UserControl
         }
     }
 
-    private Control? CreateSlotCanvas(SlotType slotType, string color) =>
+    private static Control CreateSlotCanvas(SignalChainSlot slot, SlotType slotType, Color color) =>
         slotType switch
         {
             SlotType.Envelope => new EnvelopeCanvas
             {
                 IsThumbnail = false,
-                LineColor = new SolidColorBrush(Color.Parse(color)),
+                LineColor = new SolidColorBrush(color),
+                UseAnalysisGrid = slot == SignalChainSlot.Filter,
             },
             SlotType.PoleZero => new PoleZeroCanvas(),
             SlotType.Waveform => new WaveformCanvas(),
             SlotType.Bode => new FrequencyResponseCanvas(),
-            _ => null,
+            _ => throw new ArgumentOutOfRangeException(nameof(slotType), slotType, null),
         };
 
     private Border WrapInCell(
-        TextBlock titleBlock,
+        Control titleBlock,
         Control canvas,
         int row,
         int col,
@@ -172,17 +168,16 @@ public partial class SignalChainPanel : UserControl
 
         var container = new Border
         {
-            BorderBrush = SolidColorBrush.Parse("#4a4a4a"),
+            BorderBrush = ThemeColors.CellBorderBrush,
             BorderThickness = new Thickness(1),
-            Padding = new Thickness(2, 1),
+            Padding = new Thickness(3, 2),
             Child = innerGrid,
             Cursor = new Cursor(StandardCursorType.Hand),
         };
 
         container.PointerPressed += (_, _) =>
         {
-            if (_subscribedVm is not null)
-                _subscribedVm.SelectEnvelope(slot);
+            _subscribedVm?.SelectEnvelope(slot);
         };
 
         Grid.SetRow(container, row);
@@ -192,9 +187,37 @@ public partial class SignalChainPanel : UserControl
         return container;
     }
 
+    private static Border CreateSlotHeader(string slotLabel)
+    {
+        var label = new TextBlock
+        {
+            Text = slotLabel,
+            TextAlignment = Avalonia.Media.TextAlignment.Left,
+            TextTrimming = TextTrimming.CharacterEllipsis,
+            TextWrapping = Avalonia.Media.TextWrapping.NoWrap,
+            Foreground = (IBrush)Application.Current!.FindResource("TextPrimaryBrush")!,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+            FontSize = 11,
+            FontWeight = FontWeight.SemiBold,
+        };
+        var panel = new Border
+        {
+            Padding = new Thickness(5, 2),
+            Margin = new Thickness(4, 1, 4, 0),
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+            Child = label,
+        };
+
+        ToolTip.SetTip(panel, slotLabel);
+        ToolTip.SetTip(label, slotLabel);
+        return panel;
+    }
+
     #region Toolbar creation
 
-    private StackPanel CreateToolbar(Control canvas, SignalChainSlot slot, SlotType slotType)
+    private static StackPanel CreateToolbar(Control canvas, SignalChainSlot slot, SlotType slotType)
     {
         var toolbar = new StackPanel
         {
@@ -206,28 +229,24 @@ public partial class SignalChainPanel : UserControl
         // Zoom buttons only for canvases that support zoom
         if (slotType != SlotType.PoleZero && slotType != SlotType.Bode)
         {
+            if (slot == SignalChainSlot.Output)
+                toolbar.Children.Add(CreateTrueWaveToggle());
+
             var zoomGroup = CreateZoomGroup(canvas);
             toolbar.Children.Add(zoomGroup);
         }
 
-        // Envelope cells get [S] snap button
+        // Envelope cells get snap toggle
         if (slotType == SlotType.Envelope)
         {
             var snapBtn = CreateSnapButton(canvas);
             toolbar.Children.Add(snapBtn);
         }
 
-        // All except P/Z and BODE get MODE ▾ dropdown
-        if (slotType != SlotType.PoleZero && slotType != SlotType.Bode)
-        {
-            var modeBtn = CreateModeDropdown(canvas, slot, slotType);
-            toolbar.Children.Add(modeBtn);
-        }
-
         return toolbar;
     }
 
-    private StackPanel CreateZoomGroup(Control canvas)
+    private static StackPanel CreateZoomGroup(Control canvas)
     {
         var group = new StackPanel
         {
@@ -242,11 +261,11 @@ public partial class SignalChainPanel : UserControl
         {
             var btn = new ToggleButton
             {
-                Content = $"{level}x",
                 Theme = (ControlTheme?)Application.Current!.FindResource("JagCellToggle"),
                 IsChecked = level == 1,
                 Tag = level,
             };
+            btn.Content = $"{level}X";
 
             if (level == 1)
                 activeToggle = btn;
@@ -270,7 +289,7 @@ public partial class SignalChainPanel : UserControl
                 SetCanvasZoom(canvas, zoomLevel);
             };
 
-            ToolTip.SetTip(btn, $"Zoom {level}x");
+            ToolTip.SetTip(btn, Loc.Format("TooltipZoom", level));
             group.Children.Add(btn);
         }
 
@@ -298,6 +317,27 @@ public partial class SignalChainPanel : UserControl
         return group;
     }
 
+    private static ToggleButton CreateTrueWaveToggle()
+    {
+        var btn = new ToggleButton
+        {
+            Theme = (ControlTheme?)Application.Current!.FindResource("JagCellToggle"),
+        };
+        _ = btn.Bind(
+            ToggleButton.IsCheckedProperty,
+            new Binding(nameof(MainViewModel.TrueWaveEnabled)) { Mode = BindingMode.TwoWay }
+        );
+        ToolTip.SetTip(btn, Loc.Get("TooltipTrueWave"));
+        btn.Content = new OptrisIcon
+        {
+            Value = "mdi-waveform",
+            FontSize = 15,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        };
+        return btn;
+    }
+
     private static void SetCanvasZoom(Control canvas, int zoomLevel)
     {
         switch (canvas)
@@ -308,6 +348,8 @@ public partial class SignalChainPanel : UserControl
             case WaveformCanvas wc:
                 wc.ZoomLevel = zoomLevel;
                 break;
+            default:
+                break;
         }
     }
 
@@ -315,12 +357,18 @@ public partial class SignalChainPanel : UserControl
     {
         var btn = new ToggleButton
         {
-            Content = "S",
             Theme = (ControlTheme?)Application.Current!.FindResource("JagCellToggle"),
             Margin = new Thickness(3, 0, 0, 0),
         };
         btn.Classes.Add("snap");
-        ToolTip.SetTip(btn, "Snap to grid (S)");
+        ToolTip.SetTip(btn, Loc.Get("TooltipSnapGrid"));
+        btn.Content = new OptrisIcon
+        {
+            Value = "mdi-grid",
+            FontSize = 15,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        };
 
         btn.Click += (s, _) =>
         {
@@ -331,80 +379,6 @@ public partial class SignalChainPanel : UserControl
         };
 
         return btn;
-    }
-
-    private Button CreateModeDropdown(Control canvas, SignalChainSlot slot, SlotType slotType)
-    {
-        var btn = new Button
-        {
-            Content = "MODE \u25BE",
-            Theme = (ControlTheme?)Application.Current!.FindResource("JagCellButton"),
-            Margin = new Thickness(3, 0, 0, 0),
-        };
-        ToolTip.SetTip(btn, "Display mode");
-
-        btn.Click += (s, _) =>
-        {
-            if (s is not Button button)
-                return;
-
-            var menu = new ContextMenu();
-
-            if (slotType == SlotType.Envelope && canvas is EnvelopeCanvas ec)
-            {
-                var modes = new (string Label, EnvelopeDisplayMode Mode)[]
-                {
-                    ("Auto", EnvelopeDisplayMode.AutoScale),
-                    ("Full", EnvelopeDisplayMode.FullScale),
-                    ("Norm", EnvelopeDisplayMode.Normalized),
-                };
-
-                var ecRef = ec;
-                foreach (var (label, modeValue) in modes)
-                {
-                    var item = new MenuItem { Header = label };
-                    var mode = modeValue;
-                    item.Click += (_, _) => ecRef.DisplayMode = mode;
-                    menu.Items.Add(item);
-                }
-
-                menu.Opening += (_, _) =>
-                {
-                    for (var i = 0; i < menu.Items.Count; i++)
-                    {
-                        if (menu.Items[i] is MenuItem mi)
-                        {
-                            mi.Icon =
-                                ecRef.DisplayMode == modes[i].Mode
-                                    ? new TextBlock { Text = "\u2713", FontSize = 9 }
-                                    : null;
-                        }
-                    }
-                };
-            }
-            else if (slotType == SlotType.Waveform)
-            {
-                var waveformModes = new[] { "Wave", "Spectrum" };
-                foreach (var mode in waveformModes)
-                {
-                    var item = new MenuItem { Header = mode, IsEnabled = mode == "Wave" };
-                    menu.Items.Add(item);
-                }
-            }
-
-            menu.Open(button);
-        };
-
-        return btn;
-    }
-
-    private EnvelopeViewModel? FindEnvelopeForSlot(SignalChainSlot slot)
-    {
-        if (_subscribedVm is null)
-            return null;
-        var voice = _subscribedVm.Patch.SelectedVoice;
-        var entry = MainViewModel.SignalChain.FirstOrDefault(e => e.Slot == slot);
-        return entry.Getter?.Invoke(voice);
     }
 
     #endregion
@@ -479,10 +453,12 @@ public partial class SignalChainPanel : UserControl
         {
             if (slot is EnvelopeSlot envSlot)
             {
-                var entry = MainViewModel.SignalChain.FirstOrDefault(e => e.Slot == envSlot.Slot);
-                if (entry.Getter is null)
+                var (_, getter) = MainViewModel.SignalChain.FirstOrDefault(e =>
+                    e.Slot == envSlot.Slot
+                );
+                if (getter is null)
                     continue;
-                var envelope = entry.Getter(voice);
+                var envelope = getter(voice);
                 envSlot.Canvas.Envelope = envelope;
                 envelope.PropertyChanged += OnEnvelopePropertyChanged;
                 UpdateDimming(envSlot, envelope);
@@ -534,18 +510,18 @@ public partial class SignalChainPanel : UserControl
         }
     }
 
-    private static void UpdateDimming(EnvelopeSlot slot, EnvelopeViewModel envelope)
-    {
+    private static void UpdateDimming(EnvelopeSlot slot, EnvelopeViewModel envelope) =>
         slot.Container.Opacity = envelope.IsEmpty ? 0.35 : 1.0;
-    }
 
     private void UpdateSelection(SignalChainSlot selectedSlot)
     {
         foreach (var slot in _slots)
         {
             var selected = slot.Slot == selectedSlot;
-            slot.Container.BorderBrush = SolidColorBrush.Parse(selected ? "#009E73" : "#4a4a4a");
-            slot.Container.BorderThickness = new Thickness(1.5, 0.5, 0.5, 0.5);
+            slot.Container.BorderBrush = selected
+                ? ThemeColors.AccentBrush
+                : ThemeColors.CellBorderBrush;
+            slot.Container.BorderThickness = new Thickness(1);
         }
     }
 
@@ -611,6 +587,9 @@ public partial class SignalChainPanel : UserControl
                 for (var i = 0; i < 3; i++)
                     rowDefs[i].Height = new GridLength(1, GridUnitType.Star);
                 MatrixGrid.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
+                break;
+
+            default:
                 break;
         }
     }

@@ -8,13 +8,20 @@ namespace JagFx.Synthesis.Core;
 
 public static class PatchRenderer
 {
-    public static AudioBuffer Synthesize(Patch patch, int loopCount, int voiceFilter = -1)
+    public static AudioBuffer Synthesize(
+        Patch patch,
+        int loopCount,
+        int voiceFilter = -1,
+        CancellationToken ct = default
+    )
     {
+        ct.ThrowIfCancellationRequested();
         var voicesToMix =
             voiceFilter < 0
                 ? patch.ActiveVoices
                 : [.. patch.ActiveVoices.Where(v => v.Index == voiceFilter)];
 
+        ct.ThrowIfCancellationRequested();
         var maxDuration = CalculateMaxDuration(voicesToMix);
         if (maxDuration == 0)
         {
@@ -29,12 +36,14 @@ public static class PatchRenderer
         var totalSampleCount =
             sampleCount + (loopStop - loopStart) * Math.Max(0, effectiveLoopCount - 1);
 
-        var buffer = MixVoices(voicesToMix, sampleCount, totalSampleCount);
+        var buffer = MixVoices(voicesToMix, sampleCount, totalSampleCount, ct);
         if (effectiveLoopCount > 1)
         {
+            ct.ThrowIfCancellationRequested();
             ApplyLoopExpansion(buffer, sampleCount, loopStart, loopStop, effectiveLoopCount);
         }
 
+        ct.ThrowIfCancellationRequested();
         AudioMath.ClipInt16(buffer, totalSampleCount);
 
         var output = new int[totalSampleCount];
@@ -72,18 +81,22 @@ public static class PatchRenderer
     private static int[] MixVoices(
         ImmutableList<(int Index, Voice Voice)> voices,
         int sampleCount,
-        int totalSampleCount
+        int totalSampleCount,
+        CancellationToken ct
     )
     {
         var buffer = AudioBufferPool.Acquire(totalSampleCount);
 
         foreach (var (_, voice) in voices)
         {
-            var voiceBuffer = VoiceSynthesizer.Synthesize(voice);
+            ct.ThrowIfCancellationRequested();
+            var voiceBuffer = VoiceSynthesizer.Synthesize(voice, ct);
             var startOffset = (int)(voice.OffsetMs * AudioConstants.SampleRatePerMillisecond);
 
             for (var i = 0; i < voiceBuffer.Length; i++)
             {
+                if ((i & 0x1FF) == 0)
+                    ct.ThrowIfCancellationRequested();
                 var pos = i + startOffset;
                 if (pos >= 0 && pos < sampleCount)
                 {

@@ -115,7 +115,7 @@ public static class SynthJsonMapper
             ModulationDepth: EnvelopeFromJson(json.ModulationDepth)
         );
 
-    private static PartialJson PartialToJson(Partial partial) =>
+    private static PartialJson PartialToJson(VoicePartial partial) =>
         new()
         {
             Amplitude = partial.Amplitude.Value,
@@ -123,7 +123,7 @@ public static class SynthJsonMapper
             Delay = partial.Delay.Value,
         };
 
-    private static Partial PartialFromJson(PartialJson json) =>
+    private static VoicePartial PartialFromJson(PartialJson json) =>
         new(
             Amplitude: new Percent(json.Amplitude),
             PitchOffsetSemitones: json.PitchOffsetSemitones,
@@ -191,7 +191,7 @@ public static class SynthJsonMapper
             [.. json.Feedback.Baseline],
             ImmutableArray.CreateRange(json.Feedback.Modulated)
         );
-        return ImmutableArray.Create(channel0, channel1);
+        return [channel0, channel1];
     }
 
     private static string WaveformToString(Waveform waveform) =>

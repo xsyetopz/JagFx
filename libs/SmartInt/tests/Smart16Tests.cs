@@ -5,7 +5,7 @@ namespace SmartInt.Tests;
 public class Smart16Tests
 {
     [Fact]
-    public void EncodeDecode_SmallValue_Works()
+    public void EncodeDecodeSmallValueWorks()
     {
         var smart = new Smart16(42);
         var buffer = new byte[3];
@@ -17,7 +17,7 @@ public class Smart16Tests
     }
 
     [Fact]
-    public void EncodeDecode_NegativeValue_Works()
+    public void EncodeDecodeNegativeValueWorks()
     {
         var smart = new Smart16(-100);
         var buffer = new byte[3];
@@ -29,7 +29,7 @@ public class Smart16Tests
     }
 
     [Fact]
-    public void EncodeDecode_LargeValue_Works()
+    public void EncodeDecodeLargeValueWorks()
     {
         var smart = new Smart16(Smart16.MaxValue);
         var buffer = new byte[3];

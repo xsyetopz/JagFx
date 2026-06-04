@@ -112,7 +112,7 @@ public static class SynthFileWriter
         }
     }
 
-    private static void WritePartials(BinaryBuffer buffer, ImmutableList<Partial> partials)
+    private static void WritePartials(BinaryBuffer buffer, ImmutableList<VoicePartial> partials)
     {
         foreach (var partial in partials)
         {

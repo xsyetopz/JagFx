@@ -13,6 +13,7 @@ public static class SynthesisService
         CancellationToken ct = default
     )
     {
-        return await Task.Run(() => PatchRenderer.Synthesize(patch, loopCount, voiceFilter), ct);
+        return await Task.Run(() => PatchRenderer.Synthesize(patch, loopCount, voiceFilter, ct), ct)
+            .ConfigureAwait(false);
     }
 }

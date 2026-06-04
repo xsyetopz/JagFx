@@ -22,8 +22,9 @@ public class AudioPlaybackService : IDisposable
     {
         Stop();
         await Task.Run(() =>
-            WaveFileWriter.WriteToPath(buffer.ToBytes16LE(), _tempWavPath, bitsPerSample: 16)
-        );
+                WaveFileWriter.WriteToPath(buffer.ToBytes16LE(), _tempWavPath, bitsPerSample: 16)
+            )
+            .ConfigureAwait(false);
         StartAndWatch();
     }
 
@@ -36,8 +37,9 @@ public class AudioPlaybackService : IDisposable
     public async Task UpdateWavAsync(AudioBuffer buffer)
     {
         await Task.Run(() =>
-            WaveFileWriter.WriteToPath(buffer.ToBytes16LE(), _tempWavPath, bitsPerSample: 16)
-        );
+                WaveFileWriter.WriteToPath(buffer.ToBytes16LE(), _tempWavPath, bitsPerSample: 16)
+            )
+            .ConfigureAwait(false);
     }
 
     public void ReplayFromExistingFile()
@@ -85,7 +87,7 @@ public class AudioPlaybackService : IDisposable
             {
                 try
                 {
-                    await process.WaitForExitAsync();
+                    await process.WaitForExitAsync().ConfigureAwait(false);
                     PlaybackFinished?.Invoke();
                 }
                 catch

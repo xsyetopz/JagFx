@@ -5,36 +5,38 @@ namespace JagFx.Io.Buffers;
 
 public class BinaryBuffer
 {
-    private int _position;
-    private bool _truncated;
-
-    public BinaryBuffer(byte[] data) =>
+    public BinaryBuffer(byte[] data)
+    {
         Data = data ?? throw new ArgumentNullException(nameof(data));
+    }
 
-    public BinaryBuffer(int size) => Data = new byte[size];
+    public BinaryBuffer(int size)
+    {
+        Data = new byte[size];
+    }
 
     public byte[] Data { get; }
-    public int Position => _position;
-    public bool IsTruncated => _truncated;
-    public int Remaining => Data.Length - _position;
+    public int Position { get; private set; }
+    public bool IsTruncated { get; private set; }
+    public int Remaining => Data.Length - Position;
 
-    public void Skip(int byteCount) => _position += byteCount;
+    public void Skip(int byteCount) => Position += byteCount;
 
     public void SetPosition(int newPosition)
     {
         if (newPosition < 0)
-            _position = 0;
+            Position = 0;
         else if (newPosition > Data.Length)
-            _position = Data.Length;
+            Position = Data.Length;
         else
-            _position = newPosition;
+            Position = newPosition;
     }
 
-    public int Peek() => _position >= Data.Length ? 0 : Data[_position] & 0xFF;
+    public int Peek() => Position >= Data.Length ? 0 : Data[Position] & 0xFF;
 
     public int PeekAt(int offset)
     {
-        var peekPosition = _position + offset;
+        var peekPosition = Position + offset;
         return peekPosition >= Data.Length ? 0 : Data[peekPosition] & 0xFF;
     }
 
@@ -43,8 +45,8 @@ public class BinaryBuffer
         if (CheckTruncation(1))
             return 0;
 
-        var unsignedByte = Data[_position] & 0xFF;
-        _position++;
+        var unsignedByte = Data[Position] & 0xFF;
+        Position++;
 
         return unsignedByte;
     }
@@ -54,8 +56,8 @@ public class BinaryBuffer
         if (CheckTruncation(1))
             return 0;
 
-        var signedByte = Data[_position];
-        _position++;
+        var signedByte = Data[Position];
+        Position++;
 
         return signedByte;
     }
@@ -65,8 +67,8 @@ public class BinaryBuffer
         if (CheckTruncation(2))
             return 0;
 
-        var unsignedShort = BinaryPrimitives.ReadUInt16BigEndian(Data.AsSpan(_position, 2));
-        _position += 2;
+        var unsignedShort = BinaryPrimitives.ReadUInt16BigEndian(Data.AsSpan(Position, 2));
+        Position += 2;
 
         return unsignedShort;
     }
@@ -76,8 +78,8 @@ public class BinaryBuffer
         if (CheckTruncation(2))
             return 0;
 
-        var unsignedShort = BinaryPrimitives.ReadUInt16LittleEndian(Data.AsSpan(_position, 2));
-        _position += 2;
+        var unsignedShort = BinaryPrimitives.ReadUInt16LittleEndian(Data.AsSpan(Position, 2));
+        Position += 2;
 
         return unsignedShort;
     }
@@ -87,8 +89,8 @@ public class BinaryBuffer
         if (CheckTruncation(2))
             return 0;
 
-        var signedShort = BinaryPrimitives.ReadInt16BigEndian(Data.AsSpan(_position, 2));
-        _position += 2;
+        var signedShort = BinaryPrimitives.ReadInt16BigEndian(Data.AsSpan(Position, 2));
+        Position += 2;
 
         return signedShort;
     }
@@ -98,8 +100,8 @@ public class BinaryBuffer
         if (CheckTruncation(4))
             return 0;
 
-        var signedInt = BinaryPrimitives.ReadInt32BigEndian(Data.AsSpan(_position, 4));
-        _position += 4;
+        var signedInt = BinaryPrimitives.ReadInt32BigEndian(Data.AsSpan(Position, 4));
+        Position += 4;
 
         return signedInt;
     }
@@ -122,71 +124,71 @@ public class BinaryBuffer
 
     public void WriteInt32BigEndian(int value)
     {
-        BinaryPrimitives.WriteInt32BigEndian(Data.AsSpan(_position, 4), value);
-        _position += 4;
+        BinaryPrimitives.WriteInt32BigEndian(Data.AsSpan(Position, 4), value);
+        Position += 4;
     }
 
     public void WriteInt32LittleEndian(int value)
     {
-        BinaryPrimitives.WriteInt32LittleEndian(Data.AsSpan(_position, 4), value);
-        _position += 4;
+        BinaryPrimitives.WriteInt32LittleEndian(Data.AsSpan(Position, 4), value);
+        Position += 4;
     }
 
     public void WriteInt16LittleEndian(int value)
     {
-        BinaryPrimitives.WriteInt16LittleEndian(Data.AsSpan(_position, 2), (short)value);
-        _position += 2;
+        BinaryPrimitives.WriteInt16LittleEndian(Data.AsSpan(Position, 2), (short)value);
+        Position += 2;
     }
 
     public void WriteUInt8(int value)
     {
-        Data[_position] = (byte)value;
-        _position++;
+        Data[Position] = (byte)value;
+        Position++;
     }
 
     public void WriteUInt16BigEndian(int value)
     {
-        BinaryPrimitives.WriteUInt16BigEndian(Data.AsSpan(_position, 2), (ushort)value);
-        _position += 2;
+        BinaryPrimitives.WriteUInt16BigEndian(Data.AsSpan(Position, 2), (ushort)value);
+        Position += 2;
     }
 
     public void WriteSmart16(short value)
     {
         var smart = new Smart16(value);
-        _position += smart.Encode(Data.AsSpan(_position));
+        Position += smart.Encode(Data.AsSpan(Position));
     }
 
     public void WriteUSmart16(ushort value)
     {
         var smart = new USmart16(value);
-        _position += smart.Encode(Data.AsSpan(_position));
+        Position += smart.Encode(Data.AsSpan(Position));
     }
 
     private delegate (T Smart, int BytesRead) SmartDecoder<T>(ReadOnlySpan<byte> span);
 
     private T ReadSmartBase<T>(SmartDecoder<T> decodeSmart, int oneByteThreshold)
     {
-        if (_position >= Data.Length)
+        if (Position >= Data.Length)
             return default!;
 
-        var firstByte = Data[_position] & 0xFF;
+        var firstByte = Data[Position] & 0xFF;
         var bytesNeeded = firstByte < oneByteThreshold ? 1 : 2;
 
         if (CheckTruncation(bytesNeeded))
             return default!;
 
-        var (smartValue, bytesRead) = decodeSmart(Data.AsSpan(_position));
-        _position += bytesRead;
+        var (smartValue, bytesRead) = decodeSmart(Data.AsSpan(Position));
+        Position += bytesRead;
 
         return smartValue;
     }
 
     private bool CheckTruncation(int bytesRequired)
     {
-        if (_position + bytesRequired > Data.Length)
+        if (Position + bytesRequired > Data.Length)
         {
-            _truncated = true;
-            _position += bytesRequired;
+            IsTruncated = true;
+            Position += bytesRequired;
             return true;
         }
         return false;

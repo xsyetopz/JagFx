@@ -40,7 +40,7 @@ public class SynthFileReaderTests
     }
 
     [Fact]
-    public void CowDeath_AmplitudeEnvelope_HasSegments()
+    public void CowDeathAmplitudeEnvelopeHasSegments()
     {
         var result = SynthFileReader.Read(TestResources.CowDeath);
         var (_, voice) = result.ActiveVoices.First();
@@ -65,7 +65,7 @@ public class SynthFileReaderTests
     }
 
     [Fact]
-    public void CowDeath_Partials_HaveExpectedWaveformOnFrequencyEnvelope()
+    public void CowDeathPartialsHaveExpectedWaveformOnFrequencyEnvelope()
     {
         var result = SynthFileReader.Read(TestResources.CowDeath);
         var (_, voice) = result.ActiveVoices.First();
@@ -77,7 +77,7 @@ public class SynthFileReaderTests
     #region Filter Tests
 
     [Fact]
-    public void FilterFile_ContainsVoiceWithFilter()
+    public void FilterFileContainsVoiceWithFilter()
     {
         var result = SynthFileReader.Read(TestResources.ToaZebakAttackMeleeRoar01);
         var voiceWithFilter = result.ActiveVoices.FirstOrDefault(v => v.Voice.Filter != null);

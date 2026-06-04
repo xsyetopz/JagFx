@@ -26,7 +26,7 @@ public class SynthJsonSerializerTests
     [InlineData("toa_zebak_attack_roar_05")]
     [InlineData("toa_zebak_ranged_enranged_gulp_02")]
     [InlineData("ward_of_arceuus_cast")]
-    public void RoundTrip_Binary_Json_Binary_ProducesIdenticalBytes(string resourceName)
+    public void RoundTripBinaryJsonBinaryProducesIdenticalBytes(string resourceName)
     {
         var originalBytes = TestResources.GetBytes(resourceName);
         var patch = SynthFileReader.Read(originalBytes);
@@ -43,7 +43,7 @@ public class SynthJsonSerializerTests
     }
 
     [Fact]
-    public void RoundTrip_Json_Patch_Json_PreservesJsonStructure()
+    public void RoundTripJsonPatchJsonPreservesJsonStructure()
     {
         var patch = SynthFileReader.Read(TestResources.CowDeath);
         var json1 = SynthJsonSerializer.Serialize(patch);
@@ -58,7 +58,7 @@ public class SynthJsonSerializerTests
     #region Minimal JSON with Defaults
 
     [Fact]
-    public void Deserialize_MinimalJson_AppliesDefaults()
+    public void DeserializeMinimalJsonAppliesDefaults()
     {
         const string minimalJson = """
             {
@@ -113,7 +113,7 @@ public class SynthJsonSerializerTests
     #region Filter Coefficient Mapping
 
     [Fact]
-    public void FilterCoefficients_MapCorrectly()
+    public void FilterCoefficientsMapCorrectly()
     {
         var originalBytes = TestResources.GetBytes("toa_zebak_attack_melee_roar_01");
         var patch = SynthFileReader.Read(originalBytes);
@@ -155,7 +155,7 @@ public class SynthJsonSerializerTests
     #region Waveform String Mapping
 
     [Fact]
-    public void Serialize_UsesStringWaveforms()
+    public void SerializeUsesStringWaveforms()
     {
         var patch = SynthFileReader.Read(TestResources.CowDeath);
         var json = SynthJsonSerializer.Serialize(patch);
@@ -172,7 +172,7 @@ public class SynthJsonSerializerTests
     #region Empty Patch
 
     [Fact]
-    public void RoundTrip_EmptyPatch()
+    public void RoundTripEmptyPatch()
     {
         var emptyPatch = new Patch(
             voices: ImmutableList<Voice?>.Empty,

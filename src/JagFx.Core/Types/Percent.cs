@@ -8,5 +8,8 @@ public readonly record struct Percent
 {
     public int Value { get; }
 
-    public Percent(int value) => Value = value;
+    public Percent(int value)
+    {
+        Value = value;
+    }
 }

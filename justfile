@@ -4,6 +4,8 @@
 #   just run
 #   just build
 #   just test
+#   just format
+#   just format-check
 #
 # Desktop publish (single-file, self-contained)
 #   just publish-desktop-macos-arm64
@@ -42,11 +44,20 @@ run:
 build:
 	dotnet build --nologo
 
+format:
+	dotnet tool restore
+	dotnet csharpier format .
+
+format-check:
+	dotnet tool restore
+	dotnet csharpier check .
+
 test:
 	dotnet test --nologo
 
 clean:
 	rm -rf publish
+
 
 # -- Desktop publish -----------------------------------------------------------
 

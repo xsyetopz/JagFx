@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:JagFx.Desktop.Localization"
              xmlns:vm="using:JagFx.Desktop.ViewModels"
              xmlns:controls="using:JagFx.Desktop.Controls.Canvases"
              x:Class="JagFx.Desktop.Views.Inspector.EchoSection"
@@ -11,8 +12,8 @@
                 Padding="6,3"
                 BorderBrush="{StaticResource BorderDefaultBrush}"
                 BorderThickness="0,1,0,1">
-            <TextBlock Text="ECHO"
-                       FontSize="8"
+            <TextBlock Text="{loc:TrUpper EchoTitle}"
+                       FontSize="11"
                        FontWeight="Bold"
                        Foreground="{StaticResource TextSecondaryBrush}" />
         </Border>
@@ -24,12 +25,12 @@
                     <controls:KnobControl Value="{Binding EchoDelay}"
                                           Minimum="0"
                                           Maximum="500"
-                                          Label="DELAY"
+                                          Label="{loc:TrUpper EchoDelayLabel}"
                                           Unit="ms" />
                     <controls:KnobControl Value="{Binding EchoFeedback}"
                                           Minimum="0"
                                           Maximum="100"
-                                          Label="FDBK"
+                                          Label="{loc:TrUpper EchoFeedbackLabel}"
                                           Unit="%" />
                 </StackPanel>
             </StackPanel>

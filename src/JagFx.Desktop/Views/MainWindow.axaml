@@ -23,10 +23,10 @@
         <!-- Status Bar -->
         <Border DockPanel.Dock="Bottom"
                 Background="{StaticResource SurfaceCellHeaderBrush}"
-                Height="20"
+                Height="24"
                 Padding="6,0">
             <TextBlock Text="{Binding StatusHint}"
-                       FontSize="10"
+                       FontSize="12"
                        Foreground="{StaticResource TextSecondaryBrush}"
                        VerticalAlignment="Center" />
         </Border>

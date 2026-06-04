@@ -1,12 +1,15 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using JagFx.Desktop.Controls.Canvases;
+using JagFx.Core.Constants;
 using JagFx.Desktop.Services;
 using JagFx.Domain.Models;
+using JagFx.Domain.Utilities;
 using JagFx.Io;
+using JagFx.Synthesis.Core;
 using JagFx.Synthesis.Data;
 
 namespace JagFx.Desktop.ViewModels;
@@ -52,8 +55,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private SignalChainSlot _selectedSlot;
 
-    [ObservableProperty]
-    private string _selectedEnvelopeColor = "#009E73";
+    public string SelectedEnvelopeTitle =>
+        Loc.Format("SelectedEnvelopeTitle", Loc.Get($"Slot{SelectedSlot}"));
 
     [ObservableProperty]
     private float[]? _outputSamples;
@@ -90,7 +93,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
             if (string.IsNullOrEmpty(FilePath))
                 return $"JagFx: {PatchName}{dirty}";
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var display = FilePath.StartsWith(home) ? "~" + FilePath[home.Length..] : FilePath;
+            var display = FilePath.StartsWith(home, StringComparison.Ordinal)
+                ? "~" + FilePath[home.Length..]
+                : FilePath;
             return $"JagFx: {display}{dirty}";
         }
     }
@@ -114,6 +119,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private double _loopStartNormalized;
     private double _loopEndNormalized;
     private Voice? _copiedVoice;
+    private int _interactiveEditDepth;
+    private int _previewRenderPending;
+    private int _previewRenderQueued;
+    private readonly Dictionary<int, AudioBuffer> _previewVoiceCache = [];
+    private readonly HashSet<int> _dirtyPreviewVoices = [];
+    private readonly object _previewCacheLock = new();
+
+    private const int CommittedPreviewDelayMs = 400;
 
     public MainViewModel()
     {
@@ -121,18 +134,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _fileManager.FileChanged += OnFileChanged;
         Patch.PropertyChanged += (_, e) =>
         {
-            ScheduleRerender();
+            ScheduleRerender(immediate: true);
             if (e.PropertyName == nameof(PatchViewModel.SelectedVoiceIndex))
             {
                 SubscribeVoiceChanges(Patch.SelectedVoice);
             }
         };
         _playback.PlaybackFinished += OnPlaybackFinished;
-        KnobControl.HintChanged += OnHintChanged;
         SubscribeVoiceChanges(Patch.SelectedVoice);
     }
-
-    private void OnHintChanged(string hint) => StatusHint = hint;
 
     partial void OnPatchNameChanged(string value) => OnPropertyChanged(nameof(WindowTitle));
 
@@ -140,49 +150,102 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     partial void OnFilePathChanged(string? value) => OnPropertyChanged(nameof(WindowTitle));
 
+    partial void OnSelectedSlotChanged(SignalChainSlot value) =>
+        OnPropertyChanged(nameof(SelectedEnvelopeTitle));
+
     private int EffectiveLoopCount => IsLooping ? (LoopCount == 0 ? 50 : LoopCount) : 1;
 
-    partial void OnPlaySingleVoiceChanged(bool value) => ScheduleRerender();
+    partial void OnPlaySingleVoiceChanged(bool value) => ScheduleRerender(immediate: true);
 
-    partial void OnIsLoopingChanged(bool value) => ScheduleRerender();
+    partial void OnIsLoopingChanged(bool value) => ScheduleRerender(immediate: true);
 
-    partial void OnLoopCountChanged(int value) => ScheduleRerender();
+    partial void OnLoopCountChanged(int value) => ScheduleRerender(immediate: true);
 
-    partial void OnTrueWaveEnabledChanged(bool value)
+    partial void OnTrueWaveEnabledChanged(bool value) => ScheduleRerender(immediate: true);
+
+    public void RequestPreviewUpdate(bool immediate = false) => ScheduleRerender(immediate);
+
+    public void BeginPreviewEdit() => _interactiveEditDepth++;
+
+    public void EndPreviewEdit()
     {
-        if (value)
-            ScheduleRerender();
+        if (_interactiveEditDepth > 0)
+            _interactiveEditDepth--;
+
+        if (_interactiveEditDepth == 0)
+            ScheduleRerender(immediate: true);
     }
 
-    private void ScheduleRerender()
+    private void ScheduleRerender(bool immediate = false)
     {
         IsDirty = true;
         _bufferStale = true;
 
         if (!TrueWaveEnabled)
+            _renderCts?.Cancel();
+
+        _debounceTimer?.Dispose();
+        if (!TrueWaveEnabled && _interactiveEditDepth > 0)
+            return;
+
+        if (immediate || TrueWaveEnabled)
         {
-            OutputSamples = null;
+            QueuePreviewRender();
             return;
         }
 
-        _debounceTimer?.Dispose();
         _debounceTimer = new System.Threading.Timer(
-            _ =>
-                Dispatcher.UIThread.Post(async () =>
-                {
-                    try
-                    {
-                        await RenderAndCacheAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Render failed: {ex}");
-                    }
-                }),
+            _ => QueuePreviewRender(),
             null,
-            100,
+            CommittedPreviewDelayMs,
             Timeout.Infinite
         );
+    }
+
+    private void QueuePreviewRender()
+    {
+        _ = System.Threading.Interlocked.Exchange(ref _previewRenderPending, 1);
+
+        if (System.Threading.Interlocked.Exchange(ref _previewRenderQueued, 1) == 1)
+            return;
+
+        Dispatcher.UIThread.Post(ProcessPreviewRenderQueue, DispatcherPriority.Input);
+    }
+
+    private void ProcessPreviewRenderQueue() => _ = ProcessPreviewRenderQueueAsync();
+
+    private async Task ProcessPreviewRenderQueueAsync()
+    {
+        try
+        {
+            while (System.Threading.Interlocked.Exchange(ref _previewRenderPending, 0) == 1)
+            {
+                try
+                {
+                    await RenderAndCacheAsync().ConfigureAwait(true);
+                }
+                catch (OperationCanceledException ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Render canceled: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Render failed: {ex}");
+                }
+            }
+        }
+        finally
+        {
+            System.Threading.Volatile.Write(ref _previewRenderQueued, 0);
+
+            if (
+                System.Threading.Volatile.Read(ref _previewRenderPending) == 1
+                && System.Threading.Interlocked.Exchange(ref _previewRenderQueued, 1) == 0
+            )
+            {
+                Dispatcher.UIThread.Post(ProcessPreviewRenderQueue, DispatcherPriority.Input);
+            }
+        }
     }
 
     private async Task RenderAndCacheAsync()
@@ -195,13 +258,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
             var model = Patch.ToModel();
             var voiceFilter = PlaySingleVoice ? Patch.SelectedVoiceIndex : -1;
 
-            // Always render single pass for waveform display
-            var buffer = await SynthesisService.RenderAsync(
-                model,
-                loopCount: 1,
-                voiceFilter: voiceFilter,
-                ct: cts.Token
-            );
+            // Always render single pass for waveform display.
+            var buffer = await RenderPreviewAsync(model, voiceFilter, cts.Token)
+                .ConfigureAwait(true);
             if (cts.Token.IsCancellationRequested)
                 return;
 
@@ -227,20 +286,25 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 model = DefaultLoopIfUnset(model);
 
-                var playbackBuffer = await SynthesisService.RenderAsync(
-                    model,
-                    loopCount: EffectiveLoopCount,
-                    voiceFilter: voiceFilter,
-                    ct: cts.Token
-                );
+                var playbackBuffer = await SynthesisService
+                    .RenderAsync(
+                        model,
+                        loopCount: EffectiveLoopCount,
+                        voiceFilter: voiceFilter,
+                        ct: cts.Token
+                    )
+                    .ConfigureAwait(true);
                 if (cts.Token.IsCancellationRequested)
                     return;
                 _cachedBuffer = playbackBuffer;
                 _bufferStale = false;
-                await _playback.UpdateWavAsync(playbackBuffer);
+                await _playback.UpdateWavAsync(playbackBuffer).ConfigureAwait(true);
             }
         }
-        catch (OperationCanceledException) { }
+        catch (OperationCanceledException ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Render canceled: {ex.Message}");
+        }
     }
 
     private Patch DefaultLoopIfUnset(Patch model)
@@ -252,6 +316,75 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 return model with { Loop = new LoopSegment(0, maxMs) };
         }
         return model;
+    }
+
+    private async Task<AudioBuffer> RenderPreviewAsync(
+        Patch model,
+        int voiceFilter,
+        CancellationToken ct
+    ) => await Task.Run(() => RenderPreview(model, voiceFilter, ct), ct).ConfigureAwait(false);
+
+    private AudioBuffer RenderPreview(Patch model, int voiceFilter, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        var activeVoices =
+            voiceFilter < 0
+                ? model.ActiveVoices
+                : [.. model.ActiveVoices.Where(v => v.Index == voiceFilter)];
+
+        if (activeVoices.IsEmpty)
+            return AudioBuffer.Empty(0);
+
+        var maxDuration = activeVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
+        if (maxDuration <= 0)
+            return AudioBuffer.Empty(0);
+
+        var sampleCount = (int)(maxDuration * AudioConstants.SampleRatePerMillisecond);
+        var mix = new int[sampleCount];
+
+        foreach (var (index, voice) in activeVoices)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            AudioBuffer? voiceBuffer;
+            var needsRender = false;
+            lock (_previewCacheLock)
+            {
+                needsRender =
+                    !_previewVoiceCache.TryGetValue(index, out voiceBuffer)
+                    || _dirtyPreviewVoices.Contains(index);
+            }
+
+            if (needsRender)
+            {
+                voiceBuffer = VoiceSynthesizer.Synthesize(voice, ct);
+                ct.ThrowIfCancellationRequested();
+
+                lock (_previewCacheLock)
+                {
+                    _previewVoiceCache[index] = voiceBuffer;
+                    _ = _dirtyPreviewVoices.Remove(index);
+                }
+            }
+
+            if (voiceBuffer is null)
+                continue;
+
+            var startOffset = (int)(voice.OffsetMs * AudioConstants.SampleRatePerMillisecond);
+            for (var i = 0; i < voiceBuffer.Length; i++)
+            {
+                if ((i & 0x1FF) == 0)
+                    ct.ThrowIfCancellationRequested();
+
+                var pos = i + startOffset;
+                if (pos >= 0 && pos < sampleCount)
+                    mix[pos] += voiceBuffer.Samples[i];
+            }
+        }
+
+        AudioMath.ClipInt16(mix, sampleCount);
+        return new AudioBuffer(mix, AudioConstants.SampleRate);
     }
 
     private void NormalizeAndSetOutput(AudioBuffer buffer)
@@ -281,10 +414,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private void OnFileChanged()
     {
+        lock (_previewCacheLock)
+        {
+            _previewVoiceCache.Clear();
+            _dirtyPreviewVoices.Clear();
+        }
         PatchName = _fileManager.PatchName;
         FilePath = _fileManager.FilePath;
         IsDirty = false;
-        _ = RenderAndCacheAsync();
+        QueuePreviewRender();
     }
 
     #region Deep voice change subscriptions
@@ -342,11 +480,17 @@ public partial class MainViewModel : ObservableObject, IDisposable
             v.GapOn,
         ];
 
-    private void OnVoicePropertyChanged(object? s, PropertyChangedEventArgs e) =>
-        ScheduleRerender();
+    private void OnVoicePropertyChanged(object? s, PropertyChangedEventArgs e)
+    {
+        MarkSelectedVoicePreviewDirty();
+        ScheduleRerender(immediate: true);
+    }
 
-    private void OnNestedPropertyChanged(object? s, PropertyChangedEventArgs e) =>
-        ScheduleRerender();
+    private void OnNestedPropertyChanged(object? s, PropertyChangedEventArgs e)
+    {
+        MarkSelectedVoicePreviewDirty();
+        ScheduleRerender(immediate: true);
+    }
 
     private void OnSegmentsCollectionChanged(object? s, NotifyCollectionChangedEventArgs e)
     {
@@ -356,7 +500,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (e.OldItems is not null)
             foreach (SegmentViewModel seg in e.OldItems)
                 seg.PropertyChanged -= OnNestedPropertyChanged;
-        ScheduleRerender();
+        MarkSelectedVoicePreviewDirty();
+        ScheduleRerender(immediate: true);
+    }
+
+    private void MarkSelectedVoicePreviewDirty()
+    {
+        lock (_previewCacheLock)
+        {
+            _ = _dirtyPreviewVoices.Add(Patch.SelectedVoiceIndex);
+        }
     }
 
     #endregion
@@ -371,7 +524,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         try
         {
             _fileManager.LoadFromPath(path);
-            StatusHint = $"Loaded {Path.GetFileName(path)}";
+            StatusHint = Loc.Format("StatusLoadedFile", Path.GetFileName(path));
             return true;
         }
         catch (Exception ex)
@@ -382,7 +535,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
                         or ArgumentException
             )
         {
-            StatusHint = $"Could not open {Path.GetFileName(path)}: {ex.Message}";
+            StatusHint = Loc.Format("StatusCouldNotOpenFile", Path.GetFileName(path), ex.Message);
             return false;
         }
     }
@@ -407,12 +560,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     private void NavigatePatch(string direction) =>
-        _fileManager.NavigatePatch(int.Parse(direction));
+        _fileManager.NavigatePatch(int.Parse(direction, CultureInfo.InvariantCulture));
 
     public async Task ExportToPathAsync(string path)
     {
         var model = Patch.ToModel();
-        var buffer = await SynthesisService.RenderAsync(model);
+        var buffer = await SynthesisService.RenderAsync(model).ConfigureAwait(true);
         WaveFileWriter.WriteToPath(buffer.ToUBytes(), path);
     }
 
@@ -466,6 +619,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
             or SignalChainSlot.VibratoDepth
             or SignalChainSlot.TremoloDepth => ("%", -100, 100),
             SignalChainSlot.GapOff or SignalChainSlot.GapOn => ("Gap", -65535, 65535),
+            SignalChainSlot.Filter => ("", -65535, 65535),
+            SignalChainSlot.PoleZero => ("", -65535, 65535),
+            SignalChainSlot.Output => ("", -65535, 65535),
+            SignalChainSlot.Bode => ("", -65535, 65535),
             _ => ("", -65535, 65535),
         };
 
@@ -478,11 +635,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
         var voice = Patch.SelectedVoice;
         SelectedSlot = slot;
 
-        var entry = SignalChain.FirstOrDefault(e => e.Slot == slot);
-        if (entry.Getter is not null)
+        var (_, getter) = SignalChain.FirstOrDefault(e => e.Slot == slot);
+        if (getter is not null)
         {
-            SelectedEnvelope = entry.Getter(voice);
-            SelectedEnvelopeColor = Controls.ThemeColors.SlotColor(slot);
+            SelectedEnvelope = getter(voice);
         }
         else
         {
@@ -513,7 +669,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         Patch.SelectedVoice.Clear();
         _bufferStale = true;
-        ScheduleRerender();
+        ScheduleRerender(immediate: true);
     }
 
     #endregion
@@ -530,11 +686,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         if (buffer is null || buffer.Length == 0)
         {
-            buffer = await SynthesizeAndCacheAsync();
+            buffer = await SynthesizeAndCacheAsync().ConfigureAwait(true);
         }
         else if (_bufferStale)
         {
-            buffer = await SynthesizeAndCacheAsync();
+            buffer = await SynthesizeAndCacheAsync().ConfigureAwait(true);
         }
         else if (_playback.HasWavFile)
         {
@@ -547,7 +703,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (buffer is { Length: > 0 })
         {
             IsPlaying = true;
-            await _playback.PlayAsync(buffer);
+            await _playback.PlayAsync(buffer).ConfigureAwait(true);
             StartPositionTimer(buffer.Length / (double)buffer.SampleRate);
         }
     }
@@ -559,11 +715,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         model = DefaultLoopIfUnset(model);
 
-        var buffer = await SynthesisService.RenderAsync(
-            model,
-            loopCount: EffectiveLoopCount,
-            voiceFilter: voiceFilter
-        );
+        var buffer = await SynthesisService
+            .RenderAsync(model, loopCount: EffectiveLoopCount, voiceFilter: voiceFilter)
+            .ConfigureAwait(true);
         _cachedBuffer = buffer;
         _bufferStale = false;
 
@@ -687,7 +841,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _renderCts?.Cancel();
         _renderCts?.Dispose();
         _playback.Dispose();
-        KnobControl.HintChanged -= OnHintChanged;
         UnsubscribeVoiceChanges();
         GC.SuppressFinalize(this);
     }

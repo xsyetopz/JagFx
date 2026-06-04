@@ -1,0 +1,34 @@
+using System.Globalization;
+using JagFx.Desktop.Converters;
+using Xunit;
+
+namespace JagFx.Synthesis.Tests;
+
+public class LoopCountTextConverterTests
+{
+    private static readonly LoopCountTextConverter Converter = new();
+
+    [Fact]
+    public void Convert_formats_zero_as_infinity()
+    {
+        var result = Converter.Convert(0, typeof(string), null, CultureInfo.InvariantCulture);
+
+        Assert.Equal("∞", result);
+    }
+
+    [Fact]
+    public void ConvertBack_parses_infinity_as_zero()
+    {
+        var result = Converter.ConvertBack("∞", typeof(int), null, CultureInfo.InvariantCulture);
+
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void ConvertBack_clamps_large_values()
+    {
+        var result = Converter.ConvertBack("1000", typeof(int), null, CultureInfo.InvariantCulture);
+
+        Assert.Equal(999, result);
+    }
+}

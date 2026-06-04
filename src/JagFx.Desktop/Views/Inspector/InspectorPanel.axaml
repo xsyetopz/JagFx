@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:JagFx.Desktop.Localization"
              xmlns:vm="using:JagFx.Desktop.ViewModels"
              xmlns:inspector="using:JagFx.Desktop.Views.Inspector"
              x:Class="JagFx.Desktop.Views.Inspector.InspectorPanel"
@@ -19,8 +20,8 @@
                         Padding="6,3"
                         BorderBrush="{StaticResource BorderDefaultBrush}"
                         BorderThickness="0,1,0,1">
-                    <TextBlock Text="VOICE"
-                               FontSize="9"
+                    <TextBlock Text="{loc:TrUpper VoiceSettingsTitle}"
+                               FontSize="11"
                                FontWeight="Bold"
                                Foreground="{StaticResource TextSecondaryBrush}" />
                 </Border>
@@ -29,42 +30,40 @@
                           RowDefinitions="Auto,Auto">
                         <TextBlock Grid.Row="0"
                                    Grid.Column="0"
-                                   Text="DUR"
+                                   Text="{loc:TrUpper DurationLabel}"
                                    Foreground="{StaticResource TextSecondaryBrush}"
-                                   FontSize="9"
+                                   FontSize="11"
                                    VerticalAlignment="Center"
                                    Margin="0,0,4,0" />
-                        <NumericUpDown Grid.Row="0"
-                                       Grid.Column="1"
-                                       Width="64"
-                                       Value="{Binding Patch.SelectedVoice.DurationMs, TargetNullValue=0, FallbackValue=0}"
-                                       Minimum="0"
-                                       Maximum="65535" />
+                        <TextBox Grid.Row="0"
+                                 Grid.Column="1"
+                                 Width="68"
+                                 MaxLength="5"
+                                 Text="{Binding Patch.SelectedVoice.DurationMs, TargetNullValue=0, FallbackValue=0}" />
                         <TextBlock Grid.Row="0"
                                    Grid.Column="2"
                                    Text="ms"
-                                   FontSize="8"
+                                   FontSize="11"
                                    Foreground="{StaticResource TextMutedBrush}"
                                    VerticalAlignment="Center"
                                    Margin="2,0,0,0" />
                         <TextBlock Grid.Row="1"
                                    Grid.Column="0"
-                                   Text="OFS"
+                                   Text="{loc:TrUpper OffsetLabel}"
                                    Foreground="{StaticResource TextSecondaryBrush}"
-                                   FontSize="9"
+                                   FontSize="11"
                                    VerticalAlignment="Center"
                                    Margin="0,2,4,0" />
-                        <NumericUpDown Grid.Row="1"
-                                       Grid.Column="1"
-                                       Width="64"
-                                       Value="{Binding Patch.SelectedVoice.OffsetMs, TargetNullValue=0, FallbackValue=0}"
-                                       Minimum="0"
-                                       Maximum="65535"
-                                       Margin="0,2,0,0" />
+                        <TextBox Grid.Row="1"
+                                 Grid.Column="1"
+                                 Width="68"
+                                 MaxLength="5"
+                                 Text="{Binding Patch.SelectedVoice.OffsetMs, TargetNullValue=0, FallbackValue=0}"
+                                 Margin="0,2,0,0" />
                         <TextBlock Grid.Row="1"
                                    Grid.Column="2"
                                    Text="ms"
-                                   FontSize="8"
+                                   FontSize="11"
                                    Foreground="{StaticResource TextMutedBrush}"
                                    VerticalAlignment="Center"
                                    Margin="2,2,0,0" />

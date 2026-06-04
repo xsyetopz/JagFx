@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:conv="using:JagFx.Desktop.Converters"
+             xmlns:loc="using:JagFx.Desktop.Localization"
              xmlns:vm="using:JagFx.Desktop.ViewModels"
              x:Class="JagFx.Desktop.Views.Header.HeaderBar"
              x:DataType="vm:MainViewModel"
              Height="40">
+    <UserControl.Resources>
+        <conv:LoopCountTextConverter x:Key="LoopCountTextConverter" />
+    </UserControl.Resources>
     <Border Background="{StaticResource SurfaceHeaderBrush}"
             BorderBrush="{StaticResource BorderDefaultBrush}"
             BorderThickness="0,0,0,1"
@@ -16,116 +22,143 @@
             <Button Theme="{StaticResource JagToolButton}"
                     Command="{Binding NavigatePatchCommand}"
                     CommandParameter="-1"
-                    ToolTip.Tip="Previous patch">
-                <PathIcon Data="{StaticResource IconChevronLeft}"
-                          Width="14"
-                          Height="14" />
+                    ToolTip.Tip="{loc:Tr TooltipPreviousPatch}">
+                <i:Icon Value="mdi-chevron-left"
+                        FontSize="18" />
             </Button>
-            <Border Background="{StaticResource SurfaceInputBrush}"
-                    BorderBrush="{StaticResource BorderAccentBrush}"
-                    BorderThickness="1"
-                    Padding="4,0"
-                    Width="100"
-                    Height="20"
-                    VerticalAlignment="Center">
-                <TextBlock Text="{Binding PatchName}"
-                           Foreground="{StaticResource TextAccentBrush}"
-                           FontWeight="Bold"
-                           FontSize="10"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           TextTrimming="CharacterEllipsis" />
-            </Border>
+            <TextBox Text="{Binding PatchName}"
+                     Classes="bank"
+                     IsReadOnly="True"
+                     Width="100"
+                     Height="{DynamicResource HeightUiToolbar}"
+                     FontWeight="Bold"
+                     HorizontalContentAlignment="Center"
+                     TextAlignment="Center"
+                     TextWrapping="NoWrap"
+                     ToolTip.Tip="{Binding PatchName}" />
             <Button Theme="{StaticResource JagToolButton}"
                     Command="{Binding NavigatePatchCommand}"
                     CommandParameter="1"
-                    ToolTip.Tip="Next patch">
-                <PathIcon Data="{StaticResource IconChevronRight}"
-                          Width="14"
-                          Height="14" />
+                    ToolTip.Tip="{loc:Tr TooltipNextPatch}">
+                <i:Icon Value="mdi-chevron-right"
+                        FontSize="18" />
             </Button>
             <!-- Separator -->
             <Border Width="1"
-                    Height="20"
+                    Height="{DynamicResource HeightUiToolbar}"
                     Background="{StaticResource BorderDefaultBrush}"
                     Margin="2,0" />
             <!-- File Operations -->
             <Button Theme="{StaticResource JagToolButton}"
                     Command="{Binding OpenCommand}"
-                    ToolTip.Tip="Open file (Ctrl+O)">
-                <PathIcon Data="{StaticResource IconFolderOpen}"
-                          Width="14"
-                          Height="14" />
+                    ToolTip.Tip="{loc:Tr TooltipOpenFile}">
+                <i:Icon Value="mdi-folder-open"
+                        FontSize="18" />
             </Button>
             <Button Theme="{StaticResource JagToolButton}"
                     Command="{Binding SaveCommand}"
-                    ToolTip.Tip="Save file (Ctrl+S)">
-                <PathIcon Data="{StaticResource IconContentSave}"
-                          Width="14"
-                          Height="14" />
+                    ToolTip.Tip="{loc:Tr TooltipSaveFile}">
+                <i:Icon Value="mdi-content-save"
+                        FontSize="18" />
             </Button>
             <!-- Separator -->
             <Border Width="1"
-                    Height="20"
+                    Height="{DynamicResource HeightUiToolbar}"
                     Background="{StaticResource BorderDefaultBrush}"
                     Margin="2,0" />
             <!-- Transport -->
             <Button Theme="{StaticResource JagToolButton}"
                     Command="{Binding TogglePlayCommand}"
-                    ToolTip.Tip="Play (Space)">
-                <PathIcon Data="{StaticResource IconPlay}"
-                          Width="14"
-                          Height="14" />
+                    ToolTip.Tip="{loc:Tr TooltipPlay}">
+                <i:Icon Value="mdi-play"
+                        FontSize="18" />
             </Button>
             <Button Theme="{StaticResource JagToolButton}"
                     Command="{Binding StopCommand}"
-                    ToolTip.Tip="Stop">
-                <PathIcon Data="{StaticResource IconStop}"
-                          Width="14"
-                          Height="14" />
+                    ToolTip.Tip="{loc:Tr TooltipStop}">
+                <i:Icon Value="mdi-stop"
+                        FontSize="18" />
             </Button>
             <!-- Separator -->
             <Border Width="1"
-                    Height="20"
+                    Height="{DynamicResource HeightUiToolbar}"
                     Background="{StaticResource BorderDefaultBrush}"
                     Margin="2,0" />
             <!-- Loop group -->
             <Button x:Name="BtnLoop"
                     Theme="{StaticResource JagVoiceButton}"
-                    Content="LOOP"
-                    MinWidth="32"
-                    Height="18"
-                    FontSize="8"
-                    ToolTip.Tip="Loop playback"
+                    Width="{DynamicResource HeightUiToolbar}"
+                    Height="{DynamicResource HeightUiToolbar}"
+                    Padding="2,0"
+                    ToolTip.Tip="{loc:Tr TooltipLoopPlayback}"
                     Classes.enabled="True"
-                    Classes.selected="{Binding IsLooping}" />
-            <TextBlock Text="CNT"
-                       FontSize="8"
+                    Classes.selected="{Binding IsLooping}">
+                <i:Icon Value="mdi-repeat"
+                        FontSize="16" />
+            </Button>
+            <TextBlock Text="{loc:TrUpper HeaderLoopCount}"
+                       FontSize="11"
                        Foreground="{StaticResource TextSecondaryBrush}"
                        VerticalAlignment="Center"
                        Margin="4,0,2,0" />
-            <NumericUpDown Value="{Binding LoopCount}"
-                           Minimum="0"
-                           Maximum="999"
-                           Width="48" />
-            <TextBlock Text="BGN"
-                       FontSize="8"
-                       Foreground="{StaticResource TextSecondaryBrush}"
+            <TextBox Text="{Binding LoopCount,
+                                    Converter={StaticResource LoopCountTextConverter},
+                                    UpdateSourceTrigger=LostFocus}"
+                     Width="60"
+                     Height="{DynamicResource HeightUiInput}"
+                     MaxLength="3"
+                     Background="{StaticResource SurfaceInputBrush}"
+                     Foreground="{StaticResource TextPrimaryBrush}"
+                     BorderBrush="{StaticResource ButtonBorderBrush}"
+                     BorderThickness="1"
+                     FontFamily="Consolas, Monaco, Courier New, monospace"
+                     FontSize="11"
+                     Padding="{DynamicResource PaddingUiInput}"
+                     TextAlignment="Left"
+                     VerticalContentAlignment="Center"
+                     ToolTip.Tip="{loc:Tr TooltipLoopCount}" />
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Margin="4,0,2,0"
+                        Spacing="2">
+                <i:Icon Value="mdi-repeat"
+                        FontSize="13"
+                        Foreground="{StaticResource TextSecondaryBrush}"
+                        VerticalAlignment="Center" />
+                <TextBlock Text="{loc:TrUpper HeaderLoopStart}"
+                           FontSize="11"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+            <TextBox Text="{Binding Patch.LoopBegin, TargetNullValue=0, FallbackValue=0}"
+                     Width="60"
+                     MaxLength="5" />
+            <TextBlock Text="ms"
+                       FontSize="11"
+                       Foreground="{StaticResource TextMutedBrush}"
                        VerticalAlignment="Center"
-                       Margin="4,0,2,0" />
-            <NumericUpDown Value="{Binding Patch.LoopBegin, TargetNullValue=0, FallbackValue=0}"
-                           Minimum="0"
-                           Maximum="65535"
-                           Width="56" />
-            <TextBlock Text="END"
-                       FontSize="8"
-                       Foreground="{StaticResource TextSecondaryBrush}"
+                       Margin="2,0,6,0" />
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Margin="4,0,2,0"
+                        Spacing="2">
+                <i:Icon Value="mdi-repeat"
+                        FontSize="13"
+                        Foreground="{StaticResource TextSecondaryBrush}"
+                        VerticalAlignment="Center" />
+                <TextBlock Text="{loc:TrUpper HeaderLoopEnd}"
+                           FontSize="11"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+            <TextBox Text="{Binding Patch.LoopEnd, TargetNullValue=0, FallbackValue=0}"
+                     Width="60"
+                     MaxLength="5" />
+            <TextBlock Text="ms"
+                       FontSize="11"
+                       Foreground="{StaticResource TextMutedBrush}"
                        VerticalAlignment="Center"
-                       Margin="4,0,2,0" />
-            <NumericUpDown Value="{Binding Patch.LoopEnd, TargetNullValue=0, FallbackValue=0}"
-                           Minimum="0"
-                           Maximum="65535"
-                           Width="56" />
+                       Margin="2,0,0,0" />
         </StackPanel>
     </Border>
 </UserControl>

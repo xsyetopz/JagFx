@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using JagFx.Core.Constants;
 using JagFx.Domain.Models;
@@ -134,10 +132,9 @@ public partial class VoiceViewModel : ObservableObject
         if (!IsEnabled)
             return null;
 
-        var activePartials = Partials
-            .Where(p => p.IsActive)
-            .Select(p => p.ToModel())
-            .ToImmutableList();
+        var activePartials = System.Collections.Immutable.ImmutableList.CreateRange(
+            Partials.Where(p => p.IsActive).Select(p => p.ToModel())
+        );
 
         var pitchLfo =
             (!VibratoRate.IsEmpty && !VibratoDepth.IsEmpty)

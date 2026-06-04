@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
+using System.Text;
 using JagFx.Core.Constants;
 using JagFx.Core.Types;
 using JagFx.Domain.Models;
 using JagFx.Io.Buffers;
-using System.Text;
 
 namespace JagFx.Io;
 
@@ -38,7 +38,8 @@ public static class SynthFileReader
         if (IsGitLfsPointer(data))
         {
             throw new SynthFileException(
-                "File is a Git LFS pointer, not synth data. Run `git lfs pull` in the archive repository to download the real .synth contents.");
+                "File is a Git LFS pointer, not synth data. Run `git lfs pull` in the archive repository to download the real .synth contents."
+            );
         }
     }
 
@@ -183,9 +184,9 @@ public static class SynthFileReader
             return (null, null);
         }
 
-        private ImmutableList<Partial> ReadPartials()
+        private ImmutableList<VoicePartial> ReadPartials()
         {
-            var partials = new List<Partial>(AudioConstants.MaxOscillators);
+            var partials = new List<VoicePartial>(AudioConstants.MaxOscillators);
 
             while (partials.Count < AudioConstants.MaxOscillators)
             {
@@ -200,7 +201,7 @@ public static class SynthFileReader
                 var startDelay = _buf.ReadUSmart();
 
                 partials.Add(
-                    new Partial(new Percent(volume), pitchOffset, new Milliseconds(startDelay))
+                    new VoicePartial(new Percent(volume), pitchOffset, new Milliseconds(startDelay))
                 );
             }
 
@@ -334,10 +335,8 @@ public static class SynthFileReader
             return possibleSegCount <= MaxReasonableSegCount;
         }
 
-        private static bool IsValidWaveform(int waveformId)
-        {
-            return waveformId >= MinWaveformId && waveformId <= MaxWaveformId;
-        }
+        private static bool IsValidWaveform(int waveformId) =>
+            waveformId >= MinWaveformId && waveformId <= MaxWaveformId;
 
         private static Filter BuildFilter(
             int poleCount0,

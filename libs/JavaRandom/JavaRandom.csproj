@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>JagFx.JavaRandom</PackageId>
+    <RootNamespace>JagFx.JavaRandom</RootNamespace>
     <Version>1.0.0</Version>
     <Authors>JagFx</Authors>
     <Description>Java-compatible Random implementation for .NET. Provides the same algorithm as java.util.Random for cross-platform compatibility.</Description>

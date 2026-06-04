@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
+using JagFx.Desktop.ViewModels;
 
 namespace JagFx.Desktop.Controls.Canvases;
 
@@ -120,15 +121,12 @@ public class KnobControl : Control
 
     private const double StartAngleDeg = 135.0;
     private const double SweepDeg = 270.0;
-
-    public static event Action<string>? HintChanged;
-
-    public static void RaiseHint(string hint) => HintChanged?.Invoke(hint);
+    private const double LabelBandHeight = 13.0;
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        var w = double.IsInfinity(availableSize.Width) ? 44 : Math.Min(44, availableSize.Width);
-        var h = double.IsInfinity(availableSize.Height) ? 32 : Math.Min(32, availableSize.Height);
+        var w = double.IsInfinity(availableSize.Width) ? 54 : Math.Min(54, availableSize.Width);
+        var h = double.IsInfinity(availableSize.Height) ? 40 : Math.Min(40, availableSize.Height);
         return new Size(w, h);
     }
 
@@ -137,15 +135,15 @@ public class KnobControl : Control
         var w = Bounds.Width;
         var h = Bounds.Height;
         var cx = w / 2.0;
-        var cy = h / 2.0;
+        var labelBand = string.IsNullOrEmpty(Label) ? 0.0 : LabelBandHeight;
+        var dialHeight = Math.Max(0.0, h - labelBand);
+        var cy = dialHeight / 2.0;
         var r = Math.Min(cx - 3, cy - 2);
         if (r < 6)
             r = 6;
 
         var dimmed = !IsEffectivelyEnabled;
-        var arcBrush = dimmed
-            ? new SolidColorBrush(Color.Parse("#555555"))
-            : ThemeColors.AccentBrush;
+        var arcBrush = dimmed ? ThemeColors.VoiceInactiveBrush : ThemeColors.AccentBrush;
 
         // Track arc background
         DrawArc(
@@ -155,7 +153,7 @@ public class KnobControl : Control
             r + 2,
             StartAngleDeg,
             SweepDeg,
-            new Pen(new SolidColorBrush(Color.Parse("#333333")), 3)
+            new Pen(ThemeColors.KnobTrackBrush, 3)
         );
 
         // Filled arc
@@ -176,8 +174,8 @@ public class KnobControl : Control
 
         // Knob body
         context.DrawEllipse(
-            new SolidColorBrush(Color.Parse("#1a1a1a")),
-            new Pen(new SolidColorBrush(Color.Parse("#444444")), 1),
+            ThemeColors.KnobBodyBrush,
+            new Pen(ThemeColors.KnobBorderBrush, 1),
             new Point(cx, cy),
             r,
             r
@@ -204,11 +202,11 @@ public class KnobControl : Control
                 System.Globalization.CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight,
                 new Typeface("Consolas, Monaco, Courier New, monospace"),
-                7,
-                new SolidColorBrush(Color.Parse("#aaaaaa"))
+                10,
+                ThemeColors.KnobLabelBrush
             );
             var labelX = cx - labelText.Width / 2;
-            var labelY = h - labelText.Height;
+            var labelY = dialHeight + Math.Max(0.0, (labelBand - labelText.Height) / 2.0);
             context.DrawText(labelText, new Point(labelX, labelY));
         }
     }
@@ -251,22 +249,6 @@ public class KnobControl : Control
         context.DrawGeometry(null, pen, geometry);
     }
 
-    private string FormatHint() => $"{Label}: {Value.ToString(FormatString)}{Unit}";
-
-    protected override void OnPointerEntered(PointerEventArgs e)
-    {
-        base.OnPointerEntered(e);
-        if (IsEffectivelyEnabled)
-            HintChanged?.Invoke(FormatHint());
-    }
-
-    protected override void OnPointerExited(PointerEventArgs e)
-    {
-        base.OnPointerExited(e);
-        if (!_isDragging)
-            HintChanged?.Invoke("");
-    }
-
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
@@ -275,6 +257,7 @@ public class KnobControl : Control
 
         if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
         {
+            BeginPreviewEdit();
             ShowValueFlyout();
             e.Handled = true;
             return;
@@ -286,13 +269,14 @@ public class KnobControl : Control
         if (e.ClickCount == 2)
         {
             Value = double.IsNaN(DefaultValue) ? Minimum : DefaultValue;
-            HintChanged?.Invoke(FormatHint());
+            RequestPreviewUpdate(immediate: true);
             e.Handled = true;
             return;
         }
 
         _lastPointerPos = e.GetPosition(this);
         _isDragging = true;
+        BeginPreviewEdit();
         e.Pointer.Capture(this);
         e.Handled = true;
     }
@@ -314,9 +298,11 @@ public class KnobControl : Control
         {
             var newVal = args.NewValue ?? 0m;
             Value = Math.Clamp((double)newVal, Minimum, Maximum);
+            RequestPreviewUpdate(immediate: true);
         };
 
         var flyout = new Flyout { Content = nud, Placement = PlacementMode.Bottom };
+        flyout.Closed += (_, _) => EndPreviewEdit();
 
         FlyoutBase.SetAttachedFlyout(this, flyout);
         FlyoutBase.ShowAttachedFlyout(this);
@@ -334,16 +320,17 @@ public class KnobControl : Control
         var sensitivity = range / 100.0;
         Value = Math.Clamp(Value + deltaY * sensitivity, Minimum, Maximum);
         _lastPointerPos = pos;
-        HintChanged?.Invoke(FormatHint());
         e.Handled = true;
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
+        var wasDragging = _isDragging;
         _isDragging = false;
         e.Pointer.Capture(null);
-        HintChanged?.Invoke("");
+        if (wasDragging)
+            EndPreviewEdit();
         e.Handled = true;
     }
 
@@ -360,7 +347,26 @@ public class KnobControl : Control
         if (delta != 0)
         {
             Value = Math.Clamp(Value + delta, Minimum, Maximum);
+            RequestPreviewUpdate(immediate: true);
             e.Handled = true;
         }
+    }
+
+    private void RequestPreviewUpdate(bool immediate = false)
+    {
+        if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+            vm.RequestPreviewUpdate(immediate);
+    }
+
+    private void BeginPreviewEdit()
+    {
+        if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+            vm.BeginPreviewEdit();
+    }
+
+    private void EndPreviewEdit()
+    {
+        if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+            vm.EndPreviewEdit();
     }
 }

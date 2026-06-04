@@ -44,6 +44,20 @@ public class PatchRendererTests
         Assert.Equal(0, audio.Length);
     }
 
+    [Fact]
+    public void CancellationToken_StopsSynthesis()
+    {
+        var file = SynthFileReader.Read(TestResources.CowDeath);
+        Assert.NotNull(file);
+
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+
+        Assert.Throws<OperationCanceledException>(() =>
+            PatchRenderer.Synthesize(file, 1, ct: cts.Token)
+        );
+    }
+
     #endregion
 
     #region Multiple File Tests

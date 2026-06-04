@@ -1,5 +1,4 @@
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using JagFx.Domain.Models;
@@ -82,9 +81,9 @@ public partial class EnvelopeViewModel : ObservableObject
 
     public Envelope ToModel()
     {
-        var segments = Segments
-            .Select(s => new Segment(s.Duration, s.TargetLevel))
-            .ToImmutableList();
+        var segments = System.Collections.Immutable.ImmutableList.CreateRange(
+            Segments.Select(s => new Segment(s.Duration, s.TargetLevel))
+        );
 
         return new Envelope(Waveform, StartValue, EndValue, segments);
     }
@@ -103,7 +102,8 @@ public partial class EnvelopeViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void SetWaveform(string waveformId) => Waveform = (Waveform)int.Parse(waveformId);
+    private void SetWaveform(string waveformId) =>
+        Waveform = (Waveform)int.Parse(waveformId, CultureInfo.InvariantCulture);
 
     [RelayCommand]
     private void AddDefaultSegment() => AddSegment(100, 0);
@@ -111,7 +111,7 @@ public partial class EnvelopeViewModel : ObservableObject
     [RelayCommand]
     private void RemoveSegment(SegmentViewModel seg)
     {
-        Segments.Remove(seg);
+        _ = Segments.Remove(seg);
         ReindexSegments();
         OnPropertyChanged(nameof(IsEmpty));
     }

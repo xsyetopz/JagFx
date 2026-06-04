@@ -33,9 +33,11 @@ public static class AudioFilter
         int[] buffer,
         Filter filter,
         EnvelopeGenerator? envelopeEval,
-        int sampleCount
+        int sampleCount,
+        CancellationToken ct = default
     )
     {
+        ct.ThrowIfCancellationRequested();
         if (filter.PoleCounts[0] == 0 && filter.PoleCounts[1] == 0)
         {
             return;
@@ -70,22 +72,25 @@ public static class AudioFilter
             envelopeEval,
             sampleCount
         );
-        ProcessInitialBlock(ctx, ffCount, fbCount);
-        ProcessMainBlocks(ctx, ref ffCount, ref fbCount);
-        ProcessFinalBlock(ctx, ffCount, fbCount);
+        ProcessInitialBlock(ctx, ffCount, fbCount, ct);
+        ProcessMainBlocks(ctx, ref ffCount, ref fbCount, ct);
+        ProcessFinalBlock(ctx, ffCount, fbCount, ct);
 
         AudioBufferPool.Release(tempBuffer);
     }
 
-    private static void ProcessInitialBlock(FilterProcessingContext ctx, int ffCount, int fbCount)
-    {
-        ProcessSampleRange(ctx, 0, fbCount, ffCount, fbCount);
-    }
+    private static void ProcessInitialBlock(
+        FilterProcessingContext ctx,
+        int ffCount,
+        int fbCount,
+        CancellationToken ct
+    ) => ProcessSampleRange(ctx, 0, fbCount, ffCount, fbCount, ct);
 
     private static void ProcessMainBlocks(
         FilterProcessingContext ctx,
         ref int ffCount,
-        ref int fbCount
+        ref int fbCount,
+        CancellationToken ct
     )
     {
         int pos = fbCount;
@@ -93,12 +98,17 @@ public static class AudioFilter
         while (pos < ctx.SampleCount - ffCount)
         {
             int chunkEnd = Math.Min(pos + ChunkSize, ctx.SampleCount - ffCount);
-            ProcessSampleRange(ctx, pos, chunkEnd, ffCount, fbCount);
+            ProcessSampleRange(ctx, pos, chunkEnd, ffCount, fbCount, ct);
             pos = chunkEnd;
         }
     }
 
-    private static void ProcessFinalBlock(FilterProcessingContext ctx, int ffCount, int fbCount)
+    private static void ProcessFinalBlock(
+        FilterProcessingContext ctx,
+        int ffCount,
+        int fbCount,
+        CancellationToken ct
+    )
     {
         ProcessSampleRange(
             ctx,
@@ -106,22 +116,26 @@ public static class AudioFilter
             ctx.SampleCount,
             ffCount,
             fbCount,
+            ct,
             isFinal: true
         );
     }
 
-    private static int ProcessSampleRange(
+    private static void ProcessSampleRange(
         FilterProcessingContext ctx,
         int start,
         int end,
         int ffCount,
         int fbCount,
+        CancellationToken ct,
         bool isFinal = false
     )
     {
-        int lastEnvelopeValue = AudioConstants.FixedPoint.Scale;
+        var lastEnvelopeValue = AudioConstants.FixedPoint.Scale;
         for (var n = start; n < end; n++)
         {
+            if ((n & 0x3F) == 0)
+                ct.ThrowIfCancellationRequested();
             if (isFinal)
             {
                 ApplyFilterToFinalSample(
@@ -148,7 +162,6 @@ public static class AudioFilter
                 fbCount = ctx.State.ComputeCoefficients(1, envelopeFactor);
             }
         }
-        return lastEnvelopeValue;
     }
 
     private static void ApplyFilterToSample(
@@ -232,10 +245,8 @@ public static class AudioFilter
         }
     }
 
-    private static float Interpolate(float value0, float value1, float factor)
-    {
-        return value0 + factor * (value1 - value0);
-    }
+    private static float Interpolate(float value0, float value1, float factor) =>
+        value0 + factor * (value1 - value0);
 
     private static float GetAmplitude(Filter filter, int direction, int pole, float factor)
     {

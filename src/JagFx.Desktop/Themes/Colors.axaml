@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Typography and density tokens -->
+    <x:Double x:Key="FontSizeUiBase">11</x:Double>
+    <x:Double x:Key="FontSizeUiSmall">11</x:Double>
+    <x:Double x:Key="FontSizeUiCaption">10</x:Double>
+    <Thickness x:Key="PaddingUiToolbar">7,4</Thickness>
+    <Thickness x:Key="PaddingUiCompact">5,2</Thickness>
+    <Thickness x:Key="PaddingUiInput">5,3</Thickness>
+    <x:Double x:Key="HeightUiToolbar">28</x:Double>
+    <x:Double x:Key="HeightUiCompact">24</x:Double>
+    <x:Double x:Key="HeightUiInput">28</x:Double>
+    <x:Double x:Key="HeightUiNumericInput">28</x:Double>
+    <x:Double x:Key="WidthUiCompact">24</x:Double>
+    <Thickness x:Key="PaddingUiNumericInput">4,3</Thickness>
     <!-- Base surface colors -->
     <Color x:Key="SurfaceBase">#1a1a1a</Color>
     <Color x:Key="SurfaceGraph">#000000</Color>
@@ -20,15 +33,18 @@
     <Color x:Key="TextMuted">#999999</Color>
     <Color x:Key="TextButton">#ffffff</Color>
     <Color x:Key="TextAccent">#009E73</Color>
+    <!-- Accent colors -->
+    <Color x:Key="AccentPrimary">#009E73</Color>
+    <Color x:Key="AccentSecondary">#0072B2</Color>
     <!-- Envelope line colors -->
-    <Color x:Key="LineEnvelope">#F0E442</Color>
+    <Color x:Key="LineEnvelope">#f0e19b</Color>
     <Color x:Key="LineFilter">#0072B2</Color>
     <!-- Breakpoint colors -->
-    <Color x:Key="BreakpointFill">#F0E442</Color>
+    <Color x:Key="BreakpointFill">#f0e19b</Color>
     <Color x:Key="BreakpointSelected">#ffffff</Color>
     <!-- Grid line color -->
-    <Color x:Key="GridLine">#1a1a1a</Color>
-    <Color x:Key="GridMidline">#333333</Color>
+    <Color x:Key="GridLine">#1e2228</Color>
+    <Color x:Key="GridMidline">#3b4048</Color>
     <!-- Button colors -->
     <Color x:Key="ButtonDefault">#6a6a6a</Color>
     <Color x:Key="ButtonBorder">#808080</Color>
@@ -77,6 +93,10 @@
                      Color="{StaticResource TextButton}" />
     <SolidColorBrush x:Key="TextAccentBrush"
                      Color="{StaticResource TextAccent}" />
+    <SolidColorBrush x:Key="AccentPrimaryBrush"
+                     Color="{StaticResource AccentPrimary}" />
+    <SolidColorBrush x:Key="AccentSecondaryBrush"
+                     Color="{StaticResource AccentSecondary}" />
     <SolidColorBrush x:Key="LineEnvelopeBrush"
                      Color="{StaticResource LineEnvelope}" />
     <SolidColorBrush x:Key="LineFilterBrush"
@@ -91,4 +111,18 @@
                      Color="{StaticResource ButtonBorder}" />
     <SolidColorBrush x:Key="ButtonHoverBrush"
                      Color="{StaticResource ButtonHover}" />
+    <SolidColorBrush x:Key="ButtonActiveBrush"
+                     Color="{StaticResource ButtonActive}" />
+    <SolidColorBrush x:Key="ButtonActiveBorderBrush"
+                     Color="{StaticResource ButtonActiveBorder}" />
+    <SolidColorBrush x:Key="VoiceInactiveBgBrush"
+                     Color="{StaticResource VoiceInactiveBg}" />
+    <SolidColorBrush x:Key="VoiceInactiveTextBrush"
+                     Color="{StaticResource VoiceInactiveText}" />
+    <SolidColorBrush x:Key="VoiceInactiveBorderBrush"
+                     Color="{StaticResource VoiceInactiveBorder}" />
+    <SolidColorBrush x:Key="VoiceEnabledBgBrush"
+                     Color="{StaticResource VoiceEnabledBg}" />
+    <SolidColorBrush x:Key="VoiceEnabledBorderBrush"
+                     Color="{StaticResource VoiceEnabledBorder}" />
 </ResourceDictionary>

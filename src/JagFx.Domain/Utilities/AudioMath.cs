@@ -1,3 +1,4 @@
+using System.Globalization;
 using JagFx.Core.Constants;
 
 namespace JagFx.Domain.Utilities;
@@ -23,15 +24,9 @@ public static class AudioMath
 
     private static readonly double Log10 = Math.Log(10.0);
 
-    public static double Clamp(double value, double min, double max)
-    {
-        return Math.Clamp(value, min, max);
-    }
+    public static double Clamp(double value, double min, double max) => Math.Clamp(value, min, max);
 
-    public static int Clamp(int value, int min, int max)
-    {
-        return Math.Clamp(value, min, max);
-    }
+    public static int Clamp(int value, int min, int max) => Math.Clamp(value, min, max);
 
     public static void ClipInt16(int[] buffer, int length = -1)
     {
@@ -62,10 +57,7 @@ public static class AudioMath
         }
     }
 
-    public static double Lerp(double a, double b, double t)
-    {
-        return a + (b - a) * t;
-    }
+    public static double Lerp(double a, double b, double t) => a + (b - a) * t;
 
     public static double MapRange(
         double value,
@@ -73,20 +65,12 @@ public static class AudioMath
         double inMax,
         double outMin,
         double outMax
-    )
-    {
-        return outMin + (value - inMin) / (inMax - inMin) * (outMax - outMin);
-    }
+    ) => outMin + (value - inMin) / (inMax - inMin) * (outMax - outMin);
 
-    public static double DecibelToLinear(double decibel)
-    {
-        return Math.Exp(decibel / DecibelDivisor * Log10);
-    }
+    public static double DecibelToLinear(double decibel) =>
+        Math.Exp(decibel / DecibelDivisor * Log10);
 
-    public static double LinearToDecibel(double linear)
-    {
-        return DecibelDivisor * Math.Log10(linear);
-    }
+    public static double LinearToDecibel(double linear) => DecibelDivisor * Math.Log10(linear);
 
     public static double Convert(double value, UnitType sourceUnit, UnitType targetUnit)
     {
@@ -114,14 +98,15 @@ public static class AudioMath
 
     public static string Format(double value, UnitType unit, int decimals = 1)
     {
-        var formattedDecimalString = $"%.{decimals}f";
+        var formatString = $"F{decimals}";
         return unit switch
         {
-            UnitType.Raw16 => ((int)value).ToString(),
-            UnitType.Percent => $"{string.Format(formattedDecimalString, value)}%",
-            UnitType.Normalized => string.Format(formattedDecimalString, value),
-            UnitType.Decicents => $"{string.Format(formattedDecimalString, value / 10.0)} st",
-            _ => value.ToString(),
+            UnitType.Raw16 => ((int)value).ToString(CultureInfo.InvariantCulture),
+            UnitType.Percent => $"{value.ToString(formatString, CultureInfo.InvariantCulture)}%",
+            UnitType.Normalized => value.ToString(formatString, CultureInfo.InvariantCulture),
+            UnitType.Decicents =>
+                $"{(value / 10.0).ToString(formatString, CultureInfo.InvariantCulture)} st",
+            _ => value.ToString(CultureInfo.InvariantCulture),
         };
     }
 }

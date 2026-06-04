@@ -12,7 +12,7 @@ public record class Voice(
     LowFrequencyOscillator? AmplitudeLfo,
     Envelope? GapOffEnvelope,
     Envelope? GapOnEnvelope,
-    ImmutableList<Partial> Partials,
+    ImmutableList<VoicePartial> Partials,
     Echo Echo,
     int DurationMs,
     int OffsetMs,

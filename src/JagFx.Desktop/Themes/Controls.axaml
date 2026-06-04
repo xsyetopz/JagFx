@@ -13,15 +13,15 @@
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="Padding"
-                Value="6,3" />
-        <Setter Property="MinHeight"
-                Value="24" />
-        <Setter Property="MinWidth"
-                Value="0" />
+                Value="{DynamicResource PaddingUiToolbar}" />
+        <Setter Property="Width"
+                Value="{DynamicResource HeightUiToolbar}" />
+        <Setter Property="Height"
+                Value="{DynamicResource HeightUiToolbar}" />
         <Setter Property="FontFamily"
                 Value="Consolas, Monaco, Courier New, monospace" />
         <Setter Property="FontSize"
-                Value="9" />
+                Value="{DynamicResource FontSizeUiSmall}" />
         <Setter Property="CornerRadius"
                 Value="0" />
         <Setter Property="HorizontalContentAlignment"
@@ -43,36 +43,36 @@
         </Setter>
         <Style Selector="^:pointerover">
             <Setter Property="Background"
-                    Value="#787878" />
+                    Value="{DynamicResource ButtonHoverBrush}" />
             <Setter Property="Foreground"
                     Value="{DynamicResource TextPrimaryBrush}" />
         </Style>
         <Style Selector="^:pressed">
             <Setter Property="Background"
-                    Value="#555555" />
+                    Value="{DynamicResource ButtonActiveBrush}" />
         </Style>
     </ControlTheme>
-    <!-- Voice toggle button (active = cyan) -->
+    <!-- Voice toggle button (active = primary accent) -->
     <ControlTheme x:Key="JagVoiceToggle"
                   TargetType="ToggleButton">
         <Setter Property="Background"
-                Value="{DynamicResource ButtonDefaultBrush}" />
+                Value="{DynamicResource VoiceInactiveBgBrush}" />
         <Setter Property="Foreground"
-                Value="{DynamicResource TextSecondaryBrush}" />
+                Value="{DynamicResource VoiceInactiveTextBrush}" />
         <Setter Property="BorderBrush"
-                Value="{DynamicResource ButtonBorderBrush}" />
+                Value="{DynamicResource VoiceInactiveBorderBrush}" />
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="Padding"
-                Value="3,1" />
-        <Setter Property="MinHeight"
-                Value="22" />
-        <Setter Property="MinWidth"
-                Value="22" />
+                Value="{DynamicResource PaddingUiCompact}" />
+        <Setter Property="Width"
+                Value="{DynamicResource WidthUiCompact}" />
+        <Setter Property="Height"
+                Value="{DynamicResource HeightUiCompact}" />
         <Setter Property="FontFamily"
                 Value="Consolas, Monaco, Courier New, monospace" />
         <Setter Property="FontSize"
-                Value="9" />
+                Value="{DynamicResource FontSizeUiSmall}" />
         <Setter Property="CornerRadius"
                 Value="0" />
         <Setter Property="HorizontalContentAlignment"
@@ -95,11 +95,13 @@
         </Setter>
         <Style Selector="^:checked">
             <Setter Property="Background"
-                    Value="#009E73" />
+                    Value="{DynamicResource AccentPrimaryBrush}" />
             <Setter Property="BorderBrush"
-                    Value="#009E73" />
+                    Value="{DynamicResource AccentPrimaryBrush}" />
             <Setter Property="Foreground"
-                    Value="#000000" />
+                    Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="FontWeight"
+                    Value="SemiBold" />
         </Style>
         <Style Selector="^:checked /template/ Border#Root">
             <Setter Property="BoxShadow"
@@ -107,30 +109,30 @@
         </Style>
         <Style Selector="^:pointerover">
             <Setter Property="Background"
-                    Value="#787878" />
+                    Value="{DynamicResource ButtonHoverBrush}" />
         </Style>
     </ControlTheme>
     <!-- Voice selection button (numbered, with enabled/selected states) -->
     <ControlTheme x:Key="JagVoiceButton"
                   TargetType="Button">
         <Setter Property="Background"
-                Value="#505050" />
+                Value="{DynamicResource VoiceInactiveBgBrush}" />
         <Setter Property="Foreground"
-                Value="#666666" />
+                Value="{DynamicResource VoiceInactiveTextBrush}" />
         <Setter Property="BorderBrush"
-                Value="#555555" />
+                Value="{DynamicResource VoiceInactiveBorderBrush}" />
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="Padding"
                 Value="0" />
-        <Setter Property="MinHeight"
-                Value="18" />
-        <Setter Property="MinWidth"
-                Value="28" />
+        <Setter Property="Width"
+                Value="{DynamicResource WidthUiCompact}" />
+        <Setter Property="Height"
+                Value="{DynamicResource HeightUiCompact}" />
         <Setter Property="FontFamily"
                 Value="Consolas, Monaco, Courier New, monospace" />
         <Setter Property="FontSize"
-                Value="9" />
+                Value="{DynamicResource FontSizeUiSmall}" />
         <Setter Property="CornerRadius"
                 Value="0" />
         <Setter Property="Opacity"
@@ -155,7 +157,7 @@
         </Setter>
         <Style Selector="^:pointerover">
             <Setter Property="Background"
-                    Value="#787878" />
+                    Value="{DynamicResource ButtonHoverBrush}" />
         </Style>
         <Style Selector="^.enabled">
             <Setter Property="Background"
@@ -169,13 +171,15 @@
         </Style>
         <Style Selector="^.selected">
             <Setter Property="Background"
-                    Value="#009E73" />
+                    Value="{DynamicResource AccentPrimaryBrush}" />
             <Setter Property="BorderBrush"
-                    Value="#009E73" />
+                    Value="{DynamicResource AccentPrimaryBrush}" />
             <Setter Property="Foreground"
-                    Value="#000000" />
+                    Value="{DynamicResource TextPrimaryBrush}" />
             <Setter Property="Opacity"
                     Value="1.0" />
+            <Setter Property="FontWeight"
+                    Value="SemiBold" />
         </Style>
         <Style Selector="^.selected /template/ Border#Root">
             <Setter Property="BoxShadow"
@@ -194,15 +198,15 @@
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="Padding"
-                Value="3,1" />
-        <Setter Property="MinHeight"
-                Value="18" />
-        <Setter Property="MinWidth"
-                Value="20" />
+                Value="{DynamicResource PaddingUiCompact}" />
+        <Setter Property="Width"
+                Value="{DynamicResource WidthUiCompact}" />
+        <Setter Property="Height"
+                Value="{DynamicResource HeightUiCompact}" />
         <Setter Property="FontFamily"
                 Value="Consolas, Monaco, Courier New, monospace" />
         <Setter Property="FontSize"
-                Value="9" />
+                Value="{DynamicResource FontSizeUiSmall}" />
         <Setter Property="CornerRadius"
                 Value="0" />
         <Setter Property="HorizontalContentAlignment"
@@ -225,31 +229,21 @@
         </Setter>
         <Style Selector="^:checked">
             <Setter Property="Background"
-                    Value="#009E73" />
+                    Value="{DynamicResource AccentPrimaryBrush}" />
             <Setter Property="BorderBrush"
-                    Value="#009E73" />
+                    Value="{DynamicResource AccentPrimaryBrush}" />
             <Setter Property="Foreground"
-                    Value="#000000" />
+                    Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="FontWeight"
+                    Value="SemiBold" />
         </Style>
         <Style Selector="^:checked /template/ Border#Root">
             <Setter Property="BoxShadow"
                     Value="0 0 6 0 #009E73" />
         </Style>
-        <Style Selector="^.solo:checked">
-            <Setter Property="Background"
-                    Value="#E69F00" />
-            <Setter Property="BorderBrush"
-                    Value="#E69F00" />
-            <Setter Property="Foreground"
-                    Value="#000000" />
-        </Style>
-        <Style Selector="^.solo:checked /template/ Border#Root">
-            <Setter Property="BoxShadow"
-                    Value="0 0 6 0 #E69F00" />
-        </Style>
         <Style Selector="^:pointerover">
             <Setter Property="Background"
-                    Value="#787878" />
+                    Value="{DynamicResource ButtonHoverBrush}" />
         </Style>
     </ControlTheme>
     <!-- Compact cell button (slim JagToolButton for matrix grids) -->
@@ -264,15 +258,15 @@
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="Padding"
-                Value="3,1" />
-        <Setter Property="MinHeight"
-                Value="18" />
-        <Setter Property="MinWidth"
-                Value="20" />
+                Value="{DynamicResource PaddingUiCompact}" />
+        <Setter Property="Width"
+                Value="{DynamicResource WidthUiCompact}" />
+        <Setter Property="Height"
+                Value="{DynamicResource HeightUiCompact}" />
         <Setter Property="FontFamily"
                 Value="Consolas, Monaco, Courier New, monospace" />
         <Setter Property="FontSize"
-                Value="9" />
+                Value="{DynamicResource FontSizeUiSmall}" />
         <Setter Property="CornerRadius"
                 Value="0" />
         <Setter Property="HorizontalContentAlignment"
@@ -294,13 +288,27 @@
         </Setter>
         <Style Selector="^:pointerover">
             <Setter Property="Background"
-                    Value="#787878" />
+                    Value="{DynamicResource ButtonHoverBrush}" />
             <Setter Property="Foreground"
                     Value="{DynamicResource TextPrimaryBrush}" />
         </Style>
         <Style Selector="^:pressed">
             <Setter Property="Background"
-                    Value="#555555" />
+                    Value="{DynamicResource ButtonActiveBrush}" />
+        </Style>
+        <Style Selector="^.selected">
+            <Setter Property="Background"
+                    Value="{DynamicResource AccentPrimaryBrush}" />
+            <Setter Property="BorderBrush"
+                    Value="{DynamicResource AccentPrimaryBrush}" />
+            <Setter Property="Foreground"
+                    Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="FontWeight"
+                    Value="SemiBold" />
+        </Style>
+        <Style Selector="^.selected /template/ Border#Root">
+            <Setter Property="BoxShadow"
+                    Value="0 0 6 0 #009E73" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

@@ -7,15 +7,14 @@ public sealed class CanvasInteractionHelper
 {
     public static readonly int[] ZoomLevels = [1, 2, 4];
 
-    private bool _isPanning;
     private double _panStartX;
     private double _panStartOffset;
 
-    public bool IsPanning => _isPanning;
+    public bool IsPanning { get; private set; }
 
     public void BeginPan(double startX, double currentOffset)
     {
-        _isPanning = true;
+        IsPanning = true;
         _panStartX = startX;
         _panStartOffset = currentOffset;
     }
@@ -26,12 +25,9 @@ public sealed class CanvasInteractionHelper
         return Math.Clamp(_panStartOffset + dx, 0, maxOffset);
     }
 
-    public void EndPan()
-    {
-        _isPanning = false;
-    }
+    public void EndPan() => IsPanning = false;
 
-    public int StepZoom(int currentZoom, double wheelDelta)
+    public static int StepZoom(int currentZoom, double wheelDelta)
     {
         var index = Array.IndexOf(ZoomLevels, currentZoom);
         if (index < 0)

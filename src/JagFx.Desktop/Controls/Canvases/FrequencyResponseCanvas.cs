@@ -74,34 +74,15 @@ public class FrequencyResponseCanvas : Control
             return;
 
         context.FillRectangle(ThemeColors.CanvasBackgroundBrush, new Rect(0, 0, w, h));
+        AnalysisGridRenderer.Draw(context, new Rect(0, 0, w, h), includeVertical: true);
 
         var dbRange = DbMax - DbMin;
-
-        // Vertical lines at frequency subdivisions (log scale, 20Hz–11025Hz)
-        double[] freqLines = [50, 100, 200, 500, 1000, 2000, 5000, 10000];
-        var logMin = Math.Log10(20);
-        var logMax = Math.Log10(11025);
-        var logRange = logMax - logMin;
-        foreach (var freq in freqLines)
-        {
-            var x = ThemeColors.Snap((Math.Log10(freq) - logMin) / logRange * (w - 2 * Pad) + Pad);
-            context.DrawLine(ThemeColors.GridPen, new Point(x, 0), new Point(x, h));
-        }
-
-        // Horizontal lines at 10dB intervals
-        double[] dbLines = [-70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70];
-        foreach (var dB in dbLines)
-        {
-            var y = ThemeColors.Snap(Pad + (1 - (dB - DbMin) / dbRange) * (h - 2 * Pad));
-            var pen = dB == 0 ? ThemeColors.GridFaintPen : ThemeColors.GridPen;
-            context.DrawLine(pen, new Point(0, y), new Point(w, y));
-        }
 
         var filter = Filter;
         if (filter is null || !filter.HasFilter)
             return;
 
-        var numPoints = Math.Max((int)w, 50);
+        var pointCount = Math.Max((int)w, 50);
 
         var hasPhase1 =
             !filter.PolePhase.IsDefault
@@ -118,7 +99,7 @@ public class FrequencyResponseCanvas : Control
                     context,
                     filter,
                     factor,
-                    numPoints,
+                    pointCount,
                     w,
                     h,
                     dbRange,
@@ -132,11 +113,11 @@ public class FrequencyResponseCanvas : Control
                 context,
                 filter,
                 1.0,
-                numPoints,
+                pointCount,
                 w,
                 h,
                 dbRange,
-                ThemeColors.AccentPen1_5
+                ThemeColors.AccentPenOnePointFive
             );
 
         // Layer 3 (front): yellow combined H(z) at envelope factor 0.0 (phase 0 endpoint)
@@ -144,7 +125,7 @@ public class FrequencyResponseCanvas : Control
             context,
             filter,
             0.0,
-            numPoints,
+            pointCount,
             w,
             h,
             dbRange,
@@ -156,7 +137,7 @@ public class FrequencyResponseCanvas : Control
         DrawingContext context,
         FilterViewModel filter,
         double envelopeFactor,
-        int numPoints,
+        int pointCount,
         double w,
         double h,
         double dbRange,
@@ -166,15 +147,14 @@ public class FrequencyResponseCanvas : Control
         var dBValues = FilterResponseCalculator.ComputeMagnitudeResponse(
             filter,
             envelopeFactor,
-            numPoints
+            pointCount
         );
-        DrawTrace(context, dBValues, numPoints, w, h, dbRange, pen);
+        DrawTrace(context, dBValues, w, h, dbRange, pen);
     }
 
     private static void DrawTrace(
         DrawingContext context,
         double[] dBValues,
-        int numPoints,
         double w,
         double h,
         double dbRange,

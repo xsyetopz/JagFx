@@ -21,7 +21,7 @@ public class SynthFileWriterTests
     }
 
     [Fact]
-    public void CowDeathRoundtrip_PreservesVoiceEnvelopeAndPartials()
+    public void CowDeathRoundtripPreservesVoiceEnvelopeAndPartials()
     {
         var original = SynthFileReader.Read(TestResources.CowDeath);
         var written = SynthFileWriter.Write(original);
@@ -52,7 +52,7 @@ public class SynthFileWriterTests
     }
 
     [Fact]
-    public void FilterVoiceRoundtrip_PreservesFilterPairCount()
+    public void FilterVoiceRoundtripPreservesFilterPairCount()
     {
         var original = SynthFileReader.Read(TestResources.ToaZebakAttackMeleeRoar01);
         var written = SynthFileWriter.Write(original);

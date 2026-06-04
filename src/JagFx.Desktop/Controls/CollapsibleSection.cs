@@ -16,10 +16,7 @@ public class CollapsibleSection : HeaderedContentControl
         set => SetValue(IsExpandedProperty, value);
     }
 
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
-    {
-        base.OnApplyTemplate(e);
-    }
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e) => base.OnApplyTemplate(e);
 
     protected override Size MeasureOverride(Size availableSize)
     {

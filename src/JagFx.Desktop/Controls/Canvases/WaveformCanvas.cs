@@ -175,7 +175,7 @@ public class WaveformCanvas : Control
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         base.OnPointerWheelChanged(e);
-        ZoomLevel = _interaction.StepZoom(ZoomLevel, e.Delta.Y);
+        ZoomLevel = CanvasInteractionHelper.StepZoom(ZoomLevel, e.Delta.Y);
         e.Handled = true;
     }
 

@@ -8,8 +8,9 @@ namespace JagFx.Synthesis.Core;
 
 public static class VoiceSynthesizer
 {
-    public static AudioBuffer Synthesize(Voice voice)
+    public static AudioBuffer Synthesize(Voice voice, CancellationToken ct = default)
     {
+        ct.ThrowIfCancellationRequested();
         var sampleCount = (int)(voice.DurationMs * AudioConstants.SampleRatePerMillisecond);
         if (sampleCount <= 0 || voice.DurationMs < AudioConstants.MinDurationMs)
         {
@@ -20,16 +21,20 @@ public static class VoiceSynthesizer
         var buffer = AudioBufferPool.Acquire(sampleCount);
 
         var state = CreateSynthesisState(voice, samplesPerStep);
-        RenderSamples(buffer, voice, state, sampleCount);
+        RenderSamples(buffer, voice, state, sampleCount, ct);
 
-        ApplyGating(buffer, voice, sampleCount);
-        ApplyEcho(buffer, voice, samplesPerStep, sampleCount);
+        ct.ThrowIfCancellationRequested();
+        ApplyGating(buffer, voice, sampleCount, ct);
+        ct.ThrowIfCancellationRequested();
+        ApplyEcho(buffer, voice, samplesPerStep, sampleCount, ct);
 
         if (voice.Filter != null)
         {
-            AudioFilter.Apply(buffer, voice.Filter, state.FilterEnvelopeEval, sampleCount);
+            ct.ThrowIfCancellationRequested();
+            AudioFilter.Apply(buffer, voice.Filter, state.FilterEnvelopeEval, sampleCount, ct);
         }
 
+        ct.ThrowIfCancellationRequested();
         AudioMath.ClipInt16(buffer, sampleCount);
 
         var output = new int[sampleCount];
@@ -175,7 +180,8 @@ public static class VoiceSynthesizer
         int[] buffer,
         Voice voice,
         SynthesisState state,
-        int sampleCount
+        int sampleCount,
+        CancellationToken ct
     )
     {
         var phases = new int[AudioConstants.MaxOscillators];
@@ -184,6 +190,8 @@ public static class VoiceSynthesizer
 
         for (var sample = 0; sample < sampleCount; sample++)
         {
+            if ((sample & 0xFF) == 0)
+                ct.ThrowIfCancellationRequested();
             var frequency = state.FrequencyBaseEval.Evaluate(sampleCount);
             var amplitude = state.AmplitudeBaseEval.Evaluate(sampleCount);
 
@@ -325,7 +333,12 @@ public static class VoiceSynthesizer
         };
     }
 
-    private static void ApplyGating(int[] buffer, Voice voice, int sampleCount)
+    private static void ApplyGating(
+        int[] buffer,
+        Voice voice,
+        int sampleCount,
+        CancellationToken ct
+    )
     {
         if (voice.GapOffEnvelope != null && voice.GapOnEnvelope != null)
         {
@@ -339,6 +352,8 @@ public static class VoiceSynthesizer
 
             for (var sample = 0; sample < sampleCount; sample++)
             {
+                if ((sample & 0xFF) == 0)
+                    ct.ThrowIfCancellationRequested();
                 var stepOn = silenceEval.Evaluate(sampleCount);
                 var stepOff = durationEval.Evaluate(sampleCount);
                 var threshold = muted
@@ -370,13 +385,21 @@ public static class VoiceSynthesizer
         }
     }
 
-    private static void ApplyEcho(int[] buffer, Voice voice, double samplesPerStep, int sampleCount)
+    private static void ApplyEcho(
+        int[] buffer,
+        Voice voice,
+        double samplesPerStep,
+        int sampleCount,
+        CancellationToken ct
+    )
     {
         if (voice.Echo.DelayMilliseconds > 0 && voice.Echo.FeedbackPercent > 0)
         {
             var start = (int)(voice.Echo.DelayMilliseconds * samplesPerStep);
             for (var sample = start; sample < sampleCount; sample++)
             {
+                if ((sample & 0xFF) == 0)
+                    ct.ThrowIfCancellationRequested();
                 buffer[sample] += buffer[sample - start] * voice.Echo.FeedbackPercent / 100;
             }
         }

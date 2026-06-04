@@ -43,6 +43,11 @@ public class EnvelopeCanvas : Control
         bool
     >(nameof(IsSnapEnabled));
 
+    public static readonly StyledProperty<bool> UseAnalysisGridProperty = AvaloniaProperty.Register<
+        EnvelopeCanvas,
+        bool
+    >(nameof(UseAnalysisGrid));
+
     public static readonly StyledProperty<EnvelopeDisplayMode> DisplayModeProperty =
         AvaloniaProperty.Register<EnvelopeCanvas, EnvelopeDisplayMode>(
             nameof(DisplayMode),
@@ -106,6 +111,12 @@ public class EnvelopeCanvas : Control
         set => SetValue(IsSnapEnabledProperty, value);
     }
 
+    public bool UseAnalysisGrid
+    {
+        get => GetValue(UseAnalysisGridProperty);
+        set => SetValue(UseAnalysisGridProperty, value);
+    }
+
     public EnvelopeDisplayMode DisplayMode
     {
         get => GetValue(DisplayModeProperty);
@@ -126,6 +137,7 @@ public class EnvelopeCanvas : Control
             IsThumbnailProperty,
             ZoomLevelProperty,
             ScrollOffsetProperty,
+            UseAnalysisGridProperty,
             DisplayModeProperty
         );
     }
@@ -211,7 +223,10 @@ public class EnvelopeCanvas : Control
 
         using var clip = context.PushClip(new Rect(0, 0, w, h));
 
-        DrawGrid(context, w, h, ZoomLevel, ScrollOffset);
+        if (UseAnalysisGrid)
+            AnalysisGridRenderer.Draw(context, new Rect(0, 0, w, h), includeVertical: false);
+        else
+            DrawGrid(context, w, h, ZoomLevel, ScrollOffset);
 
         var env = Envelope;
         if (env is null || env.Segments.Count == 0)
@@ -370,7 +385,8 @@ public class EnvelopeCanvas : Control
     {
         _dragIndex = hitIndex;
         _selectedIndex = hitIndex;
-        Focus();
+        _ = Focus();
+        BeginPreviewEdit();
 
         if (DisplayMode is EnvelopeDisplayMode.FullScale or EnvelopeDisplayMode.Normalized)
         {
@@ -460,10 +476,6 @@ public class EnvelopeCanvas : Control
                     env.Segments[_dragIndex].Duration = snappedDur;
                 }
             }
-            var seg = env.Segments[_dragIndex];
-            KnobControl.RaiseHint(
-                $"Segment {_dragIndex + 1}: Level={seg.TargetLevel}, Duration={seg.Duration}"
-            );
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -513,11 +525,11 @@ public class EnvelopeCanvas : Control
         if (_dragIndex >= 0)
         {
             e.Pointer.Capture(null);
-            KnobControl.RaiseHint("");
             _dragIndex = -1;
             _dragMinLevel = 0;
             _dragRange = 0;
             _dragTotalDuration = 0;
+            EndPreviewEdit();
         }
     }
 
@@ -527,7 +539,7 @@ public class EnvelopeCanvas : Control
         if (IsThumbnail)
             return;
 
-        ZoomLevel = _interaction.StepZoom(ZoomLevel, e.Delta.Y);
+        ZoomLevel = CanvasInteractionHelper.StepZoom(ZoomLevel, e.Delta.Y);
 
         e.Handled = true;
     }
@@ -551,6 +563,7 @@ public class EnvelopeCanvas : Control
             env.RemoveSegmentAt(_selectedIndex);
             _selectedIndex = Math.Min(_selectedIndex, env.Segments.Count - 1);
             InvalidateVisual();
+            RequestPreviewUpdate(immediate: true);
             e.Handled = true;
         }
     }
@@ -571,15 +584,16 @@ public class EnvelopeCanvas : Control
 
             if (env.Segments.Count > 1)
             {
-                var deleteItem = new MenuItem { Header = "Delete Point" };
+                var deleteItem = new MenuItem { Header = Loc.Get("MenuDeletePoint") };
                 var idx = pointIndex;
                 deleteItem.Click += (_, _) =>
                 {
                     env.RemoveSegmentAt(idx);
                     _selectedIndex = -1;
                     InvalidateVisual();
+                    RequestPreviewUpdate(immediate: true);
                 };
-                menu.Items.Add(deleteItem);
+                _ = menu.Items.Add(deleteItem);
             }
         }
         else
@@ -587,24 +601,26 @@ public class EnvelopeCanvas : Control
             var lineIndex = geo.LineHitTest(pos);
             if (lineIndex >= 0)
             {
-                var addItem = new MenuItem { Header = "Add Point Here" };
+                var addItem = new MenuItem { Header = Loc.Get("MenuAddPointHere") };
                 var li = lineIndex;
                 addItem.Click += (_, _) =>
                 {
                     InsertPointOnLine(li, pos, geo, env);
+                    RequestPreviewUpdate(immediate: true);
                 };
-                menu.Items.Add(addItem);
+                _ = menu.Items.Add(addItem);
             }
             else
             {
-                var addEndItem = new MenuItem { Header = "Add Point at End" };
+                var addEndItem = new MenuItem { Header = Loc.Get("MenuAddPointEnd") };
                 addEndItem.Click += (_, _) =>
                 {
                     env.AddSegment(100, 0);
                     _selectedIndex = env.Segments.Count - 1;
                     InvalidateVisual();
+                    RequestPreviewUpdate(immediate: true);
                 };
-                menu.Items.Add(addEndItem);
+                _ = menu.Items.Add(addEndItem);
             }
         }
 
@@ -659,7 +675,26 @@ public class EnvelopeCanvas : Control
 
         _selectedIndex = lineIndex;
         InvalidateVisual();
+        RequestPreviewUpdate(immediate: true);
     }
 
     #endregion
+
+    private void BeginPreviewEdit()
+    {
+        if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+            vm.BeginPreviewEdit();
+    }
+
+    private void EndPreviewEdit()
+    {
+        if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+            vm.EndPreviewEdit();
+    }
+
+    private void RequestPreviewUpdate(bool immediate = false)
+    {
+        if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+            vm.RequestPreviewUpdate(immediate);
+    }
 }

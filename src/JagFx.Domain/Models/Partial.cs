@@ -11,7 +11,7 @@ public enum Waveform
     Noise = 4,
 }
 
-public record class Partial(Percent Amplitude, int PitchOffsetSemitones, Milliseconds Delay);
+public record class VoicePartial(Percent Amplitude, int PitchOffsetSemitones, Milliseconds Delay);
 
 public static class WaveformExtensions
 {

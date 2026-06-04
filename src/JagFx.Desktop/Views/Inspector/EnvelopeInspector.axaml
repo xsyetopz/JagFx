@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:loc="using:JagFx.Desktop.Localization"
              xmlns:vm="using:JagFx.Desktop.ViewModels"
              xmlns:insp="using:JagFx.Desktop.Views.Inspector"
              xmlns:conv="using:JagFx.Desktop.Converters"
@@ -18,10 +20,13 @@
                     Padding="6,3"
                     BorderBrush="{StaticResource BorderDefaultBrush}"
                     BorderThickness="0,1,0,1">
-                <TextBlock FontSize="9"
+                <TextBlock FontSize="11"
                            FontWeight="Bold"
                            Foreground="{StaticResource TextAccentBrush}"
-                           Text="{Binding SelectedEnvelopeTitle, StringFormat='ENVELOPE: {0}'}" />
+                           Text="{Binding SelectedEnvelopeTitle}"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip.Tip="{Binding SelectedEnvelopeTitle}" />
             </Border>
             <!-- Waveform selector -->
             <Border Padding="6,4">
@@ -32,32 +37,42 @@
                                   IsChecked="{Binding SelectedEnvelope.IsOffActive, Mode=OneWay}"
                                   Command="{Binding SelectedEnvelope.SetWaveformCommand}"
                                   CommandParameter="0"
-                                  Content="OFF"
-                                  ToolTip.Tip="Off (0)" />
+                                  ToolTip.Tip="{loc:Tr TooltipWaveOff}">
+                        <i:Icon Value="mdi-signal-off"
+                                FontSize="15" />
+                    </ToggleButton>
                     <ToggleButton Theme="{StaticResource JagCellToggle}"
                                   IsChecked="{Binding SelectedEnvelope.IsSquareActive, Mode=OneWay}"
                                   Command="{Binding SelectedEnvelope.SetWaveformCommand}"
                                   CommandParameter="1"
-                                  Content="SQR"
-                                  ToolTip.Tip="Square (1)" />
+                                  ToolTip.Tip="{loc:Tr TooltipWaveSquare}">
+                        <i:Icon Value="mdi-square-wave"
+                                FontSize="15" />
+                    </ToggleButton>
                     <ToggleButton Theme="{StaticResource JagCellToggle}"
                                   IsChecked="{Binding SelectedEnvelope.IsSineActive, Mode=OneWay}"
                                   Command="{Binding SelectedEnvelope.SetWaveformCommand}"
                                   CommandParameter="2"
-                                  Content="SIN"
-                                  ToolTip.Tip="Sine (2)" />
+                                  ToolTip.Tip="{loc:Tr TooltipWaveSine}">
+                        <i:Icon Value="mdi-sine-wave"
+                                FontSize="15" />
+                    </ToggleButton>
                     <ToggleButton Theme="{StaticResource JagCellToggle}"
                                   IsChecked="{Binding SelectedEnvelope.IsSawActive, Mode=OneWay}"
                                   Command="{Binding SelectedEnvelope.SetWaveformCommand}"
                                   CommandParameter="3"
-                                  Content="SAW"
-                                  ToolTip.Tip="Sawtooth (3)" />
+                                  ToolTip.Tip="{loc:Tr TooltipWaveSawtooth}">
+                        <i:Icon Value="mdi-sawtooth-wave"
+                                FontSize="15" />
+                    </ToggleButton>
                     <ToggleButton Theme="{StaticResource JagCellToggle}"
                                   IsChecked="{Binding SelectedEnvelope.IsNoiseActive, Mode=OneWay}"
                                   Command="{Binding SelectedEnvelope.SetWaveformCommand}"
                                   CommandParameter="4"
-                                  Content="NSE"
-                                  ToolTip.Tip="Noise (4)" />
+                                  ToolTip.Tip="{loc:Tr TooltipWaveNoise}">
+                        <i:Icon Value="mdi-waveform"
+                                FontSize="15" />
+                    </ToggleButton>
                 </StackPanel>
             </Border>
             <!-- Envelope start/end values -->
@@ -68,21 +83,24 @@
                     <controls:KnobControl Value="{Binding SelectedEnvelope.StartValue, Converter={StaticResource IntToDoubleConverter}, TargetNullValue=0, FallbackValue=0}"
                                           Minimum="{Binding StartEndMin}"
                                           Maximum="{Binding StartEndMax}"
-                                          Label="START"
+                                          Label="{loc:TrUpper StartLabel}"
                                           Step="1"
                                           FormatString="F0"
                                           Unit="{Binding StartEndUnit}"
-                                          Height="32" />
+                                          Height="40" />
                     <controls:KnobControl Value="{Binding SelectedEnvelope.EndValue, Converter={StaticResource IntToDoubleConverter}, TargetNullValue=0, FallbackValue=0}"
                                           Minimum="{Binding StartEndMin}"
                                           Maximum="{Binding StartEndMax}"
-                                          Label="END"
+                                          Label="{loc:TrUpper EndLabel}"
                                           Step="1"
                                           FormatString="F0"
                                           Unit="{Binding StartEndUnit}"
-                                          Height="32" />
+                                          Height="40" />
                 </StackPanel>
             </Border>
+            <Border Margin="4,2,4,2"
+                    BorderBrush="{StaticResource BorderDefaultBrush}"
+                    BorderThickness="0,0,0,1" />
             <!-- Segments -->
             <ItemsControl ItemsSource="{Binding SelectedEnvelope.Segments}">
                 <ItemsControl.ItemTemplate>
@@ -93,58 +111,49 @@
                             <Grid ColumnDefinitions="16,*,*,18">
                                 <TextBlock Grid.Column="0"
                                            Text="{Binding Index}"
-                                           FontSize="9"
+                                           FontSize="11"
                                            Foreground="{StaticResource TextMutedBrush}"
                                            VerticalAlignment="Center" />
                                 <controls:KnobControl Grid.Column="1"
                                                       Value="{Binding Duration, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
                                                       Minimum="0"
                                                       Maximum="100"
-                                                      Label="DUR"
+                                                      Label="{loc:TrUpper SegmentDurationLabel}"
                                                       Step="0.5"
                                                       FormatString="F1"
                                                       Unit="%"
-                                                      Height="32" />
+                                                      Height="40" />
                                 <controls:KnobControl Grid.Column="2"
                                                       Value="{Binding TargetLevel, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
                                                       Minimum="0"
                                                       Maximum="100"
-                                                      Label="LVL"
+                                                      Label="{loc:TrUpper SegmentLevelLabel}"
                                                       Step="0.5"
                                                       FormatString="F1"
                                                       Unit="%"
-                                                      Height="32" />
+                                                      Height="40" />
                                 <Button Grid.Column="3"
-                                        Theme="{StaticResource JagToolButton}"
-                                        Padding="2,0"
-                                        MinWidth="14"
-                                        MinHeight="14"
-                                        Command="{Binding DataContext.SelectedEnvelope.RemoveSegmentCommand,&#xA;                                            RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        Theme="{StaticResource JagCellButton}"
+                                        ToolTip.Tip="{loc:Tr MenuDeletePoint}"
+                                        Command="{ReflectionBinding DataContext.SelectedEnvelope.RemoveSegmentCommand,&#xA;                                            RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}">
-                                    <PathIcon Data="{StaticResource IconClose}"
-                                              Width="8"
-                                              Height="8"
-                                              Foreground="{StaticResource TextMutedBrush}" />
+                                <i:Icon Value="mdi-close"
+                                            FontSize="15"
+                                            Foreground="{StaticResource TextMutedBrush}" />
                                 </Button>
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <Button Theme="{StaticResource JagToolButton}"
+            <Button Theme="{StaticResource JagCellButton}"
                     Margin="4,2"
-                    HorizontalAlignment="Center"
+                    Width="NaN"
+                    HorizontalAlignment="Stretch"
+                    ToolTip.Tip="{loc:Tr AddSegment}"
                     Command="{Binding SelectedEnvelope.AddDefaultSegmentCommand}">
-                <StackPanel Orientation="Horizontal"
-                            Spacing="4">
-                    <PathIcon Data="{StaticResource IconPlus}"
-                              Width="8"
-                              Height="8"
-                              Foreground="{StaticResource TextMutedBrush}" />
-                    <TextBlock Text="ADD"
-                               FontSize="9"
-                               Foreground="{StaticResource TextMutedBrush}" />
-                </StackPanel>
+                <i:Icon Value="mdi-plus"
+                        FontSize="15" />
             </Button>
         </StackPanel>
     </Border>

@@ -16,6 +16,7 @@
     <ProjectReference Include="../../src/JagFx.Synthesis/JagFx.Synthesis.csproj" />
     <ProjectReference Include="../../src/JagFx.Io/JagFx.Io.csproj" />
     <ProjectReference Include="../../src/JagFx.Domain/JagFx.Domain.csproj" />
+    <ProjectReference Include="../../src/JagFx.Desktop/JagFx.Desktop.csproj" />
     <ProjectReference Include="../../src/JagFx.Native/JagFx.Native.csproj" />
     <ProjectReference Include="../JagFx.TestData/JagFx.TestData.csproj" />
   </ItemGroup>

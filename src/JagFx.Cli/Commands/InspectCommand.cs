@@ -1,4 +1,5 @@
 using System.CommandLine;
+using System.Globalization;
 using JagFx.Core.Constants;
 using JagFx.Io;
 using JagFx.Io.Buffers;
@@ -71,7 +72,7 @@ public class InspectCommand : Command
             var marker = context.Buffer.Peek();
             if (marker == 0)
             {
-                context.ReadByte("empty", $"voice {i}");
+                _ = context.ReadByte("empty", $"voice {i}");
                 continue;
             }
 
@@ -93,20 +94,20 @@ public class InspectCommand : Command
 
         InspectOscillators(context);
 
-        context.ReadUSmart("echo", "feedback");
-        context.ReadUSmart("", "mix");
+        _ = context.ReadUSmart("echo", "feedback");
+        _ = context.ReadUSmart("", "mix");
 
-        context.ReadUInt16("time", "dur");
-        context.ReadUInt16("", "start");
+        _ = context.ReadUInt16("time", "dur");
+        _ = context.ReadUInt16("", "start");
 
         InspectFilter(context);
     }
 
-    private static void InspectEnvelope(InspectorContext context, string _)
+    private static void InspectEnvelope(InspectorContext context, string label)
     {
-        context.ReadByte("", "wf");
-        context.ReadInt32("", "start");
-        context.ReadInt32("", "end");
+        _ = context.ReadByte("", "wf");
+        _ = context.ReadInt32("", "start");
+        _ = context.ReadInt32("", "end");
         var nSegs = context.ReadByte("", "segs");
         var maxSegs = context.Buffer.Remaining / 4;
         var segLimit = Math.Min(nSegs, maxSegs);
@@ -122,7 +123,7 @@ public class InspectCommand : Command
         var marker = context.Buffer.Peek();
         if (marker == 0)
         {
-            context.ReadByte("", $"{label}=none");
+            _ = context.ReadByte("", $"{label}=none");
             return;
         }
 
@@ -139,13 +140,13 @@ public class InspectCommand : Command
             var marker = context.Buffer.Peek();
             if (marker == 0)
             {
-                context.ReadByte("", "osc=end");
+                _ = context.ReadByte("", "osc=end");
                 break;
             }
 
-            context.ReadUSmart("", $"osc{index}");
-            context.ReadSmart("", $"pitch");
-            context.ReadUSmart("", $"delay");
+            _ = context.ReadUSmart("", $"osc{index}");
+            _ = context.ReadSmart("", $"pitch");
+            _ = context.ReadUSmart("", $"delay");
             index++;
         }
     }
@@ -163,13 +164,13 @@ public class InspectCommand : Command
         var pair1 = packed & 0x0F;
         if (packed == 0)
         {
-            context.ReadByte("", "filt=none");
+            _ = context.ReadByte("", "filt=none");
             return;
         }
 
-        context.ReadByte("", $"filt: ch0={pair0}, ch1={pair1}");
-        context.ReadUInt16("", "unity0");
-        context.ReadUInt16("", "unity1");
+        _ = context.ReadByte("", $"filt: ch0={pair0}, ch1={pair1}");
+        _ = context.ReadUInt16("", "unity0");
+        _ = context.ReadUInt16("", "unity1");
         var modmask = context.ReadByte("", $"modmask");
 
         InspectFilterPoles(context, pair0, pair1);
@@ -186,8 +187,8 @@ public class InspectCommand : Command
 
             for (var p = 0; p < pairs; p++)
             {
-                context.ReadUInt16("", $"ch{channel}.pole{p}.freq");
-                context.ReadUInt16("", $"mag");
+                _ = context.ReadUInt16("", $"ch{channel}.pole{p}.freq");
+                _ = context.ReadUInt16("", $"mag");
             }
         }
     }
@@ -209,8 +210,8 @@ public class InspectCommand : Command
             {
                 if ((modmask & (1 << (channel * 4 + p))) != 0)
                 {
-                    context.ReadUInt16("", $"ch{channel}.pole{p}.freq_mod");
-                    context.ReadUInt16("", $"mag_mod");
+                    _ = context.ReadUInt16("", $"ch{channel}.pole{p}.freq_mod");
+                    _ = context.ReadUInt16("", $"mag_mod");
                 }
             }
         }
@@ -224,8 +225,8 @@ public class InspectCommand : Command
         var segmentLimit = Math.Min(segmentCount, maxSegments);
         for (var i = 0; i < segmentLimit; i++)
         {
-            context.ReadUInt16("", $"seg{i}.dur");
-            context.ReadUInt16("", $"seg{i}.peak");
+            _ = context.ReadUInt16("", $"seg{i}.dur");
+            _ = context.ReadUInt16("", $"seg{i}.peak");
         }
     }
 
@@ -233,8 +234,8 @@ public class InspectCommand : Command
     {
         if (context.Buffer.Remaining >= 4)
         {
-            context.ReadUInt16("loop", "start");
-            context.ReadUInt16("", "end");
+            _ = context.ReadUInt16("loop", "start");
+            _ = context.ReadUInt16("", "end");
         }
     }
 
@@ -297,7 +298,9 @@ public class InspectCommand : Command
                 startPosition,
                 bytes,
                 mnemonic,
-                comment.Length > 0 ? $"{comment}={value}" : value.ToString()
+                comment.Length > 0
+                    ? $"{comment}={value}"
+                    : value.ToString(CultureInfo.InvariantCulture)
             );
             return value;
         }
@@ -311,7 +314,9 @@ public class InspectCommand : Command
                 startPosition,
                 bytes,
                 mnemonic,
-                comment.Length > 0 ? $"{comment}={value}" : value.ToString()
+                comment.Length > 0
+                    ? $"{comment}={value}"
+                    : value.ToString(CultureInfo.InvariantCulture)
             );
             return value;
         }
@@ -323,12 +328,18 @@ public class InspectCommand : Command
 
         private static void PrintLine(int pos, byte[] bytes, string mnemonic, string comment)
         {
-            var hex = bytes.Length > 0 ? string.Join(" ", bytes.Select(b => b.ToString("X2"))) : "";
+            var hex =
+                bytes.Length > 0
+                    ? string.Join(
+                        " ",
+                        bytes.Select(b => b.ToString("X2", CultureInfo.InvariantCulture))
+                    )
+                    : "";
             if (hex.Length > 18)
                 hex = hex[..15] + "...";
             var paddedMnemonic = mnemonic.PadRight(10);
             var comma = comment.Length > 0 && mnemonic.Length > 0 ? ", " : "";
-            Console.WriteLine($"{pos:X4}: {hex,-18} {paddedMnemonic}{comma}{comment}");
+            Console.WriteLine($"{pos:X4}: {hex, -18} {paddedMnemonic}{comma}{comment}");
         }
     }
 }

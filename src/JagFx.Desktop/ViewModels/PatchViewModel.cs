@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using JagFx.Core.Constants;
 using JagFx.Domain.Models;
@@ -70,8 +68,10 @@ public partial class PatchViewModel : ObservableObject
 
     public Patch ToModel()
     {
-        var voices = Voices.Select(v => v.ToModel()).ToImmutableList();
+        var voices = System.Collections.Immutable.ImmutableList.CreateRange(
+            Voices.Select(v => v.ToModel())
+        );
 
-        return new Patch(voices, new LoopSegment(LoopBegin, LoopEnd), ImmutableList<string>.Empty);
+        return new Patch(voices, new LoopSegment(LoopBegin, LoopEnd), []);
     }
 }

@@ -11,10 +11,8 @@ public class AudioBuffer(int[] samples, int sampleRate = AudioConstants.SampleRa
 
     public int Length => Samples.Length;
 
-    public static AudioBuffer Empty(int sampleCount, int sampleRate = AudioConstants.SampleRate)
-    {
-        return new AudioBuffer(new int[sampleCount], sampleRate);
-    }
+    public static AudioBuffer Empty(int sampleCount, int sampleRate = AudioConstants.SampleRate) =>
+        new(new int[sampleCount], sampleRate);
 
     public AudioBuffer Mix(AudioBuffer other, int offset)
     {

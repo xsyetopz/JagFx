@@ -5,7 +5,7 @@ namespace SmartInt.Tests;
 public class USmart16Tests
 {
     [Fact]
-    public void EncodeDecode_SmallValue_Works()
+    public void EncodeDecodeSmallValueWorks()
     {
         var smart = new USmart16(42);
         var buffer = new byte[3];
@@ -17,7 +17,7 @@ public class USmart16Tests
     }
 
     [Fact]
-    public void EncodeDecode_LargeValue_Works()
+    public void EncodeDecodeLargeValueWorks()
     {
         var smart = new USmart16(USmart16.MaxValue);
         var buffer = new byte[3];

@@ -22,10 +22,13 @@ public partial class PartialViewModel : ObservableObject
     private int _displayIndex = 1;
 
     public double AmplitudeFraction => Amplitude / 65535.0;
+    public string DisplayLabel => Loc.Format("PartialLabelFormat", DisplayIndex);
 
     partial void OnAmplitudeChanged(int value) => OnPropertyChanged(nameof(AmplitudeFraction));
 
-    public void Load(Partial partial)
+    partial void OnDisplayIndexChanged(int value) => OnPropertyChanged(nameof(DisplayLabel));
+
+    public void Load(VoicePartial partial)
     {
         IsActive = true;
         Amplitude = partial.Amplitude.Value;
@@ -41,6 +44,6 @@ public partial class PartialViewModel : ObservableObject
         DelayMs = 0;
     }
 
-    public Partial ToModel() =>
+    public VoicePartial ToModel() =>
         new(new Percent(Amplitude), PitchOffsetSemitones, new Milliseconds(DelayMs));
 }
