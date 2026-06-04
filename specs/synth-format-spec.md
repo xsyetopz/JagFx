@@ -1,10 +1,10 @@
 # Jagex Synthesizer File Format and Engine Specification
 
-- **Version**: 2.1
-- **Origin**: OldSchool RuneScape client audio subsystem
-- **Sample Rate**: 22,050 Hz (fixed)
-- **Channels**: 1 (mono)
-- **Byte Order**: Big-endian throughout
+- Version: 2.1
+- Origin: OldSchool RuneScape client audio subsystem
+- Sample Rate: 22,050 Hz (fixed)
+- Channels: 1 (mono)
+- Byte Order: Big-endian throughout
 
 ---
 
@@ -66,7 +66,7 @@ Q16.16 fixed-point representation used throughout:
 
 ## 2. File Layout
 
-A `.synth` file consists of up to 10 sequential **voice slots** followed by a 4-byte **loop footer**:
+A `.synth` file contains up to 10 sequential **voice slots** followed by a 4-byte **loop footer**:
 
 ```text
 ┌──────────────────────────────────┐
@@ -82,7 +82,7 @@ A `.synth` file consists of up to 10 sequential **voice slots** followed by a 4-
 
 ### 2.1 Voice Slot Processing
 
-Each slot is processed sequentially. The parser peeks the first byte as a **marker**:
+The parser reads slots in order and peeks the first byte as a **marker**:
 
 | Marker Value | Action                                                                              |
 | ------------ | ----------------------------------------------------------------------------------- |
@@ -96,7 +96,7 @@ Each slot is processed sequentially. The parser peeks the first byte as a **mark
 
 ## 3. Voice Structure
 
-When a valid marker (1–4) is encountered with sufficient remaining bytes, the voice body is read in the following strict order:
+For a valid marker (1–4) with sufficient remaining bytes, the parser reads the voice body in this strict order:
 
 | #   | Field              | Type                   | Description                               |
 | --- | ------------------ | ---------------------- | ----------------------------------------- |
@@ -129,7 +129,7 @@ Each **segment** consists of:
 | Duration     | `u16` | Time to reach target (units of 1/65536 of voice duration) |
 | Target Level | `u16` | Interpolation target (0–65535)                            |
 
-$\text{TargetLevel}$ maps linearly between $\text{StartValue}$ and $\text{EndValue}$: 0 → StartValue, 65535 → EndValue.
+$\text{TargetLevel}$ maps linearly between $\text{StartValue}$ and $\text{EndValue}$: 0 maps to StartValue, 65535 maps to EndValue.
 
 #### 3.1.1 Implicit Segment Synthesis
 
@@ -137,7 +137,7 @@ When an envelope has **zero segments** but $\text{startValue} \ne \text{endValue
 
 ### 3.2 Optional Envelope Pair
 
-Three voice features (vibrato, tremolo, gating) use paired envelopes. Detection:
+Vibrato, tremolo, and gating use paired envelopes. Detection:
 
 1. **Peek** the next byte (without consuming).
 2. If byte = `0x00`: consume 1 byte, pair is **absent**.
@@ -179,8 +179,8 @@ The first byte of the filter header can collide with valid voice markers (1–4)
 3. If $b \in [1, 4]$ **AND** at least 10 bytes remain:
    a. Reconstruct bytes at offsets 1–4 as big-endian `s32`.
    b. If $|\text{s32}| \le 10{,}000{,}000$ **AND** byte at offset 9 is $\le 15$:
-      → Treat $b$ as a **voice marker**, not a filter. Return null.
-4. Otherwise: treat $b$ as the **filter header byte**. Proceed to read filter.
+      Treat $b$ as a **voice marker**, not a filter. Return null.
+4. Otherwise: treat $b$ as the **filter header byte**. Read the filter.
 
 ### 4.2 Filter Header
 
@@ -226,7 +226,7 @@ $$
 
 ### 4.4 Filter Modulation Envelope
 
-Read **only if** $\text{modulationMask} \ne 0$ **OR** $\text{unityGainCh0} \ne \text{unityGainCh1}$.
+Read when $\text{modulationMask} \ne 0$ **OR** $\text{unityGainCh0} \ne \text{unityGainCh1}$.
 
 Minimal envelope containing only segments (no waveform, start, or end fields):
 
@@ -235,7 +235,7 @@ Minimal envelope containing only segments (no waveform, start, or end fields):
 | Segment Count    | `u8`      | Number of segments (N)       |
 | Segments[0..N-1] | Segment[] | Duration + TargetLevel pairs |
 
-Constructed with $\text{Waveform} = \text{Off}$, $\text{StartValue} = 0$, $\text{EndValue} = 0$.
+Set $\text{Waveform} = \text{Off}$, $\text{StartValue} = 0$, $\text{EndValue} = 0$.
 
 ### 4.5 Truncation Safety
 
@@ -258,7 +258,7 @@ Active when $\text{LoopStart} < \text{LoopEnd}$. If fewer than 4 bytes remain, l
 
 ## 6. Truncation Behavior
 
-The `BinaryBuffer` implements a permanent truncation flag:
+`BinaryBuffer` uses a permanent truncation flag:
 
 1. Any read exceeding the buffer length sets `_truncated` **permanently**.
 2. Subsequent reads return `0` for all types; position still advances.
@@ -273,26 +273,26 @@ All tables are computed once at initialization.
 
 ### 7.1 Sine Table
 
-- **Size**: 32,768 entries (indexed 0–32767)
-- **Formula**: $\text{sineTable}[i] = \lfloor \sin(i / 5215.1903) \times 16384 \rfloor$
-- **Range**: $[-16384, +16384]$ (Q14 fixed-point)
+- Size: 32,768 entries (indexed 0–32767)
+- Formula: $\text{sineTable}[i] = \lfloor \sin(i / 5215.1903) \times 16384 \rfloor$
+- Range: $[-16384, +16384]$ (Q14 fixed-point)
 
 ### 7.2 Noise Table
 
-- **Size**: 32,768 entries
-- **RNG**: Java-compatible LCG seeded with `0` (48-bit state, multiplier `0x5DEECE66D`, addend `0xB`)
-- **Formula**: $\text{noiseTable}[i] = (\text{nextInt}() \land 2) - 1 \in \{-1, +1\}$
+- Size: 32,768 entries
+- RNG: Java-compatible LCG seeded with `0` (48-bit state, multiplier `0x5DEECE66D`, addend `0xB`)
+- Formula: $\text{noiseTable}[i] = (\text{nextInt}() \land 2) - 1 \in \{-1, +1\}$
 
 ### 7.3 Semitone Cache
 
-- **Size**: 241 entries (indices 0–240, covering decicents -120 to +120)
-- **Ratio**: $r = 2^{1/1200} = 1.0057929410678534$
-- **Formula**: $\text{cache}[i] = r^{(i - 120)}$
-- **Fallback**: Values outside $[-120, +120]$ computed as $r^{\text{decicents}}$
+- Size: 241 entries (indices 0–240, covering decicents -120 to +120)
+- Ratio: $r = 2^{1/1200} = 1.0057929410678534$
+- Formula: $\text{cache}[i] = r^{(i - 120)}$
+- Fallback: Values outside $[-120, +120]$ computed as $r^{\text{decicents}}$
 
 ### 7.4 Unit Circle Tables
 
-- **Size**: 65 entries each (indices 0–64)
+- Size: 65 entries each (indices 0–64)
 - $\text{xTable}[i] = \cos(i \cdot 2\pi / 64)$
 - $\text{yTable}[i] = \sin(i \cdot 2\pi / 64)$
 
@@ -312,7 +312,7 @@ $$
 \end{cases}
 $$
 
-The phase accumulator wraps naturally via 32-bit integer overflow.
+The phase accumulator wraps through 32-bit integer overflow.
 
 ---
 
@@ -379,7 +379,7 @@ For each voice:
 1. $N \leftarrow \lfloor \text{durationMs} \cdot (\text{sampleRate} / 1000) \rfloor$. If $N \le 0$ or $\text{durationMs} < 10$, return empty.
 2. $\sigma \leftarrow N / \text{durationMs}$ (samples per millisecond)
 3. Initialize envelope generators for frequency, amplitude, vibrato, tremolo, filter.
-4. Pre-compute per-partial arrays (for each partial $p$):
+4. Precompute per-partial arrays (for each partial $p$):
 
 $$
 \text{delay}[p] = \lfloor \text{partial.delay} \cdot \sigma \rfloor \qquad
@@ -394,12 +394,12 @@ $$
 \text{starts}[p] = \lfloor f_\text{start} \cdot 32.768 / \sigma \rfloor
 $$
 
-1. Per-sample loop ($n = 0$ to $N-1$): evaluate frequency/amplitude envelopes, apply vibrato (§10.2), tremolo (§10.3), render partials (§10.4).
-2. Apply gating (§10.5), echo (§10.6), IIR filter (§11), clip to $[-32768, 32767]$.
+5. Per-sample loop ($n = 0$ to $N-1$): evaluate frequency/amplitude envelopes, apply vibrato (§10.2), tremolo (§10.3), render partials (§10.4).
+6. Apply gating (§10.5), echo (§10.6), IIR filter (§11), clip to $[-32768, 32767]$.
 
 ### 10.2 Vibrato (Pitch Modulation)
 
-Pre-computed: $S_v = \lfloor (r_\text{end} - r_\text{start}) \cdot 32.768 / \sigma \rfloor$, $B_v = \lfloor r_\text{start} \cdot 32.768 / \sigma \rfloor$
+Precomputed: $S_v = \lfloor (r_\text{end} - r_\text{start}) \cdot 32.768 / \sigma \rfloor$, $B_v = \lfloor r_\text{start} \cdot 32.768 / \sigma \rfloor$
 
 $$
 m \leftarrow \lfloor \text{GenerateSample}(d, \varphi_v, w_\text{lfo}) / 2 \rfloor
@@ -413,11 +413,11 @@ $$
 \text{freq} \leftarrow \text{freq} + m
 $$
 
-Where $r$ and $d$ are the vibrato rate/depth envelope evaluations for the current sample.
+Here, $r$ and $d$ are the vibrato rate/depth envelope evaluations for the current sample.
 
 ### 10.3 Tremolo (Amplitude Modulation)
 
-Pre-computed: $S_t = \lfloor (r_\text{end} - r_\text{start}) \cdot 32.768 / \sigma \rfloor$, $B_t = \lfloor r_\text{start} \cdot 32.768 / \sigma \rfloor$
+Precomputed: $S_t = \lfloor (r_\text{end} - r_\text{start}) \cdot 32.768 / \sigma \rfloor$, $B_t = \lfloor r_\text{start} \cdot 32.768 / \sigma \rfloor$
 
 $$
 m \leftarrow \lfloor \text{GenerateSample}(d, \varphi_t, w_\text{lfo}) / 2 \rfloor
@@ -459,7 +459,7 @@ Partials are mixed additively. The waveform is the voice's pitch envelope wavefo
 
 ### 10.5 Gating
 
-When gate envelopes are present. Let $s_0, e_0$ denote gapOffEnvelope's start and end values.
+When gate envelopes are present, let $s_0, e_0$ denote gapOffEnvelope's start and end values.
 
 Counter $c$ starts at 0, $\text{muted} = \text{true}$. Per sample:
 
@@ -500,7 +500,7 @@ $$
 f \leftarrow \text{filterEnvelope.Evaluate}(N) / 65536
 $$
 
-If no modulation envelope exists, $f = 1.0$.
+If there is no modulation envelope, $f = 1.0$.
 
 #### 11.1.2 Pole Amplitude
 
@@ -590,8 +590,8 @@ $$
 
 After SOS cascade construction:
 
-- **Feedforward** (direction 0): scaled by floating-point inverse A₀ before quantization.
-- **Feedback** (direction 1): used directly.
+- Feedforward (direction 0): scaled by floating-point inverse A₀ before quantization.
+- Feedback (direction 1): used directly.
 
 All coefficients quantized to Q16: $\text{coeff}\_\text{Q16}[i] = \lfloor \text{sos}[d, i] \cdot 65536 \rfloor$. Total per direction: $2 \cdot \text{poleCount}$.
 
@@ -599,9 +599,9 @@ All coefficients quantized to Q16: $\text{coeff}\_\text{Q16}[i] = \lfloor \text{
 
 The filter processes the buffer in three phases:
 
-- **Phase 1** (samples $0$ to $K_\text{fb}-1$): limited feedback range due to insufficient history.
-- **Phase 2** (samples $K_\text{fb}$ to $N - K_\text{ff} - 1$): full access, processed in 128-sample chunks.
-- **Phase 3** (samples $N - K_\text{ff}$ to $N - 1$): truncated feedforward window.
+- Phase 1 (samples $0$ to $K_\text{fb}-1$): limited feedback range due to insufficient history.
+- Phase 2 (samples $K_\text{fb}$ to $N - K_\text{ff} - 1$): full access, processed in 128-sample chunks.
+- Phase 3 (samples $N - K_\text{ff}$ to $N - 1$): truncated feedforward window.
 
 For each sample $n$:
 
@@ -617,7 +617,7 @@ $$
 \text{output}[n] \leftarrow (\text{int})\,\text{acc}
 $$
 
-After each sample, the envelope is re-evaluated and coefficients recomputed, making the filter time-varying when a modulation envelope is present.
+After each sample, the filter re-evaluates the envelope and recomputes coefficients. This makes the filter time-varying when a modulation envelope is present.
 
 ---
 
