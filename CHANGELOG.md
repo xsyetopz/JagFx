@@ -4,6 +4,49 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.4.0]
+
+### Added
+
+- **Localized desktop UI** -- added localized UI string resources for English, German, Spanish, French, Italian, and Brazilian Portuguese, plus translation markup extensions for normal and uppercase text.
+- **Analysis graph renderer** -- added shared analysis-grid rendering for Pole/Zero and Frequency Response graphs, with a separate transition-curve grid for the Filter graph.
+- **Pole/Zero graph controls** -- added 1X/2X/4X zoom and snap-to-grid support to the Pole/Zero graph.
+- **Filter frequency scale** -- added a shared logarithmic musical-frequency scale for filter analysis views.
+- **Loop count display conversion** -- added converter support for showing infinite loop count as `0`.
+- **Justfile workflow** -- added `just` recipes for run, build, test, CSharpier format/check, desktop publish, desktop installer packaging, CLI publish, and compatibility aliases.
+
+### Changed
+
+- **Version** -- bumped JagFx packages and assemblies to 2.4.0.
+- **Desktop dependencies** -- updated Avalonia packages to 12.0.4 and added Optris Material Design icon packages.
+- **Editor visual system** -- refreshed the desktop editor with Okabe-Ito-derived color tokens, consistent square toolbar buttons, larger icon rendering, stronger disabled-state treatment, and shared theme resources.
+- **Signal-chain matrix** -- changed matrix cell labels to short descriptive names, uppercase zoom labels (`1X`, `2X`, `4X`), pixel-snapped canvas drawing, consistent selection borders, and removed unused mode-dropdown controls.
+- **Filter inspection** -- replaced raw angle/magnitude editing fields with knob controls, shortened common labels (`DUR`, `OFS`, `LVL`, `PIT`, `VOL`, `DEL`, `FBK`), and tightened sidebar layout.
+- **Partials and Echo footer** -- aligned Echo with the OSC card style, kept OSC cards visually inactive when toggled off, and centered footer knob layouts by knob count.
+- **Header and loop controls** -- unified text-field sizing and changed loop input labelling to use icon-based loop-in/loop-out affordances.
+- **True Wave preview** -- changed preview rendering to queue immediate updates during interactive edits and cache per-voice preview renders for faster live waveform feedback.
+- **Pole/Zero representation** -- changed Pole/Zero from a unit-circle view to the same logarithmic frequency ruler used by Frequency Response, with pole/zero positions derived from filter phase and magnitude data.
+- **Frequency Response rendering** -- moved the graph onto the shared analysis grid and pixel-snapped response traces.
+- **Graph drawing** -- disabled anti-aliasing on matrix envelope/analysis canvases for pixel-perfect graph lines.
+- **Native rendering** -- updated native rendering output to include the current version metadata and synthesis/rendering adjustments.
+- **Project layout** -- moved JavaRandom and SmartInt source files out of nested `src` folders and adjusted project references/tests.
+- **Documentation** -- revised README, CONTRIBUTING, PUBLISHING, synth-format spec, and agent guidance text.
+
+### Fixed
+
+- **macOS file picker focus** -- serialized native file dialogs and reactivated the owner window before opening pickers to avoid greyed-out, unclickable dialogs.
+- **Analyzer compliance** -- resolved analyzer, formatting, async, switch exhaustiveness, unused member, and naming issues without suppressions.
+- **CI formatting** -- switched CI formatting verification from `dotnet format` to the repo's CSharpier tool workflow.
+- **Whitespace and schema formatting** -- normalized formatting across JSON examples, schema files, CLI commands, tests, and helper libraries.
+- **Audio rendering** -- tightened clipping, buffer pooling, waveform table, voice synthesis, and filter processing paths used by preview/playback.
+
+### Removed
+
+- **Status bar** -- removed the desktop status bar and knob hint plumbing from the main window.
+- **Legacy Makefile** -- removed the Makefile in favor of the new `justfile`.
+- **Old custom icon theme file** -- removed the local `Icons.axaml` resource in favor of Optris icons.
+- **Old screenshot asset** -- replaced `370_cow_death.png` with `relic_unlock_spinning_hover.png`.
+
 ## [2.2.2]
 
 ### Added
