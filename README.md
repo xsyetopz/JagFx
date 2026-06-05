@@ -1,4 +1,4 @@
-# JagFx -- Jagex Synth Editor
+# Jagex Synth Editor
 
 <p align="left">
   <img
