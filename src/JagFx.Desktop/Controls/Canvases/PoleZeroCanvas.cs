@@ -72,7 +72,9 @@ public class PoleZeroCanvas : Control
         {
             UnsubscribeFilter();
             if (change.NewValue is FilterViewModel f)
+            {
                 SubscribeFilter(f);
+            }
         }
     }
 
@@ -85,7 +87,10 @@ public class PoleZeroCanvas : Control
     private void UnsubscribeFilter()
     {
         if (_subscribedFilter is null)
+        {
             return;
+        }
+
         _subscribedFilter.PropertyChanged -= OnFilterChanged;
         _subscribedFilter = null;
     }
@@ -97,17 +102,24 @@ public class PoleZeroCanvas : Control
         base.OnPointerPressed(e);
         var filter = Filter;
         if (filter is null || !filter.HasFilter)
+        {
             return;
+        }
+
         if (filter.PolePhase.IsDefault || filter.PoleMagnitude.IsDefault)
+        {
             return;
+        }
 
         var pos = e.GetPosition(this);
         var plotBounds = PlotBounds;
         if (plotBounds.Width <= 0 || plotBounds.Height <= 0)
+        {
             return;
+        }
 
         const double hitThreshold = 10;
-        double bestDist = hitThreshold;
+        var bestDist = hitThreshold;
         (int Channel, int Phase, int Index)? best = null;
 
         for (var phase = 0; phase < 2; phase++)
@@ -116,11 +128,19 @@ public class PoleZeroCanvas : Control
             {
                 var poleCount = channel == 0 ? filter.PoleCount0 : filter.PoleCount1;
                 if (filter.PolePhase[channel].IsDefault)
+                {
                     continue;
+                }
+
                 if (phase >= filter.PolePhase[channel].Length)
+                {
                     continue;
+                }
+
                 if (filter.PolePhase[channel][phase].IsDefault)
+                {
                     continue;
+                }
 
                 for (var p = 0; p < poleCount && p < filter.PolePhase[channel][phase].Length; p++)
                 {
@@ -159,16 +179,22 @@ public class PoleZeroCanvas : Control
     {
         base.OnPointerMoved(e);
         if (!_isDragging || _dragTarget is null)
+        {
             return;
+        }
 
         var filter = Filter;
         if (filter is null)
+        {
             return;
+        }
 
         var pos = e.GetPosition(this);
         var plotBounds = PlotBounds;
         if (plotBounds.Width <= 0 || plotBounds.Height <= 0)
+        {
             return;
+        }
 
         var newPhase = XToRawPhase(pos.X, plotBounds, ZoomLevel);
         var newMagnitude = YToRawMagnitude(pos.Y, plotBounds);
@@ -200,13 +226,17 @@ public class PoleZeroCanvas : Control
     private void BeginPreviewEdit()
     {
         if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+        {
             vm.BeginPreviewEdit();
+        }
     }
 
     private void EndPreviewEdit()
     {
         if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+        {
             vm.EndPreviewEdit();
+        }
     }
 
     public override void Render(DrawingContext context)
@@ -224,9 +254,14 @@ public class PoleZeroCanvas : Control
 
         var filter = Filter;
         if (filter is null || !filter.HasFilter)
+        {
             return;
+        }
+
         if (filter.PolePhase.IsDefault || filter.PoleMagnitude.IsDefault)
+        {
             return;
+        }
 
         var plotBounds = PlotBounds;
         DrawDirectionRails(context, filter, plotBounds);
@@ -241,17 +276,27 @@ public class PoleZeroCanvas : Control
             {
                 var poleCount = channel == 0 ? filter.PoleCount0 : filter.PoleCount1;
                 if (filter.PolePhase[channel].IsDefault)
+                {
                     continue;
+                }
+
                 if (phase >= filter.PolePhase[channel].Length)
+                {
                     continue;
+                }
+
                 if (filter.PolePhase[channel][phase].IsDefault)
+                {
                     continue;
+                }
 
                 for (var p = 0; p < poleCount && p < filter.PolePhase[channel][phase].Length; p++)
                 {
                     var point = PolePoint(filter, channel, phase, p, plotBounds, ZoomLevel);
                     if (_selectedPoint == (channel, phase, p))
+                    {
                         context.DrawEllipse(SelectionBrush, SelectionPen, point, 5, 5);
+                    }
 
                     if (channel == 0)
                     {
@@ -309,11 +354,19 @@ public class PoleZeroCanvas : Control
         {
             var poleCount = channel == 0 ? filter.PoleCount0 : filter.PoleCount1;
             if (filter.PolePhase[channel].IsDefault || filter.PoleMagnitude[channel].IsDefault)
+            {
                 continue;
+            }
+
             if (filter.PolePhase[channel].Length < 2 || filter.PoleMagnitude[channel].Length < 2)
+            {
                 continue;
+            }
+
             if (filter.PolePhase[channel][0].IsDefault || filter.PolePhase[channel][1].IsDefault)
+            {
                 continue;
+            }
 
             var count = Math.Min(
                 poleCount,

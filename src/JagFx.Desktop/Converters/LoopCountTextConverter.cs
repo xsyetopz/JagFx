@@ -31,12 +31,11 @@ public sealed class LoopCountTextConverter : IValueConverter
         {
             var trimmed = text.Trim();
             if (int.TryParse(trimmed, NumberStyles.Integer, culture, out var parsed))
+            {
                 return Math.Clamp(parsed, 0, 999);
+            }
         }
 
-        if (value is int i)
-            return Math.Clamp(i, 0, 999);
-
-        return 0;
+        return value is int i ? Math.Clamp(i, 0, 999) : (object)0;
     }
 }

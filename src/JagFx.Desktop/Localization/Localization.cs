@@ -42,7 +42,9 @@ public static class Localization
             string.Equals(culture.Name, requestedCulture.Name, StringComparison.OrdinalIgnoreCase)
         );
         if (exact is not null)
+        {
             return exact;
+        }
 
         var languageMatch = SupportedUiCultures.FirstOrDefault(culture =>
             string.Equals(

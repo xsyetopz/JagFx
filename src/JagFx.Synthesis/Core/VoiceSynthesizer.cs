@@ -191,7 +191,10 @@ public static class VoiceSynthesizer
         for (var sample = 0; sample < sampleCount; sample++)
         {
             if ((sample & 0xFF) == 0)
+            {
                 ct.ThrowIfCancellationRequested();
+            }
+
             var frequency = state.FrequencyBaseEval.Evaluate(sampleCount);
             var amplitude = state.AmplitudeBaseEval.Evaluate(sampleCount);
 
@@ -257,7 +260,9 @@ public static class VoiceSynthesizer
     )
     {
         if (state.FrequencyModulationRateEval == null || state.FrequencyModulationRangeEval == null)
+        {
             return (frequency, phase);
+        }
 
         var (mod, nextPhase) = EvaluateModulation(
             state.FrequencyModulationRateEval,
@@ -281,7 +286,9 @@ public static class VoiceSynthesizer
     )
     {
         if (state.AmplitudeModulationRateEval == null || state.AmplitudeModulationRangeEval == null)
+        {
             return (amplitude, phase);
+        }
 
         var (mod, nextPhase) = EvaluateModulation(
             state.AmplitudeModulationRateEval,
@@ -353,7 +360,10 @@ public static class VoiceSynthesizer
             for (var sample = 0; sample < sampleCount; sample++)
             {
                 if ((sample & 0xFF) == 0)
+                {
                     ct.ThrowIfCancellationRequested();
+                }
+
                 var stepOn = silenceEval.Evaluate(sampleCount);
                 var stepOff = durationEval.Evaluate(sampleCount);
                 var threshold = muted
@@ -399,7 +409,10 @@ public static class VoiceSynthesizer
             for (var sample = start; sample < sampleCount; sample++)
             {
                 if ((sample & 0xFF) == 0)
+                {
                     ct.ThrowIfCancellationRequested();
+                }
+
                 buffer[sample] += buffer[sample - start] * voice.Echo.FeedbackPercent / 100;
             }
         }

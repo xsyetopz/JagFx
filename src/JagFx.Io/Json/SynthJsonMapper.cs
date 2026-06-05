@@ -12,7 +12,9 @@ public static class SynthJsonMapper
 
         // Trim trailing nulls
         while (voices.Count > 0 && voices[^1] == null)
+        {
             voices.RemoveAt(voices.Count - 1);
+        }
 
         var loop = patch.Loop is { BeginMs: 0, EndMs: 0 }
             ? null
@@ -25,7 +27,9 @@ public static class SynthJsonMapper
     {
         var voices = new List<Voice?>();
         foreach (var v in json.Voices)
+        {
             voices.Add(v != null ? VoiceFromJson(v) : null);
+        }
 
         var loop =
             json.Loop != null

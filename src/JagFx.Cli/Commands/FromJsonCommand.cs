@@ -4,7 +4,7 @@ using JagFx.Io.Json;
 
 namespace JagFx.Cli.Commands;
 
-public class FromJsonCommand : Command
+internal sealed class FromJsonCommand : Command
 {
     public FromJsonCommand()
         : base("from-json", "Convert JSON to .synth binary format")
@@ -40,7 +40,9 @@ public class FromJsonCommand : Command
         }
 
         if (!CommandHelpers.ValidateInputFile(input))
+        {
             return 1;
+        }
 
         try
         {

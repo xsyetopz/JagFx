@@ -11,7 +11,9 @@ public static class AudioBufferPool
     public static int[] Acquire(int minSize)
     {
         if (minSize > AudioConstants.MaxBufferSize)
+        {
             return new int[minSize];
+        }
 
         var result = TryAcquireFromPool(minSize);
         return result ?? new int[minSize];
@@ -42,16 +44,24 @@ public static class AudioBufferPool
         while (Pool.TryDequeue(out var buf))
         {
             if (buf.Length >= minSize && result == null)
+            {
                 result = buf;
+            }
             else
+            {
                 attempts.Add(buf);
+            }
         }
 
         foreach (var buf in attempts)
+        {
             Pool.Enqueue(buf);
+        }
 
         if (result != null)
+        {
             Array.Clear(result);
+        }
 
         return result;
     }

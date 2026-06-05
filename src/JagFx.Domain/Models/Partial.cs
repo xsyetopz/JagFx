@@ -29,7 +29,7 @@ public static class WaveformExtensions
         kv => kv.Key
     );
 
-    public static Waveform FromId(int id) => (id >= 1 && id <= 4) ? (Waveform)id : Waveform.Off;
+    public static Waveform FromId(int id) => (id is >= 1 and <= 4) ? (Waveform)id : Waveform.Off;
 
     public static Waveform FromName(string name) =>
         _byName.TryGetValue(name.ToLowerInvariant(), out var w) ? w : Waveform.Off;

@@ -44,11 +44,15 @@ public readonly struct EnvelopeGeometry
         var plotH = canvasHeight - Padding * 2;
 
         if (segments.Count == 0)
+        {
             return new EnvelopeGeometry([], plotW, plotH);
+        }
 
         var totalDuration = segments.Sum(s => s.Duration);
         if (totalDuration <= 0)
+        {
             totalDuration = 1;
+        }
 
         double minLevel,
             maxLevel,
@@ -65,7 +69,9 @@ public readonly struct EnvelopeGeometry
             maxLevel = Math.Max(env.StartValue, segments.Max(s => s.TargetLevel));
             range = maxLevel - minLevel;
             if (range <= 0)
+            {
                 range = 1;
+            }
         }
 
         var points = new Point[segments.Count + 1];
@@ -98,7 +104,9 @@ public readonly struct EnvelopeGeometry
             var dx = pos.X - Points[i].X;
             var dy = pos.Y - Points[i].Y;
             if (dx * dx + dy * dy <= HitRadius * HitRadius)
+            {
                 return i - 1;
+            }
         }
 
         return -1;
@@ -118,18 +126,18 @@ public readonly struct EnvelopeGeometry
             var dy = b.Y - a.Y;
             var lenSq = dx * dx + dy * dy;
 
-            double t;
-            if (lenSq < 0.001)
-                t = 0;
-            else
-                t = Math.Clamp(((pos.X - a.X) * dx + (pos.Y - a.Y) * dy) / lenSq, 0, 1);
-
+            var t =
+                lenSq < 0.001
+                    ? 0
+                    : Math.Clamp(((pos.X - a.X) * dx + (pos.Y - a.Y) * dy) / lenSq, 0, 1);
             var projX = a.X + t * dx;
             var projY = a.Y + t * dy;
             var distSq = (pos.X - projX) * (pos.X - projX) + (pos.Y - projY) * (pos.Y - projY);
 
             if (distSq <= hitRadius * hitRadius)
+            {
                 return i;
+            }
         }
 
         return -1;
@@ -138,12 +146,10 @@ public readonly struct EnvelopeGeometry
     /// <summary>
     /// Converts a canvas X position back to cumulative time.
     /// </summary>
-    public double XToTime(double canvasX, double totalDuration, double scrollOffset)
-    {
-        if (PlotWidth <= 0 || totalDuration <= 0)
-            return 0;
-        return (canvasX + scrollOffset - Padding) / PlotWidth * totalDuration;
-    }
+    public double XToTime(double canvasX, double totalDuration, double scrollOffset) =>
+        PlotWidth <= 0 || totalDuration <= 0
+            ? 0
+            : (canvasX + scrollOffset - Padding) / PlotWidth * totalDuration;
 
     /// <summary>
     /// Adjusts the duration of the segment at segmentIndex based on the canvas X position,
@@ -161,14 +167,18 @@ public readonly struct EnvelopeGeometry
     {
         var plotW = (canvasWidth - Padding * 2) * zoomLevel;
         if (plotW <= 0 || totalDuration <= 0)
+        {
             return;
+        }
 
         var segments = env.Segments;
 
         // Cumulative time up to the segment before the dragged one
         double prevTime = 0;
         for (var i = 0; i < segmentIndex; i++)
+        {
             prevTime += segments[i].Duration;
+        }
 
         // Convert X position to time (add offset back to get plot-space coordinate)
         var newTime = (canvasX + scrollOffset - Padding) / plotW * totalDuration;
@@ -183,7 +193,10 @@ public readonly struct EnvelopeGeometry
         {
             var nextDur = segments[segmentIndex + 1].Duration - delta;
             if (nextDur < 1)
+            {
                 return;
+            }
+
             segments[segmentIndex].Duration = newDur;
             segments[segmentIndex + 1].Duration = nextDur;
         }
@@ -216,7 +229,9 @@ public readonly struct EnvelopeGeometry
             var maxLevel = Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel));
             range = maxLevel - minLevel;
             if (range <= 0)
+            {
                 range = 1;
+            }
         }
         return YToPeakLevel(canvasY, canvasHeight, minLevel, range);
     }
@@ -233,7 +248,10 @@ public readonly struct EnvelopeGeometry
     )
     {
         if (range <= 0)
+        {
             range = 1;
+        }
+
         var plotH = canvasHeight - Padding * 2;
         var normalizedY = 1.0 - (canvasY - Padding) / plotH;
         return Math.Clamp((int)(normalizedY * range + minLevel), -65535, 65535);
@@ -245,10 +263,16 @@ public readonly struct EnvelopeGeometry
     public static int SnapLevel(int raw, double minLevel, double range, int zoomLevel)
     {
         if (range <= 0)
+        {
             return raw;
+        }
+
         var step = range / (4.0 * zoomLevel);
         if (step <= 0)
+        {
             return raw;
+        }
+
         var snapped = Math.Round((raw - minLevel) / step) * step + minLevel;
         return Math.Clamp((int)snapped, -65535, 65535);
     }
@@ -259,12 +283,17 @@ public readonly struct EnvelopeGeometry
     public static int SnapDuration(int raw, double totalDuration, int zoomLevel)
     {
         if (totalDuration <= 0)
+        {
             return raw;
+        }
         // Grid has 8*zoomLevel divisions across visibleW, but plotW = visibleW * zoomLevel,
         // so the total grid cells across the plot is 8 * zoomLevel². Match snap to that.
         var step = totalDuration / (8.0 * zoomLevel * zoomLevel);
         if (step <= 0)
+        {
             return raw;
+        }
+
         var snapped = Math.Max(1, (int)(Math.Round(raw / step) * step));
         return snapped;
     }

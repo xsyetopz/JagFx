@@ -92,7 +92,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             var dirty = IsDirty ? " *" : "";
             if (string.IsNullOrEmpty(FilePath))
+            {
                 return $"JagFx: {PatchName}{dirty}";
+            }
+
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var display = FilePath.StartsWith(home, StringComparison.Ordinal)
                 ? "~" + FilePath[home.Length..]
@@ -171,10 +174,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public void EndPreviewEdit()
     {
         if (_interactiveEditDepth > 0)
+        {
             _interactiveEditDepth--;
+        }
 
         if (_interactiveEditDepth == 0)
+        {
             ScheduleRerender(immediate: true);
+        }
     }
 
     private void ScheduleRerender(bool immediate = false)
@@ -183,11 +190,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _bufferStale = true;
 
         if (!TrueWaveEnabled)
+        {
             _renderCts?.Cancel();
+        }
 
         _debounceTimer?.Dispose();
         if (!TrueWaveEnabled && _interactiveEditDepth > 0)
+        {
             return;
+        }
 
         if (immediate || TrueWaveEnabled)
         {
@@ -208,7 +219,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _ = System.Threading.Interlocked.Exchange(ref _previewRenderPending, 1);
 
         if (System.Threading.Interlocked.Exchange(ref _previewRenderQueued, 1) == 1)
+        {
             return;
+        }
 
         Dispatcher.UIThread.Post(ProcessPreviewRenderQueue, DispatcherPriority.Input);
     }
@@ -263,7 +276,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
             var buffer = await RenderPreviewAsync(model, voiceFilter, cts.Token)
                 .ConfigureAwait(true);
             if (cts.Token.IsCancellationRequested)
+            {
                 return;
+            }
 
             _singlePassDuration = buffer.Length / (double)buffer.SampleRate;
             var loopBeginMs = Patch.LoopBegin;
@@ -296,7 +311,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
                     )
                     .ConfigureAwait(true);
                 if (cts.Token.IsCancellationRequested)
+                {
                     return;
+                }
+
                 _cachedBuffer = playbackBuffer;
                 _bufferStale = false;
                 await _playback.UpdateWavAsync(playbackBuffer).ConfigureAwait(true);
@@ -314,7 +332,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             var maxMs = model.ActiveVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
             if (maxMs > 0)
+            {
                 return model with { Loop = new LoopSegment(0, maxMs) };
+            }
         }
         return model;
     }
@@ -335,11 +355,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 : [.. model.ActiveVoices.Where(v => v.Index == voiceFilter)];
 
         if (activeVoices.IsEmpty)
+        {
             return AudioBuffer.Empty(0);
+        }
 
         var maxDuration = activeVoices.Max(v => v.Voice.DurationMs + v.Voice.OffsetMs);
         if (maxDuration <= 0)
+        {
             return AudioBuffer.Empty(0);
+        }
 
         var sampleCount = (int)(maxDuration * AudioConstants.SampleRatePerMillisecond);
         var mix = new int[sampleCount];
@@ -370,17 +394,23 @@ public partial class MainViewModel : ObservableObject, IDisposable
             }
 
             if (voiceBuffer is null)
+            {
                 continue;
+            }
 
             var startOffset = (int)(voice.OffsetMs * AudioConstants.SampleRatePerMillisecond);
             for (var i = 0; i < voiceBuffer.Length; i++)
             {
                 if ((i & 0x1FF) == 0)
+                {
                     ct.ThrowIfCancellationRequested();
+                }
 
                 var pos = i + startOffset;
                 if (pos >= 0 && pos < sampleCount)
+                {
                     mix[pos] += voiceBuffer.Samples[i];
+                }
             }
         }
 
@@ -392,14 +422,18 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         var samples = buffer.Samples;
         if (samples.Length <= 0)
+        {
             return;
+        }
 
         var maxAbs = 0;
         foreach (var s in samples)
         {
             var abs = Math.Abs(s);
             if (abs > maxAbs)
+            {
                 maxAbs = abs;
+            }
         }
 
         var output = new float[samples.Length];
@@ -407,7 +441,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             var scale = 1.0f / maxAbs;
             for (var i = 0; i < samples.Length; i++)
+            {
                 output[i] = samples[i] * scale;
+            }
         }
 
         OutputSamples = output;
@@ -439,18 +475,25 @@ public partial class MainViewModel : ObservableObject, IDisposable
             env.PropertyChanged += OnNestedPropertyChanged;
             env.Segments.CollectionChanged += OnSegmentsCollectionChanged;
             foreach (var seg in env.Segments)
+            {
                 seg.PropertyChanged += OnNestedPropertyChanged;
+            }
         }
 
         voice.Filter.PropertyChanged += OnNestedPropertyChanged;
         foreach (var partial in voice.Partials)
+        {
             partial.PropertyChanged += OnNestedPropertyChanged;
+        }
     }
 
     private void UnsubscribeVoiceChanges()
     {
         if (_subscribedVoice is null)
+        {
             return;
+        }
+
         _subscribedVoice.PropertyChanged -= OnVoicePropertyChanged;
 
         foreach (var env in GetVoiceEnvelopes(_subscribedVoice))
@@ -458,12 +501,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
             env.PropertyChanged -= OnNestedPropertyChanged;
             env.Segments.CollectionChanged -= OnSegmentsCollectionChanged;
             foreach (var seg in env.Segments)
+            {
                 seg.PropertyChanged -= OnNestedPropertyChanged;
+            }
         }
 
         _subscribedVoice.Filter.PropertyChanged -= OnNestedPropertyChanged;
         foreach (var partial in _subscribedVoice.Partials)
+        {
             partial.PropertyChanged -= OnNestedPropertyChanged;
+        }
 
         _subscribedVoice = null;
     }
@@ -496,11 +543,21 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void OnSegmentsCollectionChanged(object? s, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems is not null)
+        {
             foreach (SegmentViewModel seg in e.NewItems)
+            {
                 seg.PropertyChanged += OnNestedPropertyChanged;
+            }
+        }
+
         if (e.OldItems is not null)
+        {
             foreach (SegmentViewModel seg in e.OldItems)
+            {
                 seg.PropertyChanged -= OnNestedPropertyChanged;
+            }
+        }
+
         MarkSelectedVoicePreviewDirty();
         ScheduleRerender(immediate: true);
     }
@@ -588,7 +645,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
             Patch.SelectedVoiceIndex = index;
             if (SelectedEnvelope is not null)
+            {
                 SelectEnvelope(SelectedSlot);
+            }
         }
     }
 
@@ -637,14 +696,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         SelectedSlot = slot;
 
         var (_, getter) = SignalChain.FirstOrDefault(e => e.Slot == slot);
-        if (getter is not null)
-        {
-            SelectedEnvelope = getter(voice);
-        }
-        else
-        {
-            SelectedEnvelope = null;
-        }
+        SelectedEnvelope = getter is not null ? getter(voice) : null;
 
         OnPropertyChanged(nameof(StartEndUnit));
         OnPropertyChanged(nameof(StartEndMin));
@@ -655,7 +707,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         var currentIndex = Array.FindIndex(SignalChain, e => e.Slot == SelectedSlot);
         if (currentIndex < 0)
+        {
             currentIndex = 0;
+        }
+
         var newIndex = Math.Clamp(currentIndex + offset, 0, SignalChain.Length - 1);
         SelectEnvelope(SignalChain[newIndex].Slot);
     }

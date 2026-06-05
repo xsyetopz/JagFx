@@ -52,7 +52,9 @@ public class FrequencyResponseCanvas : Control
         {
             UnsubscribeFilter();
             if (change.NewValue is FilterViewModel f)
+            {
                 SubscribeFilter(f);
+            }
         }
     }
 
@@ -65,7 +67,10 @@ public class FrequencyResponseCanvas : Control
     private void UnsubscribeFilter()
     {
         if (_subscribedFilter is null)
+        {
             return;
+        }
+
         _subscribedFilter.PropertyChanged -= OnFilterChanged;
         _subscribedFilter = null;
     }
@@ -77,7 +82,9 @@ public class FrequencyResponseCanvas : Control
         var w = Bounds.Width;
         var h = Bounds.Height;
         if (w < 1 || h < 1)
+        {
             return;
+        }
 
         context.FillRectangle(ThemeColors.CanvasBackgroundBrush, new Rect(0, 0, w, h));
         AnalysisGridRenderer.Draw(context, new Rect(0, 0, w, h), includeVertical: true);
@@ -86,7 +93,9 @@ public class FrequencyResponseCanvas : Control
 
         var filter = Filter;
         if (filter is null || !filter.HasFilter)
+        {
             return;
+        }
 
         var pointCount = Math.Max((int)w, 50);
 
@@ -101,6 +110,7 @@ public class FrequencyResponseCanvas : Control
         {
             double[] intermediateFactors = [0.25, 0.5, 0.75];
             foreach (var factor in intermediateFactors)
+            {
                 DrawResponseTrace(
                     context,
                     filter,
@@ -111,10 +121,12 @@ public class FrequencyResponseCanvas : Control
                     dbRange,
                     ThemeColors.SectionTracePen
                 );
+            }
         }
 
         // Layer 2: green combined H(z) at envelope factor 1.0 (phase 1 endpoint)
         if (hasPhase1)
+        {
             DrawResponseTrace(
                 context,
                 filter,
@@ -125,6 +137,7 @@ public class FrequencyResponseCanvas : Control
                 dbRange,
                 ThemeColors.AccentPenOnePointFive
             );
+        }
 
         // Layer 3 (front): yellow combined H(z) at envelope factor 0.0 (phase 0 endpoint)
         DrawResponseTrace(
@@ -176,7 +189,10 @@ public class FrequencyResponseCanvas : Control
             y = Math.Clamp(y, Pad, Math.Max(Pad, h - Pad));
             var pt = ThemeColors.Snap(new Point(x, y));
             if (prev.HasValue)
+            {
                 context.DrawLine(pen, prev.Value, pt);
+            }
+
             prev = pt;
         }
     }

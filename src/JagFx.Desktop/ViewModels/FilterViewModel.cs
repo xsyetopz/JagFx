@@ -61,17 +61,28 @@ public partial class FilterViewModel : ObservableObject
     public void UpdatePole(int channel, int phase, int index, int newPhase, int newMagnitude)
     {
         if (PolePhase.IsDefault || PoleMagnitude.IsDefault)
+        {
             return;
+        }
+
         if (channel < 0 || channel >= PolePhase.Length)
+        {
             return;
+        }
+
         if (PolePhase[channel].IsDefault || phase < 0 || phase >= PolePhase[channel].Length)
+        {
             return;
+        }
+
         if (
             PolePhase[channel][phase].IsDefault
             || index < 0
             || index >= PolePhase[channel][phase].Length
         )
+        {
             return;
+        }
 
         // Rebuild immutable arrays with the updated value
         var phaseArr = PolePhase[channel][phase].SetItem(index, newPhase);
@@ -96,16 +107,26 @@ public partial class FilterViewModel : ObservableObject
     private void ResizePoleArrays(int channel, int oldCount, int newCount)
     {
         if (PolePhase.IsDefault || PoleMagnitude.IsDefault)
+        {
             return;
+        }
+
         if (channel < 0 || channel >= PolePhase.Length)
+        {
             return;
+        }
+
         if (PolePhase[channel].IsDefault)
+        {
             return;
+        }
 
         for (var phase = 0; phase < PolePhase[channel].Length; phase++)
         {
             if (PolePhase[channel][phase].IsDefault)
+            {
                 continue;
+            }
 
             var phaseArr = PolePhase[channel][phase];
             var magArr = PoleMagnitude[channel][phase];
@@ -147,18 +168,24 @@ public partial class FilterViewModel : ObservableObject
         PoleControls.Clear();
 
         if (PolePhase.IsDefault || PoleMagnitude.IsDefault)
+        {
             return;
+        }
 
         for (var channel = 0; channel < 2 && channel < PolePhase.Length; channel++)
         {
             var poleCount = channel == 0 ? PoleCount0 : PoleCount1;
             if (PolePhase[channel].IsDefault || PoleMagnitude[channel].IsDefault)
+            {
                 continue;
+            }
 
             for (var phase = 0; phase < PolePhase[channel].Length; phase++)
             {
                 if (PolePhase[channel][phase].IsDefault || PoleMagnitude[channel][phase].IsDefault)
+                {
                     continue;
+                }
 
                 var count = Math.Min(
                     poleCount,
@@ -199,50 +226,39 @@ public partial class FilterViewModel : ObservableObject
 
     public Filter? ToModel()
     {
-        if (!HasFilter)
-            return null;
-
-        return new Filter(
-            [PoleCount0, PoleCount1],
-            [UnityGain0, UnityGain1],
-            PolePhase,
-            PoleMagnitude,
-            null
-        );
+        return !HasFilter
+            ? null
+            : new Filter(
+                [PoleCount0, PoleCount1],
+                [UnityGain0, UnityGain1],
+                PolePhase,
+                PoleMagnitude,
+                null
+            );
     }
 }
 
-public partial class FilterPoleViewModel : ObservableObject
+public partial class FilterPoleViewModel(
+    FilterViewModel owner,
+    int channel,
+    int phase,
+    int index,
+    int angleRaw,
+    int magnitudeRaw
+) : ObservableObject
 {
     private const double PhaseScaleFactor = 1.2207031e-4;
     private const double C1BaseFrequencyHz = 32.703197;
     private const double SampleRate = 22050.0;
 
-    private readonly FilterViewModel _owner;
+    private readonly FilterViewModel _owner = owner;
     private bool _isSyncing;
-    private int _angleRaw;
-    private int _magnitudeRaw;
+    private int _angleRaw = angleRaw;
+    private int _magnitudeRaw = magnitudeRaw;
 
-    public FilterPoleViewModel(
-        FilterViewModel owner,
-        int channel,
-        int phase,
-        int index,
-        int angleRaw,
-        int magnitudeRaw
-    )
-    {
-        _owner = owner;
-        Channel = channel;
-        Phase = phase;
-        Index = index;
-        _angleRaw = angleRaw;
-        _magnitudeRaw = magnitudeRaw;
-    }
-
-    public int Channel { get; }
-    public int Phase { get; }
-    public int Index { get; }
+    public int Channel { get; } = channel;
+    public int Phase { get; } = phase;
+    public int Index { get; } = index;
     public string ChannelLabel => Channel == 0 ? "A" : "B";
     public string PoleLabel => $"{ChannelLabel}{Phase}{Index}";
 
@@ -253,12 +269,16 @@ public partial class FilterPoleViewModel : ObservableObject
         {
             var bounded = Math.Clamp(value, 0, 65535);
             if (!SetProperty(ref _angleRaw, bounded))
+            {
                 return;
+            }
 
             OnPropertyChanged(nameof(AngleDegrees));
 
             if (!_isSyncing)
+            {
                 _owner.UpdatePole(Channel, Phase, Index, _angleRaw, _magnitudeRaw);
+            }
         }
     }
 
@@ -275,12 +295,16 @@ public partial class FilterPoleViewModel : ObservableObject
         {
             var bounded = Math.Clamp(value, 0, 65535);
             if (!SetProperty(ref _magnitudeRaw, bounded))
+            {
                 return;
+            }
 
             OnPropertyChanged(nameof(MagnitudePercent));
 
             if (!_isSyncing)
+            {
                 _owner.UpdatePole(Channel, Phase, Index, _angleRaw, _magnitudeRaw);
+            }
         }
     }
 

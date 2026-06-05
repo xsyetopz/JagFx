@@ -16,15 +16,21 @@ public static unsafe class JagFxExports
     )
     {
         if (bytesWritten is null)
+        {
             return (int)JagFxNativeStatus.InvalidArgument;
+        }
 
         *bytesWritten = 0;
 
         if (synthData is null || synthLength == 0)
+        {
             return (int)JagFxNativeStatus.InvalidArgument;
+        }
 
         if (synthLength > int.MaxValue || outputBufferLength > int.MaxValue)
+        {
             return (int)JagFxNativeStatus.InvalidArgument;
+        }
 
         var input = new ReadOnlySpan<byte>(synthData, (int)synthLength);
         var output = outputBuffer is null

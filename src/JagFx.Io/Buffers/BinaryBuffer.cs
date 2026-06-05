@@ -24,12 +24,10 @@ public class BinaryBuffer
 
     public void SetPosition(int newPosition)
     {
-        if (newPosition < 0)
-            Position = 0;
-        else if (newPosition > Data.Length)
-            Position = Data.Length;
-        else
-            Position = newPosition;
+        Position =
+            newPosition < 0 ? 0
+            : newPosition > Data.Length ? Data.Length
+            : newPosition;
     }
 
     public int Peek() => Position >= Data.Length ? 0 : Data[Position] & 0xFF;
@@ -43,7 +41,9 @@ public class BinaryBuffer
     public int ReadUInt8()
     {
         if (CheckTruncation(1))
+        {
             return 0;
+        }
 
         var unsignedByte = Data[Position] & 0xFF;
         Position++;
@@ -54,7 +54,9 @@ public class BinaryBuffer
     public int ReadInt8()
     {
         if (CheckTruncation(1))
+        {
             return 0;
+        }
 
         var signedByte = Data[Position];
         Position++;
@@ -65,7 +67,9 @@ public class BinaryBuffer
     public int ReadUInt16BigEndian()
     {
         if (CheckTruncation(2))
+        {
             return 0;
+        }
 
         var unsignedShort = BinaryPrimitives.ReadUInt16BigEndian(Data.AsSpan(Position, 2));
         Position += 2;
@@ -76,7 +80,9 @@ public class BinaryBuffer
     public int ReadUInt16LittleEndian()
     {
         if (CheckTruncation(2))
+        {
             return 0;
+        }
 
         var unsignedShort = BinaryPrimitives.ReadUInt16LittleEndian(Data.AsSpan(Position, 2));
         Position += 2;
@@ -87,7 +93,9 @@ public class BinaryBuffer
     public int ReadInt16BigEndian()
     {
         if (CheckTruncation(2))
+        {
             return 0;
+        }
 
         var signedShort = BinaryPrimitives.ReadInt16BigEndian(Data.AsSpan(Position, 2));
         Position += 2;
@@ -98,7 +106,9 @@ public class BinaryBuffer
     public int ReadInt32BigEndian()
     {
         if (CheckTruncation(4))
+        {
             return 0;
+        }
 
         var signedInt = BinaryPrimitives.ReadInt32BigEndian(Data.AsSpan(Position, 4));
         Position += 4;
@@ -169,13 +179,17 @@ public class BinaryBuffer
     private T ReadSmartBase<T>(SmartDecoder<T> decodeSmart, int oneByteThreshold)
     {
         if (Position >= Data.Length)
+        {
             return default!;
+        }
 
         var firstByte = Data[Position] & 0xFF;
         var bytesNeeded = firstByte < oneByteThreshold ? 1 : 2;
 
         if (CheckTruncation(bytesNeeded))
+        {
             return default!;
+        }
 
         var (smartValue, bytesRead) = decodeSmart(Data.AsSpan(Position));
         Position += bytesRead;

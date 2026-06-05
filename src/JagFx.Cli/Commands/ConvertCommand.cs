@@ -50,20 +50,15 @@ public static class ConvertCommand
             return 1;
         }
 
-        if (!CommandHelpers.ValidateInputFile(inputPath))
-            return 1;
-
-        if (
-            !CommandHelpers.ValidateFormats(
+        return !CommandHelpers.ValidateInputFile(inputPath) ? 1
+            : !CommandHelpers.ValidateFormats(
                 inputPath,
                 outputPath,
                 SupportedInputFormats,
                 SupportedOutputFormats
             )
-        )
-            return 1;
-
-        return ProcessConversion(inputPath, outputPath, loopCount);
+                ? 1
+            : ProcessConversion(inputPath, outputPath, loopCount);
     }
 
     private static int ProcessConversion(string inputPath, string outputPath, int loopCount)

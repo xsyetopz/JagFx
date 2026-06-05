@@ -114,7 +114,10 @@ public static class FilterResponseCalculator
     {
         r = Math.Clamp(r, 0, 0.9999);
         if (r <= 0)
+        {
             return 0;
+        }
+
         var raw = (int)(-20.0 * Math.Log10(1.0 - r) / 0.0015258789);
         return Math.Clamp(raw, 0, 65535);
     }
@@ -136,35 +139,28 @@ public static class FilterResponseCalculator
         int direction,
         int pole,
         int phaseIndex
-    )
-    {
-        if (direction >= filter.PoleMagnitude.Length || filter.PoleMagnitude[direction].IsDefault)
-            return 0;
-        if (
-            phaseIndex >= filter.PoleMagnitude[direction].Length
-            || filter.PoleMagnitude[direction][phaseIndex].IsDefault
-        )
-            return 0;
-        if (pole >= filter.PoleMagnitude[direction][phaseIndex].Length)
-            return 0;
+    ) =>
+        direction >= filter.PoleMagnitude.Length
+        || filter.PoleMagnitude[direction].IsDefault
+        || phaseIndex >= filter.PoleMagnitude[direction].Length
+        || filter.PoleMagnitude[direction][phaseIndex].IsDefault
+            ? 0
+        : pole >= filter.PoleMagnitude[direction][phaseIndex].Length ? 0
+        : filter.PoleMagnitude[direction][phaseIndex][pole];
 
-        return filter.PoleMagnitude[direction][phaseIndex][pole];
-    }
-
-    private static int GetRawPhase(FilterViewModel filter, int direction, int pole, int phaseIndex)
-    {
-        if (direction >= filter.PolePhase.Length || filter.PolePhase[direction].IsDefault)
-            return 0;
-        if (
-            phaseIndex >= filter.PolePhase[direction].Length
-            || filter.PolePhase[direction][phaseIndex].IsDefault
-        )
-            return 0;
-        if (pole >= filter.PolePhase[direction][phaseIndex].Length)
-            return 0;
-
-        return filter.PolePhase[direction][phaseIndex][pole];
-    }
+    private static int GetRawPhase(
+        FilterViewModel filter,
+        int direction,
+        int pole,
+        int phaseIndex
+    ) =>
+        direction >= filter.PolePhase.Length
+        || filter.PolePhase[direction].IsDefault
+        || phaseIndex >= filter.PolePhase[direction].Length
+        || filter.PolePhase[direction][phaseIndex].IsDefault
+            ? 0
+        : pole >= filter.PolePhase[direction][phaseIndex].Length ? 0
+        : filter.PolePhase[direction][phaseIndex][pole];
 
     private static double GetAmplitudeInterp(
         FilterViewModel filter,
@@ -202,7 +198,9 @@ public static class FilterResponseCalculator
         var poleCount = direction == 0 ? filter.PoleCount0 : filter.PoleCount1;
 
         if (poleCount == 0)
+        {
             return coeffs;
+        }
 
         var amp = GetAmplitudeInterp(filter, direction, 0, factor);
         var phase = GetPhaseInterp(filter, direction, 0, factor);
@@ -220,7 +218,9 @@ public static class FilterResponseCalculator
             coeffs[section * 2] = coeffs[section * 2 - 1] * term1 + coeffs[section * 2 - 2] * term2;
 
             for (var k = section * 2 - 1; k >= 2; k--)
+            {
                 coeffs[k] += coeffs[k - 1] * term1 + coeffs[k - 2] * term2;
+            }
 
             coeffs[1] += coeffs[0] * term1 + term2;
             coeffs[0] += term1;

@@ -68,15 +68,8 @@ public static class PatchRenderer
         return maxDuration;
     }
 
-    private static int ValidateLoopRegion(int start, int end, int length, int loopCount)
-    {
-        if (start < 0 || end > length || start >= end)
-        {
-            return 0;
-        }
-
-        return loopCount;
-    }
+    private static int ValidateLoopRegion(int start, int end, int length, int loopCount) =>
+        start < 0 || end > length || start >= end ? 0 : loopCount;
 
     private static int[] MixVoices(
         ImmutableList<(int Index, Voice Voice)> voices,
@@ -96,7 +89,10 @@ public static class PatchRenderer
             for (var i = 0; i < voiceBuffer.Length; i++)
             {
                 if ((i & 0x1FF) == 0)
+                {
                     ct.ThrowIfCancellationRequested();
+                }
+
                 var pos = i + startOffset;
                 if (pos >= 0 && pos < sampleCount)
                 {

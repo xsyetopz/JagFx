@@ -16,7 +16,9 @@ public static class JagFxNativeRenderer
         bytesWritten = 0;
 
         if (synthData.IsEmpty || loopCount < 1)
+        {
             return JagFxNativeStatus.InvalidArgument;
+        }
 
         try
         {
@@ -26,7 +28,9 @@ public static class JagFxNativeRenderer
 
             bytesWritten = pcm.Length;
             if (destination.Length < pcm.Length)
+            {
                 return JagFxNativeStatus.BufferTooSmall;
+            }
 
             pcm.CopyTo(destination);
             return JagFxNativeStatus.Success;

@@ -22,9 +22,8 @@ public class CollapsibleSection : HeaderedContentControl
     {
         var headerHeight = 20.0;
 
-        if (!IsExpanded)
-            return new Size(availableSize.Width, headerHeight);
-
-        return base.MeasureOverride(availableSize);
+        return !IsExpanded
+            ? new Size(availableSize.Width, headerHeight)
+            : base.MeasureOverride(availableSize);
     }
 }

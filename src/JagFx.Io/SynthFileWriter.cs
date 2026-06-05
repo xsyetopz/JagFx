@@ -159,7 +159,9 @@ public static class SynthFileWriter
             for (var pole = 0; pole < poles; pole++)
             {
                 if (modulationMask != 0 && (modulationMask & (1 << (channel * 4 + pole))) == 0)
+                {
                     continue;
+                }
 
                 buffer.WriteUInt16BigEndian(filter.PolePhase[channel][phase][pole]);
                 buffer.WriteUInt16BigEndian(filter.PoleMagnitude[channel][phase][pole]);

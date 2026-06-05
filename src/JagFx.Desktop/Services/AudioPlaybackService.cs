@@ -99,11 +99,9 @@ public class AudioPlaybackService : IDisposable
 
     private static Process? StartAudioProcess(string path)
     {
-        if (OperatingSystem.IsMacOS())
-            return Process.Start("afplay", path);
-        if (OperatingSystem.IsLinux())
-            return Process.Start("aplay", path);
-        return Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+        return OperatingSystem.IsMacOS() ? Process.Start("afplay", path)
+            : OperatingSystem.IsLinux() ? Process.Start("aplay", path)
+            : Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
     }
 
     public void Dispose()

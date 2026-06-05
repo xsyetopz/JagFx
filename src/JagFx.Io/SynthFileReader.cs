@@ -33,7 +33,9 @@ public static class SynthFileReader
     private static void ValidateInput(byte[] data)
     {
         if (data.Length == 0)
+        {
             return;
+        }
 
         if (IsGitLfsPointer(data))
         {
@@ -46,7 +48,9 @@ public static class SynthFileReader
     private static bool IsGitLfsPointer(byte[] data)
     {
         if (data.Length < GitLfsPointerPrefix.Length)
+        {
             return false;
+        }
 
         var prefix = Encoding.ASCII.GetString(data, 0, GitLfsPointerPrefix.Length);
         return prefix == GitLfsPointerPrefix;
@@ -68,9 +72,11 @@ public static class SynthFileReader
                 : new LoopSegment(0, 0);
 
             if (_buf.IsTruncated)
+            {
                 _warnings.Add(
                     $"File truncated at byte offset {_buf.Position}; loop parameters may be incomplete or invalid"
                 );
+            }
 
             return new Patch(voices, loopParams, [.. _warnings]);
         }
@@ -95,7 +101,10 @@ public static class SynthFileReader
                         {
                             voices.Add(null);
                             for (var j = i + 1; j < AudioConstants.MaxVoices; j++)
+                            {
                                 voices.Add(null);
+                            }
+
                             break;
                         }
                         _buf.Skip(1);
@@ -154,8 +163,7 @@ public static class SynthFileReader
             var waveformId = _buf.ReadUInt8();
             var startValue = _buf.ReadInt32BigEndian();
             var endValue = _buf.ReadInt32BigEndian();
-            var waveform =
-                (waveformId >= 0 && waveformId <= 4) ? (Waveform)waveformId : Waveform.Off;
+            var waveform = (waveformId is >= 0 and <= 4) ? (Waveform)waveformId : Waveform.Off;
             var segmentLength = _buf.ReadUInt8();
             return new Envelope(waveform, startValue, endValue, ReadSegmentPairs(segmentLength));
         }
@@ -191,11 +199,15 @@ public static class SynthFileReader
             while (partials.Count < AudioConstants.MaxOscillators)
             {
                 if (_buf.Remaining == 0)
+                {
                     break;
+                }
 
                 var volume = _buf.ReadUSmart();
                 if (volume == 0)
+                {
                     break;
+                }
 
                 var pitchOffset = _buf.ReadSmart();
                 var startDelay = _buf.ReadUSmart();
@@ -211,9 +223,14 @@ public static class SynthFileReader
         private Filter? ReadFilter()
         {
             if (_buf.Remaining == 0)
+            {
                 return null;
+            }
+
             if (!DetectFilterPresent())
+            {
                 return null;
+            }
 
             var (poleCount0, poleCount1) = ReadFilterHeader();
             var unityGain0 = _buf.ReadUInt16BigEndian();
@@ -282,10 +299,16 @@ public static class SynthFileReader
                         }
 
                         if (_buf.Remaining < 2)
+                        {
                             return (frequencies, magnitudes);
+                        }
+
                         frequencies[channel, phase, p] = _buf.ReadUInt16BigEndian();
                         if (_buf.Remaining < 2)
+                        {
                             return (frequencies, magnitudes);
+                        }
+
                         magnitudes[channel, phase, p] = _buf.ReadUInt16BigEndian();
                     }
                 }
@@ -308,9 +331,7 @@ public static class SynthFileReader
                 _buf.Skip(1);
                 return false;
             }
-            if (IsAmbiguousFilterByte(peeked) && LooksLikeEnvelope())
-                return false;
-            return true;
+            return !IsAmbiguousFilterByte(peeked) || !LooksLikeEnvelope();
         }
 
         private bool IsAmbiguousFilterByte(int b)
@@ -328,15 +349,17 @@ public static class SynthFileReader
             var b4 = _buf.PeekAt(4);
 
             var possibleStart = (b1 << 24) | (b2 << 16) | (b3 << 8) | b4;
-            if (possibleStart < -EnvelopeStartThreshold || possibleStart > EnvelopeStartThreshold)
+            if (possibleStart is < (-EnvelopeStartThreshold) or > EnvelopeStartThreshold)
+            {
                 return false;
+            }
 
             var possibleSegCount = _buf.PeekAt(SegCountOffset);
             return possibleSegCount <= MaxReasonableSegCount;
         }
 
         private static bool IsValidWaveform(int waveformId) =>
-            waveformId >= MinWaveformId && waveformId <= MaxWaveformId;
+            waveformId is >= MinWaveformId and <= MaxWaveformId;
 
         private static Filter BuildFilter(
             int poleCount0,
@@ -427,16 +450,14 @@ public static class SynthFileReader
 
         private static Envelope CreateEnvelopeWithDuration(Envelope env, int duration)
         {
-            if (env.Segments.Count == 0 && env.StartValue != env.EndValue)
-            {
-                return new Envelope(
+            return env.Segments.Count == 0 && env.StartValue != env.EndValue
+                ? new Envelope(
                     env.Waveform,
                     env.StartValue,
                     env.EndValue,
                     [new Segment(duration, env.EndValue)]
-                );
-            }
-            return env;
+                )
+                : env;
         }
     }
 }

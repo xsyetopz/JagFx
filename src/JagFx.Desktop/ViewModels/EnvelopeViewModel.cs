@@ -144,6 +144,8 @@ public partial class EnvelopeViewModel : ObservableObject
     private void ReindexSegments()
     {
         for (var i = 0; i < Segments.Count; i++)
+        {
             Segments[i].Index = i;
+        }
     }
 }

@@ -11,7 +11,9 @@ public partial class HeaderBar : UserControl
         BtnLoop.Click += (_, _) =>
         {
             if (DataContext is MainViewModel vm)
+            {
                 vm.IsLooping = !vm.IsLooping;
+            }
         };
     }
 }

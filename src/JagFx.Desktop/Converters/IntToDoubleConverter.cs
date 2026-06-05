@@ -7,12 +7,8 @@ public class IntToDoubleConverter : IValueConverter
 {
     public static readonly IntToDoubleConverter Instance = new();
 
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        if (value is int i)
-            return (double)i;
-        return 0.0;
-    }
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is int i ? (double)i : (object)0.0;
 
     public object ConvertBack(
         object? value,
@@ -21,10 +17,8 @@ public class IntToDoubleConverter : IValueConverter
         CultureInfo culture
     )
     {
-        if (value is double d)
-            return (int)Math.Round(d);
-        if (value is decimal dec)
-            return (int)Math.Round((double)dec);
-        return 0;
+        return value is double d ? (int)Math.Round(d)
+            : value is decimal dec ? (int)Math.Round((double)dec)
+            : (object)0;
     }
 }

@@ -161,14 +161,13 @@ public class EnvelopeCanvas : Control
         {
             UnsubscribeEnvelope();
             if (change.NewValue is EnvelopeViewModel env)
+            {
                 SubscribeEnvelope(env);
+            }
         }
         else if (change.Property == ZoomLevelProperty)
         {
-            if (ZoomLevel == 1)
-                ScrollOffset = 0;
-            else
-                ScrollOffset = Math.Clamp(ScrollOffset, 0, MaxScrollOffset);
+            ScrollOffset = ZoomLevel == 1 ? 0 : Math.Clamp(ScrollOffset, 0, MaxScrollOffset);
         }
     }
 
@@ -180,28 +179,46 @@ public class EnvelopeCanvas : Control
         env.Segments.CollectionChanged += OnSegmentsCollectionChanged;
         env.PropertyChanged += OnEnvelopeVmChanged;
         foreach (var seg in env.Segments)
+        {
             seg.PropertyChanged += OnSegmentChanged;
+        }
     }
 
     private void UnsubscribeEnvelope()
     {
         if (_subscribedEnvelope is null)
+        {
             return;
+        }
+
         _subscribedEnvelope.Segments.CollectionChanged -= OnSegmentsCollectionChanged;
         _subscribedEnvelope.PropertyChanged -= OnEnvelopeVmChanged;
         foreach (var seg in _subscribedEnvelope.Segments)
+        {
             seg.PropertyChanged -= OnSegmentChanged;
+        }
+
         _subscribedEnvelope = null;
     }
 
     private void OnSegmentsCollectionChanged(object? s, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems is not null)
+        {
             foreach (SegmentViewModel seg in e.NewItems)
+            {
                 seg.PropertyChanged += OnSegmentChanged;
+            }
+        }
+
         if (e.OldItems is not null)
+        {
             foreach (SegmentViewModel seg in e.OldItems)
+            {
                 seg.PropertyChanged -= OnSegmentChanged;
+            }
+        }
+
         InvalidateVisual();
     }
 
@@ -221,18 +238,26 @@ public class EnvelopeCanvas : Control
         context.FillRectangle(ThemeColors.CanvasBackgroundBrush, new Rect(0, 0, w, h));
 
         if (IsSelected)
+        {
             context.DrawRectangle(null, ThemeColors.AccentPen1, new Rect(0.5, 0.5, w - 1, h - 1));
+        }
 
         using var clip = context.PushClip(new Rect(0, 0, w, h));
 
         if (UseAnalysisGrid)
+        {
             AnalysisGridRenderer.Draw(context, new Rect(0, 0, w, h), includeVertical: false);
+        }
         else
+        {
             DrawGrid(context, w, h, ZoomLevel, ScrollOffset);
+        }
 
         var env = Envelope;
         if (env is null || env.Segments.Count == 0)
+        {
             return;
+        }
 
         var geometry = EnvelopeGeometry.Compute(env, w, h, ZoomLevel, ScrollOffset, DisplayMode);
         DrawEnvelope(context, geometry);
@@ -265,7 +290,10 @@ public class EnvelopeCanvas : Control
         {
             var x = ThemeColors.Snap(EnvelopeGeometry.Padding + i * step - offsetMod);
             if (x < EnvelopeGeometry.Padding || x > w - EnvelopeGeometry.Padding)
+            {
                 continue;
+            }
+
             context.DrawLine(ThemeColors.GridFaintPen, new Point(x, 0), new Point(x, h));
         }
     }
@@ -276,10 +304,14 @@ public class EnvelopeCanvas : Control
         var linePen = new Pen(lineBrush, 1);
         var points = new Point[geo.Points.Length];
         for (var i = 0; i < geo.Points.Length; i++)
+        {
             points[i] = ThemeColors.Snap(geo.Points[i]);
+        }
 
         for (var i = 0; i < points.Length - 1; i++)
+        {
             context.DrawLine(linePen, points[i], points[i + 1]);
+        }
 
         const double s = 3;
         const double selR = 5;
@@ -314,11 +346,15 @@ public class EnvelopeCanvas : Control
     {
         base.OnPointerPressed(e);
         if (IsThumbnail)
+        {
             return;
+        }
 
         var env = Envelope;
         if (env is null || env.Segments.Count == 0)
+        {
             return;
+        }
 
         var pos = e.GetPosition(this);
         var props = e.GetCurrentPoint(this).Properties;
@@ -346,9 +382,13 @@ public class EnvelopeCanvas : Control
         }
 
         if (hitIndex >= 0)
+        {
             HandleDragStart(e, env, hitIndex);
+        }
         else if (ZoomLevel > 1)
+        {
             HandlePanStart(e, pos);
+        }
         else
         {
             _selectedIndex = -1;
@@ -403,11 +443,16 @@ public class EnvelopeCanvas : Control
             _dragRange =
                 Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel)) - _dragMinLevel;
             if (_dragRange <= 0)
+            {
                 _dragRange = 1;
+            }
         }
         _dragTotalDuration = env.Segments.Sum(s => s.Duration);
         if (_dragTotalDuration <= 0)
+        {
             _dragTotalDuration = 1;
+        }
+
         e.Pointer.Capture(this);
         e.Handled = true;
     }
@@ -436,7 +481,9 @@ public class EnvelopeCanvas : Control
         {
             var env = Envelope;
             if (env is null || _dragIndex >= env.Segments.Count)
+            {
                 return;
+            }
 
             var pos = e.GetPosition(this);
             var level = EnvelopeGeometry.YToPeakLevel(
@@ -446,7 +493,10 @@ public class EnvelopeCanvas : Control
                 _dragRange
             );
             if (IsSnapEnabled)
+            {
                 level = EnvelopeGeometry.SnapLevel(level, _dragMinLevel, _dragRange, ZoomLevel);
+            }
+
             env.Segments[_dragIndex].TargetLevel = level;
             EnvelopeGeometry.AdjustDuration(
                 pos.X,
@@ -501,12 +551,10 @@ public class EnvelopeCanvas : Control
                     DisplayMode
                 );
 
-                if (geo.HitTest(pos) >= 0)
-                    Cursor = new Cursor(StandardCursorType.Hand);
-                else if (geo.LineHitTest(pos) >= 0)
-                    Cursor = new Cursor(StandardCursorType.Cross);
-                else
-                    Cursor = Cursor.Default;
+                Cursor =
+                    geo.HitTest(pos) >= 0 ? new Cursor(StandardCursorType.Hand)
+                    : geo.LineHitTest(pos) >= 0 ? new Cursor(StandardCursorType.Cross)
+                    : Cursor.Default;
             }
             else
             {
@@ -541,7 +589,9 @@ public class EnvelopeCanvas : Control
     {
         base.OnPointerWheelChanged(e);
         if (IsThumbnail)
+        {
             return;
+        }
 
         ZoomLevel = CanvasInteractionHelper.StepZoom(ZoomLevel, e.Delta.Y);
 
@@ -560,9 +610,14 @@ public class EnvelopeCanvas : Control
         {
             var env = Envelope;
             if (env is null || _selectedIndex < 0 || _selectedIndex >= env.Segments.Count)
+            {
                 return;
+            }
+
             if (env.Segments.Count <= 1)
+            {
                 return;
+            }
 
             env.RemoveSegmentAt(_selectedIndex);
             _selectedIndex = Math.Min(_selectedIndex, env.Segments.Count - 1);
@@ -629,7 +684,9 @@ public class EnvelopeCanvas : Control
         }
 
         if (menu.Items.Count > 0)
+        {
             menu.ShowAt(this, true);
+        }
     }
 
     #endregion
@@ -645,14 +702,18 @@ public class EnvelopeCanvas : Control
     {
         var totalDuration = env.Segments.Sum(s => s.Duration);
         if (totalDuration <= 0)
+        {
             return;
+        }
 
         var clickTime = geo.XToTime(pos.X, totalDuration, ScrollOffset);
 
         // Calculate cumulative time up to the start of the segment at lineIndex
         double segStartTime = 0;
         for (var i = 0; i < lineIndex; i++)
+        {
             segStartTime += env.Segments[i].Duration;
+        }
 
         var seg = env.Segments[lineIndex];
         var segEndTime = segStartTime + seg.Duration;
@@ -687,18 +748,24 @@ public class EnvelopeCanvas : Control
     private void BeginPreviewEdit()
     {
         if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+        {
             vm.BeginPreviewEdit();
+        }
     }
 
     private void EndPreviewEdit()
     {
         if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+        {
             vm.EndPreviewEdit();
+        }
     }
 
     private void RequestPreviewUpdate(bool immediate = false)
     {
         if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+        {
             vm.RequestPreviewUpdate(immediate);
+        }
     }
 }

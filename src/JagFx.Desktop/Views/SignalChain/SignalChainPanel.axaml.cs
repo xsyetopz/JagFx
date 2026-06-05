@@ -87,7 +87,9 @@ public partial class SignalChainPanel : UserControl
 
                 var canvas = CreateSlotCanvas(slot, slotType, color);
                 if (canvas is null)
+                {
                     continue;
+                }
 
                 switch (canvas)
                 {
@@ -175,10 +177,7 @@ public partial class SignalChainPanel : UserControl
             Cursor = new Cursor(StandardCursorType.Hand),
         };
 
-        container.PointerPressed += (_, _) =>
-        {
-            _subscribedVm?.SelectEnvelope(slot);
-        };
+        container.PointerPressed += (_, _) => _subscribedVm?.SelectEnvelope(slot);
 
         Grid.SetRow(container, row);
         Grid.SetColumn(container, col);
@@ -230,7 +229,9 @@ public partial class SignalChainPanel : UserControl
         if (slotType != SlotType.Bode)
         {
             if (slot == SignalChainSlot.Output)
+            {
                 toolbar.Children.Add(CreateTrueWaveToggle());
+            }
 
             var zoomGroup = CreateZoomGroup(canvas);
             toolbar.Children.Add(zoomGroup);
@@ -264,22 +265,28 @@ public partial class SignalChainPanel : UserControl
                 Theme = (ControlTheme?)Application.Current!.FindResource("JagCellToggle"),
                 IsChecked = level == 1,
                 Tag = level,
+                Content = $"{level}X",
             };
-            btn.Content = $"{level}X";
 
             if (level == 1)
+            {
                 activeToggle = btn;
+            }
 
             btn.Click += (s, _) =>
             {
                 if (s is not ToggleButton toggled)
+                {
                     return;
+                }
 
                 // Uncheck siblings
                 foreach (var child in group.Children)
                 {
                     if (child is ToggleButton tb && tb != toggled)
+                    {
                         tb.IsChecked = false;
+                    }
                 }
 
                 // Ensure at least one is checked
@@ -305,13 +312,17 @@ public partial class SignalChainPanel : UserControl
                 _ => false,
             };
             if (!isZoomProp)
+            {
                 return;
+            }
 
             var newZoom = (int)(e.NewValue ?? 1);
             foreach (var child in groupRef.Children)
             {
                 if (child is ToggleButton tb)
+                {
                     tb.IsChecked = (int)(tb.Tag ?? 1) == newZoom;
+                }
             }
         };
 
@@ -377,7 +388,10 @@ public partial class SignalChainPanel : UserControl
         btn.Click += (s, _) =>
         {
             if (s is not ToggleButton toggled)
+            {
                 return;
+            }
+
             switch (canvas)
             {
                 case EnvelopeCanvas ec:
@@ -439,22 +453,37 @@ public partial class SignalChainPanel : UserControl
     private void OnPatchPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(PatchViewModel.SelectedVoice) && _subscribedVm is not null)
+        {
             BindAll(_subscribedVm);
+        }
     }
 
     private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (_subscribedVm is null)
+        {
             return;
+        }
 
         if (e.PropertyName == nameof(MainViewModel.SelectedSlot))
+        {
             UpdateSelection(_subscribedVm.SelectedSlot);
+        }
+
         if (e.PropertyName == nameof(MainViewModel.OutputSamples) && _outCanvas is not null)
+        {
             _outCanvas.Samples = _subscribedVm.OutputSamples;
+        }
+
         if (e.PropertyName == nameof(MainViewModel.PlaybackPosition) && _outCanvas is not null)
+        {
             _outCanvas.PlaybackPosition = _subscribedVm.PlaybackPosition;
+        }
+
         if (e.PropertyName == nameof(MainViewModel.GridMode))
+        {
             UpdateGridMode(_subscribedVm.GridMode);
+        }
     }
 
     private void BindAll(MainViewModel vm)
@@ -470,7 +499,10 @@ public partial class SignalChainPanel : UserControl
                     e.Slot == envSlot.Slot
                 );
                 if (getter is null)
+                {
                     continue;
+                }
+
                 var envelope = getter(voice);
                 envSlot.Canvas.Envelope = envelope;
                 envelope.PropertyChanged += OnEnvelopePropertyChanged;
@@ -505,21 +537,30 @@ public partial class SignalChainPanel : UserControl
         foreach (var slot in _slots)
         {
             if (slot is EnvelopeSlot envSlot && envSlot.Canvas.Envelope is { } env)
+            {
                 env.PropertyChanged -= OnEnvelopePropertyChanged;
+            }
         }
     }
 
     private void OnEnvelopePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(EnvelopeViewModel.IsEmpty))
+        {
             return;
+        }
+
         if (sender is not EnvelopeViewModel env)
+        {
             return;
+        }
 
         foreach (var slot in _slots)
         {
             if (slot is EnvelopeSlot envSlot && ReferenceEquals(envSlot.Canvas.Envelope, env))
+            {
                 UpdateDimming(envSlot, env);
+            }
         }
     }
 
@@ -558,30 +599,46 @@ public partial class SignalChainPanel : UserControl
                 foreach (var slot in _slots)
                 {
                     if (FilterCells.Contains(slot.Slot))
+                    {
                         slot.Container.Width = double.NaN;
+                    }
                 }
                 for (var i = 0; i < 3; i++)
+                {
                     colDefs[i].Width = new GridLength(1, GridUnitType.Star);
+                }
+
                 colDefs[3].Width = new GridLength(0);
                 colDefs[3].MaxWidth = double.PositiveInfinity;
                 for (var i = 0; i < 3; i++)
+                {
                     rowDefs[i].Height = new GridLength(1, GridUnitType.Star);
+                }
+
                 MatrixGrid.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
                 break;
 
             case GridMode.Filter:
                 // Only col 3 visible (stacked vertically in 3 rows)
                 for (var i = 0; i < 3; i++)
+                {
                     colDefs[i].Width = new GridLength(0);
+                }
+
                 colDefs[3].Width = GridLength.Auto;
                 colDefs[3].MaxWidth = double.PositiveInfinity;
                 for (var i = 0; i < 3; i++)
+                {
                     rowDefs[i].Height = new GridLength(1, GridUnitType.Star);
+                }
+
                 MatrixGrid.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
                 foreach (var slot in _slots)
                 {
                     if (FilterCells.Contains(slot.Slot))
+                    {
                         slot.Container.Width = 300;
+                    }
                 }
                 break;
 
@@ -590,7 +647,9 @@ public partial class SignalChainPanel : UserControl
                 foreach (var slot in _slots)
                 {
                     if (FilterCells.Contains(slot.Slot))
+                    {
                         slot.Container.Width = double.NaN;
+                    }
                 }
                 colDefs[0].Width = new GridLength(1, GridUnitType.Star);
                 colDefs[1].Width = new GridLength(1, GridUnitType.Star);
@@ -598,7 +657,10 @@ public partial class SignalChainPanel : UserControl
                 colDefs[3].Width = new GridLength(1, GridUnitType.Star);
                 colDefs[3].MaxWidth = double.PositiveInfinity;
                 for (var i = 0; i < 3; i++)
+                {
                     rowDefs[i].Height = new GridLength(1, GridUnitType.Star);
+                }
+
                 MatrixGrid.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
                 break;
 

@@ -22,13 +22,17 @@ public partial class MainWindow : Window
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
         if (DataContext is not MainViewModel vm)
+        {
             return;
+        }
 
         vm.RequestOpenDialog = async () =>
         {
             var path = await FileDialogService.OpenSynthFileAsync(this).ConfigureAwait(true);
             if (path is not null)
+            {
                 _ = vm.TryLoadFromPath(path);
+            }
         };
 
         vm.RequestSaveAsDialog = async () =>
@@ -37,12 +41,18 @@ public partial class MainWindow : Window
                 .SaveSynthFileAsync(this, vm.PatchName)
                 .ConfigureAwait(true);
             if (path is null)
+            {
                 return;
+            }
 
             if (path.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
+            {
                 await vm.ExportToPathAsync(path).ConfigureAwait(true);
+            }
             else
+            {
                 vm.SaveToPath(path);
+            }
         };
 
         // Select first envelope by default
@@ -52,11 +62,15 @@ public partial class MainWindow : Window
     private void OnWindowKeyDown(object? sender, KeyEventArgs e)
     {
         if (DataContext is not MainViewModel vm)
+        {
             return;
+        }
 
         // Don't handle shortcuts when a text input is focused
         if (FocusManager?.GetFocusedElement() is TextBox or NumericUpDown)
+        {
             return;
+        }
 
         if (e.Key == Key.Space)
         {

@@ -74,10 +74,7 @@ public class WaveformCanvas : Control
         base.OnPropertyChanged(change);
         if (change.Property == ZoomLevelProperty)
         {
-            if (ZoomLevel == 1)
-                ScrollOffset = 0;
-            else
-                ScrollOffset = Math.Clamp(ScrollOffset, 0, MaxScrollOffset);
+            ScrollOffset = ZoomLevel == 1 ? 0 : Math.Clamp(ScrollOffset, 0, MaxScrollOffset);
         }
     }
 
@@ -93,7 +90,9 @@ public class WaveformCanvas : Control
 
         var samples = Samples;
         if (samples is null || samples.Length == 0)
+        {
             return;
+        }
 
         using var clip = context.PushClip(new Rect(0, 0, w, h));
 
@@ -104,28 +103,40 @@ public class WaveformCanvas : Control
 
         // Min/max per column rendering
         var pen = ThemeColors.WaveformPen;
-        for (int px = 0; px < (int)w; px++)
+        for (var px = 0; px < (int)w; px++)
         {
             var sampleStart = (int)((px + offset) * step);
             var sampleEnd = (int)((px + 1 + offset) * step);
             sampleEnd = Math.Min(sampleEnd, samples.Length);
             if (sampleStart >= samples.Length)
+            {
                 break;
+            }
+
             if (sampleStart < 0)
+            {
                 continue;
+            }
 
             float min = float.MaxValue,
                 max = float.MinValue;
-            for (int j = sampleStart; j < sampleEnd; j++)
+            for (var j = sampleStart; j < sampleEnd; j++)
             {
                 if (samples[j] < min)
+                {
                     min = samples[j];
+                }
+
                 if (samples[j] > max)
+                {
                     max = samples[j];
+                }
             }
 
             if (min == float.MaxValue)
+            {
                 continue;
+            }
 
             var x = ThemeColors.Snap(px);
             var yMin = ThemeColors.Snap(cy - min * scale);
@@ -135,7 +146,7 @@ public class WaveformCanvas : Control
 
         // Playback position marker
         var pos = PlaybackPosition;
-        if (pos > 0 && pos <= 1)
+        if (pos is > 0 and <= 1)
         {
             var px = pos * effectiveW - offset;
             if (px >= 0 && px <= w)
@@ -156,7 +167,9 @@ public class WaveformCanvas : Control
     {
         base.OnPointerPressed(e);
         if (ZoomLevel <= 1)
+        {
             return;
+        }
 
         _interaction.BeginPan(e.GetPosition(this).X, ScrollOffset);
         e.Pointer.Capture(this);
@@ -167,7 +180,9 @@ public class WaveformCanvas : Control
     {
         base.OnPointerMoved(e);
         if (!_interaction.IsPanning)
+        {
             return;
+        }
 
         ScrollOffset = _interaction.ComputePanOffset(e.GetPosition(this).X, MaxScrollOffset);
         e.Handled = true;

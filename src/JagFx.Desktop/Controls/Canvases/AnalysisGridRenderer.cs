@@ -41,7 +41,9 @@ internal static class AnalysisGridRenderer
     )
     {
         if (bounds.Width < 1 || bounds.Height < 1)
+        {
             return;
+        }
 
         if (includeVertical)
         {
@@ -176,14 +178,19 @@ internal static class AnalysisGridRenderer
         )
         {
             if (!shouldDraw(semitone))
+            {
                 continue;
+            }
 
             var frequency = FilterFrequencyScale.SemitoneToFrequency(semitone);
             if (
-                frequency < FilterFrequencyScale.MinimumFrequencyHz
-                || frequency > FilterFrequencyScale.MaximumFrequencyHz
+                frequency
+                is < FilterFrequencyScale.MinimumFrequencyHz
+                    or > FilterFrequencyScale.MaximumFrequencyHz
             )
+            {
                 continue;
+            }
 
             DrawVerticalLine(context, bounds, FrequencyToX(bounds, frequency, zoomLevel), pen);
         }
@@ -198,14 +205,19 @@ internal static class AnalysisGridRenderer
         )
         {
             if (!FilterFrequencyScale.IsAccidentalSemitone(semitone))
+            {
                 continue;
+            }
 
             var frequency = FilterFrequencyScale.SemitoneToFrequency(semitone);
             if (
-                frequency < FilterFrequencyScale.MinimumFrequencyHz
-                || frequency > FilterFrequencyScale.MaximumFrequencyHz
+                frequency
+                is < FilterFrequencyScale.MinimumFrequencyHz
+                    or > FilterFrequencyScale.MaximumFrequencyHz
             )
+            {
                 continue;
+            }
 
             yield return FrequencyToX(bounds, frequency, zoomLevel);
         }
@@ -244,7 +256,9 @@ internal static class AnalysisGridRenderer
 
             var alpha = (byte)Math.Round(color.A * opacity);
             if (alpha == 0)
+            {
                 continue;
+            }
 
             var brush = new SolidColorBrush(
                 Color.FromArgb(alpha, color.R, color.G, color.B)

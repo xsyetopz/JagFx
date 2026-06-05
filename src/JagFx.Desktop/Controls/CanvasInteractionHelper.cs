@@ -31,12 +31,12 @@ public sealed class CanvasInteractionHelper
     {
         var index = Array.IndexOf(ZoomLevels, currentZoom);
         if (index < 0)
+        {
             index = 0;
+        }
 
-        if (wheelDelta > 0 && index < ZoomLevels.Length - 1)
-            return ZoomLevels[index + 1];
-        if (wheelDelta < 0 && index > 0)
-            return ZoomLevels[index - 1];
-        return currentZoom;
+        return wheelDelta > 0 && index < ZoomLevels.Length - 1 ? ZoomLevels[index + 1]
+            : wheelDelta < 0 && index > 0 ? ZoomLevels[index - 1]
+            : currentZoom;
     }
 }

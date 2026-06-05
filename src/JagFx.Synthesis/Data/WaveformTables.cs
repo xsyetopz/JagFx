@@ -76,10 +76,8 @@ public static class WaveformTables
 
     public static double GetPitchMultiplier(int decicents)
     {
-        if (decicents >= -SemitoneRange && decicents <= SemitoneRange)
-        {
-            return SemitoneCache[decicents + SemitoneRange];
-        }
-        return Math.Pow(DecicentRatio, decicents);
+        return decicents is >= (-SemitoneRange) and <= SemitoneRange
+            ? SemitoneCache[decicents + SemitoneRange]
+            : Math.Pow(DecicentRatio, decicents);
     }
 }

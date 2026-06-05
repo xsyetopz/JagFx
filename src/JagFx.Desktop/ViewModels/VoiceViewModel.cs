@@ -92,21 +92,31 @@ public partial class VoiceViewModel : ObservableObject
         }
 
         if (voice.GapOffEnvelope is { } gapOff)
+        {
             GapOff.Load(gapOff);
+        }
 
         if (voice.GapOnEnvelope is { } gapOn)
+        {
             GapOn.Load(gapOn);
+        }
 
         Filter.Load(voice.Filter);
         if (voice.Filter?.ModulationEnvelope is { } modEnv)
+        {
             FilterEnvelope.Load(modEnv);
+        }
 
         for (var i = 0; i < AudioConstants.MaxOscillators; i++)
         {
             if (i < voice.Partials.Count)
+            {
                 Partials[i].Load(voice.Partials[i]);
+            }
             else
+            {
                 Partials[i].Clear();
+            }
         }
     }
 
@@ -124,13 +134,17 @@ public partial class VoiceViewModel : ObservableObject
         Filter.Clear();
 
         foreach (var p in Partials)
+        {
             p.Clear();
+        }
     }
 
     public Voice? ToModel()
     {
         if (!IsEnabled)
+        {
             return null;
+        }
 
         var activePartials = System.Collections.Immutable.ImmutableList.CreateRange(
             Partials.Where(p => p.IsActive).Select(p => p.ToModel())

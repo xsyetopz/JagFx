@@ -34,9 +34,13 @@ public static class AudioMath
         for (var i = 0; i < bufferEnd; i++)
         {
             if (buffer[i] < short.MinValue)
+            {
                 buffer[i] = short.MinValue;
+            }
             else if (buffer[i] > short.MaxValue)
+            {
                 buffer[i] = short.MaxValue;
+            }
         }
     }
 
@@ -46,14 +50,8 @@ public static class AudioMath
         for (var i = 0; i < bufferEnd; i++)
         {
             var sample = buffer[i];
-            if ((sample + byte.MinValue & -byte.MaxValue - 1) != 0)
-            {
-                buffer[i] = (sample >> 31) ^ 127;
-            }
-            else
-            {
-                buffer[i] = sample;
-            }
+            buffer[i] =
+                (sample + byte.MinValue & -byte.MaxValue - 1) != 0 ? (sample >> 31) ^ 127 : sample;
         }
     }
 
@@ -75,7 +73,9 @@ public static class AudioMath
     public static double Convert(double value, UnitType sourceUnit, UnitType targetUnit)
     {
         if (sourceUnit == targetUnit)
+        {
             return value;
+        }
 
         var normalized = sourceUnit switch
         {

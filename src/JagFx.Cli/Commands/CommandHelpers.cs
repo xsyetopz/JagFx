@@ -64,10 +64,7 @@ public static class CommandHelpers
     /// <summary>
     /// Gets the lowercase file extension from a path.
     /// </summary>
-    public static string GetExtension(string path)
-    {
-        return Path.GetExtension(path).ToLowerInvariant();
-    }
+    public static string GetExtension(string path) => Path.GetExtension(path).ToLowerInvariant();
 
     /// <summary>
     /// Formats bytes as human-readable string.
@@ -75,7 +72,7 @@ public static class CommandHelpers
     public static string FormatBytes(long bytes)
     {
         string[] suffixes = ["B", "KB", "MB", "GB"];
-        int suffixIndex = 0;
+        var suffixIndex = 0;
         double size = bytes;
 
         while (size >= 1024 && suffixIndex < suffixes.Length - 1)
@@ -102,8 +99,6 @@ public static class CommandHelpers
     /// <summary>
     /// Prints a footer line.
     /// </summary>
-    public static void PrintFooter()
-    {
+    public static void PrintFooter() =>
         Console.WriteLine("╚" + new string('═', ConsoleWidth) + "╝");
-    }
 }

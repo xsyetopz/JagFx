@@ -6,19 +6,14 @@ namespace JagFx.Desktop.Services;
 /// <summary>
 /// Handles patch file I/O: load, save, and directory-based navigation.
 /// </summary>
-public class PatchFileManager
+public class PatchFileManager(PatchViewModel patch)
 {
-    private readonly PatchViewModel _patch;
+    private readonly PatchViewModel _patch = patch;
 
     public string PatchName { get; private set; } = "untitled";
     public string? FilePath { get; private set; }
 
     public event Action? FileChanged;
-
-    public PatchFileManager(PatchViewModel patch)
-    {
-        _patch = patch;
-    }
 
     public void LoadFromPath(string path)
     {
@@ -32,7 +27,10 @@ public class PatchFileManager
     public void Save()
     {
         if (FilePath is null)
+        {
             return;
+        }
+
         var model = _patch.ToModel();
         SynthFileWriter.WriteToPath(model, FilePath);
         FileChanged?.Invoke();
@@ -50,20 +48,28 @@ public class PatchFileManager
     public void NavigatePatch(int direction)
     {
         if (FilePath is null)
+        {
             return;
+        }
 
         var dir = Path.GetDirectoryName(FilePath);
         if (dir is null)
+        {
             return;
+        }
 
         var files = Directory.GetFiles(dir, "*.synth").OrderBy(f => f).ToArray();
 
         var currentIndex = Array.IndexOf(files, FilePath);
         if (currentIndex < 0)
+        {
             return;
+        }
 
         var newIndex = currentIndex + direction;
         if (newIndex >= 0 && newIndex < files.Length)
+        {
             LoadFromPath(files[newIndex]);
+        }
     }
 }

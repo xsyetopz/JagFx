@@ -93,11 +93,11 @@ public static class AudioFilter
         CancellationToken ct
     )
     {
-        int pos = fbCount;
+        var pos = fbCount;
 
         while (pos < ctx.SampleCount - ffCount)
         {
-            int chunkEnd = Math.Min(pos + ChunkSize, ctx.SampleCount - ffCount);
+            var chunkEnd = Math.Min(pos + ChunkSize, ctx.SampleCount - ffCount);
             ProcessSampleRange(ctx, pos, chunkEnd, ffCount, fbCount, ct);
             pos = chunkEnd;
         }
@@ -135,7 +135,10 @@ public static class AudioFilter
         for (var n = start; n < end; n++)
         {
             if ((n & 0x3F) == 0)
+            {
                 ct.ThrowIfCancellationRequested();
+            }
+
             if (isFinal)
             {
                 ApplyFilterToFinalSample(

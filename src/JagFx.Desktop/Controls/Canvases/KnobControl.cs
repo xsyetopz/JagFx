@@ -113,7 +113,9 @@ public class KnobControl : Control
     {
         base.OnPropertyChanged(change);
         if (change.Property == IsEnabledProperty)
+        {
             InvalidateVisual();
+        }
     }
 
     private Point _lastPointerPos;
@@ -140,7 +142,9 @@ public class KnobControl : Control
         var cy = dialHeight / 2.0;
         var r = Math.Min(cx - 3, cy - 2);
         if (r < 6)
+        {
             r = 6;
+        }
 
         var dimmed = !IsEffectivelyEnabled;
         var arcBrush = dimmed ? ThemeColors.VoiceInactiveBrush : ThemeColors.AccentBrush;
@@ -222,7 +226,9 @@ public class KnobControl : Control
     )
     {
         if (sweepDeg <= 0)
+        {
             return;
+        }
 
         var startRad = startDeg * Math.PI / 180.0;
         var endRad = (startDeg + sweepDeg) * Math.PI / 180.0;
@@ -253,7 +259,9 @@ public class KnobControl : Control
     {
         base.OnPointerPressed(e);
         if (!IsEffectivelyEnabled)
+        {
             return;
+        }
 
         if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
         {
@@ -264,7 +272,9 @@ public class KnobControl : Control
         }
 
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
             return;
+        }
 
         if (e.ClickCount == 2)
         {
@@ -312,7 +322,9 @@ public class KnobControl : Control
     {
         base.OnPointerMoved(e);
         if (!_isDragging)
+        {
             return;
+        }
 
         var pos = e.GetPosition(this);
         var deltaY = _lastPointerPos.Y - pos.Y;
@@ -330,7 +342,10 @@ public class KnobControl : Control
         _isDragging = false;
         e.Pointer.Capture(null);
         if (wasDragging)
+        {
             EndPreviewEdit();
+        }
+
         e.Handled = true;
     }
 
@@ -338,7 +353,9 @@ public class KnobControl : Control
     {
         base.OnPointerWheelChanged(e);
         if (!IsEffectivelyEnabled)
+        {
             return;
+        }
 
         var delta =
             e.Delta.Y > 0 ? Step
@@ -355,18 +372,24 @@ public class KnobControl : Control
     private void RequestPreviewUpdate(bool immediate = false)
     {
         if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+        {
             vm.RequestPreviewUpdate(immediate);
+        }
     }
 
     private void BeginPreviewEdit()
     {
         if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+        {
             vm.BeginPreviewEdit();
+        }
     }
 
     private void EndPreviewEdit()
     {
         if (TopLevel.GetTopLevel(this)?.DataContext is MainViewModel vm)
+        {
             vm.EndPreviewEdit();
+        }
     }
 }

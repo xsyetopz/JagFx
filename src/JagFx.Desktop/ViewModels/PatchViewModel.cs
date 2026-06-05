@@ -34,7 +34,10 @@ public partial class PatchViewModel : ObservableObject
     private void SyncVoiceSelection()
     {
         for (var i = 0; i < Voices.Count; i++)
+        {
             Voices[i].IsSelected = i == SelectedVoiceIndex;
+        }
+
         OnPropertyChanged(nameof(SelectedVoice));
     }
 
@@ -62,7 +65,10 @@ public partial class PatchViewModel : ObservableObject
         SelectedVoiceIndex = 0;
 
         foreach (var v in Voices)
+        {
             v.Clear();
+        }
+
         SyncVoiceSelection();
     }
 

@@ -9,7 +9,7 @@ namespace JagFx.Cli.Commands;
 /// <summary>
 /// CLI command for inspecting .synth file structure in assembly-like format.
 /// </summary>
-public class InspectCommand : Command
+internal sealed class InspectCommand : Command
 {
     public InspectCommand()
         : base("inspect", "Inspect synth file structure")
@@ -50,7 +50,7 @@ public class InspectCommand : Command
 
         try
         {
-            SynthFileReader.Read(bytes);
+            _ = SynthFileReader.Read(bytes);
             InspectVoices(context);
             InspectLoop(context);
             PrintSummary(context);
@@ -68,7 +68,10 @@ public class InspectCommand : Command
         for (var i = 0; i < AudioConstants.MaxVoices; i++)
         {
             if (context.Buffer.Remaining == 0)
+            {
                 break;
+            }
+
             var marker = context.Buffer.Peek();
             if (marker == 0)
             {
@@ -85,8 +88,8 @@ public class InspectCommand : Command
         var marker = context.Buffer.Peek();
         context.PrintLine($"voice {voiceIndex}", $"active, wf={GetWaveformName((byte)marker)}");
 
-        InspectEnvelope(context, "penv");
-        InspectEnvelope(context, "aenv");
+        InspectEnvelope(context);
+        InspectEnvelope(context);
 
         InspectOptionalLFO(context, "vib");
         InspectOptionalLFO(context, "trem");
@@ -103,7 +106,7 @@ public class InspectCommand : Command
         InspectFilter(context);
     }
 
-    private static void InspectEnvelope(InspectorContext context, string label)
+    private static void InspectEnvelope(InspectorContext context)
     {
         _ = context.ReadByte("", "wf");
         _ = context.ReadInt32("", "start");
@@ -113,8 +116,8 @@ public class InspectCommand : Command
         var segLimit = Math.Min(nSegs, maxSegs);
         for (var i = 0; i < segLimit; i++)
         {
-            context.ReadUInt16("", $"seg{i}.dur");
-            context.ReadUInt16("", $"seg{i}.peak");
+            _ = context.ReadUInt16("", $"seg{i}.dur");
+            _ = context.ReadUInt16("", $"seg{i}.peak");
         }
     }
 
@@ -128,8 +131,8 @@ public class InspectCommand : Command
         }
 
         context.PrintLine(label, "present");
-        InspectEnvelope(context, $"  {label}.rate");
-        InspectEnvelope(context, $"  {label}.depth");
+        InspectEnvelope(context);
+        InspectEnvelope(context);
     }
 
     private static void InspectOscillators(InspectorContext context)
@@ -183,7 +186,9 @@ public class InspectCommand : Command
         {
             var pairs = channel == 0 ? pair0 : pair1;
             if (pairs == 0)
+            {
                 continue;
+            }
 
             for (var p = 0; p < pairs; p++)
             {
@@ -201,7 +206,9 @@ public class InspectCommand : Command
     )
     {
         if (modmask == 0)
+        {
             return;
+        }
 
         for (var channel = 0; channel < 2; channel++)
         {
@@ -250,10 +257,8 @@ public class InspectCommand : Command
         }
     }
 
-    private static void PrintError(InspectorContext context, Exception ex)
-    {
+    private static void PrintError(InspectorContext context, Exception ex) =>
         Console.WriteLine($"; ERROR at 0x{context.Buffer.Position:X4}: {ex.Message}");
-    }
 
     private static string GetWaveformName(byte id) =>
         id switch
@@ -321,10 +326,8 @@ public class InspectCommand : Command
             return value;
         }
 
-        public void PrintLine(string mnemonic, string comment)
-        {
+        public void PrintLine(string mnemonic, string comment) =>
             PrintLine(Buffer.Position, [], mnemonic, comment);
-        }
 
         private static void PrintLine(int pos, byte[] bytes, string mnemonic, string comment)
         {
@@ -336,7 +339,10 @@ public class InspectCommand : Command
                     )
                     : "";
             if (hex.Length > 18)
+            {
                 hex = hex[..15] + "...";
+            }
+
             var paddedMnemonic = mnemonic.PadRight(10);
             var comma = comment.Length > 0 && mnemonic.Length > 0 ? ", " : "";
             Console.WriteLine($"{pos:X4}: {hex, -18} {paddedMnemonic}{comma}{comment}");

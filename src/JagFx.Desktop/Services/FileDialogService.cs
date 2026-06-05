@@ -11,7 +11,9 @@ public static class FileDialogService
     public static async Task<string?> OpenSynthFileAsync(Window window)
     {
         if (!await DialogLock.WaitAsync(0).ConfigureAwait(true))
+        {
             return null;
+        }
 
         try
         {
@@ -45,7 +47,9 @@ public static class FileDialogService
     )
     {
         if (!await DialogLock.WaitAsync(0).ConfigureAwait(true))
+        {
             return null;
+        }
 
         try
         {
@@ -76,7 +80,9 @@ public static class FileDialogService
     public static async Task<string?> SaveWavFileAsync(Window window, string? suggestedName = null)
     {
         if (!await DialogLock.WaitAsync(0).ConfigureAwait(true))
+        {
             return null;
+        }
 
         try
         {
