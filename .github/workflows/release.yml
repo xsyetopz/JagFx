@@ -92,6 +92,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
+      - name: Install just
+        uses: taiki-e/install-action@just
+
       - name: Build + test
         run: |
           dotnet restore
@@ -222,6 +225,9 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install just
+        uses: taiki-e/install-action@just
 
       - name: Install AppImage tooling
         run: |
