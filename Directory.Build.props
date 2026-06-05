@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project>
   <PropertyGroup>
-    <Version>2.3.0</Version>
-    <AssemblyVersion>2.3.0.0</AssemblyVersion>
-    <FileVersion>2.3.0.0</FileVersion>
-    <InformationalVersion>2.3.0</InformationalVersion>
+    <Version>2.4.0</Version>
+    <AssemblyVersion>2.4.0.0</AssemblyVersion>
+    <FileVersion>2.4.0.0</FileVersion>
+    <InformationalVersion>2.4.0</InformationalVersion>
     <Company>JagFX</Company>
     <Product>JagFX</Product>
     <Copyright>Copyright © 2025-2026 JagFX Contributors</Copyright>

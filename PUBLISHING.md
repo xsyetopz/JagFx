@@ -163,7 +163,7 @@ Edit `Directory.Build.props`:
 Example patch bump:
 
 - `2.2.2` -> `2.2.3`
-- `2.2.2.0` -> `2.2.3.0`
+- `2.2.2.0` -> `2.2.4.0`
 
 ---
 
