@@ -30,12 +30,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "8.0.x"
 
-      - run: dotnet format --verify-no-changes
+      - run: dotnet tool restore
+      - run: dotnet csharpier check .
 
   conventional-commits:
     if: github.event_name == 'pull_request'
