@@ -30,9 +30,14 @@ if mount | grep -Fq "on $VOLUME_PATH ("; then
   hdiutil detach "$VOLUME_PATH" -force >/dev/null 2>&1 || true
 fi
 
-APP_KIB="$(du -sk "$APP_PATH" | awk '{print $1}')"
-APP_MB="$(( (APP_KIB + 1023) / 1024 ))"
-SIZE_MB="$(( ((APP_MB * 16) + 9) / 10 + 64 ))"
+DMG_ROOT="$WORK_TMP/dmg-root"
+mkdir -p "$DMG_ROOT"
+ditto "$APP_PATH" "$DMG_ROOT/$(basename "$APP_PATH")"
+ln -s /Applications "$DMG_ROOT/Applications"
+
+SOURCE_KIB="$(du -sk "$DMG_ROOT" | awk '{print $1}')"
+SOURCE_MB="$(( (SOURCE_KIB + 1023) / 1024 ))"
+SIZE_MB="$(( ((SOURCE_MB * 16) + 9) / 10 + 64 ))"
 if (( SIZE_MB < 256 )); then
   SIZE_MB=256
 fi
@@ -43,7 +48,7 @@ create_dmg() {
     -size "${size_mb}m" \
     -fs APFS \
     -volname "$VOLUME_NAME" \
-    -srcfolder "$APP_PATH" \
+    -srcfolder "$DMG_ROOT" \
     -ov \
     -format UDZO \
     "$OUTPUT_DMG"
