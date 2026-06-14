@@ -1,356 +1,407 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:i="https://github.com/projektanker/icons.avalonia"
-             xmlns:loc="using:JagFx.Desktop.Localization"
-             xmlns:vm="using:JagFx.Desktop.ViewModels"
-             xmlns:conv="using:JagFx.Desktop.Converters"
-             xmlns:controls="using:JagFx.Desktop.Controls.Canvases"
-             x:Class="JagFx.Desktop.Views.Footer.PartialsFooter"
-             x:DataType="vm:MainViewModel">
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="https://github.com/projektanker/icons.avalonia"
+    xmlns:loc="using:JagFx.Desktop.Localization"
+    xmlns:vm="using:JagFx.Desktop.ViewModels"
+    xmlns:conv="using:JagFx.Desktop.Converters"
+    xmlns:controls="using:JagFx.Desktop.Controls.Canvases"
+    x:Class="JagFx.Desktop.Views.Footer.PartialsFooter"
+    x:DataType="vm:MainViewModel"
+>
     <UserControl.Resources>
         <conv:RawToPercentConverter x:Key="RawToPercentConverter" />
         <conv:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
-        <ControlTheme x:Key="FooterBankButton"
-                      TargetType="Button">
-            <Setter Property="Background"
-                    Value="{DynamicResource VoiceInactiveBgBrush}" />
-            <Setter Property="Foreground"
-                    Value="{DynamicResource VoiceInactiveTextBrush}" />
-            <Setter Property="BorderBrush"
-                    Value="{DynamicResource VoiceInactiveBorderBrush}" />
-            <Setter Property="BorderThickness"
-                    Value="1" />
-            <Setter Property="Padding"
-                    Value="0" />
-            <Setter Property="Width"
-                    Value="{DynamicResource WidthUiCompact}" />
-            <Setter Property="FontFamily"
-                    Value="Consolas, Monaco, Courier New, monospace" />
-            <Setter Property="FontSize"
-                    Value="{DynamicResource FontSizeUiSmall}" />
-            <Setter Property="CornerRadius"
-                    Value="0" />
-            <Setter Property="Opacity"
-                    Value="0.6" />
-            <Setter Property="HorizontalContentAlignment"
-                    Value="Center" />
-            <Setter Property="VerticalContentAlignment"
-                    Value="Center" />
+        <ControlTheme x:Key="FooterBankButton" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource VoiceInactiveBgBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource VoiceInactiveTextBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource VoiceInactiveBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Width" Value="{DynamicResource WidthUiCompact}" />
+            <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+            <Setter Property="FontSize" Value="{DynamicResource FontSizeUiSmall}" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Opacity" Value="0.6" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Template">
                 <ControlTemplate>
-                    <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter Content="{TemplateBinding Content}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <Border
+                        x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                    >
+                        <ContentPresenter
+                            Content="{TemplateBinding Content}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        />
                     </Border>
                 </ControlTemplate>
             </Setter>
             <Style Selector="^:pointerover">
-                <Setter Property="Background"
-                        Value="{DynamicResource ButtonHoverBrush}" />
+                <Setter Property="Background" Value="{DynamicResource ButtonHoverBrush}" />
             </Style>
             <Style Selector="^.enabled">
-                <Setter Property="Background"
-                        Value="{DynamicResource VoiceInactiveBgBrush}" />
-                <Setter Property="BorderBrush"
-                        Value="{DynamicResource VoiceInactiveBorderBrush}" />
-                <Setter Property="Foreground"
-                        Value="{DynamicResource TextButtonBrush}" />
-                <Setter Property="Opacity"
-                        Value="1.0" />
+                <Setter Property="Background" Value="{DynamicResource VoiceInactiveBgBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource VoiceInactiveBorderBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextButtonBrush}" />
+                <Setter Property="Opacity" Value="1.0" />
             </Style>
         </ControlTheme>
-        <DataTemplate x:Key="PartialCellTemplate"
-                      x:DataType="vm:PartialViewModel">
-            <Border BorderBrush="{StaticResource BorderDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="2"
-                    Margin="1,2"
-                    Padding="2"
-                    Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacityConverter}}">
+        <DataTemplate x:Key="PartialCellTemplate" x:DataType="vm:PartialViewModel">
+            <Border
+                BorderBrush="{StaticResource BorderDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="2"
+                Margin="1,2"
+                Padding="2"
+                Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacityConverter}}"
+            >
                 <Grid RowDefinitions="Auto,*,3">
-                    <Border Background="{StaticResource SurfaceCellHeaderBrush}"
-                            Padding="2,1"
-                            Margin="-2,-2,-2,0"
-                            CornerRadius="2,2,0,0">
+                    <Border
+                        Background="{StaticResource SurfaceCellHeaderBrush}"
+                        Padding="2,1"
+                        Margin="-2,-2,-2,0"
+                        CornerRadius="2,2,0,0"
+                    >
                         <Grid>
-                            <TextBlock Text="{Binding DisplayLabel}"
-                                       FontSize="11"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource TextSecondaryBrush}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
-                            <CheckBox IsChecked="{Binding IsActive}"
-                                      MinWidth="16"
-                                      MinHeight="16"
-                                      Padding="0"
-                                      HorizontalAlignment="Left"
-                                      VerticalAlignment="Center"
-                                      ToolTip.Tip="{loc:Tr TooltipPartialActive}" />
+                            <TextBlock
+                                Text="{Binding DisplayLabel}"
+                                FontSize="11"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource TextSecondaryBrush}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                            />
+                            <CheckBox
+                                IsChecked="{Binding IsActive}"
+                                MinWidth="16"
+                                MinHeight="16"
+                                Padding="0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                ToolTip.Tip="{loc:Tr TooltipPartialActive}"
+                            />
                         </Grid>
                     </Border>
-                    <Grid Grid.Row="1"
-                          ColumnDefinitions="*,Auto,*,Auto,*,Auto,*"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Center">
-                        <controls:KnobControl Grid.Column="1"
-                                              Value="{Binding PitchOffsetSemitones}"
-                                              Minimum="-128"
-                                              Maximum="127"
-                                              DefaultValue="0"
-                                              Label="{loc:TrUpper PitchLabel}"
-                                              Step="1"
-                                              FormatString="F0"
-                                              Unit="st"
-                                              Height="40"
-                                              IsEnabled="{Binding IsActive}" />
-                        <controls:KnobControl Grid.Column="3"
-                                              Value="{Binding Amplitude, Converter={StaticResource RawToPercentConverter}}"
-                                              Minimum="0"
-                                              Maximum="100"
-                                              DefaultValue="100"
-                                              Label="{loc:TrUpper VolumeLabel}"
-                                              Step="0.5"
-                                              FormatString="F1"
-                                              Unit="%"
-                                              Height="40"
-                                              IsEnabled="{Binding IsActive}" />
-                        <controls:KnobControl Grid.Column="5"
-                                              Value="{Binding DelayMs}"
-                                              Minimum="0"
-                                              Maximum="65535"
-                                              Label="{loc:TrUpper DelayLabel}"
-                                              Step="10"
-                                              FormatString="F0"
-                                              Unit="ms"
-                                              Height="40"
-                                              IsEnabled="{Binding IsActive}" />
+                    <Grid
+                        Grid.Row="1"
+                        ColumnDefinitions="*,Auto,*,Auto,*,Auto,*"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                    >
+                        <controls:KnobControl
+                            Grid.Column="1"
+                            Value="{Binding PitchOffsetSemitones}"
+                            Minimum="-128"
+                            Maximum="127"
+                            DefaultValue="0"
+                            Label="{loc:TrUpper PitchLabel}"
+                            Step="1"
+                            FormatString="F0"
+                            Unit="st"
+                            Height="40"
+                            IsEnabled="{Binding IsActive}"
+                        />
+                        <controls:KnobControl
+                            Grid.Column="3"
+                            Value="{Binding Amplitude, Converter={StaticResource RawToPercentConverter}}"
+                            Minimum="0"
+                            Maximum="100"
+                            DefaultValue="100"
+                            Label="{loc:TrUpper VolumeLabel}"
+                            Step="0.5"
+                            FormatString="F1"
+                            Unit="%"
+                            Height="40"
+                            IsEnabled="{Binding IsActive}"
+                        />
+                        <controls:KnobControl
+                            Grid.Column="5"
+                            Value="{Binding DelayMs}"
+                            Minimum="0"
+                            Maximum="65535"
+                            Label="{loc:TrUpper DelayLabel}"
+                            Step="10"
+                            FormatString="F0"
+                            Unit="ms"
+                            Height="40"
+                            IsEnabled="{Binding IsActive}"
+                        />
                     </Grid>
-                    <ProgressBar Grid.Row="2"
-                                 Height="3"
-                                 Minimum="0"
-                                 Maximum="1"
-                                 Value="{Binding AmplitudeFraction}"
-                                 Foreground="{StaticResource BorderAccentBrush}"
-                                 Background="{StaticResource SurfaceBaseBrush}" />
+                    <ProgressBar
+                        Grid.Row="2"
+                        Height="3"
+                        Minimum="0"
+                        Maximum="1"
+                        Value="{Binding AmplitudeFraction}"
+                        Foreground="{StaticResource BorderAccentBrush}"
+                        Background="{StaticResource SurfaceBaseBrush}"
+                    />
                 </Grid>
             </Border>
         </DataTemplate>
-        <DataTemplate x:Key="EchoCellTemplate"
-                      x:DataType="vm:VoiceViewModel">
-            <Border BorderBrush="{StaticResource BorderDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="2"
-                    Margin="1,2"
-                    Padding="2">
+        <DataTemplate x:Key="EchoCellTemplate" x:DataType="vm:VoiceViewModel">
+            <Border
+                BorderBrush="{StaticResource BorderDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="2"
+                Margin="1,2"
+                Padding="2"
+            >
                 <Grid RowDefinitions="Auto,*,3">
-                    <Border Background="{StaticResource SurfaceCellHeaderBrush}"
-                            Padding="2,1"
-                            Margin="-2,-2,-2,0"
-                            CornerRadius="2,2,0,0">
+                    <Border
+                        Background="{StaticResource SurfaceCellHeaderBrush}"
+                        Padding="2,1"
+                        Margin="-2,-2,-2,0"
+                        CornerRadius="2,2,0,0"
+                    >
                         <Grid>
-                            <TextBlock Text="{loc:TrUpper EchoTitle}"
-                                       FontSize="11"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource TextSecondaryBrush}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
+                            <TextBlock
+                                Text="{loc:TrUpper EchoTitle}"
+                                FontSize="11"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource TextSecondaryBrush}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                            />
                         </Grid>
                     </Border>
-                    <Grid Grid.Row="1"
-                          ColumnDefinitions="*,Auto,*,Auto,*"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Center">
-                        <controls:KnobControl Grid.Column="1"
-                                              Value="{Binding EchoDelay}"
-                                              Minimum="0"
-                                              Maximum="500"
-                                              Label="{loc:TrUpper EchoDelayLabel}"
-                                              Step="5"
-                                              FormatString="F0"
-                                              Unit="ms"
-                                              Height="40" />
-                        <controls:KnobControl Grid.Column="3"
-                                              Value="{Binding EchoFeedback}"
-                                              Minimum="0"
-                                              Maximum="100"
-                                              Label="{loc:TrUpper EchoFeedbackLabel}"
-                                              Step="1"
-                                              FormatString="F0"
-                                              Unit="%"
-                                              Height="40" />
+                    <Grid
+                        Grid.Row="1"
+                        ColumnDefinitions="*,Auto,*,Auto,*"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                    >
+                        <controls:KnobControl
+                            Grid.Column="1"
+                            Value="{Binding EchoDelay}"
+                            Minimum="0"
+                            Maximum="500"
+                            Label="{loc:TrUpper EchoDelayLabel}"
+                            Step="5"
+                            FormatString="F0"
+                            Unit="ms"
+                            Height="40"
+                        />
+                        <controls:KnobControl
+                            Grid.Column="3"
+                            Value="{Binding EchoFeedback}"
+                            Minimum="0"
+                            Maximum="100"
+                            Label="{loc:TrUpper EchoFeedbackLabel}"
+                            Step="1"
+                            FormatString="F0"
+                            Unit="%"
+                            Height="40"
+                        />
                     </Grid>
-                    <ProgressBar Grid.Row="2"
-                                 Height="3"
-                                 Minimum="0"
-                                 Maximum="1"
-                                 Value="0"
-                                 Foreground="{StaticResource BorderAccentBrush}"
-                                 Background="{StaticResource SurfaceBaseBrush}" />
+                    <ProgressBar
+                        Grid.Row="2"
+                        Height="3"
+                        Minimum="0"
+                        Maximum="1"
+                        Value="0"
+                        Foreground="{StaticResource BorderAccentBrush}"
+                        Background="{StaticResource SurfaceBaseBrush}"
+                    />
                 </Grid>
             </Border>
         </DataTemplate>
     </UserControl.Resources>
-    <Border Background="{StaticResource SurfaceFooterBrush}"
-            BorderBrush="{StaticResource BorderDefaultBrush}"
-            BorderThickness="0,1,0,0">
+    <Border
+        Background="{StaticResource SurfaceFooterBrush}"
+        BorderBrush="{StaticResource BorderDefaultBrush}"
+        BorderThickness="0,1,0,0"
+    >
         <DockPanel LastChildFill="True">
             <!-- Header row with voice strip, bank toggle, and mode buttons -->
-            <Border DockPanel.Dock="Top"
-                    Background="{StaticResource SurfaceCellHeaderBrush}"
-                    Padding="4,3"
-                    Height="28">
+            <Border
+                DockPanel.Dock="Top"
+                Background="{StaticResource SurfaceCellHeaderBrush}"
+                Padding="4,3"
+                Height="28"
+            >
                 <Grid ColumnDefinitions="Auto,*,Auto">
                     <!-- Left: Voice strip + ONE/ALL -->
-                    <StackPanel Grid.Column="0"
-                                Orientation="Horizontal"
-                                Spacing="1"
-                                VerticalAlignment="Center">
+                    <StackPanel
+                        Grid.Column="0"
+                        Orientation="Horizontal"
+                        Spacing="1"
+                        VerticalAlignment="Center"
+                    >
                         <ItemsControl ItemsSource="{Binding Patch.Voices}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"
-                                                Spacing="1" />
+                                    <StackPanel Orientation="Horizontal" Spacing="1" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="vm:VoiceViewModel">
-                                    <Button Theme="{StaticResource JagVoiceButton}"
-                                            Content="{Binding DisplayIndex}"
-                                            Command="{ReflectionBinding DataContext.SelectVoiceCommand,&#xA;                                                RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding Index}"
-                                            Classes.enabled="{Binding IsEnabled}"
-                                            Classes.selected="{Binding IsSelected}"
-                                            Width="24"
-                                            Height="24"
-                                            FontSize="11" />
+                                    <Button
+                                        Theme="{StaticResource JagVoiceButton}"
+                                        Content="{Binding DisplayIndex}"
+                                        Command="{ReflectionBinding DataContext.SelectVoiceCommand,&#xA;                                                RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding Index}"
+                                        Classes.enabled="{Binding IsEnabled}"
+                                        Classes.selected="{Binding IsSelected}"
+                                        Width="24"
+                                        Height="24"
+                                        FontSize="11"
+                                    />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        <Border Width="1"
-                                Height="16"
-                                Background="{StaticResource BorderDefaultBrush}"
-                                Margin="2,0" />
-                        <Button x:Name="BtnOne"
-                                Theme="{StaticResource JagCellButton}"
-                                ToolTip.Tip="{loc:Tr TooltipPlaySelectedVoice}"
-                                Classes.enabled="True"
-                                Classes.selected="{Binding PlaySingleVoice}">
-                            <i:Icon Value="mdi-speaker"
-                                    FontSize="15" />
+                        <Border
+                            Width="1"
+                            Height="16"
+                            Background="{StaticResource BorderDefaultBrush}"
+                            Margin="2,0"
+                        />
+                        <Button
+                            x:Name="BtnOne"
+                            Theme="{StaticResource JagCellButton}"
+                            ToolTip.Tip="{loc:Tr TooltipPlaySelectedVoice}"
+                            Classes.enabled="True"
+                            Classes.selected="{Binding PlaySingleVoice}"
+                        >
+                            <i:Icon Value="mdi-speaker" FontSize="15" />
                         </Button>
-                        <Button x:Name="BtnAll"
-                                Theme="{StaticResource JagCellButton}"
-                                ToolTip.Tip="{loc:Tr TooltipPlayAllVoices}"
-                                Classes.enabled="True"
-                                Classes.selected="{Binding !PlaySingleVoice}">
-                            <i:Icon Value="mdi-speaker-multiple"
-                                    FontSize="15" />
+                        <Button
+                            x:Name="BtnAll"
+                            Theme="{StaticResource JagCellButton}"
+                            ToolTip.Tip="{loc:Tr TooltipPlayAllVoices}"
+                            Classes.enabled="True"
+                            Classes.selected="{Binding !PlaySingleVoice}"
+                        >
+                            <i:Icon Value="mdi-speaker-multiple" FontSize="15" />
                         </Button>
-                        <Border Width="1"
-                                Height="16"
-                                Background="{StaticResource BorderDefaultBrush}"
-                                Margin="2,0" />
-                        <Button x:Name="BtnCopy"
-                                Theme="{StaticResource JagCellButton}"
-                                ToolTip.Tip="{loc:Tr TooltipCopyVoice}"
-                                Classes.enabled="True"
-                                Classes.selected="{Binding IsCopyMode}">
-                            <i:Icon Value="mdi-content-copy"
-                                    FontSize="15" />
+                        <Border
+                            Width="1"
+                            Height="16"
+                            Background="{StaticResource BorderDefaultBrush}"
+                            Margin="2,0"
+                        />
+                        <Button
+                            x:Name="BtnCopy"
+                            Theme="{StaticResource JagCellButton}"
+                            ToolTip.Tip="{loc:Tr TooltipCopyVoice}"
+                            Classes.enabled="True"
+                            Classes.selected="{Binding IsCopyMode}"
+                        >
+                            <i:Icon Value="mdi-content-copy" FontSize="15" />
                         </Button>
-                        <Button x:Name="BtnReset"
-                                Theme="{StaticResource JagCellButton}"
-                                ToolTip.Tip="{loc:Tr TooltipResetVoice}"
-                                Classes.enabled="True">
-                            <i:Icon Value="mdi-restore"
-                                    FontSize="15" />
+                        <Button
+                            x:Name="BtnReset"
+                            Theme="{StaticResource JagCellButton}"
+                            ToolTip.Tip="{loc:Tr TooltipResetVoice}"
+                            Classes.enabled="True"
+                        >
+                            <i:Icon Value="mdi-restore" FontSize="15" />
                         </Button>
                     </StackPanel>
                     <!-- Right: Grid mode -->
-                    <StackPanel Grid.Column="2"
-                                Orientation="Horizontal"
-                                Spacing="1"
-                                VerticalAlignment="Center">
-                        <Button x:Name="BtnMain"
-                                Theme="{StaticResource JagCellButton}"
-                                ToolTip.Tip="{loc:Tr TooltipShowMain}"
-                                Classes.enabled="True"
-                                Classes.selected="{Binding IsMainMode}">
-                            <i:Icon Value="mdi-waveform"
-                                    FontSize="15" />
+                    <StackPanel
+                        Grid.Column="2"
+                        Orientation="Horizontal"
+                        Spacing="1"
+                        VerticalAlignment="Center"
+                    >
+                        <Button
+                            x:Name="BtnMain"
+                            Theme="{StaticResource JagCellButton}"
+                            ToolTip.Tip="{loc:Tr TooltipShowMain}"
+                            Classes.enabled="True"
+                            Classes.selected="{Binding IsMainMode}"
+                        >
+                            <i:Icon Value="mdi-waveform" FontSize="15" />
                         </Button>
-                        <Button x:Name="BtnFilt"
-                                Theme="{StaticResource JagCellButton}"
-                                ToolTip.Tip="{loc:Tr TooltipShowFilter}"
-                                Classes.enabled="True"
-                                Classes.selected="{Binding IsFilterMode}">
-                            <i:Icon Value="mdi-filter"
-                                    FontSize="15" />
+                        <Button
+                            x:Name="BtnFilt"
+                            Theme="{StaticResource JagCellButton}"
+                            ToolTip.Tip="{loc:Tr TooltipShowFilter}"
+                            Classes.enabled="True"
+                            Classes.selected="{Binding IsFilterMode}"
+                        >
+                            <i:Icon Value="mdi-filter" FontSize="15" />
                         </Button>
-                        <Button x:Name="BtnBoth"
-                                Theme="{StaticResource JagCellButton}"
-                                ToolTip.Tip="{loc:Tr TooltipShowBoth}"
-                                Classes.enabled="True"
-                                Classes.selected="{Binding IsBothMode}">
-                            <i:Icon Value="mdi-view-split-horizontal"
-                                    FontSize="15" />
+                        <Button
+                            x:Name="BtnBoth"
+                            Theme="{StaticResource JagCellButton}"
+                            ToolTip.Tip="{loc:Tr TooltipShowBoth}"
+                            Classes.enabled="True"
+                            Classes.selected="{Binding IsBothMode}"
+                        >
+                            <i:Icon Value="mdi-view-split-horizontal" FontSize="15" />
                         </Button>
                     </StackPanel>
                 </Grid>
             </Border>
             <!-- Partials + Echo in a proportional grid with bank arrows -->
-            <Grid x:Name="PartialsGrid"
-                  ColumnDefinitions="Auto,3*,3*,3*,3*,3*,Auto,3*">
+            <Grid x:Name="PartialsGrid" ColumnDefinitions="Auto,3*,3*,3*,3*,3*,Auto,3*">
                 <!-- Left bank arrow -->
-                <Button x:Name="BtnBankPrev"
-                        Grid.Column="0"
-                        Theme="{StaticResource FooterBankButton}"
-                        Classes.enabled="True"
-                        ToolTip.Tip="{loc:Tr TooltipPreviousPartialBank}"
-                        VerticalAlignment="Stretch"
-                        Margin="2,2">
-                    <i:Icon Value="mdi-chevron-left"
-                            FontSize="18" />
+                <Button
+                    x:Name="BtnBankPrev"
+                    Grid.Column="0"
+                    Theme="{StaticResource FooterBankButton}"
+                    Classes.enabled="True"
+                    ToolTip.Tip="{loc:Tr TooltipPreviousPartialBank}"
+                    VerticalAlignment="Stretch"
+                    Margin="2,2"
+                >
+                    <i:Icon Value="mdi-chevron-left" FontSize="18" />
                 </Button>
-                <ContentControl x:Name="Slot0"
-                                Grid.Column="1"
-                                ContentTemplate="{StaticResource PartialCellTemplate}" />
-                <ContentControl x:Name="Slot1"
-                                Grid.Column="2"
-                                ContentTemplate="{StaticResource PartialCellTemplate}" />
-                <ContentControl x:Name="Slot2"
-                                Grid.Column="3"
-                                ContentTemplate="{StaticResource PartialCellTemplate}" />
-                <ContentControl x:Name="Slot3"
-                                Grid.Column="4"
-                                ContentTemplate="{StaticResource PartialCellTemplate}" />
-                <ContentControl x:Name="Slot4"
-                                Grid.Column="5"
-                                ContentTemplate="{StaticResource PartialCellTemplate}" />
+                <ContentControl
+                    x:Name="Slot0"
+                    Grid.Column="1"
+                    ContentTemplate="{StaticResource PartialCellTemplate}"
+                />
+                <ContentControl
+                    x:Name="Slot1"
+                    Grid.Column="2"
+                    ContentTemplate="{StaticResource PartialCellTemplate}"
+                />
+                <ContentControl
+                    x:Name="Slot2"
+                    Grid.Column="3"
+                    ContentTemplate="{StaticResource PartialCellTemplate}"
+                />
+                <ContentControl
+                    x:Name="Slot3"
+                    Grid.Column="4"
+                    ContentTemplate="{StaticResource PartialCellTemplate}"
+                />
+                <ContentControl
+                    x:Name="Slot4"
+                    Grid.Column="5"
+                    ContentTemplate="{StaticResource PartialCellTemplate}"
+                />
                 <!-- Right bank arrow -->
-                <Button x:Name="BtnBankNext"
-                        Grid.Column="6"
-                        Theme="{StaticResource FooterBankButton}"
-                        Classes.enabled="True"
-                        ToolTip.Tip="{loc:Tr TooltipNextPartialBank}"
-                        VerticalAlignment="Stretch"
-                        Margin="2,2">
-                    <i:Icon Value="mdi-chevron-right"
-                            FontSize="18" />
+                <Button
+                    x:Name="BtnBankNext"
+                    Grid.Column="6"
+                    Theme="{StaticResource FooterBankButton}"
+                    Classes.enabled="True"
+                    ToolTip.Tip="{loc:Tr TooltipNextPartialBank}"
+                    VerticalAlignment="Stretch"
+                    Margin="2,2"
+                >
+                    <i:Icon Value="mdi-chevron-right" FontSize="18" />
                 </Button>
                 <!-- Echo cell -->
-                <ContentControl Grid.Column="7"
-                                Content="{Binding Patch.SelectedVoice}"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                ContentTemplate="{StaticResource EchoCellTemplate}" />
+                <ContentControl
+                    Grid.Column="7"
+                    Content="{Binding Patch.SelectedVoice}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    ContentTemplate="{StaticResource EchoCellTemplate}"
+                />
             </Grid>
         </DockPanel>
     </Border>

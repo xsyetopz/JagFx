@@ -1,145 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+>
     <!-- Global dark background -->
     <Style Selector="Window">
-        <Setter Property="Background"
-                Value="{DynamicResource SurfaceBaseBrush}" />
-        <Setter Property="FontFamily"
-                Value="Consolas, Monaco, Courier New, monospace" />
-        <Setter Property="FontSize"
-                Value="{DynamicResource FontSizeUiBase}" />
-        <Setter Property="Foreground"
-                Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBaseBrush}" />
+        <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSizeUiBase}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     </Style>
     <!-- Compact TextBlock defaults -->
     <Style Selector="TextBlock">
-        <Setter Property="FontFamily"
-                Value="Consolas, Monaco, Courier New, monospace" />
-        <Setter Property="FontSize"
-                Value="{DynamicResource FontSizeUiBase}" />
-        <Setter Property="Foreground"
-                Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSizeUiBase}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     </Style>
     <!-- Separator styling -->
     <Style Selector="Separator">
-        <Setter Property="Background"
-                Value="{DynamicResource BorderDefaultBrush}" />
-        <Setter Property="Height"
-                Value="1" />
+        <Setter Property="Background" Value="{DynamicResource BorderDefaultBrush}" />
+        <Setter Property="Height" Value="1" />
     </Style>
     <!-- ScrollBar thin dark style -->
     <Style Selector="ScrollViewer">
-        <Setter Property="Background"
-                Value="Transparent" />
+        <Setter Property="Background" Value="Transparent" />
     </Style>
     <!-- TextBox compact dark style (matches NumericUpDown chrome) -->
     <Style Selector="TextBox">
-        <Setter Property="Background"
-                Value="{DynamicResource SurfaceInputBrush}" />
-        <Setter Property="Foreground"
-                Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="BorderBrush"
-                Value="{DynamicResource ButtonBorderBrush}" />
-        <Setter Property="BorderThickness"
-                Value="1" />
-        <Setter Property="FontFamily"
-                Value="Consolas, Monaco, Courier New, monospace" />
-        <Setter Property="FontSize"
-                Value="{DynamicResource FontSizeUiSmall}" />
-        <Setter Property="CaretBrush"
-                Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="TextAlignment"
-                Value="Left" />
-        <Setter Property="VerticalContentAlignment"
-                Value="Center" />
-        <Setter Property="MinHeight"
-                Value="0" />
-        <Setter Property="Height"
-                Value="{DynamicResource HeightUiInput}" />
-        <Setter Property="Padding"
-                Value="{DynamicResource PaddingUiInput}" />
-        <Setter Property="CornerRadius"
-                Value="0" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceInputBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSizeUiSmall}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Height" Value="{DynamicResource HeightUiInput}" />
+        <Setter Property="Padding" Value="{DynamicResource PaddingUiInput}" />
+        <Setter Property="CornerRadius" Value="0" />
     </Style>
     <Style Selector="TextBox.bank">
-        <Setter Property="Foreground"
-                Value="{DynamicResource TextAccentBrush}" />
-        <Setter Property="BorderBrush"
-                Value="{DynamicResource BorderAccentBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextAccentBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderAccentBrush}" />
     </Style>
     <Style Selector="TextBox /template/ TextPresenter#PART_TextPresenter">
-        <Setter Property="VerticalAlignment"
-                Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
     <Style Selector="TextBox /template/ DataValidationErrors">
-        <Setter Property="MinHeight"
-                Value="0" />
+        <Setter Property="MinHeight" Value="0" />
     </Style>
     <Style Selector="NumericUpDown">
-        <Setter Property="Background"
-                Value="{DynamicResource SurfaceInputBrush}" />
-        <Setter Property="Foreground"
-                Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="BorderBrush"
-                Value="{DynamicResource ButtonBorderBrush}" />
-        <Setter Property="BorderThickness"
-                Value="1" />
-        <Setter Property="FontFamily"
-                Value="Consolas, Monaco, Courier New, monospace" />
-        <Setter Property="FontSize"
-                Value="{DynamicResource FontSizeUiSmall}" />
-        <Setter Property="VerticalContentAlignment"
-                Value="Center" />
-        <Setter Property="MinHeight"
-                Value="0" />
-        <Setter Property="Height"
-                Value="{DynamicResource HeightUiNumericInput}" />
-        <Setter Property="Padding"
-                Value="{DynamicResource PaddingUiNumericInput}" />
-        <Setter Property="ShowButtonSpinner"
-                Value="False" />
-        <Setter Property="CornerRadius"
-                Value="0" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceInputBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="Consolas, Monaco, Courier New, monospace" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSizeUiSmall}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Height" Value="{DynamicResource HeightUiNumericInput}" />
+        <Setter Property="Padding" Value="{DynamicResource PaddingUiNumericInput}" />
+        <Setter Property="ShowButtonSpinner" Value="False" />
+        <Setter Property="CornerRadius" Value="0" />
     </Style>
     <!-- Ensure inner TextBox text is visible and centered on dark background -->
     <Style Selector="NumericUpDown /template/ TextBox">
-        <Setter Property="Foreground"
-                Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="CaretBrush"
-                Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="TextAlignment"
-                Value="Left" />
-        <Setter Property="FontSize"
-                Value="{DynamicResource FontSizeUiSmall}" />
-        <Setter Property="VerticalContentAlignment"
-                Value="Center" />
-        <Setter Property="Padding"
-                Value="{DynamicResource PaddingUiNumericInput}" />
-        <Setter Property="MinHeight"
-                Value="0" />
-        <Setter Property="Height"
-                Value="{DynamicResource HeightUiNumericInput}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSizeUiSmall}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="{DynamicResource PaddingUiNumericInput}" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Height" Value="{DynamicResource HeightUiNumericInput}" />
     </Style>
     <!-- Strip Fluent chrome from inner TextBox border -->
     <Style Selector="NumericUpDown /template/ TextBox /template/ Border#PART_BorderElement">
-        <Setter Property="MinHeight"
-                Value="0" />
-        <Setter Property="Padding"
-                Value="0" />
-        <Setter Property="Background"
-                Value="Transparent" />
-        <Setter Property="BorderThickness"
-                Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
     </Style>
     <!-- Force TextPresenter vertical centering -->
     <Style Selector="NumericUpDown /template/ TextBox /template/ TextPresenter#PART_TextPresenter">
-        <Setter Property="VerticalAlignment"
-                Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
     <!-- Remove DataValidationErrors wrapper height -->
     <Style Selector="NumericUpDown /template/ DataValidationErrors">
-        <Setter Property="MinHeight"
-                Value="0" />
+        <Setter Property="MinHeight" Value="0" />
     </Style>
 </Styles>

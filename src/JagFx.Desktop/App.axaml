@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="JagFx.Desktop.App"
-             RequestedThemeVariant="Dark">
+<Application
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="JagFx.Desktop.App"
+    RequestedThemeVariant="Dark"
+>
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://JagFx.Desktop/Themes/JagFxTheme.axaml" />

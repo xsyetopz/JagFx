@@ -1,152 +1,192 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="using:JagFx.Desktop.Localization"
-             xmlns:vm="using:JagFx.Desktop.ViewModels"
-             xmlns:conv="using:JagFx.Desktop.Converters"
-             xmlns:controls="using:JagFx.Desktop.Controls.Canvases"
-             x:Class="JagFx.Desktop.Views.Inspector.FilterSection"
-             x:DataType="vm:FilterViewModel">
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:loc="using:JagFx.Desktop.Localization"
+    xmlns:vm="using:JagFx.Desktop.ViewModels"
+    xmlns:conv="using:JagFx.Desktop.Converters"
+    xmlns:controls="using:JagFx.Desktop.Controls.Canvases"
+    x:Class="JagFx.Desktop.Views.Inspector.FilterSection"
+    x:DataType="vm:FilterViewModel"
+>
     <UserControl.Resources>
         <conv:RawToPercentConverter x:Key="RawToPercentConverter" />
     </UserControl.Resources>
     <StackPanel Spacing="0">
         <!-- Section Header -->
-        <Border Background="{StaticResource SurfaceCellHeaderBrush}"
-                Padding="6,3"
-                BorderBrush="{StaticResource BorderDefaultBrush}"
-                BorderThickness="0,1,0,1">
-            <TextBlock Text="{loc:TrUpper FilterTitle}"
-                       FontSize="11"
-                       FontWeight="Bold"
-                       Foreground="{StaticResource TextSecondaryBrush}" />
+        <Border
+            Background="{StaticResource SurfaceCellHeaderBrush}"
+            Padding="6,3"
+            BorderBrush="{StaticResource BorderDefaultBrush}"
+            BorderThickness="0,1,0,1"
+        >
+            <TextBlock
+                Text="{loc:TrUpper FilterTitle}"
+                FontSize="11"
+                FontWeight="Bold"
+                Foreground="{StaticResource TextSecondaryBrush}"
+            />
         </Border>
-        <Border Padding="4,4"
-                IsVisible="{Binding HasFilter}">
+        <Border Padding="4,4" IsVisible="{Binding HasFilter}">
             <StackPanel Spacing="3">
-                <TextBlock Text="{loc:TrUpper PolesLabel}"
-                           FontSize="11"
-                           Foreground="{StaticResource TextSecondaryBrush}"
-                           HorizontalAlignment="Center" />
-                <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto"
-                      HorizontalAlignment="Stretch"
-                      Margin="0,0,0,1">
-                    <TextBox Grid.Column="0"
-                             Text="{Binding PoleCount0, TargetNullValue=0, FallbackValue=0}"
-                             MaxLength="2"
-                             Width="32"
-                             HorizontalAlignment="Left" />
-                    <TextBlock Grid.Column="1"
-                               Text="/"
-                               FontSize="11"
-                               Foreground="{StaticResource TextMutedBrush}"
-                               VerticalAlignment="Center"
-                               Margin="2,0" />
-                    <TextBox Grid.Column="2"
-                             Text="{Binding PoleCount1, TargetNullValue=0, FallbackValue=0}"
-                             MaxLength="2"
-                             Width="32"
-                             HorizontalAlignment="Left" />
+                <TextBlock
+                    Text="{loc:TrUpper PolesLabel}"
+                    FontSize="11"
+                    Foreground="{StaticResource TextSecondaryBrush}"
+                    HorizontalAlignment="Center"
+                />
+                <Grid
+                    ColumnDefinitions="Auto,Auto,Auto,Auto,Auto"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,0,0,1"
+                >
+                    <TextBox
+                        Grid.Column="0"
+                        Text="{Binding PoleCount0, TargetNullValue=0, FallbackValue=0}"
+                        MaxLength="2"
+                        Width="32"
+                        HorizontalAlignment="Left"
+                    />
+                    <TextBlock
+                        Grid.Column="1"
+                        Text="/"
+                        FontSize="11"
+                        Foreground="{StaticResource TextMutedBrush}"
+                        VerticalAlignment="Center"
+                        Margin="2,0"
+                    />
+                    <TextBox
+                        Grid.Column="2"
+                        Text="{Binding PoleCount1, TargetNullValue=0, FallbackValue=0}"
+                        MaxLength="2"
+                        Width="32"
+                        HorizontalAlignment="Left"
+                    />
                 </Grid>
-                <StackPanel Orientation="Horizontal"
-                            Spacing="4"
-                            HorizontalAlignment="Center">
-                    <controls:KnobControl Value="{Binding UnityGain0, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
-                                          Minimum="0"
-                                          Maximum="100"
-                                          Label="{loc:TrUpper GainALabel}"
-                                          Step="0.5"
-                                          FormatString="F1"
-                                          Unit="%"
-                                          Height="40" />
-                    <controls:KnobControl Value="{Binding UnityGain1, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
-                                          Minimum="0"
-                                          Maximum="100"
-                                          Label="{loc:TrUpper GainBLabel}"
-                                          Step="0.5"
-                                          FormatString="F1"
-                                          Unit="%"
-                                          Height="40" />
+                <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                    <controls:KnobControl
+                        Value="{Binding UnityGain0, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
+                        Minimum="0"
+                        Maximum="100"
+                        Label="{loc:TrUpper GainALabel}"
+                        Step="0.5"
+                        FormatString="F1"
+                        Unit="%"
+                        Height="40"
+                    />
+                    <controls:KnobControl
+                        Value="{Binding UnityGain1, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
+                        Minimum="0"
+                        Maximum="100"
+                        Label="{loc:TrUpper GainBLabel}"
+                        Step="0.5"
+                        FormatString="F1"
+                        Unit="%"
+                        Height="40"
+                    />
                 </StackPanel>
-                <Border Margin="0,2,0,0"
-                        BorderBrush="{StaticResource BorderSubtleBrush}"
-                        BorderThickness="0,1,0,0" />
-                <Grid ColumnDefinitions="30,54,54"
-                      ColumnSpacing="4"
-                      HorizontalAlignment="Center"
-                      Margin="0,2,0,0">
-                    <TextBlock Grid.Column="0"
-                               Text="{loc:TrUpper PoleIndexLabel}"
-                               FontSize="10"
-                               Foreground="{StaticResource TextMutedBrush}"
-                               HorizontalAlignment="Center" />
-                    <TextBlock Grid.Column="1"
-                               Text="{loc:TrUpper PoleAngleLabel}"
-                               FontSize="10"
-                               Foreground="{StaticResource TextMutedBrush}"
-                               HorizontalAlignment="Center" />
-                    <TextBlock Grid.Column="2"
-                               Text="{loc:TrUpper PoleMagnitudeLabel}"
-                               FontSize="10"
-                               Foreground="{StaticResource TextMutedBrush}"
-                               HorizontalAlignment="Center" />
+                <Border
+                    Margin="0,2,0,0"
+                    BorderBrush="{StaticResource BorderSubtleBrush}"
+                    BorderThickness="0,1,0,0"
+                />
+                <Grid
+                    ColumnDefinitions="30,54,54"
+                    ColumnSpacing="4"
+                    HorizontalAlignment="Center"
+                    Margin="0,2,0,0"
+                >
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="{loc:TrUpper PoleIndexLabel}"
+                        FontSize="10"
+                        Foreground="{StaticResource TextMutedBrush}"
+                        HorizontalAlignment="Center"
+                    />
+                    <TextBlock
+                        Grid.Column="1"
+                        Text="{loc:TrUpper PoleAngleLabel}"
+                        FontSize="10"
+                        Foreground="{StaticResource TextMutedBrush}"
+                        HorizontalAlignment="Center"
+                    />
+                    <TextBlock
+                        Grid.Column="2"
+                        Text="{loc:TrUpper PoleMagnitudeLabel}"
+                        FontSize="10"
+                        Foreground="{StaticResource TextMutedBrush}"
+                        HorizontalAlignment="Center"
+                    />
                 </Grid>
                 <ItemsControl ItemsSource="{Binding PoleControls}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:FilterPoleViewModel">
-                            <Grid ColumnDefinitions="30,54,54"
-                                  ColumnSpacing="4"
-                                  HorizontalAlignment="Center"
-                                  Margin="0,1">
-                                <Grid Grid.Column="0"
-                                      RowDefinitions="*,Auto"
-                                      Width="30"
-                                      Height="40">
-                                    <TextBlock Text="{Binding PoleLabel}"
-                                               FontSize="12"
-                                               FontWeight="SemiBold"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Grid.Row="1"
-                                               Text="{loc:TrUpper PoleIndexLabel}"
-                                               FontSize="10"
-                                               Foreground="{StaticResource TextMutedBrush}"
-                                               HorizontalAlignment="Center" />
+                            <Grid
+                                ColumnDefinitions="30,54,54"
+                                ColumnSpacing="4"
+                                HorizontalAlignment="Center"
+                                Margin="0,1"
+                            >
+                                <Grid
+                                    Grid.Column="0"
+                                    RowDefinitions="*,Auto"
+                                    Width="30"
+                                    Height="40"
+                                >
+                                    <TextBlock
+                                        Text="{Binding PoleLabel}"
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Foreground="{StaticResource TextSecondaryBrush}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                    />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Text="{loc:TrUpper PoleIndexLabel}"
+                                        FontSize="10"
+                                        Foreground="{StaticResource TextMutedBrush}"
+                                        HorizontalAlignment="Center"
+                                    />
                                 </Grid>
-                                <controls:KnobControl Grid.Column="1"
-                                                      Value="{Binding AngleDegrees, TargetNullValue=0, FallbackValue=0}"
-                                                      Minimum="0"
-                                                      Maximum="136.67443481253852"
-                                                      Step="1"
-                                                      Label="{loc:TrUpper PoleAngleLabel}"
-                                                      FormatString="F0"
-                                                      Unit="°"
-                                                      Width="54"
-                                                      Height="40" />
-                                <controls:KnobControl Grid.Column="2"
-                                                      Value="{Binding MagnitudePercent, TargetNullValue=0, FallbackValue=0}"
-                                                      Minimum="0"
-                                                      Maximum="100"
-                                                      Step="0.5"
-                                                      Label="{loc:TrUpper PoleMagnitudeLabel}"
-                                                      FormatString="F1"
-                                                      Unit="%"
-                                                      Width="54"
-                                                      Height="40" />
+                                <controls:KnobControl
+                                    Grid.Column="1"
+                                    Value="{Binding AngleDegrees, TargetNullValue=0, FallbackValue=0}"
+                                    Minimum="0"
+                                    Maximum="136.67443481253852"
+                                    Step="1"
+                                    Label="{loc:TrUpper PoleAngleLabel}"
+                                    FormatString="F0"
+                                    Unit="°"
+                                    Width="54"
+                                    Height="40"
+                                />
+                                <controls:KnobControl
+                                    Grid.Column="2"
+                                    Value="{Binding MagnitudePercent, TargetNullValue=0, FallbackValue=0}"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    Step="0.5"
+                                    Label="{loc:TrUpper PoleMagnitudeLabel}"
+                                    FormatString="F1"
+                                    Unit="%"
+                                    Width="54"
+                                    Height="40"
+                                />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </StackPanel>
         </Border>
-        <Border Padding="4,4"
-                IsVisible="{Binding !HasFilter}">
-            <TextBlock Text="{loc:TrUpper NoFilter}"
-                       FontSize="11"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextMutedBrush}"
-                       HorizontalAlignment="Center" />
+        <Border Padding="4,4" IsVisible="{Binding !HasFilter}">
+            <TextBlock
+                Text="{loc:TrUpper NoFilter}"
+                FontSize="11"
+                FontWeight="SemiBold"
+                Foreground="{StaticResource TextMutedBrush}"
+                HorizontalAlignment="Center"
+            />
         </Border>
     </StackPanel>
 </UserControl>

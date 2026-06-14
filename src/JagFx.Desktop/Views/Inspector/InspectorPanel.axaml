@@ -1,72 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="using:JagFx.Desktop.Localization"
-             xmlns:vm="using:JagFx.Desktop.ViewModels"
-             xmlns:inspector="using:JagFx.Desktop.Views.Inspector"
-             x:Class="JagFx.Desktop.Views.Inspector.InspectorPanel"
-             x:DataType="vm:MainViewModel">
-    <Border Background="{StaticResource SurfacePanelBrush}"
-            BorderBrush="{StaticResource BorderDefaultBrush}"
-            BorderThickness="0,0,1,0">
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Spacing="0"
-                        Margin="4">
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:loc="using:JagFx.Desktop.Localization"
+    xmlns:vm="using:JagFx.Desktop.ViewModels"
+    xmlns:inspector="using:JagFx.Desktop.Views.Inspector"
+    x:Class="JagFx.Desktop.Views.Inspector.InspectorPanel"
+    x:DataType="vm:MainViewModel"
+>
+    <Border
+        Background="{StaticResource SurfacePanelBrush}"
+        BorderBrush="{StaticResource BorderDefaultBrush}"
+        BorderThickness="0,0,1,0"
+    >
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="0" Margin="4">
                 <!-- Envelope Inspector (visible when envelope selected) -->
                 <inspector:EnvelopeInspector DataContext="{Binding}" />
                 <!-- Voice Parameters -->
-                <Border Background="{StaticResource SurfaceCellHeaderBrush}"
-                        Padding="6,3"
-                        BorderBrush="{StaticResource BorderDefaultBrush}"
-                        BorderThickness="0,1,0,1">
-                    <TextBlock Text="{loc:TrUpper VoiceSettingsTitle}"
-                               FontSize="11"
-                               FontWeight="Bold"
-                               Foreground="{StaticResource TextSecondaryBrush}" />
+                <Border
+                    Background="{StaticResource SurfaceCellHeaderBrush}"
+                    Padding="6,3"
+                    BorderBrush="{StaticResource BorderDefaultBrush}"
+                    BorderThickness="0,1,0,1"
+                >
+                    <TextBlock
+                        Text="{loc:TrUpper VoiceSettingsTitle}"
+                        FontSize="11"
+                        FontWeight="Bold"
+                        Foreground="{StaticResource TextSecondaryBrush}"
+                    />
                 </Border>
                 <Border Padding="4,4">
-                    <Grid ColumnDefinitions="Auto,Auto,Auto"
-                          RowDefinitions="Auto,Auto">
-                        <TextBlock Grid.Row="0"
-                                   Grid.Column="0"
-                                   Text="{loc:TrUpper DurationLabel}"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   FontSize="11"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,4,0" />
-                        <TextBox Grid.Row="0"
-                                 Grid.Column="1"
-                                 Width="68"
-                                 MaxLength="5"
-                                 Text="{Binding Patch.SelectedVoice.DurationMs, TargetNullValue=0, FallbackValue=0}" />
-                        <TextBlock Grid.Row="0"
-                                   Grid.Column="2"
-                                   Text="ms"
-                                   FontSize="11"
-                                   Foreground="{StaticResource TextMutedBrush}"
-                                   VerticalAlignment="Center"
-                                   Margin="2,0,0,0" />
-                        <TextBlock Grid.Row="1"
-                                   Grid.Column="0"
-                                   Text="{loc:TrUpper OffsetLabel}"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   FontSize="11"
-                                   VerticalAlignment="Center"
-                                   Margin="0,2,4,0" />
-                        <TextBox Grid.Row="1"
-                                 Grid.Column="1"
-                                 Width="68"
-                                 MaxLength="5"
-                                 Text="{Binding Patch.SelectedVoice.OffsetMs, TargetNullValue=0, FallbackValue=0}"
-                                 Margin="0,2,0,0" />
-                        <TextBlock Grid.Row="1"
-                                   Grid.Column="2"
-                                   Text="ms"
-                                   FontSize="11"
-                                   Foreground="{StaticResource TextMutedBrush}"
-                                   VerticalAlignment="Center"
-                                   Margin="2,2,0,0" />
+                    <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto">
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Text="{loc:TrUpper DurationLabel}"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            FontSize="11"
+                            VerticalAlignment="Center"
+                            Margin="0,0,4,0"
+                        />
+                        <TextBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Width="68"
+                            MaxLength="5"
+                            Text="{Binding Patch.SelectedVoice.DurationMs, TargetNullValue=0, FallbackValue=0}"
+                        />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Text="ms"
+                            FontSize="11"
+                            Foreground="{StaticResource TextMutedBrush}"
+                            VerticalAlignment="Center"
+                            Margin="2,0,0,0"
+                        />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Text="{loc:TrUpper OffsetLabel}"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            FontSize="11"
+                            VerticalAlignment="Center"
+                            Margin="0,2,4,0"
+                        />
+                        <TextBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Width="68"
+                            MaxLength="5"
+                            Text="{Binding Patch.SelectedVoice.OffsetMs, TargetNullValue=0, FallbackValue=0}"
+                            Margin="0,2,0,0"
+                        />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Text="ms"
+                            FontSize="11"
+                            Foreground="{StaticResource TextMutedBrush}"
+                            VerticalAlignment="Center"
+                            Margin="2,2,0,0"
+                        />
                     </Grid>
                 </Border>
                 <!-- Filter Section -->
