@@ -12,6 +12,7 @@
     x:DataType="vm:MainViewModel"
 >
     <UserControl.Resources>
+        <conv:RawToGateMillisecondsConverter x:Key="RawToGateMillisecondsConverter" />
         <conv:RawToPercentConverter x:Key="RawToPercentConverter" />
         <conv:IntToDoubleConverter x:Key="IntToDoubleConverter" />
     </UserControl.Resources>
@@ -88,6 +89,7 @@
             <Border Padding="6,6">
                 <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
                     <controls:KnobControl
+                        IsVisible="{Binding IsSelectedEnvelopeFrequencyScale}"
                         Value="{Binding SelectedEnvelope.StartValue, Converter={StaticResource IntToDoubleConverter}, TargetNullValue=0, FallbackValue=0}"
                         Minimum="{Binding StartEndMin}"
                         Maximum="{Binding StartEndMax}"
@@ -98,12 +100,57 @@
                         Height="40"
                     />
                     <controls:KnobControl
+                        IsVisible="{Binding IsSelectedEnvelopePercentScale}"
+                        Value="{Binding SelectedEnvelope.StartValue, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
+                        Minimum="{Binding StartEndMin}"
+                        Maximum="{Binding StartEndMax}"
+                        Label="{loc:TrUpper StartLabel}"
+                        Step="0.5"
+                        FormatString="F1"
+                        Unit="{Binding StartEndUnit}"
+                        Height="40"
+                    />
+                    <controls:KnobControl
+                        IsVisible="{Binding IsSelectedEnvelopeGateDurationScale}"
+                        Value="{Binding SelectedEnvelope.StartValue, Converter={StaticResource RawToGateMillisecondsConverter}, TargetNullValue=0, FallbackValue=0}"
+                        Minimum="{Binding StartEndMin}"
+                        Maximum="{Binding StartEndMax}"
+                        Label="{loc:TrUpper StartLabel}"
+                        Step="0.1"
+                        FormatString="F1"
+                        Unit="{Binding StartEndUnit}"
+                        Height="40"
+                    />
+                    <controls:KnobControl
+                        IsVisible="{Binding IsSelectedEnvelopeFrequencyScale}"
                         Value="{Binding SelectedEnvelope.EndValue, Converter={StaticResource IntToDoubleConverter}, TargetNullValue=0, FallbackValue=0}"
                         Minimum="{Binding StartEndMin}"
                         Maximum="{Binding StartEndMax}"
                         Label="{loc:TrUpper EndLabel}"
                         Step="1"
                         FormatString="F0"
+                        Unit="{Binding StartEndUnit}"
+                        Height="40"
+                    />
+                    <controls:KnobControl
+                        IsVisible="{Binding IsSelectedEnvelopePercentScale}"
+                        Value="{Binding SelectedEnvelope.EndValue, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
+                        Minimum="{Binding StartEndMin}"
+                        Maximum="{Binding StartEndMax}"
+                        Label="{loc:TrUpper EndLabel}"
+                        Step="0.5"
+                        FormatString="F1"
+                        Unit="{Binding StartEndUnit}"
+                        Height="40"
+                    />
+                    <controls:KnobControl
+                        IsVisible="{Binding IsSelectedEnvelopeGateDurationScale}"
+                        Value="{Binding SelectedEnvelope.EndValue, Converter={StaticResource RawToGateMillisecondsConverter}, TargetNullValue=0, FallbackValue=0}"
+                        Minimum="{Binding StartEndMin}"
+                        Maximum="{Binding StartEndMax}"
+                        Label="{loc:TrUpper EndLabel}"
+                        Step="0.1"
+                        FormatString="F1"
                         Unit="{Binding StartEndUnit}"
                         Height="40"
                     />
@@ -144,6 +191,7 @@
                                 />
                                 <controls:KnobControl
                                     Grid.Column="2"
+                                    IsVisible="{ReflectionBinding DataContext.IsSelectedEnvelopePercentScale, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                     Value="{Binding TargetLevel, Converter={StaticResource RawToPercentConverter}, TargetNullValue=0, FallbackValue=0}"
                                     Minimum="0"
                                     Maximum="100"
@@ -151,6 +199,30 @@
                                     Step="0.5"
                                     FormatString="F1"
                                     Unit="%"
+                                    Height="40"
+                                />
+                                <controls:KnobControl
+                                    Grid.Column="2"
+                                    IsVisible="{ReflectionBinding DataContext.IsSelectedEnvelopeFrequencyScale, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    Value="{Binding TargetLevel, Converter={StaticResource IntToDoubleConverter}, TargetNullValue=0, FallbackValue=0}"
+                                    Minimum="0"
+                                    Maximum="11025"
+                                    Label="{loc:TrUpper SegmentLevelLabel}"
+                                    Step="1"
+                                    FormatString="F0"
+                                    Unit="Hz"
+                                    Height="40"
+                                />
+                                <controls:KnobControl
+                                    Grid.Column="2"
+                                    IsVisible="{ReflectionBinding DataContext.IsSelectedEnvelopeGateDurationScale, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    Value="{Binding TargetLevel, Converter={StaticResource RawToGateMillisecondsConverter}, TargetNullValue=0, FallbackValue=0}"
+                                    Minimum="0"
+                                    Maximum="11.61"
+                                    Label="{loc:TrUpper SegmentLevelLabel}"
+                                    Step="0.1"
+                                    FormatString="F1"
+                                    Unit="ms"
                                     Height="40"
                                 />
                                 <Button

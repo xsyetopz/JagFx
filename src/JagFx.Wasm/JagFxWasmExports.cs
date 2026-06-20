@@ -10,7 +10,17 @@ public static partial class JagFxWasmExports
     public static byte[] RenderPcm16Le(byte[] synthData, int loopCount, int voiceFilter)
     {
         var patch = SynthFileReader.Read(synthData);
-        var audio = PatchRenderer.Synthesize(patch, loopCount, voiceFilter);
-        return audio.ToBytes16LE();
+        using var audio = PatchRenderer.SynthesizePooled(patch, loopCount, voiceFilter);
+        var bytes = new byte[audio.Length * sizeof(short)];
+        var samples = audio.Span;
+        for (var i = 0; i < samples.Length; i++)
+        {
+            var sample = samples[i];
+            var byteOffset = i * sizeof(short);
+            bytes[byteOffset] = (byte)sample;
+            bytes[byteOffset + 1] = (byte)(sample >> 8);
+        }
+
+        return bytes;
     }
 }

@@ -11,19 +11,19 @@ public class SynthFileReaderTests
     [Fact]
     public void ReadsCowDeath1VoiceCorrectly()
     {
-        var result = SynthFileReader.Read(TestResources.CowDeath);
-        Assert.NotNull(result);
-        _ = Assert.Single(result.ActiveVoices);
-        Assert.Equal(0, result.Loop.BeginMs);
-        Assert.Equal(0, result.Loop.EndMs);
+        var cowDeathPatch = SynthFileReader.Read(TestResources.CowDeath);
+        Assert.NotNull(cowDeathPatch);
+        _ = Assert.Single(cowDeathPatch.ActiveVoices);
+        Assert.Equal(0, cowDeathPatch.Loop.BeginMs);
+        Assert.Equal(0, cowDeathPatch.Loop.EndMs);
     }
 
     [Fact]
     public void ReadsWardOfArceuusCastCorrectly()
     {
-        var result = SynthFileReader.Read(TestResources.WardOfArceuusCast);
-        Assert.NotNull(result);
-        Assert.True(result.ActiveVoices.Count >= 1);
+        var wardCastPatch = SynthFileReader.Read(TestResources.WardOfArceuusCast);
+        Assert.NotNull(wardCastPatch);
+        Assert.True(wardCastPatch.ActiveVoices.Count >= 1);
     }
 
     #endregion
@@ -42,8 +42,8 @@ public class SynthFileReaderTests
     [Fact]
     public void CowDeathAmplitudeEnvelopeHasSegments()
     {
-        var result = SynthFileReader.Read(TestResources.CowDeath);
-        var (_, voice) = result.ActiveVoices.First();
+        var cowDeathPatch = SynthFileReader.Read(TestResources.CowDeath);
+        var (_, voice) = cowDeathPatch.ActiveVoices.First();
         Assert.True(
             voice.AmplitudeEnvelope.Segments.Count > 0,
             "cow_death amplitude envelope must have at least one segment"
@@ -57,9 +57,9 @@ public class SynthFileReaderTests
     [Fact]
     public void ParsesPartialsCorrectly()
     {
-        var result = SynthFileReader.Read(TestResources.CowDeath);
-        Assert.NotNull(result);
-        var (_, voice) = result.ActiveVoices.First();
+        var cowDeathPatch = SynthFileReader.Read(TestResources.CowDeath);
+        Assert.NotNull(cowDeathPatch);
+        var (_, voice) = cowDeathPatch.ActiveVoices.First();
         Assert.Equal(2, voice.Partials.Count);
         Assert.Equal(100, voice.Partials[0].Amplitude.Value);
     }
@@ -67,8 +67,8 @@ public class SynthFileReaderTests
     [Fact]
     public void CowDeathPartialsHaveExpectedWaveformOnFrequencyEnvelope()
     {
-        var result = SynthFileReader.Read(TestResources.CowDeath);
-        var (_, voice) = result.ActiveVoices.First();
+        var cowDeathPatch = SynthFileReader.Read(TestResources.CowDeath);
+        var (_, voice) = cowDeathPatch.ActiveVoices.First();
         Assert.Equal(Waveform.Sine, voice.FrequencyEnvelope.Waveform);
     }
 
@@ -79,8 +79,10 @@ public class SynthFileReaderTests
     [Fact]
     public void FilterFileContainsVoiceWithFilter()
     {
-        var result = SynthFileReader.Read(TestResources.ToaZebakAttackMeleeRoar01);
-        var voiceWithFilter = result.ActiveVoices.FirstOrDefault(v => v.Voice.Filter != null);
+        var zebakRoarPatch = SynthFileReader.Read(TestResources.ToaZebakAttackMeleeRoar01);
+        var voiceWithFilter = zebakRoarPatch.ActiveVoices.FirstOrDefault(v =>
+            v.Voice.Filter != null
+        );
         Assert.True(
             voiceWithFilter != default,
             "toa_zebak_attack_melee_roar_01 must contain a voice with a filter"
@@ -105,9 +107,9 @@ public class SynthFileReaderTests
     public void AllResourcesAreValidSynthFiles(string resourceName)
     {
         var bytes = TestResources.GetBytes(resourceName);
-        var result = SynthFileReader.Read(bytes);
-        Assert.NotNull(result);
-        Assert.NotNull(result.Voices);
+        var resourcePatch = SynthFileReader.Read(bytes);
+        Assert.NotNull(resourcePatch);
+        Assert.NotNull(resourcePatch.Voices);
     }
 
     #endregion

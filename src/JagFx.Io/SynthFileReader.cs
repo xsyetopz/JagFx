@@ -17,48 +17,48 @@ public static class SynthFileReader
     private const int MaxReasonableSegCount = 15;
     private const int MinVoiceSize = 30;
 
-    public static Patch Read(byte[] data)
+    public static Patch Read(byte[] synthBytes)
     {
-        ValidateInput(data);
-        var parser = new SynthParser(new BinaryBuffer(data));
+        ValidateInput(synthBytes);
+        var parser = new SynthParser(new BinaryBuffer(synthBytes));
         return parser.Parse();
     }
 
     public static Patch ReadFromPath(string path)
     {
-        var data = File.ReadAllBytes(path);
-        return Read(data);
+        var synthBytes = File.ReadAllBytes(path);
+        return Read(synthBytes);
     }
 
-    private static void ValidateInput(byte[] data)
+    private static void ValidateInput(byte[] synthBytes)
     {
-        if (data.Length == 0)
+        if (synthBytes.Length == 0)
         {
             return;
         }
 
-        if (IsGitLfsPointer(data))
+        if (IsGitLfsPointer(synthBytes))
         {
             throw new SynthFileException(
-                "File is a Git LFS pointer, not synth data. Run `git lfs pull` in the archive repository to download the real .synth contents."
+                "File is a Git LFS pointer, not synth file bytes. Run `git lfs pull` in the archive repository to download the real .synth contents."
             );
         }
     }
 
-    private static bool IsGitLfsPointer(byte[] data)
+    private static bool IsGitLfsPointer(byte[] synthBytes)
     {
-        if (data.Length < GitLfsPointerPrefix.Length)
+        if (synthBytes.Length < GitLfsPointerPrefix.Length)
         {
             return false;
         }
 
-        var prefix = Encoding.ASCII.GetString(data, 0, GitLfsPointerPrefix.Length);
+        var prefix = Encoding.ASCII.GetString(synthBytes, 0, GitLfsPointerPrefix.Length);
         return prefix == GitLfsPointerPrefix;
     }
 
-    private sealed class SynthParser(BinaryBuffer buf)
+    private sealed class SynthParser(BinaryBuffer synthBuffer)
     {
-        private readonly BinaryBuffer _buf = buf;
+        private readonly BinaryBuffer _synthBuffer = synthBuffer;
         private readonly List<string> _warnings = [];
 
         public Patch Parse()
@@ -66,15 +66,18 @@ public static class SynthFileReader
             var voices = ReadVoices();
 
             var loopParams =
-                _buf.Remaining >= 4
-                    ? new LoopSegment(_buf.ReadUInt16BigEndian(), _buf.ReadUInt16BigEndian())
-                : _buf.IsTruncated ? new LoopSegment(0, 0)
+                _synthBuffer.Remaining >= 4
+                    ? new LoopSegment(
+                        _synthBuffer.ReadUInt16BigEndian(),
+                        _synthBuffer.ReadUInt16BigEndian()
+                    )
+                : _synthBuffer.IsTruncated ? new LoopSegment(0, 0)
                 : new LoopSegment(0, 0);
 
-            if (_buf.IsTruncated)
+            if (_synthBuffer.IsTruncated)
             {
                 _warnings.Add(
-                    $"File truncated at byte offset {_buf.Position}; loop parameters may be incomplete or invalid"
+                    $"File truncated at byte offset {_synthBuffer.Position}; loop parameters may be incomplete or invalid"
                 );
             }
 
@@ -87,9 +90,9 @@ public static class SynthFileReader
 
             for (var i = 0; i < AudioConstants.MaxVoices; i++)
             {
-                if (_buf.Remaining >= MinVoiceSize)
+                if (_synthBuffer.Remaining >= MinVoiceSize)
                 {
-                    var marker = _buf.Peek();
+                    var marker = _synthBuffer.Peek();
                     if (marker != 0 && IsValidWaveform(marker))
                     {
                         var voice = ReadVoice();
@@ -107,7 +110,7 @@ public static class SynthFileReader
 
                             break;
                         }
-                        _buf.Skip(1);
+                        _synthBuffer.Skip(1);
                         voices.Add(null);
                     }
                 }
@@ -131,11 +134,11 @@ public static class SynthFileReader
 
             var partials = ReadPartials();
 
-            var echoDelay = _buf.ReadUSmart();
-            var echoFeedback = _buf.ReadUSmart();
+            var echoDelay = _synthBuffer.ReadUSmart();
+            var echoFeedback = _synthBuffer.ReadUSmart();
 
-            var duration = _buf.ReadUInt16BigEndian();
-            var startTime = _buf.ReadUInt16BigEndian();
+            var duration = _synthBuffer.ReadUInt16BigEndian();
+            var startTime = _synthBuffer.ReadUInt16BigEndian();
 
             var filter = ReadFilter();
 
@@ -160,11 +163,11 @@ public static class SynthFileReader
 
         private Envelope ReadEnvelope()
         {
-            var waveformId = _buf.ReadUInt8();
-            var startValue = _buf.ReadInt32BigEndian();
-            var endValue = _buf.ReadInt32BigEndian();
+            var waveformId = _synthBuffer.ReadUInt8();
+            var startValue = _synthBuffer.ReadInt32BigEndian();
+            var endValue = _synthBuffer.ReadInt32BigEndian();
             var waveform = (waveformId is >= 0 and <= 4) ? (Waveform)waveformId : Waveform.Off;
-            var segmentLength = _buf.ReadUInt8();
+            var segmentLength = _synthBuffer.ReadUInt8();
             return new Envelope(waveform, startValue, endValue, ReadSegmentPairs(segmentLength));
         }
 
@@ -173,14 +176,19 @@ public static class SynthFileReader
             var segments = new List<Segment>(count);
             for (var i = 0; i < count; i++)
             {
-                segments.Add(new Segment(_buf.ReadUInt16BigEndian(), _buf.ReadUInt16BigEndian()));
+                segments.Add(
+                    new Segment(
+                        _synthBuffer.ReadUInt16BigEndian(),
+                        _synthBuffer.ReadUInt16BigEndian()
+                    )
+                );
             }
             return [.. segments];
         }
 
         private (Envelope? first, Envelope? second) ReadOptionalEnvelopePair()
         {
-            var marker = _buf.Peek();
+            var marker = _synthBuffer.Peek();
             if (marker != 0)
             {
                 var env1 = ReadEnvelope();
@@ -188,7 +196,7 @@ public static class SynthFileReader
                 return (env1, env2);
             }
 
-            _buf.Skip(1);
+            _synthBuffer.Skip(1);
             return (null, null);
         }
 
@@ -198,19 +206,19 @@ public static class SynthFileReader
 
             while (partials.Count < AudioConstants.MaxOscillators)
             {
-                if (_buf.Remaining == 0)
+                if (_synthBuffer.Remaining == 0)
                 {
                     break;
                 }
 
-                var volume = _buf.ReadUSmart();
+                var volume = _synthBuffer.ReadUSmart();
                 if (volume == 0)
                 {
                     break;
                 }
 
-                var pitchOffset = _buf.ReadSmart();
-                var startDelay = _buf.ReadUSmart();
+                var pitchOffset = _synthBuffer.ReadSmart();
+                var startDelay = _synthBuffer.ReadUSmart();
 
                 partials.Add(
                     new VoicePartial(new Percent(volume), pitchOffset, new Milliseconds(startDelay))
@@ -222,7 +230,7 @@ public static class SynthFileReader
 
         private Filter? ReadFilter()
         {
-            if (_buf.Remaining == 0)
+            if (_synthBuffer.Remaining == 0)
             {
                 return null;
             }
@@ -233,9 +241,9 @@ public static class SynthFileReader
             }
 
             var (poleCount0, poleCount1) = ReadFilterHeader();
-            var unityGain0 = _buf.ReadUInt16BigEndian();
-            var unityGain1 = _buf.ReadUInt16BigEndian();
-            var modulationMask = _buf.ReadUInt8();
+            var unityGain0 = _synthBuffer.ReadUInt16BigEndian();
+            var unityGain1 = _synthBuffer.ReadUInt16BigEndian();
+            var modulationMask = _synthBuffer.ReadUInt8();
 
             var (frequencies, magnitudes) = ReadFilterCoefficients(
                 poleCount0,
@@ -249,9 +257,9 @@ public static class SynthFileReader
                 modulationEnvelope = ReadEnvelopeSegments();
             }
 
-            if (_buf.IsTruncated)
+            if (_synthBuffer.IsTruncated)
             {
-                _warnings.Add("Filter truncated (discarding partial data)");
+                _warnings.Add("Filter truncated (discarding partial filter payload)");
                 return null;
             }
 
@@ -268,48 +276,53 @@ public static class SynthFileReader
 
         private (int poleCount0, int poleCount1) ReadFilterHeader()
         {
-            var packedPoles = _buf.ReadUInt8();
+            var packedPoles = _synthBuffer.ReadUInt8();
             var poleCount0 = packedPoles >> 4;
             var poleCount1 = packedPoles & 0xF;
             return (poleCount0, poleCount1);
         }
 
-        private (int[,,] frequencies, int[,,] magnitudes) ReadFilterCoefficients(
+        private (int[] frequencies, int[] magnitudes) ReadFilterCoefficients(
             int poleCount0,
             int poleCount1,
             int modulationMask
         )
         {
-            var frequencies = new int[2, 2, AudioConstants.MaxFilterPairs];
-            var magnitudes = new int[2, 2, AudioConstants.MaxFilterPairs];
+            var frequencies = new int[2 * 2 * AudioConstants.MaxFilterPairs];
+            var magnitudes = new int[2 * 2 * AudioConstants.MaxFilterPairs];
 
             for (var phase = 0; phase < 2; phase++)
             {
                 for (var channel = 0; channel < 2; channel++)
                 {
                     var poles = channel == 0 ? poleCount0 : poleCount1;
-                    var maxPoles = Math.Min(poles, AudioConstants.MaxFilterPairs);
+                    var maxPoles =
+                        poles < AudioConstants.MaxFilterPairs
+                            ? poles
+                            : AudioConstants.MaxFilterPairs;
                     for (var p = 0; p < maxPoles; p++)
                     {
+                        var index = GetFilterCoefficientIndex(channel, phase, p);
                         if (phase == 1 && (modulationMask & (1 << (channel * 4 + p))) == 0)
                         {
-                            frequencies[channel, 1, p] = frequencies[channel, 0, p];
-                            magnitudes[channel, 1, p] = magnitudes[channel, 0, p];
+                            var baseIndex = GetFilterCoefficientIndex(channel, 0, p);
+                            frequencies[index] = frequencies[baseIndex];
+                            magnitudes[index] = magnitudes[baseIndex];
                             continue;
                         }
 
-                        if (_buf.Remaining < 2)
+                        if (_synthBuffer.Remaining < 2)
                         {
                             return (frequencies, magnitudes);
                         }
 
-                        frequencies[channel, phase, p] = _buf.ReadUInt16BigEndian();
-                        if (_buf.Remaining < 2)
+                        frequencies[index] = _synthBuffer.ReadUInt16BigEndian();
+                        if (_synthBuffer.Remaining < 2)
                         {
                             return (frequencies, magnitudes);
                         }
 
-                        magnitudes[channel, phase, p] = _buf.ReadUInt16BigEndian();
+                        magnitudes[index] = _synthBuffer.ReadUInt16BigEndian();
                     }
                 }
             }
@@ -319,16 +332,16 @@ public static class SynthFileReader
 
         private Envelope ReadEnvelopeSegments()
         {
-            var length = _buf.ReadUInt8();
+            var length = _synthBuffer.ReadUInt8();
             return new Envelope(Waveform.Off, 0, 0, ReadSegmentPairs(length));
         }
 
         private bool DetectFilterPresent()
         {
-            var peeked = _buf.Peek();
+            var peeked = _synthBuffer.Peek();
             if (peeked == 0)
             {
-                _buf.Skip(1);
+                _synthBuffer.Skip(1);
                 return false;
             }
             return !IsAmbiguousFilterByte(peeked) || !LooksLikeEnvelope();
@@ -338,15 +351,15 @@ public static class SynthFileReader
         {
             return b >= MinWaveformId
                 && b <= MaxWaveformId
-                && _buf.Remaining >= AudioConstants.MaxVoices;
+                && _synthBuffer.Remaining >= AudioConstants.MaxVoices;
         }
 
         private bool LooksLikeEnvelope()
         {
-            var b1 = _buf.PeekAt(1);
-            var b2 = _buf.PeekAt(2);
-            var b3 = _buf.PeekAt(3);
-            var b4 = _buf.PeekAt(4);
+            var b1 = _synthBuffer.PeekAt(1);
+            var b2 = _synthBuffer.PeekAt(2);
+            var b3 = _synthBuffer.PeekAt(3);
+            var b4 = _synthBuffer.PeekAt(4);
 
             var possibleStart = (b1 << 24) | (b2 << 16) | (b3 << 8) | b4;
             if (possibleStart is < (-EnvelopeStartThreshold) or > EnvelopeStartThreshold)
@@ -354,7 +367,7 @@ public static class SynthFileReader
                 return false;
             }
 
-            var possibleSegCount = _buf.PeekAt(SegCountOffset);
+            var possibleSegCount = _synthBuffer.PeekAt(SegCountOffset);
             return possibleSegCount <= MaxReasonableSegCount;
         }
 
@@ -366,8 +379,8 @@ public static class SynthFileReader
             int poleCount1,
             int unityGain0,
             int unityGain1,
-            int[,,] frequencies,
-            int[,,] magnitudes,
+            int[] frequencies,
+            int[] magnitudes,
             Envelope? modulationEnvelope
         )
         {
@@ -388,8 +401,8 @@ public static class SynthFileReader
             ImmutableArray<ImmutableArray<ImmutableArray<int>>> polePhase,
             ImmutableArray<ImmutableArray<ImmutableArray<int>>> poleMagnitude
         ) BuildFilterCoefficientArrays(
-            int[,,] frequencies,
-            int[,,] magnitudes,
+            int[] frequencies,
+            int[] magnitudes,
             int poleCount0,
             int poleCount1
         )
@@ -400,7 +413,8 @@ public static class SynthFileReader
             for (var channel = 0; channel < 2; channel++)
             {
                 var poles = channel == 0 ? poleCount0 : poleCount1;
-                var maxPoles = Math.Min(poles, AudioConstants.MaxFilterPairs);
+                var maxPoles =
+                    poles < AudioConstants.MaxFilterPairs ? poles : AudioConstants.MaxFilterPairs;
                 freqArray[channel] = new ImmutableArray<int>[2];
                 magArray[channel] = new ImmutableArray<int>[2];
 
@@ -434,7 +448,7 @@ public static class SynthFileReader
         }
 
         private static ImmutableArray<int> BuildCoefficientArray(
-            int[,,] coefficients,
+            int[] coefficients,
             int channel,
             int phase,
             int poles
@@ -443,10 +457,13 @@ public static class SynthFileReader
             var builder = ImmutableArray.CreateBuilder<int>(poles);
             for (var pole = 0; pole < poles; pole++)
             {
-                builder.Add(coefficients[channel, phase, pole]);
+                builder.Add(coefficients[GetFilterCoefficientIndex(channel, phase, pole)]);
             }
             return builder.ToImmutable();
         }
+
+        private static int GetFilterCoefficientIndex(int channel, int phase, int pole) =>
+            ((channel * 2) + phase) * AudioConstants.MaxFilterPairs + pole;
 
         private static Envelope CreateEnvelopeWithDuration(Envelope env, int duration)
         {

@@ -85,7 +85,8 @@ public class JavaRandom(long seed)
     /// </summary>
     public void NextBytes(byte[] buffer)
     {
-        for (var i = 0; i < buffer.Length; )
+        var i = 0;
+        while (i < buffer.Length)
         {
             var rnd = NextInt();
             var n = Math.Min(buffer.Length - i, 4);

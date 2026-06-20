@@ -11,24 +11,39 @@ public class LoopCountTextConverterTests
     [Fact]
     public void ConvertFormatsZeroAsZero()
     {
-        var result = Converter.Convert(0, typeof(string), null, CultureInfo.InvariantCulture);
+        var loopCountText = Converter.Convert(
+            0,
+            typeof(string),
+            null,
+            CultureInfo.InvariantCulture
+        );
 
-        Assert.Equal("0", result);
+        Assert.Equal("0", loopCountText);
     }
 
     [Fact]
     public void ConvertBackParsesZeroAsZero()
     {
-        var result = Converter.ConvertBack("0", typeof(int), null, CultureInfo.InvariantCulture);
+        var parsedLoopCount = Converter.ConvertBack(
+            "0",
+            typeof(int),
+            null,
+            CultureInfo.InvariantCulture
+        );
 
-        Assert.Equal(0, result);
+        Assert.Equal(0, parsedLoopCount);
     }
 
     [Fact]
     public void ConvertBackClampsLargeValues()
     {
-        var result = Converter.ConvertBack("1000", typeof(int), null, CultureInfo.InvariantCulture);
+        var cappedLoopCount = Converter.ConvertBack(
+            "1000",
+            typeof(int),
+            null,
+            CultureInfo.InvariantCulture
+        );
 
-        Assert.Equal(999, result);
+        Assert.Equal(999, cappedLoopCount);
     }
 }

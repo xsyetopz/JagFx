@@ -3,7 +3,7 @@ namespace JagFx.Desktop.Controls;
 /// <summary>
 /// Shared pan and zoom state for canvas controls that support both interactions.
 /// </summary>
-public sealed class CanvasInteractionHelper
+public sealed class CanvasPanZoomController
 {
     public static readonly int[] ZoomLevels = [1, 2, 4];
 

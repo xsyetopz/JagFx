@@ -8,7 +8,7 @@ public static class WaveFileWriter
     private const int RiffMagic = 0x52494646; // "RIFF"
     private const int WaveMagic = 0x57415645; // "WAVE"
     private const int FmtMagic = 0x666d7420; // "fmt "
-    private const int DataMagic = 0x64617461; // "data"
+    private const int RiffPcmPayloadChunkMagic = 0x64617461; // RIFF PCM payload chunk
 
     private const int HeaderSize = 44;
     private const int FmtChunkSize = 16;
@@ -25,7 +25,7 @@ public static class WaveFileWriter
     private const int ByteRateOffset = 28;
     private const int BlockAlignOffset = 32;
     private const int BitsPerSampleOffset = 34;
-    private const int DataMagicOffset = 36;
+    private const int RiffPcmPayloadChunkMagicOffset = 36;
     private const int DataSizeOffset = 40;
     private const int SampleDataOffset = 44;
 
@@ -86,7 +86,10 @@ public static class WaveFileWriter
 
     private static void WriteDataChunk(byte[] buffer, int dataSize)
     {
-        BinaryPrimitives.WriteInt32BigEndian(buffer.AsSpan(DataMagicOffset), DataMagic);
+        BinaryPrimitives.WriteInt32BigEndian(
+            buffer.AsSpan(RiffPcmPayloadChunkMagicOffset),
+            RiffPcmPayloadChunkMagic
+        );
         BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(DataSizeOffset), dataSize);
     }
 }

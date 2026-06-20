@@ -31,15 +31,15 @@ public class PatchFileManager(PatchViewModel patch)
             return;
         }
 
-        var model = _patch.ToModel();
-        SynthFileWriter.WriteToPath(model, FilePath);
+        var patchModel = _patch.ToModel();
+        SynthFileWriter.WriteToPath(patchModel, FilePath);
         FileChanged?.Invoke();
     }
 
     public void SaveToPath(string path)
     {
-        var model = _patch.ToModel();
-        SynthFileWriter.WriteToPath(model, path);
+        var patchModel = _patch.ToModel();
+        SynthFileWriter.WriteToPath(patchModel, path);
         FilePath = path;
         PatchName = Path.GetFileNameWithoutExtension(path);
         FileChanged?.Invoke();

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using JagFx.Io;
-using JagFx.Synthesis.Data;
+using JagFx.Synthesis.Audio;
 
 namespace JagFx.Desktop.Services;
 

@@ -23,16 +23,22 @@ public static class JagFxNativeRenderer
         try
         {
             var patch = SynthFileReader.Read(synthData.ToArray());
-            var audio = PatchRenderer.Synthesize(patch, loopCount, voiceFilter);
-            var pcm = audio.ToBytes16LE();
+            using var audio = PatchRenderer.SynthesizePooled(patch, loopCount, voiceFilter);
 
-            bytesWritten = pcm.Length;
-            if (destination.Length < pcm.Length)
+            bytesWritten = audio.Length * sizeof(short);
+            if (destination.Length < bytesWritten)
             {
                 return JagFxNativeStatus.BufferTooSmall;
             }
 
-            pcm.CopyTo(destination);
+            var samples = audio.Span;
+            for (var i = 0; i < samples.Length; i++)
+            {
+                var sample = samples[i];
+                var byteOffset = i * sizeof(short);
+                destination[byteOffset] = (byte)sample;
+                destination[byteOffset + 1] = (byte)(sample >> 8);
+            }
             return JagFxNativeStatus.Success;
         }
         catch (Exception ex) when (ex is InvalidDataException or SynthFileException)

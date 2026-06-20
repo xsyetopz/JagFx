@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using JagFx.Core.Constants;
 
-namespace JagFx.Synthesis.Data;
+namespace JagFx.Synthesis.Audio;
 
 public static class AudioBufferPool
 {
@@ -15,15 +15,14 @@ public static class AudioBufferPool
             return new int[minSize];
         }
 
-        var result = TryAcquireFromPool(minSize);
-        return result ?? new int[minSize];
+        var pooledSamples = TryAcquireFromPool(minSize);
+        return pooledSamples ?? new int[AudioConstants.MaxBufferSize];
     }
 
     public static void Release(int[] buffer)
     {
         if (buffer != null && buffer.Length == AudioConstants.MaxBufferSize)
         {
-            Array.Clear(buffer, 0, buffer.Length);
             if (Pool.Count < MaxCapacity)
             {
                 Pool.Enqueue(buffer);
@@ -38,31 +37,12 @@ public static class AudioBufferPool
 
     private static int[]? TryAcquireFromPool(int minSize)
     {
-        var attempts = new List<int[]>();
-        int[]? result = null;
-
-        while (Pool.TryDequeue(out var buf))
+        if (!Pool.TryDequeue(out var pooledSamples))
         {
-            if (buf.Length >= minSize && result == null)
-            {
-                result = buf;
-            }
-            else
-            {
-                attempts.Add(buf);
-            }
+            return null;
         }
 
-        foreach (var buf in attempts)
-        {
-            Pool.Enqueue(buf);
-        }
-
-        if (result != null)
-        {
-            Array.Clear(result);
-        }
-
-        return result;
+        Array.Clear(pooledSamples, 0, minSize);
+        return pooledSamples;
     }
 }

@@ -1,6 +1,6 @@
 using JagFx.Domain.Models;
+using JagFx.Synthesis.Audio;
 using JagFx.Synthesis.Core;
-using JagFx.Synthesis.Data;
 
 namespace JagFx.Desktop.Services;
 
@@ -13,7 +13,19 @@ public static class SynthesisService
         CancellationToken ct = default
     )
     {
-        return await Task.Run(() => PatchRenderer.Synthesize(patch, loopCount, voiceFilter, ct), ct)
+        return await Task.Run(
+                () =>
+                {
+                    using var pooled = PatchRenderer.SynthesizePooled(
+                        patch,
+                        loopCount,
+                        voiceFilter,
+                        ct
+                    );
+                    return pooled.ToAudioBuffer();
+                },
+                ct
+            )
             .ConfigureAwait(false);
     }
 }

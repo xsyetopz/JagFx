@@ -1,55 +1,130 @@
+using System.Buffers;
 using JagFx.Core.Constants;
 using JagFx.Domain.Models;
 using JagFx.Domain.Utilities;
-using JagFx.Synthesis.Data;
+using JagFx.Synthesis.Audio;
 using JagFx.Synthesis.Processing;
 
 namespace JagFx.Synthesis.Core;
 
-public static class VoiceSynthesizer
+public static partial class VoiceSynthesizer
 {
     public static AudioBuffer Synthesize(Voice voice, CancellationToken ct = default)
+    {
+        using var pooled = SynthesizePooled(voice, ct);
+        return pooled.ToAudioBuffer();
+    }
+
+    public static PooledAudioBuffer SynthesizePooled(Voice voice, CancellationToken ct = default)
+    {
+        var pooled = SynthesizePooledCore(voice, ct);
+        return new PooledAudioBuffer(pooled.Samples, pooled.Length);
+    }
+
+    internal static PooledVoiceBuffer SynthesizePooledCore(
+        Voice voice,
+        CancellationToken ct = default
+    )
     {
         ct.ThrowIfCancellationRequested();
         var sampleCount = (int)(voice.DurationMs * AudioConstants.SampleRatePerMillisecond);
         if (sampleCount <= 0 || voice.DurationMs < AudioConstants.MinDurationMs)
         {
-            return AudioBuffer.Empty(0);
+            return new PooledVoiceBuffer([], 0);
         }
 
         var samplesPerStep = sampleCount / (double)voice.DurationMs;
         var buffer = AudioBufferPool.Acquire(sampleCount);
+        Span<int> partialDelays = stackalloc int[AudioConstants.MaxOscillators];
+        Span<int> partialVolumes = stackalloc int[AudioConstants.MaxOscillators];
+        Span<int> partialSemitones = stackalloc int[AudioConstants.MaxOscillators];
+        Span<int> partialStarts = stackalloc int[AudioConstants.MaxOscillators];
 
-        var state = CreateSynthesisState(voice, samplesPerStep);
-        RenderSamples(buffer, voice, state, sampleCount, ct);
+        var state = CreateVoiceRenderState(
+            voice,
+            samplesPerStep,
+            partialDelays,
+            partialVolumes,
+            partialSemitones,
+            partialStarts
+        );
 
-        ct.ThrowIfCancellationRequested();
-        ApplyGating(buffer, voice, sampleCount, ct);
-        ct.ThrowIfCancellationRequested();
-        ApplyEcho(buffer, voice, samplesPerStep, sampleCount, ct);
-
-        if (voice.Filter != null)
+        try
         {
+            byte[]? gateMaskBuffer = null;
+            try
+            {
+                if (voice.GapOffEnvelope != null && voice.GapOnEnvelope != null)
+                {
+                    gateMaskBuffer = ArrayPool<byte>.Shared.Rent(sampleCount);
+                    FillGateMask(gateMaskBuffer, voice, sampleCount, ct);
+                    RenderGatedSamples(
+                        buffer,
+                        voice,
+                        state,
+                        partialDelays,
+                        partialVolumes,
+                        partialSemitones,
+                        partialStarts,
+                        gateMaskBuffer.AsSpan(0, sampleCount),
+                        sampleCount,
+                        ct
+                    );
+                }
+                else
+                {
+                    RenderSamples(
+                        buffer,
+                        voice,
+                        state,
+                        partialDelays,
+                        partialVolumes,
+                        partialSemitones,
+                        partialStarts,
+                        sampleCount,
+                        ct
+                    );
+                }
+            }
+            finally
+            {
+                if (gateMaskBuffer != null)
+                {
+                    ArrayPool<byte>.Shared.Return(gateMaskBuffer);
+                }
+            }
+
             ct.ThrowIfCancellationRequested();
-            AudioFilter.Apply(buffer, voice.Filter, state.FilterEnvelopeEval, sampleCount, ct);
+            ApplyEcho(buffer, voice, samplesPerStep, sampleCount, ct);
+
+            if (voice.Filter != null)
+            {
+                ct.ThrowIfCancellationRequested();
+                AudioFilter.Apply(buffer, voice.Filter, state.FilterEnvelopeEval, sampleCount, ct);
+            }
+
+            ct.ThrowIfCancellationRequested();
+            AudioMath.ClipInt16(buffer, sampleCount);
+
+            return new PooledVoiceBuffer(buffer, sampleCount);
         }
-
-        ct.ThrowIfCancellationRequested();
-        AudioMath.ClipInt16(buffer, sampleCount);
-
-        var output = new int[sampleCount];
-        Array.Copy(buffer, 0, output, 0, sampleCount);
-
-        AudioBufferPool.Release(buffer);
-        return new AudioBuffer(output, AudioConstants.SampleRate);
+        finally
+        {
+            ReleaseVoiceRenderState(state);
+        }
     }
 
-    private static SynthesisState CreateSynthesisState(Voice voice, double samplesPerStep)
+    private static VoiceRenderState CreateVoiceRenderState(
+        Voice voice,
+        double samplesPerStep,
+        Span<int> partialDelays,
+        Span<int> partialVolumes,
+        Span<int> partialSemitones,
+        Span<int> partialStarts
+    )
     {
-        var freqBaseEval = new EnvelopeGenerator(voice.FrequencyEnvelope);
-        var ampBaseEval = new EnvelopeGenerator(voice.AmplitudeEnvelope);
-        freqBaseEval.Reset();
-        ampBaseEval.Reset();
+        var freqBaseEval = EnvelopeGenerator.Rent(voice.FrequencyEnvelope);
+        var ampBaseEval = EnvelopeGenerator.Rent(voice.AmplitudeEnvelope);
 
         var (freqModRateEval, freqModRangeEval, vibratoStep, vibratoBase) = CreateFrequencyEnvelope(
             voice,
@@ -60,16 +135,22 @@ public static class VoiceSynthesizer
             samplesPerStep
         );
 
-        var (delays, volumes, semitones, starts) = CreatePartials(voice, samplesPerStep);
+        var partialCount = CreatePartials(
+            voice,
+            samplesPerStep,
+            partialDelays,
+            partialVolumes,
+            partialSemitones,
+            partialStarts
+        );
 
         EnvelopeGenerator? filterEnvelopeEval = null;
         if (voice.Filter != null && voice.Filter.ModulationEnvelope != null)
         {
-            filterEnvelopeEval = new EnvelopeGenerator(voice.Filter.ModulationEnvelope);
-            filterEnvelopeEval.Reset();
+            filterEnvelopeEval = EnvelopeGenerator.Rent(voice.Filter.ModulationEnvelope);
         }
 
-        return new SynthesisState
+        return new VoiceRenderState
         {
             FrequencyBaseEval = freqBaseEval,
             AmplitudeBaseEval = ampBaseEval,
@@ -81,12 +162,20 @@ public static class VoiceSynthesizer
             FrequencyBase = vibratoBase,
             AmplitudeStep = tremoloStep,
             AmplitudeBase = tremoloBase,
-            PartialDelays = delays,
-            PartialVolumes = volumes,
-            PartialSemitones = semitones,
-            PartialStarts = starts,
+            PartialCount = partialCount,
             FilterEnvelopeEval = filterEnvelopeEval,
         };
+    }
+
+    private static void ReleaseVoiceRenderState(VoiceRenderState state)
+    {
+        EnvelopeGenerator.Return(state.FrequencyBaseEval);
+        EnvelopeGenerator.Return(state.AmplitudeBaseEval);
+        EnvelopeGenerator.Return(state.FrequencyModulationRateEval);
+        EnvelopeGenerator.Return(state.FrequencyModulationRangeEval);
+        EnvelopeGenerator.Return(state.AmplitudeModulationRateEval);
+        EnvelopeGenerator.Return(state.AmplitudeModulationRangeEval);
+        EnvelopeGenerator.Return(state.FilterEnvelopeEval);
     }
 
     private static (
@@ -114,10 +203,8 @@ public static class VoiceSynthesizer
     {
         if (lfo != null)
         {
-            var rateEval = new EnvelopeGenerator(lfo.RateEnvelope);
-            var rangeEval = new EnvelopeGenerator(lfo.ModulationDepth);
-            rateEval.Reset();
-            rangeEval.Reset();
+            var rateEval = EnvelopeGenerator.Rent(lfo.RateEnvelope);
+            var rangeEval = EnvelopeGenerator.Rent(lfo.ModulationDepth);
 
             var step = (int)(
                 (lfo.RateEnvelope.EndValue - lfo.RateEnvelope.StartValue)
@@ -134,226 +221,93 @@ public static class VoiceSynthesizer
         return (null, null, 0, 0);
     }
 
-    private static (int[] delays, int[] volumes, int[] semitones, int[] starts) CreatePartials(
+    private static int CreatePartials(
         Voice voice,
-        double samplesPerStep
+        double samplesPerStep,
+        Span<int> delays,
+        Span<int> volumes,
+        Span<int> semitones,
+        Span<int> starts
     )
     {
-        var delays = new int[AudioConstants.MaxOscillators];
-        var volumes = new int[AudioConstants.MaxOscillators];
-        var semitones = new int[AudioConstants.MaxOscillators];
-        var starts = new int[AudioConstants.MaxOscillators];
+        var partialCount =
+            voice.Partials.Count < AudioConstants.MaxOscillators
+                ? voice.Partials.Count
+                : AudioConstants.MaxOscillators;
+        var activePartial = 0;
+        var frequencySpan = voice.FrequencyEnvelope.EndValue - voice.FrequencyEnvelope.StartValue;
+        var frequencyStart = (int)(
+            voice.FrequencyEnvelope.StartValue * AudioConstants.PhaseScale / samplesPerStep
+        );
 
-        var partialCount = Math.Min(AudioConstants.MaxOscillators, voice.Partials.Count);
         for (var partial = 0; partial < partialCount; partial++)
         {
             var height = voice.Partials[partial];
-            if (height.Amplitude.Value != 0)
+            if (height.Amplitude.Value == 0)
             {
-                delays[partial] = (int)(height.Delay.Value * samplesPerStep);
-                volumes[partial] = (height.Amplitude.Value << 14) / 100;
-                semitones[partial] = (int)(
-                    (voice.FrequencyEnvelope.EndValue - voice.FrequencyEnvelope.StartValue)
-                    * AudioConstants.PhaseScale
-                    * WaveformTables.GetPitchMultiplier(height.PitchOffsetSemitones)
-                    / samplesPerStep
-                );
-                starts[partial] = (int)(
-                    voice.FrequencyEnvelope.StartValue * AudioConstants.PhaseScale / samplesPerStep
-                );
-
-                if (partial == 0)
-                {
-                    _ = WaveformTables.GetPitchMultiplier(height.PitchOffsetSemitones);
-                }
-                else if (partial == 1)
-                {
-                    _ = WaveformTables.GetPitchMultiplier(height.PitchOffsetSemitones);
-                }
-            }
-        }
-
-        return (delays, volumes, semitones, starts);
-    }
-
-    private static void RenderSamples(
-        int[] buffer,
-        Voice voice,
-        SynthesisState state,
-        int sampleCount,
-        CancellationToken ct
-    )
-    {
-        var phases = new int[AudioConstants.MaxOscillators];
-        var frequencyPhase = 0;
-        var amplitudePhase = 0;
-
-        for (var sample = 0; sample < sampleCount; sample++)
-        {
-            if ((sample & 0xFF) == 0)
-            {
-                ct.ThrowIfCancellationRequested();
+                continue;
             }
 
-            var frequency = state.FrequencyBaseEval.Evaluate(sampleCount);
-            var amplitude = state.AmplitudeBaseEval.Evaluate(sampleCount);
-
-            (frequency, frequencyPhase) = ApplyVibrato(
-                frequency,
-                frequencyPhase,
-                sampleCount,
-                state,
-                voice
+            delays[activePartial] = (int)(height.Delay.Value * samplesPerStep);
+            volumes[activePartial] = (height.Amplitude.Value << 14) / 100;
+            semitones[activePartial] = (int)(
+                frequencySpan
+                * AudioConstants.PhaseScale
+                * WaveformTables.GetPitchMultiplier(height.PitchOffsetSemitones)
+                / samplesPerStep
             );
-            (amplitude, amplitudePhase) = ApplyTremolo(
-                amplitude,
-                amplitudePhase,
-                sampleCount,
-                state,
-                voice
-            );
-
-            RenderPartials(buffer, voice, state, sample, sampleCount, frequency, amplitude, phases);
+            starts[activePartial] = frequencyStart;
+            activePartial++;
         }
+
+        SortPartialsByDelay(activePartial, delays, volumes, semitones, starts);
+        return activePartial;
     }
 
-    private static void RenderPartials(
-        int[] buffer,
-        Voice voice,
-        SynthesisState state,
-        int sample,
-        int sampleCount,
-        int frequency,
-        int amplitude,
-        int[] phases
+    private static void SortPartialsByDelay(
+        int partialCount,
+        Span<int> delays,
+        Span<int> volumes,
+        Span<int> semitones,
+        Span<int> starts
     )
     {
-        var partialCount = Math.Min(AudioConstants.MaxOscillators, voice.Partials.Count);
-        for (var partial = 0; partial < partialCount; partial++)
+        for (var i = 1; i < partialCount; i++)
         {
-            if (voice.Partials[partial].Amplitude.Value != 0)
+            var delay = delays[i];
+            var volume = volumes[i];
+            var semitone = semitones[i];
+            var start = starts[i];
+            var j = i - 1;
+
+            while (j >= 0 && delays[j] > delay)
             {
-                var position = sample + state.PartialDelays[partial];
-                if (position >= 0 && position < sampleCount)
-                {
-                    var sampleValue = GenerateSample(
-                        amplitude * state.PartialVolumes[partial] >> 15,
-                        phases[partial],
-                        voice.FrequencyEnvelope.Waveform
-                    );
-
-                    buffer[position] += sampleValue;
-                    phases[partial] +=
-                        (frequency * state.PartialSemitones[partial] >> 16)
-                        + state.PartialStarts[partial];
-                }
+                delays[j + 1] = delays[j];
+                volumes[j + 1] = volumes[j];
+                semitones[j + 1] = semitones[j];
+                starts[j + 1] = starts[j];
+                j--;
             }
+
+            delays[j + 1] = delay;
+            volumes[j + 1] = volume;
+            semitones[j + 1] = semitone;
+            starts[j + 1] = start;
         }
     }
 
-    private static (int frequency, int phase) ApplyVibrato(
-        int frequency,
-        int phase,
-        int sampleCount,
-        SynthesisState state,
-        Voice voice
-    )
-    {
-        if (state.FrequencyModulationRateEval == null || state.FrequencyModulationRangeEval == null)
-        {
-            return (frequency, phase);
-        }
-
-        var (mod, nextPhase) = EvaluateModulation(
-            state.FrequencyModulationRateEval,
-            state.FrequencyModulationRangeEval,
-            state.FrequencyBase,
-            state.FrequencyStep,
-            phase,
-            sampleCount,
-            voice.PitchLfo!.RateEnvelope.Waveform
-        );
-
-        return (frequency + mod, nextPhase);
-    }
-
-    private static (int amplitude, int phase) ApplyTremolo(
-        int amplitude,
-        int phase,
-        int sampleCount,
-        SynthesisState state,
-        Voice voice
-    )
-    {
-        if (state.AmplitudeModulationRateEval == null || state.AmplitudeModulationRangeEval == null)
-        {
-            return (amplitude, phase);
-        }
-
-        var (mod, nextPhase) = EvaluateModulation(
-            state.AmplitudeModulationRateEval,
-            state.AmplitudeModulationRangeEval,
-            state.AmplitudeBase,
-            state.AmplitudeStep,
-            phase,
-            sampleCount,
-            voice.AmplitudeLfo!.RateEnvelope.Waveform
-        );
-
-        return (amplitude * (mod + AudioConstants.FixedPoint.Offset) >> 15, nextPhase);
-    }
-
-    private static (int mod, int nextPhase) EvaluateModulation(
-        EnvelopeGenerator rateEval,
-        EnvelopeGenerator rangeEval,
-        int baseValue,
-        int step,
-        int phase,
-        int sampleCount,
-        Waveform waveform
-    )
-    {
-        var rate = rateEval.Evaluate(sampleCount);
-        var range = rangeEval.Evaluate(sampleCount);
-        var mod = GenerateSample(range, phase, waveform) >> 1;
-        var nextPhase = phase + baseValue + (rate * step >> 16);
-        return (mod, nextPhase);
-    }
-
-    private static int GenerateSample(int amplitude, int phase, Waveform waveform)
-    {
-        return waveform switch
-        {
-            Waveform.Square => (phase & AudioConstants.PhaseMask)
-            < AudioConstants.FixedPoint.Quarter
-                ? amplitude
-                : -amplitude,
-            Waveform.Sine => (
-                WaveformTables.SineWaveTable[phase & AudioConstants.PhaseMask] * amplitude
-            ) >> 14,
-            Waveform.Saw => (((phase & AudioConstants.PhaseMask) * amplitude) >> 14) - amplitude,
-            Waveform.Noise => WaveformTables.NoiseTable[
-                (phase / AudioConstants.NoisePhaseDiv) & AudioConstants.PhaseMask
-            ] * amplitude,
-            Waveform.Off => 0,
-            _ => 0,
-        };
-    }
-
-    private static void ApplyGating(
-        int[] buffer,
+    private static void FillGateMask(
+        byte[] gateMask,
         Voice voice,
         int sampleCount,
         CancellationToken ct
     )
     {
-        if (voice.GapOffEnvelope != null && voice.GapOnEnvelope != null)
-        {
-            var silenceEval = new EnvelopeGenerator(voice.GapOffEnvelope);
-            var durationEval = new EnvelopeGenerator(voice.GapOnEnvelope);
-            silenceEval.Reset();
-            durationEval.Reset();
+        var silenceEval = EnvelopeGenerator.Rent(voice.GapOffEnvelope!);
+        var durationEval = EnvelopeGenerator.Rent(voice.GapOnEnvelope!);
 
+        try
+        {
             var counter = 0;
             var muted = true;
 
@@ -367,13 +321,13 @@ public static class VoiceSynthesizer
                 var stepOn = silenceEval.Evaluate(sampleCount);
                 var stepOff = durationEval.Evaluate(sampleCount);
                 var threshold = muted
-                    ? voice.GapOffEnvelope.StartValue
+                    ? voice.GapOffEnvelope!.StartValue
                         + (
                             (voice.GapOffEnvelope.EndValue - voice.GapOffEnvelope.StartValue)
                                 * stepOn
                             >> 8
                         )
-                    : voice.GapOffEnvelope.StartValue
+                    : voice.GapOffEnvelope!.StartValue
                         + (
                             (voice.GapOffEnvelope.EndValue - voice.GapOffEnvelope.StartValue)
                                 * stepOff
@@ -387,53 +341,13 @@ public static class VoiceSynthesizer
                     muted = !muted;
                 }
 
-                if (muted)
-                {
-                    buffer[sample] = 0;
-                }
+                gateMask[sample] = muted ? (byte)0 : (byte)1;
             }
         }
-    }
-
-    private static void ApplyEcho(
-        int[] buffer,
-        Voice voice,
-        double samplesPerStep,
-        int sampleCount,
-        CancellationToken ct
-    )
-    {
-        if (voice.Echo.DelayMilliseconds > 0 && voice.Echo.FeedbackPercent > 0)
+        finally
         {
-            var start = (int)(voice.Echo.DelayMilliseconds * samplesPerStep);
-            for (var sample = start; sample < sampleCount; sample++)
-            {
-                if ((sample & 0xFF) == 0)
-                {
-                    ct.ThrowIfCancellationRequested();
-                }
-
-                buffer[sample] += buffer[sample - start] * voice.Echo.FeedbackPercent / 100;
-            }
+            EnvelopeGenerator.Return(durationEval);
+            EnvelopeGenerator.Return(silenceEval);
         }
-    }
-
-    private sealed class SynthesisState
-    {
-        public required EnvelopeGenerator FrequencyBaseEval { get; init; }
-        public required EnvelopeGenerator AmplitudeBaseEval { get; init; }
-        public EnvelopeGenerator? FrequencyModulationRateEval { get; init; }
-        public EnvelopeGenerator? FrequencyModulationRangeEval { get; init; }
-        public EnvelopeGenerator? AmplitudeModulationRateEval { get; init; }
-        public EnvelopeGenerator? AmplitudeModulationRangeEval { get; init; }
-        public int FrequencyStep { get; init; }
-        public int FrequencyBase { get; init; }
-        public int AmplitudeStep { get; init; }
-        public int AmplitudeBase { get; init; }
-        public int[] PartialDelays { get; init; } = null!;
-        public int[] PartialVolumes { get; init; } = null!;
-        public int[] PartialSemitones { get; init; } = null!;
-        public int[] PartialStarts { get; init; } = null!;
-        public EnvelopeGenerator? FilterEnvelopeEval { get; init; }
     }
 }

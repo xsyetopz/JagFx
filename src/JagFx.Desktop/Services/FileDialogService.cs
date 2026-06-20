@@ -18,7 +18,7 @@ public static class FileDialogService
         try
         {
             await ActivateOwnerAsync(window).ConfigureAwait(true);
-            var result = await window
+            var selectedStorageItems = await window
                 .StorageProvider.OpenFilePickerAsync(
                     new FilePickerOpenOptions
                     {
@@ -33,7 +33,7 @@ public static class FileDialogService
                 )
                 .ConfigureAwait(true);
 
-            return result.Count > 0 ? result[0].Path.LocalPath : null;
+            return selectedStorageItems.Count > 0 ? selectedStorageItems[0].Path.LocalPath : null;
         }
         finally
         {
@@ -54,7 +54,7 @@ public static class FileDialogService
         try
         {
             await ActivateOwnerAsync(window).ConfigureAwait(true);
-            var result = await window
+            var selectedStorageItem = await window
                 .StorageProvider.SaveFilePickerAsync(
                     new FilePickerSaveOptions
                     {
@@ -69,7 +69,7 @@ public static class FileDialogService
                 )
                 .ConfigureAwait(true);
 
-            return result?.Path.LocalPath;
+            return selectedStorageItem?.Path.LocalPath;
         }
         finally
         {
@@ -87,7 +87,7 @@ public static class FileDialogService
         try
         {
             await ActivateOwnerAsync(window).ConfigureAwait(true);
-            var result = await window
+            var selectedStorageItem = await window
                 .StorageProvider.SaveFilePickerAsync(
                     new FilePickerSaveOptions
                     {
@@ -101,7 +101,7 @@ public static class FileDialogService
                 )
                 .ConfigureAwait(true);
 
-            return result?.Path.LocalPath;
+            return selectedStorageItem?.Path.LocalPath;
         }
         finally
         {

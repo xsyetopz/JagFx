@@ -54,38 +54,17 @@ public readonly struct EnvelopeGeometry
             totalDuration = 1;
         }
 
-        double minLevel,
-            maxLevel,
-            range;
-        if (displayMode is EnvelopeDisplayMode.FullScale or EnvelopeDisplayMode.Normalized)
-        {
-            minLevel = 0;
-            maxLevel = 65535;
-            range = 65535;
-        }
-        else
-        {
-            minLevel = Math.Min(env.StartValue, segments.Min(s => s.TargetLevel));
-            maxLevel = Math.Max(env.StartValue, segments.Max(s => s.TargetLevel));
-            range = maxLevel - minLevel;
-            if (range <= 0)
-            {
-                range = 1;
-            }
-        }
-
         var points = new Point[segments.Count + 1];
         double xAccum = 0;
 
-        // Start point -- minLevel maps to bottom, maxLevel maps to top
-        var startY = Padding + plotH - ((env.StartValue - minLevel) / range) * plotH;
+        var startY = ValueToY(env.StartValue, env, canvasHeight, displayMode);
         points[0] = new Point(Padding - scrollOffset, Math.Clamp(startY, Padding, Padding + plotH));
 
         for (var i = 0; i < segments.Count; i++)
         {
             xAccum += segments[i].Duration;
             var x = Padding + xAccum / totalDuration * plotW - scrollOffset;
-            var y = Padding + plotH - ((segments[i].TargetLevel - minLevel) / range) * plotH;
+            var y = ValueToY(segments[i].TargetLevel, env, canvasHeight, displayMode);
             points[i + 1] = new Point(x, Math.Clamp(y, Padding, Padding + plotH));
         }
 
@@ -118,7 +97,7 @@ public readonly struct EnvelopeGeometry
     /// </summary>
     public int LineHitTest(Point pos, double hitRadius = 6)
     {
-        for (var i = 0; i < Points.Length - 1; i++)
+        for (var i = 1; i < Points.Length - 1; i++)
         {
             var a = Points[i];
             var b = Points[i + 1];
@@ -141,6 +120,44 @@ public readonly struct EnvelopeGeometry
         }
 
         return -1;
+    }
+
+    public static double ValueToY(
+        int value,
+        EnvelopeViewModel env,
+        double canvasHeight,
+        EnvelopeDisplayMode displayMode
+    )
+    {
+        var plotH = canvasHeight - Padding * 2;
+        var normalizedValue = ToLinearNormalizedValue(value, env, displayMode);
+        return Padding + plotH - normalizedValue * plotH;
+    }
+
+    private static double ToLinearNormalizedValue(
+        int value,
+        EnvelopeViewModel env,
+        EnvelopeDisplayMode displayMode
+    )
+    {
+        var (minLevel, range) = GetLinearScale(env, displayMode);
+        return (value - minLevel) / range;
+    }
+
+    private static (double MinLevel, double Range) GetLinearScale(
+        EnvelopeViewModel env,
+        EnvelopeDisplayMode displayMode
+    )
+    {
+        if (displayMode is EnvelopeDisplayMode.FullScale or EnvelopeDisplayMode.Normalized)
+        {
+            return (0, 65535);
+        }
+
+        var minLevel = Math.Min(env.StartValue, env.Segments.Min(s => s.TargetLevel));
+        var maxLevel = Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel));
+        var range = maxLevel - minLevel;
+        return range <= 0 ? (minLevel, 1) : (minLevel, range);
     }
 
     /// <summary>
@@ -214,27 +231,7 @@ public readonly struct EnvelopeGeometry
         double canvasHeight,
         EnvelopeViewModel env,
         EnvelopeDisplayMode displayMode = EnvelopeDisplayMode.FullScale
-    )
-    {
-        double minLevel,
-            range;
-        if (displayMode is EnvelopeDisplayMode.FullScale or EnvelopeDisplayMode.Normalized)
-        {
-            minLevel = 0;
-            range = 65535;
-        }
-        else
-        {
-            minLevel = Math.Min(env.StartValue, env.Segments.Min(s => s.TargetLevel));
-            var maxLevel = Math.Max(env.StartValue, env.Segments.Max(s => s.TargetLevel));
-            range = maxLevel - minLevel;
-            if (range <= 0)
-            {
-                range = 1;
-            }
-        }
-        return YToPeakLevel(canvasY, canvasHeight, minLevel, range);
-    }
+    ) => YToPeakLevel(canvasY, canvasHeight, GetLinearScale(env, displayMode));
 
     /// <summary>
     /// Converts a canvas Y position to a peak level using pre-computed min/range.
@@ -256,6 +253,12 @@ public readonly struct EnvelopeGeometry
         var normalizedY = 1.0 - (canvasY - Padding) / plotH;
         return Math.Clamp((int)(normalizedY * range + minLevel), -65535, 65535);
     }
+
+    private static int YToPeakLevel(
+        double canvasY,
+        double canvasHeight,
+        (double MinLevel, double Range) scale
+    ) => YToPeakLevel(canvasY, canvasHeight, scale.MinLevel, scale.Range);
 
     /// <summary>
     /// Snaps a raw level value to the nearest grid step based on zoom level.

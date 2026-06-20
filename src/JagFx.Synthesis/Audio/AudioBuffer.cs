@@ -1,7 +1,7 @@
 using JagFx.Core.Constants;
 using JagFx.Domain.Utilities;
 
-namespace JagFx.Synthesis.Data;
+namespace JagFx.Synthesis.Audio;
 
 public class AudioBuffer(int[] samples, int sampleRate = AudioConstants.SampleRate)
 {
@@ -12,24 +12,24 @@ public class AudioBuffer(int[] samples, int sampleRate = AudioConstants.SampleRa
     public int Length => Samples.Length;
 
     public static AudioBuffer Empty(int sampleCount, int sampleRate = AudioConstants.SampleRate) =>
-        new(new int[sampleCount], sampleRate);
+        new(sampleCount == 0 ? [] : new int[sampleCount], sampleRate);
 
     public AudioBuffer Mix(AudioBuffer other, int offset)
     {
-        var maxLen = Math.Max(Samples.Length, other.Samples.Length + offset);
-        var result = new int[maxLen];
-        Array.Copy(Samples, 0, result, 0, Samples.Length);
+        var mixedSampleCount = Math.Max(Samples.Length, other.Samples.Length + offset);
+        var mixedSamples = new int[mixedSampleCount];
+        Array.Copy(Samples, 0, mixedSamples, 0, Samples.Length);
 
         for (var i = 0; i < other.Samples.Length; i++)
         {
             var pos = i + offset;
-            if (pos >= 0 && pos < maxLen)
+            if (pos >= 0 && pos < mixedSampleCount)
             {
-                result[pos] += other.Samples[i];
+                mixedSamples[pos] += other.Samples[i];
             }
         }
 
-        return new AudioBuffer(result, SampleRate);
+        return new AudioBuffer(mixedSamples, SampleRate);
     }
 
     public AudioBuffer Clip()
@@ -41,43 +41,43 @@ public class AudioBuffer(int[] samples, int sampleRate = AudioConstants.SampleRa
 
     public byte[] ToUBytes()
     {
-        var result = new byte[Samples.Length];
+        var unsignedPcmBytes = new byte[Samples.Length];
         for (var i = 0; i < Samples.Length; i++)
         {
-            result[i] = (byte)((Samples[i] >> 8) + 128);
+            unsignedPcmBytes[i] = (byte)((Samples[i] >> 8) + 128);
         }
-        return result;
+        return unsignedPcmBytes;
     }
 
     public byte[] ToBytes()
     {
-        var result = new byte[Samples.Length];
+        var signedPcmBytes = new byte[Samples.Length];
         for (var i = 0; i < Samples.Length; i++)
         {
-            result[i] = (byte)(Samples[i] >> 8);
+            signedPcmBytes[i] = (byte)(Samples[i] >> 8);
         }
-        return result;
+        return signedPcmBytes;
     }
 
     public byte[] ToBytes16BE()
     {
-        var result = new byte[Samples.Length * 2];
+        var bigEndianPcmBytes = new byte[Samples.Length * 2];
         for (var i = 0; i < Samples.Length; i++)
         {
-            result[i * 2] = (byte)(Samples[i] >> 8);
-            result[i * 2 + 1] = (byte)Samples[i];
+            bigEndianPcmBytes[i * 2] = (byte)(Samples[i] >> 8);
+            bigEndianPcmBytes[i * 2 + 1] = (byte)Samples[i];
         }
-        return result;
+        return bigEndianPcmBytes;
     }
 
     public byte[] ToBytes16LE()
     {
-        var result = new byte[Samples.Length * 2];
+        var littleEndianPcmBytes = new byte[Samples.Length * 2];
         for (var i = 0; i < Samples.Length; i++)
         {
-            result[i * 2] = (byte)Samples[i];
-            result[i * 2 + 1] = (byte)(Samples[i] >> 8);
+            littleEndianPcmBytes[i * 2] = (byte)Samples[i];
+            littleEndianPcmBytes[i * 2 + 1] = (byte)(Samples[i] >> 8);
         }
-        return result;
+        return littleEndianPcmBytes;
     }
 }

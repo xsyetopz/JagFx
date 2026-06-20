@@ -25,7 +25,7 @@ public class WaveformCanvas : Control
         double
     >(nameof(ScrollOffset));
 
-    private readonly CanvasInteractionHelper _interaction = new();
+    private readonly CanvasPanZoomController _interaction = new();
 
     public float[]? Samples
     {
@@ -201,7 +201,7 @@ public class WaveformCanvas : Control
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         base.OnPointerWheelChanged(e);
-        ZoomLevel = CanvasInteractionHelper.StepZoom(ZoomLevel, e.Delta.Y);
+        ZoomLevel = CanvasPanZoomController.StepZoom(ZoomLevel, e.Delta.Y);
         e.Handled = true;
     }
 

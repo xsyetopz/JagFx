@@ -240,10 +240,10 @@ public class KnobControl : Control
 
         var isLargeArc = sweepDeg > 180;
         var geometry = new StreamGeometry();
-        using (var ctx = geometry.Open())
+        using (var arcGeometryContext = geometry.Open())
         {
-            ctx.BeginFigure(new Point(startX, startY), false);
-            ctx.ArcTo(
+            arcGeometryContext.BeginFigure(new Point(startX, startY), false);
+            arcGeometryContext.ArcTo(
                 new Point(endX, endY),
                 new Size(r, r),
                 0,

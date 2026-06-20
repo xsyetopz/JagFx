@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.4.1]
+
+### Added
+
+- **Version bump workflow** -- added `scripts/bump-version.sh` to update .NET and package versions after a changelog entry exists.
+
+### Changed
+
+- **Version** -- bumped JagFx packages and assemblies to 2.4.1.
+- **Desktop terminology** -- standardized visible synth/DAW labels and tooltips around OSC, PITCH, VOL, ENV, LFO, VIB, TREM, FLT, FREQ, RESP, P/Z, RATE, DEPTH, GAIN, DEL, FBK, DUR, ms, dB, and %.
+
+### Fixed
+
+- **Envelope graph display** -- kept graphs backed by actual file segment values and removed synthetic start/reset point rendering.
+
 ## [2.4.0]
 
 ### Added

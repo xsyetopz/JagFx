@@ -12,113 +12,343 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
-  <data name="WorkflowStartTitle" xml:space="preserve"><value>Empieza aquí</value></data>
-  <data name="WorkflowStartBody" xml:space="preserve"><value>Abre un patch, escúchalo y luego elige la voz en la que quieres trabajar.</value></data>
-  <data name="WorkflowShapeTitle" xml:space="preserve"><value>Moldea el sonido</value></data>
-  <data name="WorkflowShapeBody" xml:space="preserve"><value>Usa el inspector para los ajustes de voz, las envolventes, los parciales y los puntos de bucle.</value></data>
-  <data name="WorkflowInspectTitle" xml:space="preserve"><value>Inspeccionar y exportar</value></data>
-  <data name="WorkflowInspectBody" xml:space="preserve"><value>Cambia entre Principal, Filtro y Ambos para comparar las vistas, y luego guarda o exporta WAV.</value></data>
-
-  <data name="HeaderLoop" xml:space="preserve"><value>Bucle</value></data>
-  <data name="HeaderLoopCount" xml:space="preserve"><value>Repetir</value></data>
-  <data name="HeaderLoopStart" xml:space="preserve"><value>In</value></data>
-  <data name="HeaderLoopEnd" xml:space="preserve"><value>Out</value></data>
-  <data name="TooltipPreviousPatch" xml:space="preserve"><value>Previous patch</value></data>
-  <data name="TooltipNextPatch" xml:space="preserve"><value>Next patch</value></data>
-  <data name="TooltipOpenFile" xml:space="preserve"><value>Open file (Ctrl+O)</value></data>
-  <data name="TooltipSaveFile" xml:space="preserve"><value>Save file (Ctrl+S)</value></data>
-  <data name="TooltipPlay" xml:space="preserve"><value>Play (Space)</value></data>
-  <data name="TooltipStop" xml:space="preserve"><value>Stop</value></data>
-  <data name="TooltipLoopPlayback" xml:space="preserve"><value>Loop playback</value></data>
-  <data name="TooltipLoopCount" xml:space="preserve"><value>0 significa repetir hasta detener</value></data>
-  <data name="TooltipPartialActive" xml:space="preserve"><value>Activar/desactivar oscilador</value></data>
-  <data name="TooltipPlaySelectedVoice" xml:space="preserve"><value>Play selected voice only (V)</value></data>
-  <data name="TooltipPlayAllVoices" xml:space="preserve"><value>Play all voices (V)</value></data>
-  <data name="TooltipCopyVoice" xml:space="preserve"><value>Copy voice to another slot</value></data>
-  <data name="TooltipResetVoice" xml:space="preserve"><value>Reset voice to defaults</value></data>
-  <data name="TooltipShowMain" xml:space="preserve"><value>Show main envelopes (M)</value></data>
-  <data name="TooltipShowFilter" xml:space="preserve"><value>Show filter view (F)</value></data>
-  <data name="TooltipShowBoth" xml:space="preserve"><value>Show both views (B)</value></data>
-
-  <data name="VoiceSettingsTitle" xml:space="preserve"><value>Ajustes de voz</value></data>
-  <data name="DurationLabel" xml:space="preserve"><value>DUR</value></data>
-  <data name="OffsetLabel" xml:space="preserve"><value>OFS</value></data>
-  <data name="FilterTitle" xml:space="preserve"><value>Filtro</value></data>
-  <data name="PolesLabel" xml:space="preserve"><value>Etapas</value></data>
-  <data name="GainALabel" xml:space="preserve"><value>Ganancia A</value></data>
-  <data name="GainBLabel" xml:space="preserve"><value>Ganancia B</value></data>
-  <data name="NoFilter" xml:space="preserve"><value>Bypass</value></data>
-  <data name="PoleChannelLabel" xml:space="preserve"><value>CH</value></data>
-  <data name="PolePhaseLabel" xml:space="preserve"><value>PH</value></data>
-  <data name="PoleIndexLabel" xml:space="preserve"><value>#</value></data>
-  <data name="PoleAngleLabel" xml:space="preserve"><value>ANG</value></data>
-  <data name="PoleMagnitudeLabel" xml:space="preserve"><value>MAG</value></data>
-  <data name="EchoTitle" xml:space="preserve"><value>Eco</value></data>
-  <data name="EchoDelayLabel" xml:space="preserve"><value>DEL</value></data>
-  <data name="EchoFeedbackLabel" xml:space="preserve"><value>FBK</value></data>
-
-  <data name="EnvelopeTitle" xml:space="preserve"><value>Envelope</value></data>
-  <data name="SelectedEnvelopeTitle" xml:space="preserve"><value>Envolvente {0}</value></data>
-  <data name="WaveOff" xml:space="preserve"><value>Apagado</value></data>
-  <data name="WaveSquare" xml:space="preserve"><value>Cuadrada</value></data>
-  <data name="WaveSine" xml:space="preserve"><value>Seno</value></data>
-  <data name="WaveSawtooth" xml:space="preserve"><value>Diente de sierra</value></data>
-  <data name="WaveNoise" xml:space="preserve"><value>Ruido</value></data>
-  <data name="TooltipWaveOff" xml:space="preserve"><value>Desactivado</value></data>
-  <data name="TooltipWaveSquare" xml:space="preserve"><value>Onda cuadrada</value></data>
-  <data name="TooltipWaveSine" xml:space="preserve"><value>Onda sinusoidal</value></data>
-  <data name="TooltipWaveSawtooth" xml:space="preserve"><value>Diente de sierra</value></data>
-  <data name="TooltipWaveNoise" xml:space="preserve"><value>Ruido</value></data>
-  <data name="TooltipTrueWave" xml:space="preserve"><value>Salida True Wave (en vivo)</value></data>
-  <data name="StartLabel" xml:space="preserve"><value>Inicio</value></data>
-  <data name="EndLabel" xml:space="preserve"><value>Fin</value></data>
-  <data name="SegmentDurationLabel" xml:space="preserve"><value>DUR</value></data>
-  <data name="SegmentLevelLabel" xml:space="preserve"><value>LVL</value></data>
-  <data name="AddSegment" xml:space="preserve"><value>Añadir segmento</value></data>
-
-  <data name="PartialLabel" xml:space="preserve"><value>OSC</value></data>
-  <data name="PartialLabelFormat" xml:space="preserve"><value>OSC {0}</value></data>
-  <data name="PitchLabel" xml:space="preserve"><value>PIT</value></data>
-  <data name="VolumeLabel" xml:space="preserve"><value>VOL</value></data>
-  <data name="DelayLabel" xml:space="preserve"><value>DEL</value></data>
-  <data name="VoiceSelected" xml:space="preserve"><value>Seleccionada</value></data>
-  <data name="VoiceAll" xml:space="preserve"><value>Todas</value></data>
-  <data name="VoiceCopy" xml:space="preserve"><value>Copiar</value></data>
-  <data name="VoiceReset" xml:space="preserve"><value>Restablecer</value></data>
-  <data name="GridMain" xml:space="preserve"><value>Principal</value></data>
-  <data name="GridFilter" xml:space="preserve"><value>Filtro</value></data>
-  <data name="GridBoth" xml:space="preserve"><value>Ambos</value></data>
-  <data name="TooltipPreviousPartialBank" xml:space="preserve"><value>Banco de osciladores anterior</value></data>
-  <data name="TooltipNextPartialBank" xml:space="preserve"><value>Banco de osciladores siguiente</value></data>
-  <data name="Snap" xml:space="preserve"><value>Ajustar</value></data>
-  <data name="Mode" xml:space="preserve"><value>Modo</value></data>
-
-  <data name="SlotPitch" xml:space="preserve"><value>Pitch</value></data>
-  <data name="SlotVibratoRate" xml:space="preserve"><value>Vib Rate</value></data>
-  <data name="SlotVibratoDepth" xml:space="preserve"><value>Vib Depth</value></data>
-  <data name="SlotVolume" xml:space="preserve"><value>Volume</value></data>
-  <data name="SlotTremoloRate" xml:space="preserve"><value>Trem Rate</value></data>
-  <data name="SlotTremoloDepth" xml:space="preserve"><value>Trem Depth</value></data>
-  <data name="SlotGapOff" xml:space="preserve"><value>Gap Off</value></data>
-  <data name="SlotGapOn" xml:space="preserve"><value>Gap On</value></data>
-  <data name="SlotFilter" xml:space="preserve"><value>Filter Curve</value></data>
-  <data name="SlotPoleZero" xml:space="preserve"><value>Pole / Zero</value></data>
-  <data name="SlotOutput" xml:space="preserve"><value>Output</value></data>
-  <data name="SlotBode" xml:space="preserve"><value>Freq Response</value></data>
-
-  <data name="TooltipZoom" xml:space="preserve"><value>Zoom {0}X</value></data>
-  <data name="TooltipSnapGrid" xml:space="preserve"><value>Snap to grid (S)</value></data>
-  <data name="TooltipDisplayMode" xml:space="preserve"><value>Display mode</value></data>
-  <data name="ModeAuto" xml:space="preserve"><value>Automático</value></data>
-  <data name="ModeFull" xml:space="preserve"><value>Completo</value></data>
-  <data name="ModeNormalized" xml:space="preserve"><value>Normalizado</value></data>
-  <data name="ModeWave" xml:space="preserve"><value>Onda</value></data>
-  <data name="ModeSpectrum" xml:space="preserve"><value>Espectro</value></data>
-  <data name="MenuDeletePoint" xml:space="preserve"><value>Eliminar punto</value></data>
-  <data name="MenuAddPointHere" xml:space="preserve"><value>Añadir punto aquí</value></data>
-  <data name="MenuAddPointEnd" xml:space="preserve"><value>Añadir punto al final</value></data>
-
-  <data name="StatusLoadedFile" xml:space="preserve"><value>Cargado {0}</value></data>
-  <data name="StatusCouldNotOpenFile" xml:space="preserve"><value>No se pudo abrir {0}: {1}</value></data>
+  <data name="WorkflowStartTitle" xml:space="preserve">
+    <value>Empieza aquí</value>
+  </data>
+  <data name="WorkflowStartBody" xml:space="preserve">
+    <value>Abre un patch, escúchalo y luego elige la voz en la que quieres trabajar.</value>
+  </data>
+  <data name="WorkflowShapeTitle" xml:space="preserve">
+    <value>Moldea el sonido</value>
+  </data>
+  <data name="WorkflowShapeBody" xml:space="preserve">
+    <value>Usa el inspector para los ajustes de voz, las envolventes, los parciales y los puntos de bucle.</value>
+  </data>
+  <data name="WorkflowInspectTitle" xml:space="preserve">
+    <value>Inspeccionar y exportar</value>
+  </data>
+  <data name="WorkflowInspectBody" xml:space="preserve">
+    <value>Cambia entre Principal, Filtro y Ambos para comparar las vistas, y luego guarda o exporta WAV.</value>
+  </data>
+  <data name="HeaderLoop" xml:space="preserve">
+    <value>Bucle</value>
+  </data>
+  <data name="HeaderLoopCount" xml:space="preserve">
+    <value>Repetir</value>
+  </data>
+  <data name="HeaderLoopStart" xml:space="preserve">
+    <value>In</value>
+  </data>
+  <data name="HeaderLoopEnd" xml:space="preserve">
+    <value>Out</value>
+  </data>
+  <data name="TooltipPreviousPatch" xml:space="preserve">
+    <value>Previous patch</value>
+  </data>
+  <data name="TooltipNextPatch" xml:space="preserve">
+    <value>Next patch</value>
+  </data>
+  <data name="TooltipOpenFile" xml:space="preserve">
+    <value>Open file (Ctrl+O)</value>
+  </data>
+  <data name="TooltipSaveFile" xml:space="preserve">
+    <value>Save file (Ctrl+S)</value>
+  </data>
+  <data name="TooltipPlay" xml:space="preserve">
+    <value>Play (Space)</value>
+  </data>
+  <data name="TooltipStop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="TooltipLoopPlayback" xml:space="preserve">
+    <value>Loop playback</value>
+  </data>
+  <data name="TooltipLoopCount" xml:space="preserve">
+    <value>0 significa repetir hasta detener</value>
+  </data>
+  <data name="TooltipPartialActive" xml:space="preserve">
+    <value>Activar/desactivar oscilador</value>
+  </data>
+  <data name="TooltipPlaySelectedVoice" xml:space="preserve">
+    <value>Play selected voice only (V)</value>
+  </data>
+  <data name="TooltipPlayAllVoices" xml:space="preserve">
+    <value>Play all voices (V)</value>
+  </data>
+  <data name="TooltipCopyVoice" xml:space="preserve">
+    <value>Copy voice to another slot</value>
+  </data>
+  <data name="TooltipResetVoice" xml:space="preserve">
+    <value>Reset voice to defaults</value>
+  </data>
+  <data name="TooltipShowMain" xml:space="preserve">
+    <value>Show main envelopes (M)</value>
+  </data>
+  <data name="TooltipShowFilter" xml:space="preserve">
+    <value>Show filter view (F)</value>
+  </data>
+  <data name="TooltipShowBoth" xml:space="preserve">
+    <value>Show both views (B)</value>
+  </data>
+  <data name="VoiceSettingsTitle" xml:space="preserve">
+    <value>Ajustes de voz</value>
+  </data>
+  <data name="DurationLabel" xml:space="preserve">
+    <value>DUR</value>
+  </data>
+  <data name="OffsetLabel" xml:space="preserve">
+    <value>OFFSET</value>
+  </data>
+  <data name="FilterTitle" xml:space="preserve">
+    <value>FLT</value>
+  </data>
+  <data name="PolesLabel" xml:space="preserve">
+    <value>POLES</value>
+  </data>
+  <data name="GainALabel" xml:space="preserve">
+    <value>GAIN A</value>
+  </data>
+  <data name="GainBLabel" xml:space="preserve">
+    <value>GAIN B</value>
+  </data>
+  <data name="NoFilter" xml:space="preserve">
+    <value>Bypass</value>
+  </data>
+  <data name="PoleChannelLabel" xml:space="preserve">
+    <value>CH</value>
+  </data>
+  <data name="PolePhaseLabel" xml:space="preserve">
+    <value>PH</value>
+  </data>
+  <data name="PoleIndexLabel" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="PoleAngleLabel" xml:space="preserve">
+    <value>ANGLE</value>
+  </data>
+  <data name="PoleMagnitudeLabel" xml:space="preserve">
+    <value>MAG</value>
+  </data>
+  <data name="EchoTitle" xml:space="preserve">
+    <value>ECHO</value>
+  </data>
+  <data name="EchoDelayLabel" xml:space="preserve">
+    <value>DEL</value>
+  </data>
+  <data name="EchoFeedbackLabel" xml:space="preserve">
+    <value>FBK</value>
+  </data>
+  <data name="EnvelopeTitle" xml:space="preserve">
+    <value>Envelope</value>
+  </data>
+  <data name="SelectedEnvelopeTitle" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="WaveOff" xml:space="preserve">
+    <value>Apagado</value>
+  </data>
+  <data name="WaveSquare" xml:space="preserve">
+    <value>Cuadrada</value>
+  </data>
+  <data name="WaveSine" xml:space="preserve">
+    <value>Seno</value>
+  </data>
+  <data name="WaveSawtooth" xml:space="preserve">
+    <value>Diente de sierra</value>
+  </data>
+  <data name="WaveNoise" xml:space="preserve">
+    <value>Ruido</value>
+  </data>
+  <data name="TooltipWaveOff" xml:space="preserve">
+    <value>Desactivado</value>
+  </data>
+  <data name="TooltipWaveSquare" xml:space="preserve">
+    <value>Onda cuadrada</value>
+  </data>
+  <data name="TooltipWaveSine" xml:space="preserve">
+    <value>Onda sinusoidal</value>
+  </data>
+  <data name="TooltipWaveSawtooth" xml:space="preserve">
+    <value>Diente de sierra</value>
+  </data>
+  <data name="TooltipWaveNoise" xml:space="preserve">
+    <value>Ruido</value>
+  </data>
+  <data name="TooltipTrueWave" xml:space="preserve">
+    <value>Output waveform preview (live)</value>
+  </data>
+  <data name="StartLabel" xml:space="preserve">
+    <value>START</value>
+  </data>
+  <data name="EndLabel" xml:space="preserve">
+    <value>END</value>
+  </data>
+  <data name="SegmentDurationLabel" xml:space="preserve">
+    <value>DUR</value>
+  </data>
+  <data name="SegmentLevelLabel" xml:space="preserve">
+    <value>VALUE</value>
+  </data>
+  <data name="AddSegment" xml:space="preserve">
+    <value>Añadir segmento</value>
+  </data>
+  <data name="PartialLabel" xml:space="preserve">
+    <value>OSC</value>
+  </data>
+  <data name="PartialLabelFormat" xml:space="preserve">
+    <value>OSC {0}</value>
+  </data>
+  <data name="PitchLabel" xml:space="preserve">
+    <value>PITCH</value>
+  </data>
+  <data name="VolumeLabel" xml:space="preserve">
+    <value>VOL</value>
+  </data>
+  <data name="DelayLabel" xml:space="preserve">
+    <value>DEL</value>
+  </data>
+  <data name="VoiceSelected" xml:space="preserve">
+    <value>Seleccionada</value>
+  </data>
+  <data name="VoiceAll" xml:space="preserve">
+    <value>Todas</value>
+  </data>
+  <data name="VoiceCopy" xml:space="preserve">
+    <value>Copiar</value>
+  </data>
+  <data name="VoiceReset" xml:space="preserve">
+    <value>Restablecer</value>
+  </data>
+  <data name="GridMain" xml:space="preserve">
+    <value>Principal</value>
+  </data>
+  <data name="GridFilter" xml:space="preserve">
+    <value>Filtro</value>
+  </data>
+  <data name="GridBoth" xml:space="preserve">
+    <value>Ambos</value>
+  </data>
+  <data name="TooltipPreviousPartialBank" xml:space="preserve">
+    <value>Banco de osciladores anterior</value>
+  </data>
+  <data name="TooltipNextPartialBank" xml:space="preserve">
+    <value>Banco de osciladores siguiente</value>
+  </data>
+  <data name="Snap" xml:space="preserve">
+    <value>Ajustar</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Modo</value>
+  </data>
+  <data name="SlotPitch" xml:space="preserve">
+    <value>PITCH ENV</value>
+  </data>
+  <data name="SlotVibratoRate" xml:space="preserve">
+    <value>VIB RATE ENV</value>
+  </data>
+  <data name="SlotVibratoDepth" xml:space="preserve">
+    <value>VIB DEPTH ENV</value>
+  </data>
+  <data name="SlotVolume" xml:space="preserve">
+    <value>VOL ENV</value>
+  </data>
+  <data name="SlotTremoloRate" xml:space="preserve">
+    <value>TREM RATE ENV</value>
+  </data>
+  <data name="SlotTremoloDepth" xml:space="preserve">
+    <value>TREM DEPTH ENV</value>
+  </data>
+  <data name="SlotGapOff" xml:space="preserve">
+    <value>GATE CLOSED ENV</value>
+  </data>
+  <data name="SlotGapOn" xml:space="preserve">
+    <value>GATE OPEN ENV</value>
+  </data>
+  <data name="SlotFilter" xml:space="preserve">
+    <value>FLT ENV</value>
+  </data>
+  <data name="SlotPoleZero" xml:space="preserve">
+    <value>FLT P/Z</value>
+  </data>
+  <data name="SlotOutput" xml:space="preserve">
+    <value>OUTPUT WAVE</value>
+  </data>
+  <data name="SlotBode" xml:space="preserve">
+    <value>FLT FREQ RESP</value>
+  </data>
+  <data name="TooltipZoom" xml:space="preserve">
+    <value>Zoom {0}X</value>
+  </data>
+  <data name="TooltipSnapGrid" xml:space="preserve">
+    <value>Snap envelope points to grid (S)</value>
+  </data>
+  <data name="TooltipDisplayMode" xml:space="preserve">
+    <value>Envelope display scale</value>
+  </data>
+  <data name="ModeAuto" xml:space="preserve">
+    <value>Automático</value>
+  </data>
+  <data name="ModeFull" xml:space="preserve">
+    <value>Completo</value>
+  </data>
+  <data name="ModeNormalized" xml:space="preserve">
+    <value>Normalizado</value>
+  </data>
+  <data name="ModeWave" xml:space="preserve">
+    <value>Onda</value>
+  </data>
+  <data name="ModeSpectrum" xml:space="preserve">
+    <value>Espectro</value>
+  </data>
+  <data name="MenuDeletePoint" xml:space="preserve">
+    <value>Eliminar punto</value>
+  </data>
+  <data name="MenuAddPointHere" xml:space="preserve">
+    <value>Añadir punto aquí</value>
+  </data>
+  <data name="MenuAddPointEnd" xml:space="preserve">
+    <value>Add Point at End</value>
+  </data>
+  <data name="StatusLoadedFile" xml:space="preserve">
+    <value>Cargado {0}</value>
+  </data>
+  <data name="StatusCouldNotOpenFile" xml:space="preserve">
+    <value>No se pudo abrir {0}: {1}</value>
+  </data>
+  <data name="SlotTooltipPitch" xml:space="preserve">
+    <value>Oscillator pitch envelope</value>
+  </data>
+  <data name="SlotTooltipVibratoRate" xml:space="preserve">
+    <value>Vibrato LFO rate envelope: pitch modulation speed</value>
+  </data>
+  <data name="SlotTooltipVibratoDepth" xml:space="preserve">
+    <value>Vibrato LFO depth envelope: pitch modulation amount</value>
+  </data>
+  <data name="SlotTooltipVolume" xml:space="preserve">
+    <value>Oscillator volume envelope</value>
+  </data>
+  <data name="SlotTooltipTremoloRate" xml:space="preserve">
+    <value>Tremolo LFO rate envelope: volume modulation speed</value>
+  </data>
+  <data name="SlotTooltipTremoloDepth" xml:space="preserve">
+    <value>Tremolo LFO depth envelope: volume modulation amount</value>
+  </data>
+  <data name="SlotTooltipGapOff" xml:space="preserve">
+    <value>Gate closed envelope: muted time between sound bursts</value>
+  </data>
+  <data name="SlotTooltipGapOn" xml:space="preserve">
+    <value>Gate open envelope: audible time between muted gaps</value>
+  </data>
+  <data name="SlotTooltipFilter" xml:space="preserve">
+    <value>Filter modulation envelope</value>
+  </data>
+  <data name="SlotTooltipPoleZero" xml:space="preserve">
+    <value>Filter pole-zero plot</value>
+  </data>
+  <data name="SlotTooltipOutput" xml:space="preserve">
+    <value>Rendered output waveform</value>
+  </data>
+  <data name="SlotTooltipBode" xml:space="preserve">
+    <value>Filter frequency response</value>
+  </data>
 </root>

@@ -90,3 +90,10 @@ $RECYCLE.BIN/
 .serena/
 .cursorignore
 .cursorindexingignore
+
+/.crew/
+/.crew
+!.crew/artifacts/
+!.crew/graphs/
+!.crew/artifacts/.gitkeep
+!.crew/graphs/.gitkeep

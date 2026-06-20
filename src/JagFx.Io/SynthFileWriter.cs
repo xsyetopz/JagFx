@@ -16,13 +16,13 @@ public static class SynthFileWriter
         WriteVoices(buffer, patch.Voices);
         WriteLoop(buffer, patch.Loop);
 
-        return buffer.Data[..buffer.Position];
+        return buffer.Bytes[..buffer.Position];
     }
 
     public static void WriteToPath(Patch patch, string path)
     {
-        var data = Write(patch);
-        File.WriteAllBytes(path, data);
+        var synthBytes = Write(patch);
+        File.WriteAllBytes(path, synthBytes);
     }
 
     private static void WriteVoices(BinaryBuffer buffer, ImmutableList<Voice?> voices)
@@ -163,8 +163,8 @@ public static class SynthFileWriter
                     continue;
                 }
 
-                buffer.WriteUInt16BigEndian(filter.PolePhase[channel][phase][pole]);
-                buffer.WriteUInt16BigEndian(filter.PoleMagnitude[channel][phase][pole]);
+                buffer.WriteUInt16BigEndian(filter.GetPolePhase(channel, phase, pole));
+                buffer.WriteUInt16BigEndian(filter.GetPoleMagnitude(channel, phase, pole));
             }
         }
     }
@@ -190,15 +190,14 @@ public static class SynthFileWriter
     {
         var mask = 0;
         var poleCounts = filter.PoleCounts;
-        var polePhase = filter.PolePhase;
 
         for (var channel = 0; channel < 2; channel++)
         {
             var poles = poleCounts[channel];
             for (var pole = 0; pole < poles; pole++)
             {
-                var phase0 = polePhase[channel][0][pole];
-                var phase1 = polePhase[channel][1][pole];
+                var phase0 = filter.GetPolePhase(channel, 0, pole);
+                var phase1 = filter.GetPolePhase(channel, 1, pole);
                 if (phase0 != phase1)
                 {
                     mask |= 1 << (channel * 4 + pole);

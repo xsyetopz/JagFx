@@ -20,6 +20,19 @@ public enum SignalChainSlot
 
 public static class SignalChainSlotExtensions
 {
+    public static bool UsesLogFrequencyScale(this SignalChainSlot slot) =>
+        slot is SignalChainSlot.Pitch or SignalChainSlot.VibratoRate or SignalChainSlot.TremoloRate;
+
+    public static bool UsesGateDurationScale(this SignalChainSlot slot) =>
+        slot is SignalChainSlot.GapOff or SignalChainSlot.GapOn;
+
+    public static bool UsesPercentScale(this SignalChainSlot slot) =>
+        slot
+            is SignalChainSlot.Volume
+                or SignalChainSlot.VibratoDepth
+                or SignalChainSlot.TremoloDepth
+                or SignalChainSlot.Filter;
+
     public static string DisplayName(this SignalChainSlot slot) =>
         slot switch
         {

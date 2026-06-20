@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.Globalization;
+using System.Text;
 using JagFx.Core.Constants;
 using JagFx.Io;
 using JagFx.Io.Buffers;
@@ -42,7 +43,7 @@ internal sealed class InspectCommand : Command
         }
 
         var bytes = File.ReadAllBytes(filePath);
-        var context = new InspectorContext(bytes);
+        var synthCursor = new SynthInspectionCursor(bytes);
 
         Console.WriteLine($"; File: {filePath}");
         Console.WriteLine($"; Size: {bytes.Length} bytes");
@@ -50,137 +51,137 @@ internal sealed class InspectCommand : Command
 
         try
         {
-            _ = SynthFileReader.Read(bytes);
-            InspectVoices(context);
-            InspectLoop(context);
-            PrintSummary(context);
+            Consume(SynthFileReader.Read(bytes));
+            InspectVoices(synthCursor);
+            InspectLoop(synthCursor);
+            PrintSummary(synthCursor);
             return 0;
         }
         catch (Exception ex)
         {
-            PrintError(context, ex);
+            PrintError(synthCursor, ex);
             return 1;
         }
     }
 
-    private static void InspectVoices(InspectorContext context)
+    private static void InspectVoices(SynthInspectionCursor synthCursor)
     {
         for (var i = 0; i < AudioConstants.MaxVoices; i++)
         {
-            if (context.Buffer.Remaining == 0)
+            if (synthCursor.Buffer.Remaining == 0)
             {
                 break;
             }
 
-            var marker = context.Buffer.Peek();
+            var marker = synthCursor.Buffer.Peek();
             if (marker == 0)
             {
-                _ = context.ReadByte("empty", $"voice {i}");
+                Consume(synthCursor.ReadByte("empty", $"voice {i}"));
                 continue;
             }
 
-            InspectVoice(context, i);
+            InspectVoice(synthCursor, i);
         }
     }
 
-    private static void InspectVoice(InspectorContext context, int voiceIndex)
+    private static void InspectVoice(SynthInspectionCursor synthCursor, int voiceIndex)
     {
-        var marker = context.Buffer.Peek();
-        context.PrintLine($"voice {voiceIndex}", $"active, wf={GetWaveformName((byte)marker)}");
+        var marker = synthCursor.Buffer.Peek();
+        synthCursor.PrintLine($"voice {voiceIndex}", $"active, wf={GetWaveformName((byte)marker)}");
 
-        InspectEnvelope(context);
-        InspectEnvelope(context);
+        InspectEnvelope(synthCursor);
+        InspectEnvelope(synthCursor);
 
-        InspectOptionalLFO(context, "vib");
-        InspectOptionalLFO(context, "trem");
-        InspectOptionalLFO(context, "gate");
+        InspectOptionalLFO(synthCursor, "vib");
+        InspectOptionalLFO(synthCursor, "trem");
+        InspectOptionalLFO(synthCursor, "gate");
 
-        InspectOscillators(context);
+        InspectOscillators(synthCursor);
 
-        _ = context.ReadUSmart("echo", "feedback");
-        _ = context.ReadUSmart("", "mix");
+        Consume(synthCursor.ReadUSmart("echo", "feedback"));
+        Consume(synthCursor.ReadUSmart("", "mix"));
 
-        _ = context.ReadUInt16("time", "dur");
-        _ = context.ReadUInt16("", "start");
+        Consume(synthCursor.ReadUInt16("time", "dur"));
+        Consume(synthCursor.ReadUInt16("", "start"));
 
-        InspectFilter(context);
+        InspectFilter(synthCursor);
     }
 
-    private static void InspectEnvelope(InspectorContext context)
+    private static void InspectEnvelope(SynthInspectionCursor synthCursor)
     {
-        _ = context.ReadByte("", "wf");
-        _ = context.ReadInt32("", "start");
-        _ = context.ReadInt32("", "end");
-        var nSegs = context.ReadByte("", "segs");
-        var maxSegs = context.Buffer.Remaining / 4;
-        var segLimit = Math.Min(nSegs, maxSegs);
+        Consume(synthCursor.ReadByte("", "wf"));
+        Consume(synthCursor.ReadInt32("", "start"));
+        Consume(synthCursor.ReadInt32("", "end"));
+        var nSegs = synthCursor.ReadByte("", "segs");
+        var maxSegs = synthCursor.Buffer.Remaining / 4;
+        var segLimit = nSegs < maxSegs ? nSegs : maxSegs;
         for (var i = 0; i < segLimit; i++)
         {
-            _ = context.ReadUInt16("", $"seg{i}.dur");
-            _ = context.ReadUInt16("", $"seg{i}.peak");
+            Consume(synthCursor.ReadUInt16("", $"seg{i}.dur"));
+            Consume(synthCursor.ReadUInt16("", $"seg{i}.peak"));
         }
     }
 
-    private static void InspectOptionalLFO(InspectorContext context, string label)
+    private static void InspectOptionalLFO(SynthInspectionCursor synthCursor, string label)
     {
-        var marker = context.Buffer.Peek();
+        var marker = synthCursor.Buffer.Peek();
         if (marker == 0)
         {
-            _ = context.ReadByte("", $"{label}=none");
+            Consume(synthCursor.ReadByte("", $"{label}=none"));
             return;
         }
 
-        context.PrintLine(label, "present");
-        InspectEnvelope(context);
-        InspectEnvelope(context);
+        synthCursor.PrintLine(label, "present");
+        InspectEnvelope(synthCursor);
+        InspectEnvelope(synthCursor);
     }
 
-    private static void InspectOscillators(InspectorContext context)
+    private static void InspectOscillators(SynthInspectionCursor synthCursor)
     {
         var index = 0;
-        while (index < AudioConstants.MaxOscillators && context.Buffer.Remaining > 0)
+        while (index < AudioConstants.MaxOscillators && synthCursor.Buffer.Remaining > 0)
         {
-            var marker = context.Buffer.Peek();
+            var marker = synthCursor.Buffer.Peek();
             if (marker == 0)
             {
-                _ = context.ReadByte("", "osc=end");
+                Consume(synthCursor.ReadByte("", "osc=end"));
                 break;
             }
 
-            _ = context.ReadUSmart("", $"osc{index}");
-            _ = context.ReadSmart("", $"pitch");
-            _ = context.ReadUSmart("", $"delay");
+            Consume(synthCursor.ReadUSmart("", $"osc{index}"));
+            Consume(synthCursor.ReadSmart("", $"pitch"));
+            Consume(synthCursor.ReadUSmart("", $"delay"));
             index++;
         }
     }
 
-    private static void InspectFilter(InspectorContext context)
+    private static void InspectFilter(SynthInspectionCursor synthCursor)
     {
-        if (context.Buffer.Remaining < 1)
+        if (synthCursor.Buffer.Remaining < 1)
         {
-            context.PrintLine("; filter", "none (EOF)");
+            synthCursor.PrintLine("; filter", "none (EOF)");
             return;
         }
 
-        var packed = context.Buffer.Peek();
+        var packed = synthCursor.Buffer.Peek();
         var pair0 = packed >> 4;
         var pair1 = packed & 0x0F;
         if (packed == 0)
         {
-            _ = context.ReadByte("", "filt=none");
+            Consume(synthCursor.ReadByte("", "filt=none"));
             return;
         }
 
-        _ = context.ReadByte("", $"filt: ch0={pair0}, ch1={pair1}");
-        _ = context.ReadUInt16("", "unity0");
-        _ = context.ReadUInt16("", "unity1");
-        var modmask = context.ReadByte("", $"modmask");
+        Consume(synthCursor.ReadByte("", $"filt: ch0={pair0}, ch1={pair1}"));
+        Consume(synthCursor.ReadUInt16("", "unity0"));
+        Consume(synthCursor.ReadUInt16("", "unity1"));
+        var modmask = synthCursor.ReadByte("", $"modmask");
 
-        InspectFilterPoles(context, pair0, pair1);
-        InspectFilterModulation(context, pair0, pair1, modmask);
+        InspectFilterPoles(synthCursor, pair0, pair1);
+        InspectFilterModulation(synthCursor, pair0, pair1, modmask);
     }
 
-    private static void InspectFilterPoles(InspectorContext context, int pair0, int pair1)
+    private static void InspectFilterPoles(SynthInspectionCursor synthCursor, int pair0, int pair1)
     {
         for (var channel = 0; channel < 2; channel++)
         {
@@ -192,14 +193,14 @@ internal sealed class InspectCommand : Command
 
             for (var p = 0; p < pairs; p++)
             {
-                _ = context.ReadUInt16("", $"ch{channel}.pole{p}.freq");
-                _ = context.ReadUInt16("", $"mag");
+                Consume(synthCursor.ReadUInt16("", $"ch{channel}.pole{p}.freq"));
+                Consume(synthCursor.ReadUInt16("", $"mag"));
             }
         }
     }
 
     private static void InspectFilterModulation(
-        InspectorContext context,
+        SynthInspectionCursor synthCursor,
         int pair0,
         int pair1,
         int modmask
@@ -217,48 +218,48 @@ internal sealed class InspectCommand : Command
             {
                 if ((modmask & (1 << (channel * 4 + p))) != 0)
                 {
-                    _ = context.ReadUInt16("", $"ch{channel}.pole{p}.freq_mod");
-                    _ = context.ReadUInt16("", $"mag_mod");
+                    Consume(synthCursor.ReadUInt16("", $"ch{channel}.pole{p}.freq_mod"));
+                    Consume(synthCursor.ReadUInt16("", $"mag_mod"));
                 }
             }
         }
-        InspectEnvelopeSegments(context);
+        InspectEnvelopeSegments(synthCursor);
     }
 
-    private static void InspectEnvelopeSegments(InspectorContext context)
+    private static void InspectEnvelopeSegments(SynthInspectionCursor synthCursor)
     {
-        var segmentCount = context.ReadByte("", "env_segs");
-        var maxSegments = context.Buffer.Remaining / 4;
-        var segmentLimit = Math.Min(segmentCount, maxSegments);
+        var segmentCount = synthCursor.ReadByte("", "env_segs");
+        var maxSegments = synthCursor.Buffer.Remaining / 4;
+        var segmentLimit = segmentCount < maxSegments ? segmentCount : maxSegments;
         for (var i = 0; i < segmentLimit; i++)
         {
-            _ = context.ReadUInt16("", $"seg{i}.dur");
-            _ = context.ReadUInt16("", $"seg{i}.peak");
+            Consume(synthCursor.ReadUInt16("", $"seg{i}.dur"));
+            Consume(synthCursor.ReadUInt16("", $"seg{i}.peak"));
         }
     }
 
-    private static void InspectLoop(InspectorContext context)
+    private static void InspectLoop(SynthInspectionCursor synthCursor)
     {
-        if (context.Buffer.Remaining >= 4)
+        if (synthCursor.Buffer.Remaining >= 4)
         {
-            _ = context.ReadUInt16("loop", "start");
-            _ = context.ReadUInt16("", "end");
+            Consume(synthCursor.ReadUInt16("loop", "start"));
+            Consume(synthCursor.ReadUInt16("", "end"));
         }
     }
 
-    private static void PrintSummary(InspectorContext context)
+    private static void PrintSummary(SynthInspectionCursor synthCursor)
     {
         Console.WriteLine(
-            $"; Parsed {context.Buffer.Position}/{context.Buffer.Data.Length} bytes ({context.Buffer.Position * 100.0 / context.Buffer.Data.Length:F1}%)"
+            $"; Parsed {synthCursor.Buffer.Position}/{synthCursor.Buffer.Bytes.Length} bytes ({synthCursor.Buffer.Position * 100.0 / synthCursor.Buffer.Bytes.Length:F1}%)"
         );
-        if (context.Buffer.Remaining > 0)
+        if (synthCursor.Buffer.Remaining > 0)
         {
-            Console.WriteLine($"; Remaining: {context.Buffer.Remaining} bytes unparsed");
+            Console.WriteLine($"; Remaining: {synthCursor.Buffer.Remaining} bytes unparsed");
         }
     }
 
-    private static void PrintError(InspectorContext context, Exception ex) =>
-        Console.WriteLine($"; ERROR at 0x{context.Buffer.Position:X4}: {ex.Message}");
+    private static void PrintError(SynthInspectionCursor synthCursor, Exception ex) =>
+        Console.WriteLine($"; ERROR at 0x{synthCursor.Buffer.Position:X4}: {ex.Message}");
 
     private static string GetWaveformName(byte id) =>
         id switch
@@ -271,9 +272,11 @@ internal sealed class InspectCommand : Command
             _ => $"?({id})",
         };
 
-    private sealed class InspectorContext(byte[] data)
+    private static void Consume<T>(T value) => GC.KeepAlive(value);
+
+    private sealed class SynthInspectionCursor(byte[] synthBytes)
     {
-        public BinaryBuffer Buffer { get; } = new(data);
+        public BinaryBuffer Buffer { get; } = new(synthBytes);
 
         public byte ReadByte(string mnemonic, string comment)
         {
@@ -298,7 +301,7 @@ internal sealed class InspectCommand : Command
             var startPosition = Buffer.Position;
             var value = readFunc();
             var lengthFromStart = Buffer.Position - startPosition;
-            var bytes = Buffer.Data.Skip(startPosition).Take(lengthFromStart).ToArray();
+            var bytes = CopyBytes(startPosition, lengthFromStart);
             PrintLine(
                 startPosition,
                 bytes,
@@ -314,7 +317,7 @@ internal sealed class InspectCommand : Command
         {
             var startPosition = Buffer.Position;
             var value = readFunc();
-            var bytes = Buffer.Data.Skip(startPosition).Take(byteCount).ToArray();
+            var bytes = CopyBytes(startPosition, byteCount);
             PrintLine(
                 startPosition,
                 bytes,
@@ -329,15 +332,16 @@ internal sealed class InspectCommand : Command
         public void PrintLine(string mnemonic, string comment) =>
             PrintLine(Buffer.Position, [], mnemonic, comment);
 
+        private byte[] CopyBytes(int startPosition, int byteCount)
+        {
+            var bytes = new byte[byteCount];
+            Array.Copy(Buffer.Bytes, startPosition, bytes, 0, byteCount);
+            return bytes;
+        }
+
         private static void PrintLine(int pos, byte[] bytes, string mnemonic, string comment)
         {
-            var hex =
-                bytes.Length > 0
-                    ? string.Join(
-                        " ",
-                        bytes.Select(b => b.ToString("X2", CultureInfo.InvariantCulture))
-                    )
-                    : "";
+            var hex = FormatHex(bytes);
             if (hex.Length > 18)
             {
                 hex = hex[..15] + "...";
@@ -345,7 +349,28 @@ internal sealed class InspectCommand : Command
 
             var paddedMnemonic = mnemonic.PadRight(10);
             var comma = comment.Length > 0 && mnemonic.Length > 0 ? ", " : "";
-            Console.WriteLine($"{pos:X4}: {hex, -18} {paddedMnemonic}{comma}{comment}");
+            Console.WriteLine($"{pos:X4}: {hex.PadRight(18)} {paddedMnemonic}{comma}{comment}");
+        }
+
+        private static string FormatHex(byte[] bytes)
+        {
+            if (bytes.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var builder = new StringBuilder(bytes.Length * 3 - 1);
+            for (var i = 0; i < bytes.Length; i++)
+            {
+                if (i > 0)
+                {
+                    Consume(builder.Append(' '));
+                }
+
+                Consume(builder.Append(bytes[i].ToString("X2", CultureInfo.InvariantCulture)));
+            }
+
+            return builder.ToString();
         }
     }
 }

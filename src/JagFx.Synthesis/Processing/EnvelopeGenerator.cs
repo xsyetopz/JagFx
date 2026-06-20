@@ -3,9 +3,10 @@ using JagFx.Domain.Models;
 
 namespace JagFx.Synthesis.Processing;
 
-public class EnvelopeGenerator(Envelope envelope)
+public sealed class EnvelopeGenerator
 {
     private const int EnvelopeScaleFactor = 15;
+    private static readonly Stack<EnvelopeGenerator> Pool = [];
 
     private int _amplitude;
     private int _delta;
@@ -13,7 +14,47 @@ public class EnvelopeGenerator(Envelope envelope)
     private int _threshold;
     private int _ticks;
 
-    public Envelope Envelope { get; } = envelope;
+    private EnvelopeGenerator(Envelope envelope)
+    {
+        Envelope = envelope;
+        Reset();
+    }
+
+    public Envelope Envelope { get; private set; }
+
+    public static EnvelopeGenerator Rent(Envelope envelope)
+    {
+        lock (Pool)
+        {
+            if (Pool.Count != 0)
+            {
+                var generator = Pool.Pop();
+                generator.Reset(envelope);
+                return generator;
+            }
+        }
+
+        return new EnvelopeGenerator(envelope);
+    }
+
+    public static void Return(EnvelopeGenerator? generator)
+    {
+        if (generator == null)
+        {
+            return;
+        }
+
+        lock (Pool)
+        {
+            Pool.Push(generator);
+        }
+    }
+
+    public void Reset(Envelope envelope)
+    {
+        Envelope = envelope;
+        Reset();
+    }
 
     public void Reset()
     {

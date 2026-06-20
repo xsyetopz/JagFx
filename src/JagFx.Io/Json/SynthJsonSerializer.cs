@@ -22,7 +22,7 @@ public static class SynthJsonSerializer
     {
         var patchJson =
             JsonSerializer.Deserialize<PatchJson>(json, Options)
-            ?? throw new JsonException("Failed to deserialize JSON: result was null");
+            ?? throw new JsonException("Failed to deserialize synth JSON: patch payload was null");
         return SynthJsonMapper.FromJson(patchJson);
     }
 

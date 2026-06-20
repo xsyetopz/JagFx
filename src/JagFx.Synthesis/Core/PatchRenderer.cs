@@ -1,8 +1,7 @@
-using System.Collections.Immutable;
 using JagFx.Core.Constants;
 using JagFx.Domain.Models;
 using JagFx.Domain.Utilities;
-using JagFx.Synthesis.Data;
+using JagFx.Synthesis.Audio;
 
 namespace JagFx.Synthesis.Core;
 
@@ -15,17 +14,22 @@ public static class PatchRenderer
         CancellationToken ct = default
     )
     {
-        ct.ThrowIfCancellationRequested();
-        var voicesToMix =
-            voiceFilter < 0
-                ? patch.ActiveVoices
-                : [.. patch.ActiveVoices.Where(v => v.Index == voiceFilter)];
+        using var buffer = SynthesizePooled(patch, loopCount, voiceFilter, ct);
+        return buffer.ToAudioBuffer();
+    }
 
+    public static PooledAudioBuffer SynthesizePooled(
+        Patch patch,
+        int loopCount,
+        int voiceFilter = -1,
+        CancellationToken ct = default
+    )
+    {
         ct.ThrowIfCancellationRequested();
-        var maxDuration = CalculateMaxDuration(voicesToMix);
+        var maxDuration = CalculateMaxDuration(patch, voiceFilter);
         if (maxDuration == 0)
         {
-            return AudioBuffer.Empty(0);
+            return new PooledAudioBuffer([], 0);
         }
 
         var sampleCount = (int)(maxDuration * AudioConstants.SampleRatePerMillisecond);
@@ -36,28 +40,43 @@ public static class PatchRenderer
         var totalSampleCount =
             sampleCount + (loopStop - loopStart) * Math.Max(0, effectiveLoopCount - 1);
 
-        var buffer = MixVoices(voicesToMix, sampleCount, totalSampleCount, ct);
+        var buffer = MixVoices(patch, voiceFilter, sampleCount, totalSampleCount, ct);
         if (effectiveLoopCount > 1)
         {
             ct.ThrowIfCancellationRequested();
-            ApplyLoopExpansion(buffer, sampleCount, loopStart, loopStop, effectiveLoopCount);
+            ApplyLoopExpansion(
+                buffer,
+                sampleCount,
+                totalSampleCount,
+                loopStart,
+                loopStop,
+                effectiveLoopCount
+            );
         }
 
         ct.ThrowIfCancellationRequested();
         AudioMath.ClipInt16(buffer, totalSampleCount);
 
-        var output = new int[totalSampleCount];
-        Array.Copy(buffer, 0, output, 0, totalSampleCount);
-        AudioBufferPool.Release(buffer);
-
-        return new AudioBuffer(output, AudioConstants.SampleRate);
+        return new PooledAudioBuffer(buffer, totalSampleCount);
     }
 
-    private static int CalculateMaxDuration(ImmutableList<(int Index, Voice Voice)> voices)
+    private static int CalculateMaxDuration(Patch patch, int voiceFilter)
     {
         var maxDuration = 0;
-        foreach (var (_, voice) in voices)
+        var voices = patch.Voices;
+        for (var i = 0; i < voices.Count; i++)
         {
+            if (voiceFilter >= 0 && i != voiceFilter)
+            {
+                continue;
+            }
+
+            var voice = voices[i];
+            if (voice == null)
+            {
+                continue;
+            }
+
             var endTime = voice.DurationMs + voice.OffsetMs;
             if (endTime > maxDuration)
             {
@@ -72,32 +91,52 @@ public static class PatchRenderer
         start < 0 || end > length || start >= end ? 0 : loopCount;
 
     private static int[] MixVoices(
-        ImmutableList<(int Index, Voice Voice)> voices,
+        Patch patch,
+        int voiceFilter,
         int sampleCount,
         int totalSampleCount,
         CancellationToken ct
     )
     {
         var buffer = AudioBufferPool.Acquire(totalSampleCount);
+        var voices = patch.Voices;
 
-        foreach (var (_, voice) in voices)
+        for (var voiceIndex = 0; voiceIndex < voices.Count; voiceIndex++)
         {
-            ct.ThrowIfCancellationRequested();
-            var voiceBuffer = VoiceSynthesizer.Synthesize(voice, ct);
-            var startOffset = (int)(voice.OffsetMs * AudioConstants.SampleRatePerMillisecond);
-
-            for (var i = 0; i < voiceBuffer.Length; i++)
+            if (voiceFilter >= 0 && voiceIndex != voiceFilter)
             {
-                if ((i & 0x1FF) == 0)
-                {
-                    ct.ThrowIfCancellationRequested();
-                }
+                continue;
+            }
 
-                var pos = i + startOffset;
-                if (pos >= 0 && pos < sampleCount)
+            ct.ThrowIfCancellationRequested();
+            var voice = voices[voiceIndex];
+            if (voice == null)
+            {
+                continue;
+            }
+
+            var voiceBuffer = VoiceSynthesizer.SynthesizePooledCore(voice, ct);
+            try
+            {
+                var startOffset = (int)(voice.OffsetMs * AudioConstants.SampleRatePerMillisecond);
+                var mixStart = Math.Max(0, -startOffset);
+                var sampleRoom = sampleCount - startOffset;
+                var mixEnd = voiceBuffer.Length < sampleRoom ? voiceBuffer.Length : sampleRoom;
+                var voiceSamples = voiceBuffer.Samples;
+
+                for (var i = mixStart; i < mixEnd; i++)
                 {
-                    buffer[pos] += voiceBuffer.Samples[i];
+                    if ((i & 0x1FF) == 0)
+                    {
+                        ct.ThrowIfCancellationRequested();
+                    }
+
+                    buffer[i + startOffset] += voiceSamples[i];
                 }
+            }
+            finally
+            {
+                AudioBufferPool.Release(voiceBuffer.Samples);
             }
         }
 
@@ -107,12 +146,12 @@ public static class PatchRenderer
     private static void ApplyLoopExpansion(
         int[] buffer,
         int sampleCount,
+        int totalSampleCount,
         int loopStart,
         int loopStop,
         int loopCount
     )
     {
-        var totalSampleCount = buffer.Length;
         var endOffset = totalSampleCount - sampleCount;
 
         for (var sample = sampleCount - 1; sample >= loopStop; sample--)

@@ -2,7 +2,7 @@ using JagFx.Core.Constants;
 using JagFx.Domain.Utilities;
 using JavaRng = JagFx.JavaRandom.JavaRandom;
 
-namespace JagFx.Synthesis.Data;
+namespace JagFx.Synthesis.Audio;
 
 public static class WaveformTables
 {

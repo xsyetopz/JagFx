@@ -32,18 +32,18 @@ public static class FilterResponseCalculator
         int numPoints = NumPoints
     )
     {
-        var result = new double[numPoints];
+        var decibelResponse = new double[numPoints];
 
         if (!filter.HasFilter || filter.PolePhase.IsDefault || filter.PoleMagnitude.IsDefault)
         {
-            Array.Fill(result, 0.0);
-            return result;
+            Array.Fill(decibelResponse, 0.0);
+            return decibelResponse;
         }
 
         if (filter.PoleCount0 == 0 && filter.PoleCount1 == 0)
         {
-            Array.Fill(result, 0.0);
-            return result;
+            Array.Fill(decibelResponse, 0.0);
+            return decibelResponse;
         }
 
         var ffCoeffs = BuildSosCoefficientsInterp(filter, 0, envelopeFactor);
@@ -82,10 +82,10 @@ public static class FilterResponseCalculator
             var h =
                 denominator.Magnitude > 1e-10 ? inverseA0 * numerator / denominator : Complex.Zero;
 
-            result[i] = 20.0 * Math.Log10(Math.Max(h.Magnitude, 1e-10));
+            decibelResponse[i] = 20.0 * Math.Log10(Math.Max(h.Magnitude, 1e-10));
         }
 
-        return result;
+        return decibelResponse;
     }
 
     /// <summary>

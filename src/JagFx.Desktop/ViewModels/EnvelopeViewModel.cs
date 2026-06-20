@@ -57,14 +57,7 @@ public partial class EnvelopeViewModel : ObservableObject
         for (var i = 0; i < envelope.Segments.Count; i++)
         {
             var seg = envelope.Segments[i];
-            Segments.Add(
-                new SegmentViewModel
-                {
-                    Index = i,
-                    Duration = seg.Duration,
-                    TargetLevel = seg.TargetLevel,
-                }
-            );
+            Segments.Add(CreateSegment(i, seg.Duration, seg.TargetLevel));
         }
 
         OnPropertyChanged(nameof(IsEmpty));
@@ -90,14 +83,7 @@ public partial class EnvelopeViewModel : ObservableObject
 
     public void AddSegment(int duration, int peak)
     {
-        Segments.Add(
-            new SegmentViewModel
-            {
-                Index = Segments.Count,
-                Duration = duration,
-                TargetLevel = peak,
-            }
-        );
+        Segments.Add(CreateSegment(Segments.Count, duration, peak));
         OnPropertyChanged(nameof(IsEmpty));
     }
 
@@ -118,15 +104,7 @@ public partial class EnvelopeViewModel : ObservableObject
 
     public void InsertSegment(int index, int duration, int targetLevel)
     {
-        Segments.Insert(
-            index,
-            new SegmentViewModel
-            {
-                Index = index,
-                Duration = duration,
-                TargetLevel = targetLevel,
-            }
-        );
+        Segments.Insert(index, CreateSegment(index, duration, targetLevel));
         ReindexSegments();
         OnPropertyChanged(nameof(IsEmpty));
     }
@@ -139,6 +117,17 @@ public partial class EnvelopeViewModel : ObservableObject
             ReindexSegments();
             OnPropertyChanged(nameof(IsEmpty));
         }
+    }
+
+    private static SegmentViewModel CreateSegment(int index, int duration, int targetLevel)
+    {
+        var segment = new SegmentViewModel
+        {
+            Index = index,
+            Duration = duration,
+            TargetLevel = targetLevel,
+        };
+        return segment;
     }
 
     private void ReindexSegments()
