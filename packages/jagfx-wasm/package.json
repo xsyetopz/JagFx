@@ -18,7 +18,9 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node --test test/index.test.mjs"
+    "test": "bun test test/index.test.mjs",
+    "build:wasm": "dotnet publish ../../src/JagFx.Wasm -c Release",
+    "playground": "bun playground/serve.mjs"
   },
   "license": "MIT",
   "engines": {

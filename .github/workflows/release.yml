@@ -95,6 +95,24 @@ jobs:
       - name: Install just
         uses: taiki-e/install-action@just
 
+      - name: Validate notarization credentials
+        id: validate-notary
+        if: ${{ env.HAS_MACOS_SIGNING == 'true' }}
+        env:
+          MACOS_NOTARY_APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}
+          MACOS_NOTARY_TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAM_ID }}
+          MACOS_NOTARY_PASSWORD: ${{ secrets.MACOS_NOTARY_PASSWORD }}
+        run: |
+          if xcrun notarytool history \
+            --apple-id "$MACOS_NOTARY_APPLE_ID" \
+            --team-id "$MACOS_NOTARY_TEAM_ID" \
+            --password "$MACOS_NOTARY_PASSWORD" >/dev/null; then
+            echo "valid=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Apple notarization credentials were rejected. Skipping DMG notarization for this run. Refresh MACOS_NOTARY_PASSWORD with an app-specific password for MACOS_NOTARY_APPLE_ID and confirm MACOS_NOTARY_TEAM_ID to publish notarized macOS artifacts."
+          fi
+
       - name: Build + test
         run: |
           dotnet restore
@@ -152,7 +170,7 @@ jobs:
           just package-desktop-macos-$ARCH_LABEL
 
       - name: Sign + notarize DMG
-        if: ${{ env.HAS_MACOS_SIGNING == 'true' }}
+        if: ${{ env.HAS_MACOS_SIGNING == 'true' && steps.validate-notary.outputs.valid == 'true' }}
         env:
           MACOS_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
           MACOS_NOTARY_APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}

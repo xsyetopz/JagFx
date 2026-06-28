@@ -212,6 +212,15 @@ The DMG recipe already sets an explicit size and retries. Re-run:
 just release-desktop-macos-arm64
 ```
 
+### Apple notarization returns HTTP 401
+
+The Release workflow checks notarization credentials before the macOS build. If
+`notarytool` reports HTTP 401, the workflow warns and skips DMG notarization so
+other release artifacts can still publish. Refresh the GitHub Actions
+`MACOS_NOTARY_PASSWORD` secret with a current Apple app-specific password for
+`MACOS_NOTARY_APPLE_ID`, and confirm `MACOS_NOTARY_TEAM_ID` matches that Apple
+Developer account before cutting a notarized macOS release.
+
 ### `ISCC not found`
 
 Install Inno Setup and put `ISCC` on PATH.

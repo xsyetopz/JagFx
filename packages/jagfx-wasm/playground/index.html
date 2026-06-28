@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JagFx WASM playground</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: #101114;
+        color: #f2f4f8;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at top left, rgb(89 64 255 / 26%), transparent 34rem),
+          radial-gradient(circle at bottom right, rgb(0 214 201 / 18%), transparent 30rem),
+          #101114;
+      }
+
+      main {
+        width: min(860px, calc(100vw - 32px));
+        padding: 32px;
+        border: 1px solid rgb(255 255 255 / 12%);
+        border-radius: 28px;
+        background: rgb(18 20 26 / 82%);
+        box-shadow: 0 28px 90px rgb(0 0 0 / 42%);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 7vw, 4rem);
+        letter-spacing: -0.06em;
+      }
+
+      p {
+        max-width: 66ch;
+        color: #b8becd;
+        line-height: 1.6;
+      }
+
+      form {
+        display: grid;
+        gap: 18px;
+        margin-top: 28px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        color: #d8dce8;
+        font-weight: 700;
+      }
+
+      input,
+      select,
+      button,
+      a.button {
+        border: 1px solid rgb(255 255 255 / 14%);
+        border-radius: 14px;
+        padding: 12px 14px;
+        background: rgb(255 255 255 / 7%);
+        color: #f2f4f8;
+        font: inherit;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      button,
+      a.button {
+        cursor: pointer;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      button.primary {
+        background: linear-gradient(135deg, #7c5cff, #00d6c9);
+        border: 0;
+        color: #06070a;
+      }
+
+      button:disabled,
+      a.button[aria-disabled="true"] {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+
+      pre {
+        min-height: 116px;
+        overflow: auto;
+        margin: 24px 0 0;
+        padding: 18px;
+        border-radius: 18px;
+        background: rgb(0 0 0 / 36%);
+        color: #b8ffec;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>JagFx WASM</h1>
+      <p>
+        Test the JavaScript wrapper against the real <code>JagFx.Wasm</code>
+        JSExport runtime. Load a <code>.synth</code>, render PCM in WebAssembly,
+        play it, or save a WAV preview.
+      </p>
+
+      <form id="render-form">
+        <label>
+          Synth file
+          <input id="synth-file" name="synth" type="file" accept=".synth,application/octet-stream" />
+        </label>
+
+        <div class="grid">
+          <label>
+            Loops
+            <input id="loops" name="loops" type="number" min="1" step="1" value="1" />
+          </label>
+          <label>
+            Voice filter
+            <select id="voice-filter" name="voiceFilter">
+              <option value="-1">All voices</option>
+              <option value="0">Voice 0</option>
+              <option value="1">Voice 1</option>
+              <option value="2">Voice 2</option>
+              <option value="3">Voice 3</option>
+              <option value="4">Voice 4</option>
+              <option value="5">Voice 5</option>
+              <option value="6">Voice 6</option>
+              <option value="7">Voice 7</option>
+              <option value="8">Voice 8</option>
+              <option value="9">Voice 9</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button class="primary" type="submit">Render selected file</button>
+          <button id="load-example" type="button">Render cow_death.synth</button>
+          <button id="play" type="button" disabled>Play last render</button>
+          <a id="download" class="button" href="./" aria-disabled="true">Download WAV</a>
+        </div>
+      </form>
+
+      <pre id="status">Publish JagFx.Wasm, start the playground server, then render a synth.</pre>
+    </main>
+
+    <script type="module" src="./playground.mjs"></script>
+  </body>
+</html>
