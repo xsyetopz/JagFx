@@ -12,8 +12,12 @@
     <Description>Jagex Smart encoding for OSRS cache integers</Description>
     <Authors>JagFx Team</Authors>
     <PackageTags>osrs;smart;encoding;runescape</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Remove="tests\**" />
     <EmbeddedResource Remove="tests\**" />

@@ -10,6 +10,10 @@
     <Authors>JagFx</Authors>
     <Description>Java-compatible Random implementation for .NET. Provides the same algorithm as java.util.Random for cross-platform compatibility.</Description>
     <PackageTags>random;java;compatibility;rng</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 </Project>
