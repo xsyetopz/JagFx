@@ -1,0 +1,21 @@
+{
+  "name": "jagfx-workspace",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build:js": "bun run --cwd packages/jagfx build && bun run --cwd packages/jagfx-wasm build && bun run --cwd packages/jagfx-node build",
+    "typecheck": "tsc --noEmit",
+    "biome:check": "biome check . --error-on-warnings --max-diagnostics 16384",
+    "biome:fix": "biome check . --write --max-diagnostics 16384"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.1",
+    "@types/bun": "^1.3.14",
+    "@types/node": "^26.0.1",
+    "bun-types": "^1.3.14",
+    "typescript": "^6.0.3"
+  }
+}

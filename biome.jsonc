@@ -1,0 +1,86 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": [
+			"**/*.js",
+			"**/*.mjs",
+			"**/*.cjs",
+			"**/*.ts",
+			"**/*.mts",
+			"!**/node_modules",
+			"!**/dist",
+			"!publish"
+		],
+		"ignoreUnknown": true
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"complexity": {
+				"noUselessStringConcat": "warn",
+				"noUselessUndefinedInitialization": "error",
+				"useDateNow": "warn",
+				"useLiteralKeys": "off"
+			},
+			"correctness": {
+				"noNodejsModules": "off",
+				"noUndeclaredDependencies": "error",
+				"noUnusedFunctionParameters": "warn",
+				"noUnusedImports": "error",
+				"noUnusedVariables": "error",
+				"useImportExtensions": "off"
+			},
+			"performance": {
+				"noBarrelFile": "warn",
+				"noNamespaceImport": "off",
+				"noReExportAll": "warn",
+				"useTopLevelRegex": "warn"
+			},
+			"style": {
+				"noDefaultExport": "warn",
+				"noParameterProperties": "warn",
+				"noParameterAssign": "error",
+				"noUnusedTemplateLiteral": "error",
+				"useArrayLiterals": "warn",
+				"useAsConstAssertion": "error",
+				"useBlockStatements": "off",
+				"useConsistentArrayType": "warn",
+				"useNodeAssertStrict": "error",
+				"useNumberNamespace": "error",
+				"useSingleVarDeclarator": "error",
+				"useThrowNewError": "error",
+				"useThrowOnlyError": "error"
+			},
+			"suspicious": {
+				"noSkippedTests": "error",
+				"useAwait": "error",
+				"useErrorMessage": "warn"
+			}
+		}
+	},
+	"javascript": {
+		"globals": [
+			"Bun"
+		],
+		"formatter": {
+			"quoteStyle": "double"
+		}
+	}
+}

@@ -20,11 +20,15 @@
     "src"
   ],
   "scripts": {
-    "build": "node-gyp rebuild",
-    "test": "node --test test/index.test.mjs"
+    "build": "bun run build:esm && bun run build:cjs && bun run build:types",
+    "test": "node --test test/index.test.mjs",
+    "build:esm": "bun build ./src/index.ts --target=node --format=esm --packages=external --outfile=./dist/index.mjs",
+    "build:cjs": "bun build ./src/index.ts --target=node --format=cjs --packages=external --outfile=./dist/index.cjs",
+    "build:types": "tsc -p tsconfig.build.json"
   },
   "license": "MIT",
   "engines": {
     "node": ">=22.23.1"
-  }
+  },
+  "source": "./src/index.ts"
 }

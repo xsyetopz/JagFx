@@ -1,5 +1,6 @@
 import { createJagFxWasmBackend } from "../dist/index.mjs";
 
+const synthExtensionPattern = /\.synth$/i;
 const sampleRate = 22050;
 const form = document.querySelector("#render-form");
 const fileInput = document.querySelector("#synth-file");
@@ -35,7 +36,7 @@ exampleButton.addEventListener("click", async () => {
 	await render(new Uint8Array(await response.arrayBuffer()), "cow_death.synth");
 });
 
-playButton.addEventListener("click", async () => {
+playButton.addEventListener("click", () => {
 	if (!lastAudioBuffer) {
 		return;
 	}
@@ -58,7 +59,7 @@ async function render(data, label) {
 		const elapsedMs = performance.now() - startedAt;
 
 		lastAudioBuffer = pcm16LeToAudioBuffer(pcm);
-		setDownload(pcm, label.replace(/\.synth$/i, ".wav"));
+		setDownload(pcm, label.replace(synthExtensionPattern, ".wav"));
 		playButton.disabled = false;
 
 		setStatus(
@@ -80,7 +81,7 @@ async function render(data, label) {
 	}
 }
 
-async function getBackend() {
+function getBackend() {
 	backendPromise ??= import("/_framework/dotnet.js").then(({ dotnet }) =>
 		createJagFxWasmBackend(dotnet),
 	);

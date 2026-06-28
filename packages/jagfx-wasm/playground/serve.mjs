@@ -8,10 +8,11 @@ const repoRoot = resolve(packageDir, "../..");
 const playgroundDir = join(packageDir, "playground");
 const port = Number.parseInt(process.env.PORT ?? "8787", 10);
 const host = process.env.HOST ?? "127.0.0.1";
+const leadingSlashPattern = /^([/\\])+/;
 const wwwroot = resolveWwwroot();
 
 if (process.env.JAGFX_PLAYGROUND_SMOKE === "1") {
-	console.log(`JagFx WASM playground smoke OK`);
+	console.log("JagFx WASM playground smoke OK");
 	console.log(`Serving JagFx.Wasm wwwroot: ${wwwroot}`);
 	process.exit(0);
 }
@@ -63,23 +64,30 @@ function resolveWwwroot() {
 			"src/JagFx.Wasm/bin/Release/net8.0/browser-wasm/publish/wwwroot",
 		),
 		join(repoRoot, "src/JagFx.Wasm/bin/Release/net8.0/publish/wwwroot"),
-	].filter(Boolean);
+	];
 
-	const found = candidates.find((candidate) =>
-		existsSync(join(candidate, "_framework/dotnet.js")),
-	);
-	if (found) {
-		return resolve(found);
+	for (let i = 0; i < candidates.length; i++) {
+		const candidate = candidates[i];
+		if (candidate && existsSync(join(candidate, "_framework/dotnet.js"))) {
+			return resolve(candidate);
+		}
 	}
 
-	throw new Error(
-		[
-			"JagFx.Wasm publish output not found.",
-			"Run `bun --cwd packages/jagfx-wasm run build:wasm` first, or set JAGFX_WASM_WWWROOT=/path/to/wwwroot.",
-			"Checked:",
-			...candidates.map((candidate) => `  - ${candidate}`),
-		].join("\n"),
-	);
+	const checked = [];
+	for (let i = 0; i < candidates.length; i++) {
+		const candidate = candidates[i];
+		if (candidate) {
+			checked.push(`  - ${candidate}`);
+		}
+	}
+	let message =
+		"JagFx.Wasm publish output not found.\n" +
+		"Run `bun --cwd packages/jagfx-wasm run build:wasm` first, or set JAGFX_WASM_WWWROOT=/path/to/wwwroot.\n" +
+		"Checked:";
+	if (checked.length > 0) {
+		message += `\n${checked.join("\n")}`;
+	}
+	throw new Error(message);
 }
 
 async function responseFromFile(root, relativePath) {
@@ -99,7 +107,7 @@ async function responseFromFile(root, relativePath) {
 }
 
 function safeJoin(root, relativePath) {
-	const normalized = normalize(relativePath).replace(/^([/\\])+/, "");
+	const normalized = normalize(relativePath).replace(leadingSlashPattern, "");
 	const filePath = resolve(root, normalized);
 	const rootWithSep = root.endsWith(sep) ? root : `${root}${sep}`;
 	if (filePath !== root && !filePath.startsWith(rootWithSep)) {

@@ -4,13 +4,13 @@ import { createJagFxWasmBackend } from "../dist/index.mjs";
 describe("createJagFxWasmBackend", () => {
 	test("renders PCM through the JagFx.Wasm JSExport runtime", async () => {
 		const backend = await createJagFxWasmBackend(() => ({
-			async create() {
-				return {
+			create() {
+				return Promise.resolve({
 					getConfig() {
 						return { mainAssemblyName: "JagFx.Wasm" };
 					},
-					async getAssemblyExports() {
-						return {
+					getAssemblyExports() {
+						return Promise.resolve({
 							JagFx: {
 								Wasm: {
 									JagFxWasmExports: {
@@ -23,9 +23,9 @@ describe("createJagFxWasmBackend", () => {
 									},
 								},
 							},
-						};
+						});
 					},
-				};
+				});
 			},
 		}));
 

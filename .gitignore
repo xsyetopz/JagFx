@@ -79,7 +79,9 @@ $RECYCLE.BIN/
 node_modules/
 dist/
 coverage/
-bun.lock
+packages/*/bun.lock
+packages/*/bun.lockb
+packages/jagfx-node/build/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
