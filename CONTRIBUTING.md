@@ -27,7 +27,7 @@ This guide defines the contribution workflow and review expectations.
 
 ### Naming
 
-Domain model field names follow DSP conventions. Use `specs/synth-format-spec.md` as the reference:
+Domain model field names follow DSP conventions. Use `docs/synth-format-spec.md` as the reference:
 
 - Envelope boundary fields are `StartValue` / `EndValue` (not "samples").
 - Segment fields are `Duration` / `TargetLevel`.

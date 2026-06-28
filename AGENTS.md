@@ -1,86 +1,112 @@
 # AGENTS.md
 
-## Context
+JagFx is a .NET 8 toolkit for Old School RuneScape `.synth` sound-effect files. The repository contains:
 
-JagFx is a .NET 8 toolkit for OSRS synthesizer instrument files (`.synth`). It includes a CLI (`JagFx.Cli`), a desktop editor (`JagFx.Desktop`, Avalonia 11 MVVM), and a JSON interchange format for programmatic patch creation.
+- `JagFx.Cli`: command-line conversion, inspection, and rendering.
+- `JagFx.Desktop`: Avalonia 11 MVVM desktop editor.
+- `JagFx.Io`: binary `.synth` reader/writer, JSON serialization, and WAV writing.
+- `JagFx.Synthesis`: DSP rendering for patches and voices.
+- JavaScript packages under `packages/` for CLI-backed bindings and WASM work.
 
 ## Commands
 
+Use Bun for JavaScript package work.
+
 ```bash
-dotnet build          # Must pass with 0 warnings (TreatWarningsAsErrors enabled)
-dotnet test           # Must pass before committing
-dotnet format         # Auto-fix formatting; CI checks --verify-no-changes
+dotnet build          # Must pass with 0 warnings; TreatWarningsAsErrors is enabled
+dotnet test           # Must pass before reporting backend work complete
+dotnet format         # Auto-fix formatting; CI checks formatting
+bun test              # Use inside JS package directories that define Bun tests
 dotnet run --project src/JagFx.Cli -- <command> [args]
 dotnet run --project src/JagFx.Desktop
-just release-all      # Cross-platform distributable archives (see Makefile)
+just release-all      # Build release artifacts; see PUBLISHING.md
 ```
 
-## Project Layout
+On machines where `dotnet` resolves to a newer SDK, use the .NET 8 install path if needed:
 
-| Project           | Role                                                                                |
-| ----------------- | ----------------------------------------------------------------------------------- |
-| `JagFx.Core`      | Value types (`Percent`, `Milliseconds`, `Samples`), `AudioConstants`                |
-| `JagFx.Domain`    | Immutable domain records (`Patch`, `Voice`, `Envelope`, `Filter`, etc.)             |
-| `JagFx.Io`        | Binary reader/writer, JSON serialization (`Json/`), WAV writer                      |
-| `JagFx.Synthesis` | DSP engine: `PatchRenderer`, `VoiceSynthesizer`, `AudioFilter`                      |
-| `JagFx.Cli`       | CLI commands via `System.CommandLine`: `convert`, `inspect`, `to-json`, `from-json` |
-| `JagFx.Desktop`   | Avalonia 11 MVVM desktop editor with custom canvas controls                         |
-| `JagFx.TestData`  | Embedded hex resources for test fixtures                                            |
-| `JavaRandom`      | Java-compatible RNG (for OSRS noise waveform)                                       |
-| `SmartInt`        | Variable-length integer codec                                                       |
+```bash
+/usr/local/share/dotnet/dotnet test --nologo
+```
 
-## Key Patterns
+## Project layout
 
-- **Domain models**: immutable `record` types with `ImmutableList`/`ImmutableArray`
-- **I/O layer**: `SynthFileReader`/`SynthFileWriter` are static classes operating on `BinaryBuffer`
-- **JSON layer**: `SynthJsonSerializer` → `SynthJsonMapper` (domain ↔ DTO) → `SynthJsonModels` (DTOs with `[JsonPropertyName]`)
-- **CLI commands**: class extending `Command`, registered in `JagFxCli.BuildRootCommand()`
-- **Tests**: xUnit, Arrange-Act-Assert, test data via `JagFx.TestData.TestResources`
-- **Desktop**: MVVM with `CommunityToolkit.Mvvm`, service-based architecture
-- **Controls**: custom Avalonia canvas controls in `Controls/` — DAW-style interactions (double-click insert, right-click menu, Delete key, cursor feedback)
-- **Theme**: `ThemeColors.cs` centralizes rendering constants; `Colors.axaml` for XAML resource brushes
-- **DSP field names** follow `specs/synth-format-spec.md` (e.g. StartValue/EndValue, Duration/TargetLevel)
+| Project | Role |
+| --- | --- |
+| `JagFx.Core` | Value types (`Percent`, `Milliseconds`, `Samples`) and `AudioConstants`. |
+| `JagFx.Domain` | Immutable records for `Patch`, `Voice`, `Envelope`, `Filter`, and related models. |
+| `JagFx.Io` | Binary reader/writer, JSON mapper/serializer, and WAV writer. |
+| `JagFx.Synthesis` | `PatchRenderer`, `VoiceSynthesizer`, `AudioFilter`, waveform tables, and envelope generation. |
+| `JagFx.Cli` | `System.CommandLine` commands: `convert`, `inspect`, `to-json`, `from-json`. |
+| `JagFx.Desktop` | Avalonia editor, MVVM view models, services, and custom canvas controls. |
+| `JagFx.TestData` | Embedded hex fixtures for tests. |
+| `JavaRandom` | Java-compatible RNG for the OSRS noise waveform. |
+| `SmartInt` | Variable-length integer codec. |
+| `packages/jagfx` | JS/TS helpers around the CLI and JSON patch format. |
+| `packages/jagfx-wasm` | WASM package and browser playground. |
 
-## Rules
+## Code patterns
 
-### Always do
+- Domain models are immutable `record` types with `ImmutableList` or `ImmutableArray` fields.
+- `SynthFileReader` and `SynthFileWriter` are static I/O entry points over `BinaryBuffer`.
+- JSON conversion flows through `SynthJsonSerializer` -> `SynthJsonMapper` -> `SynthJsonModels`.
+- CLI commands extend `Command` and are registered in `JagFxCli.BuildRootCommand()`.
+- Tests use xUnit and Arrange-Act-Assert. Reference synths live under `references/synths/`.
+- Desktop code uses `CommunityToolkit.Mvvm` and service-based view models.
+- Canvas controls live under `src/JagFx.Desktop/Controls/` and use DAW-style interactions: double-click insert, right-click menu, Delete key, and cursor feedback.
+- Rendering colors and pens belong in `ThemeColors.cs`; XAML brushes belong in `Colors.axaml`.
+- DSP field names follow `docs/synth-format-spec.md`: `StartValue`, `EndValue`, `Duration`, `TargetLevel`, and related binary-format names.
 
-- Run `dotnet test` before declaring work complete
-- Run `dotnet format` before committing
-- Follow existing code style in each file (nullable enabled, implicit usings, file-scoped namespaces)
-- Use conventional commits: `type(scope): description` — types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+## Required behavior
 
-### Ask first
+- Do not revert user changes unless the user explicitly asks.
+- Do not push. The user pushes.
+- Do not commit unless the user explicitly asks.
+- Before committing, stage only intended files and use a Conventional Commit message.
+- Keep binary round-trip fidelity for files that currently round-trip cleanly.
+- Preserve known JSON test behavior: files with existing binary asymmetries compare against `SynthFileWriter.Write(SynthFileReader.Read(bytes))`, not raw original bytes.
+- Do not commit secrets, `.env` files, or local credential material.
+- Ask before adding NuGet packages. Explain why built-in APIs are not enough.
+- Ask before changing `docs/synth-format-spec.md` unless the user is already asking for format-doc work.
 
-- Adding NuGet packages — justify why built-in alternatives won't work
-- Modifying `specs/synth-format-spec.md` — requires understanding of OSRS client behavior
+## Formatting and commits
 
-### Never do
+Commit messages must use Conventional Commits:
 
-- Break binary round-trip fidelity for files that currently round-trip cleanly
-- Commit secrets or `.env` files
-- Skip tests or bypass CI checks
+```text
+type(scope): description
+```
 
-## Binary Format Notes
+Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 
-- Big-endian throughout, variable-length integers (USmart16, Smart16)
-- 10 voice slots + 4-byte loop footer per patch
-- Filter detection uses heuristics (see `SynthFileReader.DetectFilterPresent`)
-- 4 reference files have pre-existing binary round-trip asymmetries — JSON tests compare against `SynthFileWriter.Write(SynthFileReader.Read(bytes))` baseline, not raw original bytes
+Examples:
 
-## Specs & References
+- `feat(io): add synth json fixtures`
+- `fix(synthesis): preserve filter coefficient phase`
+- `docs(format): clarify partial encoding`
 
-- `specs/synth-format-spec.md` — authoritative binary format documentation
-- `specs/synth.schema.json` — JSON interchange format schema
-- `specs/examples/` — example JSON patches
-- `references/synths/` — real `.synth` files for testing
-- `llms.txt` — project overview for LLM consumption
+## Format notes
+
+- `.synth` files are big-endian.
+- A patch has ten voice slots followed by a four-byte loop footer.
+- Variable-length integers use `USmart16` and `Smart16` from `SmartInt`.
+- Filter detection is heuristic; check `SynthFileReader.DetectFilterPresent` before changing filter parsing.
+- Partial amplitude `0` terminates the partial list in binary.
+
+## References
+
+- `docs/synth-format-spec.md`: binary `.synth` format and synthesis semantics.
+- `schemas/synth.schema.json`: JSON interchange schema.
+- `references/synths/`: real `.synth` files used for tests.
+- `references/json/`: JSON generated from every reference `.synth` file.
+- `llms.txt`: project overview for LLM readers.
+- `PUBLISHING.md`: release and signing steps.
 
 ## Tooling
 
-- **Version**: managed in `Directory.Build.props`
-- **CI**: GitHub Actions — build, test, format check, conventional commits validation (`.github/workflows/ci.yml`)
-- **Security**: CodeQL analysis (`.github/workflows/codeql.yml`)
-- **Dependencies**: Dependabot for NuGet + GitHub Actions updates
-- **Linting**: `.editorconfig` + Roslyn analyzers (`AnalysisLevel: 8.0-recommended`)
-- **Commit hooks**: Husky.Net + CommitLint.Net (auto-installed via `dotnet restore`)
+- Version fields live in `Directory.Build.props`.
+- CI lives in `.github/workflows/ci.yml`.
+- Release packaging lives in `.github/workflows/release.yml` and `justfile`.
+- CodeQL lives in `.github/workflows/codeql.yml`.
+- Dependabot tracks NuGet and GitHub Actions dependencies.
+- `.editorconfig` and Roslyn analyzers enforce C# style.
+- Husky.Net and CommitLint.Net install through `dotnet restore`.

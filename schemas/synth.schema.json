@@ -1,0 +1,398 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/xsyetopz/JagFx/blob/main/schemas/synth.schema.json",
+    "title": "JagFx synth JSON",
+    "description": "JSON form read and written by `JagFx.Io.Json.SynthJsonSerializer`.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "voices"
+    ],
+    "properties": {
+        "voices": {
+            "type": "array",
+            "description": "Voice slots in file order. Use `null` for an empty slot. JagFx writes at most 10 slots and drops trailing `null` slots.",
+            "minItems": 0,
+            "maxItems": 10,
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/voice"
+                    },
+                    {
+                        "type": "null"
+                    }
+                ]
+            },
+            "default": []
+        },
+        "loop": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/loopSegment"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "description": "Loop start and end in milliseconds. Omitted or `null` means `beginMs=0` and `endMs=0`."
+        }
+    },
+    "$defs": {
+        "int32": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+        },
+        "uint8": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+        },
+        "uint16": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+        },
+        "usmart16": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 32767
+        },
+        "smart16": {
+            "type": "integer",
+            "minimum": -32768,
+            "maximum": 16383
+        },
+        "waveform": {
+            "type": "string",
+            "enum": [
+                "off",
+                "square",
+                "sine",
+                "saw",
+                "noise"
+            ],
+            "description": "Waveform name used by `WaveformExtensions.FromName`."
+        },
+        "voice": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "frequencyEnvelope",
+                "amplitudeEnvelope",
+                "durationMs"
+            ],
+            "properties": {
+                "frequencyEnvelope": {
+                    "$ref": "#/$defs/envelope",
+                    "description": "Frequency envelope written first in a voice slot."
+                },
+                "amplitudeEnvelope": {
+                    "$ref": "#/$defs/envelope",
+                    "description": "Amplitude envelope written after the frequency envelope."
+                },
+                "pitchLfo": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/lfo"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Pitch LFO envelope pair. Omitted or `null` writes the disabled marker."
+                },
+                "amplitudeLfo": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/lfo"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Amplitude LFO envelope pair. Omitted or `null` writes the disabled marker."
+                },
+                "gapOffEnvelope": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/envelope"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Gap off envelope. Provide `gapOnEnvelope` with it for gated playback."
+                },
+                "gapOnEnvelope": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/envelope"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Gap on envelope. Provide `gapOffEnvelope` with it for gated playback."
+                },
+                "partials": {
+                    "type": "array",
+                    "description": "Up to 10 oscillator partials. Omitted or `null` writes only the partial terminator.",
+                    "maxItems": 10,
+                    "items": {
+                        "$ref": "#/$defs/partial"
+                    }
+                },
+                "echo": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/echo"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Echo delay and feedback. Omitted or `null` writes zero delay and zero feedback."
+                },
+                "durationMs": {
+                    "$ref": "#/$defs/uint16",
+                    "description": "Voice duration in milliseconds."
+                },
+                "offsetMs": {
+                    "$ref": "#/$defs/uint16",
+                    "description": "Voice start offset in milliseconds. Omitted writes `0`."
+                },
+                "filter": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/filter"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Two-channel filter block. Omitted or `null` writes the no-filter marker."
+                }
+            }
+        },
+        "envelope": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "waveform",
+                "startValue",
+                "endValue",
+                "segments"
+            ],
+            "properties": {
+                "waveform": {
+                    "$ref": "#/$defs/waveform"
+                },
+                "startValue": {
+                    "$ref": "#/$defs/int32",
+                    "description": "Raw 32-bit start value from the binary envelope."
+                },
+                "endValue": {
+                    "$ref": "#/$defs/int32",
+                    "description": "Raw 32-bit end value from the binary envelope."
+                },
+                "segments": {
+                    "type": "array",
+                    "description": "Envelope segment pairs. JagFx writes the count as 1 byte.",
+                    "maxItems": 255,
+                    "items": {
+                        "$ref": "#/$defs/segment"
+                    }
+                }
+            }
+        },
+        "segment": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "duration",
+                "targetLevel"
+            ],
+            "properties": {
+                "duration": {
+                    "$ref": "#/$defs/uint16",
+                    "description": "Segment duration fraction as stored in the binary file."
+                },
+                "targetLevel": {
+                    "$ref": "#/$defs/uint16",
+                    "description": "Segment target level as stored in the binary file."
+                }
+            }
+        },
+        "lfo": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "rateEnvelope",
+                "modulationDepth"
+            ],
+            "properties": {
+                "rateEnvelope": {
+                    "$ref": "#/$defs/envelope"
+                },
+                "modulationDepth": {
+                    "$ref": "#/$defs/envelope"
+                }
+            }
+        },
+        "partial": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "amplitude",
+                "pitchOffsetSemitones"
+            ],
+            "properties": {
+                "amplitude": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 32767,
+                    "description": "`USmart16` partial amplitude. Zero is reserved for the partial-list terminator."
+                },
+                "pitchOffsetSemitones": {
+                    "$ref": "#/$defs/smart16",
+                    "description": "`Smart16` pitch offset from the voice frequency envelope."
+                },
+                "delay": {
+                    "$ref": "#/$defs/usmart16",
+                    "description": "`USmart16` partial start delay in milliseconds. Omitted writes `0`."
+                }
+            }
+        },
+        "echo": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "delayMilliseconds",
+                "feedbackPercent"
+            ],
+            "properties": {
+                "delayMilliseconds": {
+                    "$ref": "#/$defs/usmart16",
+                    "description": "`USmart16` echo delay in milliseconds."
+                },
+                "feedbackPercent": {
+                    "$ref": "#/$defs/usmart16",
+                    "description": "`USmart16` echo feedback value."
+                }
+            }
+        },
+        "filter": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "poleCounts",
+                "unityGain",
+                "polePhase",
+                "poleMagnitude"
+            ],
+            "properties": {
+                "poleCounts": {
+                    "type": "array",
+                    "description": "Two 4-bit pole counts: [feedforward, feedback].",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 15
+                    }
+                },
+                "unityGain": {
+                    "type": "array",
+                    "description": "Two unsigned 16-bit unity gain values.",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                        "$ref": "#/$defs/uint16"
+                    }
+                },
+                "polePhase": {
+                    "$ref": "#/$defs/filterCoefficients"
+                },
+                "poleMagnitude": {
+                    "$ref": "#/$defs/filterCoefficients"
+                },
+                "modulationEnvelope": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/envelope"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Filter modulation envelope. Omitted or `null` writes no modulation envelope."
+                }
+            }
+        },
+        "filterCoefficients": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "feedforward",
+                "feedback"
+            ],
+            "properties": {
+                "feedforward": {
+                    "$ref": "#/$defs/filterPhases",
+                    "description": "Channel 0 coefficient arrays."
+                },
+                "feedback": {
+                    "$ref": "#/$defs/filterPhases",
+                    "description": "Channel 1 coefficient arrays."
+                }
+            }
+        },
+        "filterPhases": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "baseline",
+                "modulated"
+            ],
+            "properties": {
+                "baseline": {
+                    "type": "array",
+                    "description": "Baseline phase coefficients as unsigned 16-bit integers.",
+                    "maxItems": 15,
+                    "items": {
+                        "$ref": "#/$defs/uint16"
+                    }
+                },
+                "modulated": {
+                    "type": "array",
+                    "description": "Modulated phase coefficients as unsigned 16-bit integers.",
+                    "maxItems": 15,
+                    "items": {
+                        "$ref": "#/$defs/uint16"
+                    }
+                }
+            }
+        },
+        "loopSegment": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "beginMs",
+                "endMs"
+            ],
+            "properties": {
+                "beginMs": {
+                    "$ref": "#/$defs/uint16",
+                    "description": "Loop start in milliseconds."
+                },
+                "endMs": {
+                    "$ref": "#/$defs/uint16",
+                    "description": "Loop end in milliseconds."
+                }
+            }
+        }
+    }
+}

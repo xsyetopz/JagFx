@@ -1,19 +1,50 @@
 # @xsyetopz/jagfx
 
-JavaScript and TypeScript bindings for JagFx.
+JavaScript and TypeScript helpers for JagFx synth patches.
 
-This package currently provides a dependency-free Node backend that calls the JagFx CLI. It ships both ESM and CommonJS entrypoints plus TypeScript declarations.
+The package wraps the JagFx CLI and exposes small builders for the JSON patch
+format. Use it from Node or Bun scripts when you want to generate a patch, convert
+`.synth` files to JSON, or render WAV files.
 
 ```js
-import { renderSynthToWav } from "@xsyetopz/jagfx";
+import {
+  createEnvelope,
+  createPatch,
+  createVoice,
+  renderPatchToWav,
+  synthToJson,
+} from "@xsyetopz/jagfx";
 
-await renderSynthToWav("cow_death.synth", "cow_death.wav");
+const cow = await synthToJson("references/synths/cow_death.synth");
+
+const patch = createPatch({
+  voices: [
+    createVoice({
+      frequencyEnvelope: createEnvelope({
+        waveform: "sine",
+        startValue: 32768,
+        endValue: 32768,
+      }),
+      amplitudeEnvelope: createEnvelope({
+        waveform: "off",
+        startValue: 0,
+        endValue: 65535,
+        segments: [{ duration: 65535, targetLevel: 0 }],
+      }),
+      durationMs: 500,
+    }),
+  ],
+});
+
+await renderPatchToWav(patch, "preview.wav");
 ```
 
-By default, the package uses `JAGFX_CLI` when set. In a JagFx source checkout, it falls back to `dotnet run --project src/JagFx.Cli --`.
+Set `JAGFX_CLI` to use an installed CLI binary. In a JagFx checkout, the package
+falls back to `dotnet run --project src/JagFx.Cli --`.
 
 ```sh
-JAGFX_CLI=/path/to/JagFx.Cli node app.mjs
+JAGFX_CLI=/path/to/JagFx.Cli bun app.mjs
 ```
 
-If a `.synth` file is a Git LFS pointer instead of real synth bytes, the package throws a clear error before invoking JagFx.
+If a `.synth` path points at a Git LFS pointer, the package throws before calling
+JagFx. Run `git lfs pull` in the repository that owns the synth files.

@@ -1,0 +1,130 @@
+# JagFx
+
+JagFx is a .NET 8 toolkit for Old School RuneScape `.synth` sound-effect files. The repository includes a binary reader/writer, JSON interchange format, DSP renderer, CLI, Avalonia desktop editor, JavaScript helpers, and WASM package work.
+
+## `.synth` format
+
+A `.synth` file is a compact binary patch format used by the OSRS audio engine. Files are big-endian and render to mono audio at 22,050 Hz.
+
+A patch contains ten voice slots followed by a loop footer. Each voice can contain:
+
+- frequency and amplitude envelopes
+- pitch and amplitude LFO envelope pairs
+- gate envelope pairs
+- up to ten additive partials
+- echo delay and feedback
+- optional IIR filter data
+- duration and offset values in milliseconds
+
+Binary details live in [`docs/synth-format-spec.md`](docs/synth-format-spec.md). The spec covers scalar encodings (`USmart16`, `Smart16`), voice slot dispatch, envelope layout, partial termination, filter detection, canonical writer behavior, and synthesis formulas.
+
+## JSON interchange
+
+JagFx maps `.synth` patches to JSON for editing, tests, generated patches, and diffs.
+
+JSON format files:
+
+- [`schemas/synth.schema.json`](schemas/synth.schema.json): JSON Schema draft 2020-12.
+- [`references/json/`](references/json/): JSON generated from every reference `.synth` file.
+
+JSON uses:
+
+- waveform strings: `"off"`, `"square"`, `"sine"`, `"saw"`, `"noise"`
+- raw envelope `startValue` and `endValue` integers
+- segment objects with `duration` and `targetLevel`
+- partial objects with `amplitude`, `pitchOffsetSemitones`, and `delay`
+- structured filter coefficients grouped by `feedforward`/`feedback` and `baseline`/`modulated`
+- optional fields for echo, filters, LFOs, gates, partials, offset, and loop values
+
+Important binary/JSON constraints:
+
+- A patch has at most ten voices.
+- A voice has at most ten partials.
+- Partial amplitude `0` is the binary terminator, so stored partial amplitudes use `1` through `32767`.
+- `USmart16` values use `0` through `32767`.
+- `Smart16` values use `-32768` through `16383`.
+- Four reference files have known binary round-trip asymmetries; tests compare against `SynthFileWriter.Write(SynthFileReader.Read(bytes))` for those files.
+
+## CLI
+
+Run from the repository:
+
+```bash
+dotnet run --project src/JagFx.Cli -- to-json input.synth output.json
+dotnet run --project src/JagFx.Cli -- from-json input.json output.synth
+dotnet run --project src/JagFx.Cli -- convert input.synth output.wav
+dotnet run --project src/JagFx.Cli -- inspect input.synth
+```
+
+Installed CLI shape:
+
+```bash
+jagfx to-json <input.synth> [output.json]
+jagfx from-json <input.json> <output.synth>
+jagfx convert <input.synth> <output.wav> [loopCount]
+jagfx inspect <file.synth>
+```
+
+## Minimal JSON patch
+
+```json
+{
+  "voices": [
+    {
+      "frequencyEnvelope": {
+        "waveform": "sine",
+        "startValue": 0,
+        "endValue": 500,
+        "segments": [
+          { "duration": 65535, "targetLevel": 32768 }
+        ]
+      },
+      "amplitudeEnvelope": {
+        "waveform": "off",
+        "startValue": 0,
+        "endValue": 100,
+        "segments": [
+          { "duration": 16384, "targetLevel": 65535 },
+          { "duration": 65535, "targetLevel": 0 }
+        ]
+      },
+      "durationMs": 500
+    }
+  ]
+}
+```
+
+## Project layout
+
+| Project | Role |
+| --- | --- |
+| `JagFx.Core` | Value types and `AudioConstants`. |
+| `JagFx.Domain` | Immutable records for patches, voices, envelopes, filters, partials, echo, and loop segments. |
+| `JagFx.Io` | Binary `.synth` reader/writer, JSON serializer/mapper, and WAV writer. |
+| `JagFx.Synthesis` | DSP renderer: `PatchRenderer`, `VoiceSynthesizer`, `AudioFilter`, waveform tables, and envelope generator. |
+| `JagFx.Cli` | `System.CommandLine` CLI commands. |
+| `JagFx.Desktop` | Avalonia 11 MVVM editor. |
+| `JagFx.TestData` | Embedded test fixtures. |
+| `JavaRandom` | Java-compatible RNG for OSRS noise waveform generation. |
+| `SmartInt` | Variable-length integer codec. |
+| `packages/jagfx` | JavaScript/TypeScript helpers around the CLI and JSON patch format. |
+| `packages/jagfx-wasm` | WASM package and browser playground. |
+
+## Build and test
+
+```bash
+dotnet build
+dotnet test
+dotnet format
+bun --cwd=packages/jagfx test
+bun --cwd=packages/jagfx-wasm test
+```
+
+Use `/usr/local/share/dotnet/dotnet` if the default `dotnet` resolves to an SDK newer than the repository expects.
+
+## Repository docs
+
+- [`AGENTS.md`](AGENTS.md): instructions for coding agents.
+- [`PUBLISHING.md`](PUBLISHING.md): release, signing, and notarization steps.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md): contributor workflow.
+- [`docs/`](docs/): format and reference documentation.

@@ -109,9 +109,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - **CLI `from-json` command** -- `jagfx from-json <input.json> <output.synth>` converts a JSON patch back to binary `.synth` format.
 
-- **JSON Schema** -- `specs/synth.schema.json` (JSON Schema draft 2020-12) documents the interchange format with type constraints, required fields, and descriptions.
+- **JSON Schema** -- `schemas/synth.schema.json` (JSON Schema draft 2020-12) documents the interchange format with type constraints, required fields, and descriptions.
 
-- **Example JSON patches** -- `specs/examples/minimal.json` (hand-written single-voice, required fields only) and `specs/examples/cow_death.json` (generated via `to-json`).
+- **Reference JSON fixtures** -- `references/json/` contains JSON generated from the reference `.synth` files.
 
 - **`llms.txt`** -- project description following the [llms.txt standard](https://llmstxt.org/) for LLM consumption, covering the project, `.synth` format, JSON interchange, CLI usage, and project structure.
 
@@ -168,7 +168,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **DSP-accurate naming refactor** -- renamed identifiers across the full solution to match what the code actually does. No behaviour changes.
 
   | Old name                               | New name                              | Reason                                                    |
-  | -------------------------------------- | ------------------------------------- | --------------------------------------------------------- |
+| --- | --- | --- |
   | `Segment.DurationSamples`              | `Segment.Duration`                    | Value is relative ticks, not samples                      |
   | `Segment.PeakLevel`                    | `Segment.TargetLevel`                 | It is a breakpoint target, not a peak                     |
   | `Envelope.StartSample`                 | `Envelope.StartValue`                 | Value is generic (not always samples)                     |
@@ -180,14 +180,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   | `LoopSegment.BeginSample`              | `LoopSegment.BeginMs`                 | Value is milliseconds                                     |
   | `LoopSegment.EndSample`                | `LoopSegment.EndMs`                   | Value is milliseconds                                     |
   | `LowFrequencyOscillator.FrequencyRate` | `LowFrequencyOscillator.RateEnvelope` | Carries waveform + rate; "Frequency" was redundant        |
-  | `Filter.CutoffEnvelope`                | `Filter.ModulationEnvelope`           | Modulates coefficients, not just cutoff                   |
+  | `Filter.CutoffEnvelope`                | `Filter.ModulationEnvelope`           | Modulates coefficients rather than cutoff only                   |
   | `Echo.MixPercent`                      | `Echo.FeedbackPercent`                | Controls feedback/wet amount                              |
   | `PatchMixer`                           | `PatchRenderer`                       | Class synthesises and sums voices; "Mixer" was misleading |
 
   UI labels updated to match:
 
   | Old label                 | New label             |
-  | ------------------------- | --------------------- |
+| --- | --- |
   | `G.SIL` / `Gate Silence`  | `GAP OFF` / `Gap Off` |
   | `G.DUR` / `Gate Duration` | `GAP ON` / `Gap On`   |
   | `STO` (header bar)        | `OFS`                 |

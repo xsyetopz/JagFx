@@ -9,7 +9,6 @@ export async function createJagFxWasmBackend(dotnetFactory) {
 	const config = runtime.getConfig();
 	const exports = await runtime.getAssemblyExports(config.mainAssemblyName);
 	const render = exports?.JagFx?.Wasm?.JagFxWasmExports?.RenderPcm16Le;
-
 	if (typeof render !== "function") {
 		throw new Error("JagFx.Wasm export RenderPcm16Le was not found.");
 	}

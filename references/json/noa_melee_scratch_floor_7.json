@@ -1,0 +1,125 @@
+{
+    "voices": [
+        {
+            "frequencyEnvelope": {
+                "waveform": "noise",
+                "startValue": 40,
+                "endValue": 1200,
+                "segments": [
+                    {
+                        "duration": 0,
+                        "targetLevel": 0
+                    },
+                    {
+                        "duration": 20734,
+                        "targetLevel": 2528
+                    },
+                    {
+                        "duration": 55909,
+                        "targetLevel": 16174
+                    },
+                    {
+                        "duration": 65535,
+                        "targetLevel": 65535
+                    }
+                ]
+            },
+            "amplitudeEnvelope": {
+                "waveform": "off",
+                "startValue": 0,
+                "endValue": 100,
+                "segments": [
+                    {
+                        "duration": 0,
+                        "targetLevel": 0
+                    },
+                    {
+                        "duration": 22585,
+                        "targetLevel": 50749
+                    },
+                    {
+                        "duration": 45912,
+                        "targetLevel": 58143
+                    },
+                    {
+                        "duration": 65534,
+                        "targetLevel": 65535
+                    },
+                    {
+                        "duration": 65535,
+                        "targetLevel": 0
+                    }
+                ]
+            },
+            "gapOffEnvelope": {
+                "waveform": "square",
+                "startValue": 400,
+                "endValue": 1000,
+                "segments": [
+                    {
+                        "duration": 0,
+                        "targetLevel": 9075
+                    },
+                    {
+                        "duration": 12403,
+                        "targetLevel": 19997
+                    },
+                    {
+                        "duration": 29250,
+                        "targetLevel": 22182
+                    },
+                    {
+                        "duration": 63314,
+                        "targetLevel": 36129
+                    },
+                    {
+                        "duration": 65535,
+                        "targetLevel": 0
+                    }
+                ]
+            },
+            "gapOnEnvelope": {
+                "waveform": "off",
+                "startValue": 0,
+                "endValue": 100,
+                "segments": [
+                    {
+                        "duration": 0,
+                        "targetLevel": 33031
+                    },
+                    {
+                        "duration": 23521,
+                        "targetLevel": 50332
+                    },
+                    {
+                        "duration": 40937,
+                        "targetLevel": 52167
+                    },
+                    {
+                        "duration": 52428,
+                        "targetLevel": 52429
+                    },
+                    {
+                        "duration": 65535,
+                        "targetLevel": 51905
+                    }
+                ]
+            },
+            "partials": [
+                {
+                    "amplitude": 100,
+                    "pitchOffsetSemitones": 70
+                },
+                {
+                    "amplitude": 89,
+                    "pitchOffsetSemitones": 120
+                }
+            ],
+            "echo": {
+                "delayMilliseconds": 350,
+                "feedbackPercent": 0
+            },
+            "durationMs": 500
+        }
+    ]
+}

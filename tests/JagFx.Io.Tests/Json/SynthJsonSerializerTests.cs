@@ -52,6 +52,51 @@ public class SynthJsonSerializerTests
         Assert.Equal(json1, json2);
     }
 
+    [Fact]
+    public void ReferenceJsonFilesMatchSynthSerializerOutput()
+    {
+        var repoRoot = FindRepositoryRoot();
+        var synthDir = Path.Combine(repoRoot, "references", "synths");
+        var jsonDir = Path.Combine(repoRoot, "references", "json");
+
+        foreach (var synthPath in Directory.EnumerateFiles(synthDir, "*.synth").Order())
+        {
+            var name = Path.GetFileNameWithoutExtension(synthPath);
+            var jsonPath = Path.Combine(jsonDir, name + ".json");
+
+            Assert.True(File.Exists(jsonPath), $"Missing JSON fixture for {name}");
+
+            var patch = SynthFileReader.ReadFromPath(synthPath);
+            var expectedJson = SynthJsonSerializer.Serialize(patch);
+            var actualJson = File.ReadAllText(jsonPath);
+
+            Assert.Equal(expectedJson, actualJson);
+        }
+    }
+
+    [Fact]
+    public void ReferenceJsonFilesRoundTripToBinaryWriterBaseline()
+    {
+        var repoRoot = FindRepositoryRoot();
+        var synthDir = Path.Combine(repoRoot, "references", "synths");
+        var jsonDir = Path.Combine(repoRoot, "references", "json");
+
+        foreach (var synthPath in Directory.EnumerateFiles(synthDir, "*.synth").Order())
+        {
+            var name = Path.GetFileNameWithoutExtension(synthPath);
+            var jsonPath = Path.Combine(jsonDir, name + ".json");
+
+            Assert.True(File.Exists(jsonPath), $"Missing JSON fixture for {name}");
+
+            var baselinePatch = SynthFileReader.ReadFromPath(synthPath);
+            var baselineBytes = SynthFileWriter.Write(baselinePatch);
+            var jsonPatch = SynthJsonSerializer.DeserializeFromPath(jsonPath);
+            var jsonBytes = SynthFileWriter.Write(jsonPatch);
+
+            Assert.Equal(baselineBytes, jsonBytes);
+        }
+    }
+
     #endregion
 
     #region Minimal JSON with Defaults
@@ -179,4 +224,15 @@ public class SynthJsonSerializerTests
     }
 
     #endregion
+    private static string FindRepositoryRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory != null && !File.Exists(Path.Combine(directory.FullName, "JagFx.sln")))
+        {
+            directory = directory.Parent;
+        }
+
+        return directory?.FullName
+            ?? throw new DirectoryNotFoundException("Could not find JagFx.sln");
+    }
 }

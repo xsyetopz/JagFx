@@ -1,100 +1,79 @@
-# Publishing Guide
+# Publishing
 
-Release steps for macOS, Windows, and Linux hosts.
+Use this guide when cutting a JagFx release or testing release artifacts locally.
 
-## Quick path
+## Release checklist
 
-1. Confirm required GitHub secrets exist (section **Secrets**).
-2. Bump version in `Directory.Build.props`.
-3. Run local preflight:
+1. Confirm required GitHub Actions secrets are present. See [Secrets](#secrets).
+2. Update version fields in `Directory.Build.props`.
+3. Run local checks:
    ```bash
    dotnet build --nologo
    dotnet test --nologo
    ```
-4. Build the installers supported by your host OS (see matrix below).
-5. Tag + push:
+4. Build local artifacts supported by the host OS. See [Host support](#host-support).
+5. Create and push a version tag:
    ```bash
-   git tag v2.2.2
-   git push origin v2.2.2
+   git tag v<version>
+   git push origin v<version>
    ```
-6. Watch `Actions -> Release`.
+6. Watch GitHub Actions -> `Release`.
 7. Download artifacts from the workflow run.
-
----
 
 ## Secret handling
 
-- Never commit secrets to git.
-- Store secrets only in GitHub Actions Secrets.
-- GitHub path: `Repo -> Settings -> Secrets and variables -> Actions -> New repository secret`
+- Do not commit secrets.
+- Store release credentials only in GitHub Actions secrets.
+- Add or edit secrets at `Settings -> Secrets and variables -> Actions`.
 
----
+## Host support
 
-## Host OS matrix (what you can do locally)
+| Host OS | Local app binaries | Local installer | Local signing/notarization | Release path |
+| --- | --- | --- | --- | --- |
+| macOS | macOS, Windows, and Linux binaries via `dotnet publish`. | macOS DMG with `just release-desktop-macos-*`. | macOS signing and notarization when Apple credentials are available. | Build and test locally; use CI for all release artifacts. |
+| Windows | macOS, Windows, and Linux binaries via `dotnet publish`. | Windows setup EXE with `just release-desktop-windows`. | Windows signing when a certificate is available. macOS notarization is not available. | Build and test locally; use CI for macOS and Linux artifacts. |
+| Linux | macOS, Windows, and Linux binaries via `dotnet publish`. | Linux AppImage or tarball with `just release-desktop-linux`. | macOS notarization is not available. Windows signing usually runs in CI. | Build and test locally; use CI for macOS and Windows artifacts. |
 
-| Host OS | Local app binaries                                    | Local installer                                    | Local signing/notarization                                                 | Release path                                             |
-| ------- | ----------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- |
-| macOS   | macOS / Windows / Linux binaries via `dotnet publish` | macOS DMG (`just release-desktop-macos-*`)         | macOS signing + notarization: **yes** (with Apple cert + credentials)      | Build/test locally, use CI for the full multi-OS release |
-| Windows | macOS / Windows / Linux binaries via `dotnet publish` | Windows setup EXE (`just release-desktop-windows`) | Windows signing: **yes** (with code-sign cert), macOS notarization: **no** | Build/test locally, use CI for macOS notarization        |
-| Linux   | macOS / Windows / Linux binaries via `dotnet publish` | Linux AppImage/tar (`just release-desktop-linux`)  | macOS notarization: **no**, Windows signing: usually **no**                | Build/test locally, use CI for signed installers         |
+## Host commands
 
-Develop on any supported OS. CI produces the trusted release installers on target OS runners.
+### macOS
 
----
+```bash
+dotnet build --nologo
+dotnet test --nologo
+just release-desktop-macos-arm64
+just release-desktop-macos-x64
+hdiutil verify publish/JagFx-*-macos-arm64.dmg
+hdiutil verify publish/JagFx-*-macos-x64.dmg
+```
 
-## Host OS playbooks
+Push the release tag after local verification. CI builds Windows, Linux, and signed macOS release artifacts.
 
-### If you develop on macOS
+### Windows
 
-1. Build + test:
-   ```bash
-   dotnet build --nologo
-   dotnet test --nologo
-   ```
-2. Build local macOS installers:
-   ```bash
-   just release-desktop-macos-arm64
-   just release-desktop-macos-x64
-   ```
-3. Verify DMGs:
-   ```bash
-   hdiutil verify publish/JagFx-*-macos-arm64.dmg
-   hdiutil verify publish/JagFx-*-macos-x64.dmg
-   ```
-4. Push the tag. CI builds all platforms and runs signing steps.
+```powershell
+dotnet build --nologo
+dotnet test --nologo
+just release-desktop-windows
+```
 
-### If you develop on Windows
+Sign locally only when the Windows certificate is available. CI handles macOS notarization and Linux artifacts.
 
-1. Build + test:
-   ```powershell
-   dotnet build --nologo
-   dotnet test --nologo
-   ```
-2. Build local Windows installer:
-   ```powershell
-   just release-desktop-windows
-   ```
-3. Sign locally only if the certificate is available. Otherwise, CI signs release artifacts.
-4. Push the tag. CI handles macOS notarization and Linux artifacts.
+### Linux
 
-### If you develop on Linux
+```bash
+dotnet build --nologo
+dotnet test --nologo
+just release-desktop-linux
+```
 
-1. Build + test:
-   ```bash
-   dotnet build --nologo
-   dotnet test --nologo
-   ```
-2. Build local Linux artifacts:
-   ```bash
-   just release-desktop-linux
-   ```
-3. Push the tag. CI handles macOS and Windows installer trust steps.
-
----
+CI handles macOS notarization and Windows installer trust steps.
 
 ## Secrets
 
-### Required for macOS signing and notarization in CI
+### macOS signing and notarization
+
+The release workflow uses these secrets for macOS DMG signing and notarization:
 
 1. `MACOS_CERT_P12_BASE64`
 2. `MACOS_CERT_PASSWORD`
@@ -103,11 +82,9 @@ Develop on any supported OS. CI produces the trusted release installers on targe
 5. `MACOS_NOTARY_TEAM_ID`
 6. `MACOS_NOTARY_PASSWORD`
 
-### Secret sources
-
 #### `MACOS_CERT_P12_BASE64`
 
-Export **Developer ID Application** cert + private key to `cert.p12` in Keychain Access, then:
+Export a Developer ID Application certificate and private key to `cert.p12` in Keychain Access, then copy the base64 payload:
 
 ```bash
 base64 -i cert.p12 | pbcopy
@@ -115,98 +92,99 @@ base64 -i cert.p12 | pbcopy
 
 #### `MACOS_CERT_PASSWORD`
 
-Password you used while exporting `cert.p12`.
+Use the password set when exporting `cert.p12`.
 
 #### `MACOS_SIGN_IDENTITY`
+
+List signing identities:
 
 ```bash
 security find-identity -v -p codesigning
 ```
 
-Use exact value like:
+Use the exact identity string, for example:
 
-`Developer ID Application: Your Name (TEAMID)`
+```text
+Developer ID Application: Your Name (TEAMID)
+```
 
 #### `MACOS_NOTARY_APPLE_ID`
 
-Apple ID email for the Developer account.
+Use the Apple ID email for the Developer account.
 
 #### `MACOS_NOTARY_TEAM_ID`
 
-Apple Developer Team ID.
+Use the Apple Developer Team ID tied to `MACOS_NOTARY_APPLE_ID`.
 
 #### `MACOS_NOTARY_PASSWORD`
 
-Apple app-specific password, not the normal login password:
+Use an Apple app-specific password, not the normal Apple ID password.
 
-- <https://account.apple.com/account/manage>
-- Sign-In and Security -> App-Specific Passwords
+Create one at <https://account.apple.com/account/manage> under `Sign-In and Security -> App-Specific Passwords`.
 
 ### Optional Windows signing
 
-The workflow does not require these unless Windows signing is enabled:
+Windows signing uses these secrets only when Windows signing is enabled:
 
 - `WIN_CERT_PFX_BASE64`
 - `WIN_CERT_PASSWORD`
 
----
+## Version bump
 
-## Bump version
-
-Edit `Directory.Build.props`:
+Edit these fields in `Directory.Build.props`:
 
 - `Version`
 - `AssemblyVersion`
 - `FileVersion`
 - `InformationalVersion`
 
-Example patch bump:
+Patch bump example:
 
-- `2.2.2` -> `2.2.3`
-- `2.2.2.0` -> `2.2.4.0`
+```text
+2.4.1   -> 2.4.2
+2.4.1.0 -> 2.4.2.0
+```
 
----
+## Triggering the release workflow
 
-## Trigger release workflow
-
-Workflow file: `.github/workflows/release.yml`
+Workflow file: `.github/workflows/release.yml`.
 
 Tag push:
 
 ```bash
-git tag v2.2.2
-git push origin v2.2.2
+git tag v<version>
+git push origin v<version>
 ```
 
 Manual run:
 
-- GitHub -> `Actions` -> `Release` -> `Run workflow`.
+```text
+GitHub -> Actions -> Release -> Run workflow
+```
 
----
+## Artifacts
 
-## Expected artifacts
+The release workflow publishes:
 
 - macOS arm64 DMG
 - macOS x64 DMG
 - Windows x64 setup EXE
-- Linux x64 AppImage (or tar fallback)
-- CLI archives per platform
-
----
+- Linux x64 AppImage or tarball fallback
+- CLI archives for supported platforms
 
 ## Troubleshooting
 
-### “Can I sign Windows apps from macOS?”
+### Can Windows apps be signed from macOS?
 
-Not with the current local setup. Sign on a Windows runner in CI or on a Windows machine.
+Not with the current local setup. Sign on a Windows machine or in CI on a Windows runner.
 
-### “Can I notarize macOS app from Linux/Windows?”
+### Can macOS apps be notarized from Linux or Windows?
 
-No. This workflow runs notarization on a macOS runner.
+No. Notarization runs on a macOS runner.
 
-### `No space left on device` while building DMG
+### `No space left on device` while building a DMG
 
-The DMG recipe already sets an explicit size and retries. Re-run:
+The DMG recipe sets an explicit size and retries. Re-run the target:
 
 ```bash
 just release-desktop-macos-arm64
@@ -214,13 +192,14 @@ just release-desktop-macos-arm64
 
 ### Apple notarization returns HTTP 401
 
-The Release workflow checks notarization credentials before the macOS build. If
-`notarytool` reports HTTP 401, the workflow warns and skips DMG notarization so
-other release artifacts can still publish. Refresh the GitHub Actions
-`MACOS_NOTARY_PASSWORD` secret with a current Apple app-specific password for
-`MACOS_NOTARY_APPLE_ID`, and confirm `MACOS_NOTARY_TEAM_ID` matches that Apple
-Developer account before cutting a notarized macOS release.
+The release workflow checks notarization credentials before the macOS build. If `notarytool` reports HTTP 401, the workflow warns and skips DMG notarization so other artifacts can publish.
+
+Fix the secrets before cutting a notarized macOS release:
+
+1. Refresh `MACOS_NOTARY_PASSWORD` with a current Apple app-specific password.
+2. Confirm `MACOS_NOTARY_APPLE_ID` belongs to the Developer account.
+3. Confirm `MACOS_NOTARY_TEAM_ID` matches that account.
 
 ### `ISCC not found`
 
-Install Inno Setup and put `ISCC` on PATH.
+Install Inno Setup and put `ISCC` on `PATH`.
