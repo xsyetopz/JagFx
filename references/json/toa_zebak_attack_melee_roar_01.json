@@ -1,617 +1,617 @@
 {
-    "voices": [
-        {
-            "frequencyEnvelope": {
-                "waveform": "sine",
-                "startValue": 2,
-                "endValue": 800,
-                "segments": [
-                    {
-                        "duration": 0,
-                        "targetLevel": 0
-                    },
-                    {
-                        "duration": 5739,
-                        "targetLevel": 21734
-                    },
-                    {
-                        "duration": 44801,
-                        "targetLevel": 39929
-                    },
-                    {
-                        "duration": 61463,
-                        "targetLevel": 17353
-                    },
-                    {
-                        "duration": 65535,
-                        "targetLevel": 1573
-                    }
-                ]
+  "voices": [
+    {
+      "frequencyEnvelope": {
+        "waveform": "sine",
+        "startValue": 2,
+        "endValue": 800,
+        "segments": [
+          {
+            "duration": 0,
+            "targetLevel": 0
+          },
+          {
+            "duration": 5739,
+            "targetLevel": 21734
+          },
+          {
+            "duration": 44801,
+            "targetLevel": 39929
+          },
+          {
+            "duration": 61463,
+            "targetLevel": 17353
+          },
+          {
+            "duration": 65535,
+            "targetLevel": 1573
+          }
+        ]
+      },
+      "amplitudeEnvelope": {
+        "waveform": "off",
+        "startValue": 0,
+        "endValue": 100,
+        "segments": [
+          {
+            "duration": 0,
+            "targetLevel": 0
+          },
+          {
+            "duration": 17772,
+            "targetLevel": 8907
+          },
+          {
+            "duration": 28139,
+            "targetLevel": 31592
+          },
+          {
+            "duration": 53502,
+            "targetLevel": 61167
+          },
+          {
+            "duration": 61278,
+            "targetLevel": 0
+          },
+          {
+            "duration": 65535,
+            "targetLevel": 0
+          }
+        ]
+      },
+      "pitchLfo": {
+        "rateEnvelope": {
+          "waveform": "noise",
+          "startValue": 0,
+          "endValue": 100,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 0
             },
-            "amplitudeEnvelope": {
-                "waveform": "off",
-                "startValue": 0,
-                "endValue": 100,
-                "segments": [
-                    {
-                        "duration": 0,
-                        "targetLevel": 0
-                    },
-                    {
-                        "duration": 17772,
-                        "targetLevel": 8907
-                    },
-                    {
-                        "duration": 28139,
-                        "targetLevel": 31592
-                    },
-                    {
-                        "duration": 53502,
-                        "targetLevel": 61167
-                    },
-                    {
-                        "duration": 61278,
-                        "targetLevel": 0
-                    },
-                    {
-                        "duration": 65535,
-                        "targetLevel": 0
-                    }
-                ]
+            {
+              "duration": 12218,
+              "targetLevel": 13815
             },
-            "pitchLfo": {
-                "rateEnvelope": {
-                    "waveform": "noise",
-                    "startValue": 0,
-                    "endValue": 100,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 0
-                        },
-                        {
-                            "duration": 12218,
-                            "targetLevel": 13815
-                        },
-                        {
-                            "duration": 46837,
-                            "targetLevel": 52059
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 11535
-                        }
-                    ]
-                },
-                "modulationDepth": {
-                    "waveform": "off",
-                    "startValue": 0,
-                    "endValue": 100,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 29623
-                        },
-                        {
-                            "duration": 17057,
-                            "targetLevel": 47449
-                        },
-                        {
-                            "duration": 31960,
-                            "targetLevel": 54789
-                        },
-                        {
-                            "duration": 47760,
-                            "targetLevel": 43254
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 1836
-                        }
-                    ]
-                }
+            {
+              "duration": 46837,
+              "targetLevel": 52059
             },
-            "amplitudeLfo": {
-                "rateEnvelope": {
-                    "waveform": "noise",
-                    "startValue": 0,
-                    "endValue": 33,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 18351
-                        },
-                        {
-                            "duration": 16698,
-                            "targetLevel": 26215
-                        },
-                        {
-                            "duration": 32766,
-                            "targetLevel": 32768
-                        },
-                        {
-                            "duration": 49149,
-                            "targetLevel": 32768
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 32768
-                        }
-                    ]
-                },
-                "modulationDepth": {
-                    "waveform": "off",
-                    "startValue": 0,
-                    "endValue": 100,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 0
-                        },
-                        {
-                            "duration": 9157,
-                            "targetLevel": 6030
-                        },
-                        {
-                            "duration": 36807,
-                            "targetLevel": 8651
-                        },
-                        {
-                            "duration": 49555,
-                            "targetLevel": 3933
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 787
-                        }
-                    ]
-                }
-            },
-            "partials": [
-                {
-                    "amplitude": 100,
-                    "pitchOffsetSemitones": 0
-                },
-                {
-                    "amplitude": 30,
-                    "pitchOffsetSemitones": 11,
-                    "delay": 50
-                }
-            ],
-            "echo": {
-                "delayMilliseconds": 4,
-                "feedbackPercent": 10
-            },
-            "durationMs": 1200,
-            "filter": {
-                "poleCounts": [
-                    1,
-                    0
-                ],
-                "unityGain": [
-                    0,
-                    0
-                ],
-                "polePhase": {
-                    "feedforward": {
-                        "baseline": [
-                            62573
-                        ],
-                        "modulated": [
-                            0
-                        ]
-                    },
-                    "feedback": {
-                        "baseline": [],
-                        "modulated": []
-                    }
-                },
-                "poleMagnitude": {
-                    "feedforward": {
-                        "baseline": [
-                            0
-                        ],
-                        "modulated": [
-                            0
-                        ]
-                    },
-                    "feedback": {
-                        "baseline": [],
-                        "modulated": []
-                    }
-                },
-                "modulationEnvelope": {
-                    "waveform": "off",
-                    "startValue": 0,
-                    "endValue": 0,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 0
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 65535
-                        }
-                    ]
-                }
+            {
+              "duration": 65535,
+              "targetLevel": 11535
             }
+          ]
         },
-        {
-            "frequencyEnvelope": {
-                "waveform": "sine",
-                "startValue": 2,
-                "endValue": 800,
-                "segments": [
-                    {
-                        "duration": 0,
-                        "targetLevel": 0
-                    },
-                    {
-                        "duration": 19623,
-                        "targetLevel": 15332
-                    },
-                    {
-                        "duration": 50355,
-                        "targetLevel": 55428
-                    },
-                    {
-                        "duration": 58686,
-                        "targetLevel": 23250
-                    },
-                    {
-                        "duration": 65535,
-                        "targetLevel": 1573
-                    }
-                ]
+        "modulationDepth": {
+          "waveform": "off",
+          "startValue": 0,
+          "endValue": 100,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 29623
             },
-            "amplitudeEnvelope": {
-                "waveform": "off",
-                "startValue": 0,
-                "endValue": 100,
-                "segments": [
-                    {
-                        "duration": 0,
-                        "targetLevel": 0
-                    },
-                    {
-                        "duration": 26103,
-                        "targetLevel": 18821
-                    },
-                    {
-                        "duration": 50910,
-                        "targetLevel": 61335
-                    },
-                    {
-                        "duration": 58963,
-                        "targetLevel": 33104
-                    },
-                    {
-                        "duration": 62759,
-                        "targetLevel": 0
-                    },
-                    {
-                        "duration": 65534,
-                        "targetLevel": 0
-                    },
-                    {
-                        "duration": 65535,
-                        "targetLevel": 0
-                    }
-                ]
+            {
+              "duration": 17057,
+              "targetLevel": 47449
             },
-            "pitchLfo": {
-                "rateEnvelope": {
-                    "waveform": "noise",
-                    "startValue": 0,
-                    "endValue": 100,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 0
-                        },
-                        {
-                            "duration": 13329,
-                            "targetLevel": 37738
-                        },
-                        {
-                            "duration": 49149,
-                            "targetLevel": 32768
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 32768
-                        }
-                    ]
-                },
-                "modulationDepth": {
-                    "waveform": "off",
-                    "startValue": 0,
-                    "endValue": 100,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 32768
-                        },
-                        {
-                            "duration": 16383,
-                            "targetLevel": 32768
-                        },
-                        {
-                            "duration": 32766,
-                            "targetLevel": 32768
-                        },
-                        {
-                            "duration": 49149,
-                            "targetLevel": 32768
-                        },
-                        {
-                            "duration": 65532,
-                            "targetLevel": 32768
-                        }
-                    ]
-                }
+            {
+              "duration": 31960,
+              "targetLevel": 54789
             },
-            "amplitudeLfo": {
-                "rateEnvelope": {
-                    "waveform": "noise",
-                    "startValue": 0,
-                    "endValue": 33,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 0
-                        },
-                        {
-                            "duration": 14440,
-                            "targetLevel": 10587
-                        },
-                        {
-                            "duration": 33878,
-                            "targetLevel": 13276
-                        },
-                        {
-                            "duration": 48318,
-                            "targetLevel": 36633
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 0
-                        }
-                    ]
-                },
-                "modulationDepth": {
-                    "waveform": "off",
-                    "startValue": 0,
-                    "endValue": 100,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 0
-                        },
-                        {
-                            "duration": 9157,
-                            "targetLevel": 6030
-                        },
-                        {
-                            "duration": 40358,
-                            "targetLevel": 9243
-                        },
-                        {
-                            "duration": 49555,
-                            "targetLevel": 3933
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 787
-                        }
-                    ]
-                }
+            {
+              "duration": 47760,
+              "targetLevel": 43254
             },
-            "partials": [
-                {
-                    "amplitude": 50,
-                    "pitchOffsetSemitones": 0
-                },
-                {
-                    "amplitude": 130,
-                    "pitchOffsetSemitones": 11,
-                    "delay": 50
-                }
-            ],
-            "echo": {
-                "delayMilliseconds": 0,
-                "feedbackPercent": 100
-            },
-            "durationMs": 1200
-        },
-        {
-            "frequencyEnvelope": {
-                "waveform": "sine",
-                "startValue": 2,
-                "endValue": 800,
-                "segments": [
-                    {
-                        "duration": 0,
-                        "targetLevel": 0
-                    },
-                    {
-                        "duration": 19623,
-                        "targetLevel": 15332
-                    },
-                    {
-                        "duration": 50355,
-                        "targetLevel": 55428
-                    },
-                    {
-                        "duration": 58686,
-                        "targetLevel": 23250
-                    },
-                    {
-                        "duration": 65535,
-                        "targetLevel": 1573
-                    }
-                ]
-            },
-            "amplitudeEnvelope": {
-                "waveform": "off",
-                "startValue": 0,
-                "endValue": 100,
-                "segments": [
-                    {
-                        "duration": 0,
-                        "targetLevel": 0
-                    },
-                    {
-                        "duration": 11478,
-                        "targetLevel": 8235
-                    },
-                    {
-                        "duration": 20364,
-                        "targetLevel": 16637
-                    },
-                    {
-                        "duration": 48133,
-                        "targetLevel": 48900
-                    },
-                    {
-                        "duration": 62388,
-                        "targetLevel": 0
-                    },
-                    {
-                        "duration": 65535,
-                        "targetLevel": 0
-                    }
-                ]
-            },
-            "pitchLfo": {
-                "rateEnvelope": {
-                    "waveform": "noise",
-                    "startValue": 0,
-                    "endValue": 100,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 65031
-                        },
-                        {
-                            "duration": 15441,
-                            "targetLevel": 34866
-                        },
-                        {
-                            "duration": 31472,
-                            "targetLevel": 29820
-                        },
-                        {
-                            "duration": 43271,
-                            "targetLevel": 25166
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 11535
-                        }
-                    ]
-                },
-                "modulationDepth": {
-                    "waveform": "off",
-                    "startValue": 0,
-                    "endValue": 100,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 29623
-                        },
-                        {
-                            "duration": 17057,
-                            "targetLevel": 47449
-                        },
-                        {
-                            "duration": 31960,
-                            "targetLevel": 54789
-                        },
-                        {
-                            "duration": 47760,
-                            "targetLevel": 43254
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 1836
-                        }
-                    ]
-                }
-            },
-            "amplitudeLfo": {
-                "rateEnvelope": {
-                    "waveform": "noise",
-                    "startValue": 0,
-                    "endValue": 33,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 18351
-                        },
-                        {
-                            "duration": 16698,
-                            "targetLevel": 26215
-                        },
-                        {
-                            "duration": 32766,
-                            "targetLevel": 32768
-                        },
-                        {
-                            "duration": 49149,
-                            "targetLevel": 32768
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 32768
-                        }
-                    ]
-                },
-                "modulationDepth": {
-                    "waveform": "off",
-                    "startValue": 0,
-                    "endValue": 100,
-                    "segments": [
-                        {
-                            "duration": 0,
-                            "targetLevel": 0
-                        },
-                        {
-                            "duration": 9157,
-                            "targetLevel": 6030
-                        },
-                        {
-                            "duration": 36807,
-                            "targetLevel": 8651
-                        },
-                        {
-                            "duration": 49555,
-                            "targetLevel": 3933
-                        },
-                        {
-                            "duration": 65535,
-                            "targetLevel": 787
-                        }
-                    ]
-                }
-            },
-            "partials": [
-                {
-                    "amplitude": 130,
-                    "pitchOffsetSemitones": 0
-                },
-                {
-                    "amplitude": 130,
-                    "pitchOffsetSemitones": 11,
-                    "delay": 50
-                }
-            ],
-            "echo": {
-                "delayMilliseconds": 0,
-                "feedbackPercent": 100
-            },
-            "durationMs": 1200
+            {
+              "duration": 65535,
+              "targetLevel": 1836
+            }
+          ]
         }
-    ]
+      },
+      "amplitudeLfo": {
+        "rateEnvelope": {
+          "waveform": "noise",
+          "startValue": 0,
+          "endValue": 33,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 18351
+            },
+            {
+              "duration": 16698,
+              "targetLevel": 26215
+            },
+            {
+              "duration": 32766,
+              "targetLevel": 32768
+            },
+            {
+              "duration": 49149,
+              "targetLevel": 32768
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 32768
+            }
+          ]
+        },
+        "modulationDepth": {
+          "waveform": "off",
+          "startValue": 0,
+          "endValue": 100,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 0
+            },
+            {
+              "duration": 9157,
+              "targetLevel": 6030
+            },
+            {
+              "duration": 36807,
+              "targetLevel": 8651
+            },
+            {
+              "duration": 49555,
+              "targetLevel": 3933
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 787
+            }
+          ]
+        }
+      },
+      "partials": [
+        {
+          "amplitude": 100,
+          "pitchOffsetSemitones": 0
+        },
+        {
+          "amplitude": 30,
+          "pitchOffsetSemitones": 11,
+          "delay": 50
+        }
+      ],
+      "echo": {
+        "delayMilliseconds": 4,
+        "feedbackPercent": 10
+      },
+      "durationMs": 1200,
+      "filter": {
+        "poleCounts": [
+          1,
+          0
+        ],
+        "unityGain": [
+          0,
+          0
+        ],
+        "polePhase": {
+          "feedforward": {
+            "baseline": [
+              62573
+            ],
+            "modulated": [
+              0
+            ]
+          },
+          "feedback": {
+            "baseline": [],
+            "modulated": []
+          }
+        },
+        "poleMagnitude": {
+          "feedforward": {
+            "baseline": [
+              0
+            ],
+            "modulated": [
+              0
+            ]
+          },
+          "feedback": {
+            "baseline": [],
+            "modulated": []
+          }
+        },
+        "modulationEnvelope": {
+          "waveform": "off",
+          "startValue": 0,
+          "endValue": 0,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 0
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 65535
+            }
+          ]
+        }
+      }
+    },
+    {
+      "frequencyEnvelope": {
+        "waveform": "sine",
+        "startValue": 2,
+        "endValue": 800,
+        "segments": [
+          {
+            "duration": 0,
+            "targetLevel": 0
+          },
+          {
+            "duration": 19623,
+            "targetLevel": 15332
+          },
+          {
+            "duration": 50355,
+            "targetLevel": 55428
+          },
+          {
+            "duration": 58686,
+            "targetLevel": 23250
+          },
+          {
+            "duration": 65535,
+            "targetLevel": 1573
+          }
+        ]
+      },
+      "amplitudeEnvelope": {
+        "waveform": "off",
+        "startValue": 0,
+        "endValue": 100,
+        "segments": [
+          {
+            "duration": 0,
+            "targetLevel": 0
+          },
+          {
+            "duration": 26103,
+            "targetLevel": 18821
+          },
+          {
+            "duration": 50910,
+            "targetLevel": 61335
+          },
+          {
+            "duration": 58963,
+            "targetLevel": 33104
+          },
+          {
+            "duration": 62759,
+            "targetLevel": 0
+          },
+          {
+            "duration": 65534,
+            "targetLevel": 0
+          },
+          {
+            "duration": 65535,
+            "targetLevel": 0
+          }
+        ]
+      },
+      "pitchLfo": {
+        "rateEnvelope": {
+          "waveform": "noise",
+          "startValue": 0,
+          "endValue": 100,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 0
+            },
+            {
+              "duration": 13329,
+              "targetLevel": 37738
+            },
+            {
+              "duration": 49149,
+              "targetLevel": 32768
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 32768
+            }
+          ]
+        },
+        "modulationDepth": {
+          "waveform": "off",
+          "startValue": 0,
+          "endValue": 100,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 32768
+            },
+            {
+              "duration": 16383,
+              "targetLevel": 32768
+            },
+            {
+              "duration": 32766,
+              "targetLevel": 32768
+            },
+            {
+              "duration": 49149,
+              "targetLevel": 32768
+            },
+            {
+              "duration": 65532,
+              "targetLevel": 32768
+            }
+          ]
+        }
+      },
+      "amplitudeLfo": {
+        "rateEnvelope": {
+          "waveform": "noise",
+          "startValue": 0,
+          "endValue": 33,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 0
+            },
+            {
+              "duration": 14440,
+              "targetLevel": 10587
+            },
+            {
+              "duration": 33878,
+              "targetLevel": 13276
+            },
+            {
+              "duration": 48318,
+              "targetLevel": 36633
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 0
+            }
+          ]
+        },
+        "modulationDepth": {
+          "waveform": "off",
+          "startValue": 0,
+          "endValue": 100,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 0
+            },
+            {
+              "duration": 9157,
+              "targetLevel": 6030
+            },
+            {
+              "duration": 40358,
+              "targetLevel": 9243
+            },
+            {
+              "duration": 49555,
+              "targetLevel": 3933
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 787
+            }
+          ]
+        }
+      },
+      "partials": [
+        {
+          "amplitude": 50,
+          "pitchOffsetSemitones": 0
+        },
+        {
+          "amplitude": 130,
+          "pitchOffsetSemitones": 11,
+          "delay": 50
+        }
+      ],
+      "echo": {
+        "delayMilliseconds": 0,
+        "feedbackPercent": 100
+      },
+      "durationMs": 1200
+    },
+    {
+      "frequencyEnvelope": {
+        "waveform": "sine",
+        "startValue": 2,
+        "endValue": 800,
+        "segments": [
+          {
+            "duration": 0,
+            "targetLevel": 0
+          },
+          {
+            "duration": 19623,
+            "targetLevel": 15332
+          },
+          {
+            "duration": 50355,
+            "targetLevel": 55428
+          },
+          {
+            "duration": 58686,
+            "targetLevel": 23250
+          },
+          {
+            "duration": 65535,
+            "targetLevel": 1573
+          }
+        ]
+      },
+      "amplitudeEnvelope": {
+        "waveform": "off",
+        "startValue": 0,
+        "endValue": 100,
+        "segments": [
+          {
+            "duration": 0,
+            "targetLevel": 0
+          },
+          {
+            "duration": 11478,
+            "targetLevel": 8235
+          },
+          {
+            "duration": 20364,
+            "targetLevel": 16637
+          },
+          {
+            "duration": 48133,
+            "targetLevel": 48900
+          },
+          {
+            "duration": 62388,
+            "targetLevel": 0
+          },
+          {
+            "duration": 65535,
+            "targetLevel": 0
+          }
+        ]
+      },
+      "pitchLfo": {
+        "rateEnvelope": {
+          "waveform": "noise",
+          "startValue": 0,
+          "endValue": 100,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 65031
+            },
+            {
+              "duration": 15441,
+              "targetLevel": 34866
+            },
+            {
+              "duration": 31472,
+              "targetLevel": 29820
+            },
+            {
+              "duration": 43271,
+              "targetLevel": 25166
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 11535
+            }
+          ]
+        },
+        "modulationDepth": {
+          "waveform": "off",
+          "startValue": 0,
+          "endValue": 100,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 29623
+            },
+            {
+              "duration": 17057,
+              "targetLevel": 47449
+            },
+            {
+              "duration": 31960,
+              "targetLevel": 54789
+            },
+            {
+              "duration": 47760,
+              "targetLevel": 43254
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 1836
+            }
+          ]
+        }
+      },
+      "amplitudeLfo": {
+        "rateEnvelope": {
+          "waveform": "noise",
+          "startValue": 0,
+          "endValue": 33,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 18351
+            },
+            {
+              "duration": 16698,
+              "targetLevel": 26215
+            },
+            {
+              "duration": 32766,
+              "targetLevel": 32768
+            },
+            {
+              "duration": 49149,
+              "targetLevel": 32768
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 32768
+            }
+          ]
+        },
+        "modulationDepth": {
+          "waveform": "off",
+          "startValue": 0,
+          "endValue": 100,
+          "segments": [
+            {
+              "duration": 0,
+              "targetLevel": 0
+            },
+            {
+              "duration": 9157,
+              "targetLevel": 6030
+            },
+            {
+              "duration": 36807,
+              "targetLevel": 8651
+            },
+            {
+              "duration": 49555,
+              "targetLevel": 3933
+            },
+            {
+              "duration": 65535,
+              "targetLevel": 787
+            }
+          ]
+        }
+      },
+      "partials": [
+        {
+          "amplitude": 130,
+          "pitchOffsetSemitones": 0
+        },
+        {
+          "amplitude": 130,
+          "pitchOffsetSemitones": 11,
+          "delay": 50
+        }
+      ],
+      "echo": {
+        "delayMilliseconds": 0,
+        "feedbackPercent": 100
+      },
+      "durationMs": 1200
+    }
+  ]
 }

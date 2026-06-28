@@ -68,7 +68,7 @@ public class SynthJsonSerializerTests
 
             var patch = SynthFileReader.ReadFromPath(synthPath);
             var expectedJson = SynthJsonSerializer.Serialize(patch);
-            var actualJson = File.ReadAllText(jsonPath);
+            var actualJson = TrimFinalLineEnding(File.ReadAllText(jsonPath));
 
             Assert.Equal(expectedJson, actualJson);
         }
@@ -234,5 +234,12 @@ public class SynthJsonSerializerTests
 
         return directory?.FullName
             ?? throw new DirectoryNotFoundException("Could not find JagFx.sln");
+    }
+
+    private static string TrimFinalLineEnding(string text)
+    {
+        return text.EndsWith("\r\n", StringComparison.Ordinal) ? text[..^2]
+            : text.EndsWith('\n') ? text[..^1]
+            : text;
     }
 }

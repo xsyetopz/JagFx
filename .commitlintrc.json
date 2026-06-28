@@ -1,24 +1,24 @@
 {
-	"config": {
-		"max-subject-length": {
-			"enabled": true,
-			"value": 100
-		},
-		"conventional-commit": {
-			"enabled": true,
-			"types": [
-				"feat",
-				"fix",
-				"docs",
-				"style",
-				"refactor",
-				"perf",
-				"test",
-				"build",
-				"ci",
-				"chore",
-				"revert"
-			]
-		}
-	}
+  "config": {
+    "max-subject-length": {
+      "enabled": true,
+      "value": 100
+    },
+    "conventional-commit": {
+      "enabled": true,
+      "types": [
+        "feat",
+        "fix",
+        "docs",
+        "style",
+        "refactor",
+        "perf",
+        "test",
+        "build",
+        "ci",
+        "chore",
+        "revert"
+      ]
+    }
+  }
 }
