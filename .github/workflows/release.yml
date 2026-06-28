@@ -84,7 +84,7 @@ jobs:
       matrix:
         rid: [osx-arm64, osx-x64]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
@@ -177,7 +177,7 @@ jobs:
     runs-on: windows-latest
     needs: resolve-release-ref
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
@@ -218,7 +218,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: resolve-release-ref
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
@@ -268,7 +268,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
