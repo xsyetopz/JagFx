@@ -88,7 +88,7 @@ jobs:
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -199,7 +199,7 @@ jobs:
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -240,7 +240,7 @@ jobs:
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
