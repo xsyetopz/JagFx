@@ -29,7 +29,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=22.23.1"
+    "bun": ">=1.4.2"
   },
   "source": "./src/index.ts"
 }
