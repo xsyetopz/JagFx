@@ -1,4 +1,4 @@
-# AGENTS.md
+# Agent brief
 
 JagFx is a .NET 8 toolkit for Old School RuneScape `.synth` sound-effect files. The repository contains:
 

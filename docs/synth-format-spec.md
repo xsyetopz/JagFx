@@ -280,10 +280,10 @@ Filter = FilterHeader FilterCoefficientPayload FilterModulationEnvelope?
 The filter has no unambiguous magic byte. A non-zero filter header can collide with the next voice slot marker. JagFx detects filters with this rule:
 
 1. If no bytes remain, the filter is absent.
-2. Let `b = peek(0)`.
-3. If `b = 0`, consume `b`; the filter is absent.
-4. If `b \notin [1, 4]`, decode a filter.
-5. If `b \in [1, 4]`, test whether the bytes look like a following envelope:
+1. Let `b = peek(0)`.
+1. If `b = 0`, consume `b`; the filter is absent.
+1. If `b \notin [1, 4]`, decode a filter.
+1. If `b \in [1, 4]`, test whether the bytes look like a following envelope:
 
 $$
 \text{possibleStart} = (\operatorname{peek}(1) \ll 24) \;|\; (\operatorname{peek}(2) \ll 16) \;|\; (\operatorname{peek}(3) \ll 8) \;|\; \operatorname{peek}(4)
@@ -415,13 +415,13 @@ JagFx rejects Git LFS pointer text before parsing binary data.
 `SynthFileWriter` writes a canonical stream for a JagFx domain patch:
 
 1. Emit ten voice slots.
-2. Emit `0x00` for null voice slots.
-3. Emit full envelope records as stored in the domain model.
-4. Emit `0x00` for absent optional envelope pairs.
-5. Emit partials followed by `usmart16(0)`.
-6. Emit `0x00` for absent filters.
-7. Emit a filter modulation envelope only when the filter has one.
-8. Emit `LoopBegin` and `LoopEnd` as `u16`.
+1. Emit `0x00` for null voice slots.
+1. Emit full envelope records as stored in the domain model.
+1. Emit `0x00` for absent optional envelope pairs.
+1. Emit partials followed by `usmart16(0)`.
+1. Emit `0x00` for absent filters.
+1. Emit a filter modulation envelope only when the filter has one.
+1. Emit `LoopBegin` and `LoopEnd` as `u16`.
 
 Some valid input byte streams are not byte-stable after read/write because the reader normalizes ambiguous or missing data. Tests compare JSON round-trips against `SynthFileWriter.Write(SynthFileReader.Read(bytes))` for files with known asymmetries.
 
