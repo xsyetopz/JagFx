@@ -95,7 +95,7 @@ release-desktop-windows: publish-desktop-windows
 
 release-desktop-linux: publish-desktop-linux
 	@if command -v appimagetool >/dev/null 2>&1; then \
-		tools/release/create-appimage.sh publish/desktop/linux-x64/JagFx.Desktop publish/JagFx-{{VERSION}}-linux-x64.AppImage {{VERSION}}; \
+		tools/release/create-appimage.sh publish/desktop/linux-x64/JagFx.Desktop publish/JagFx-{{VERSION}}-x86_64.AppImage {{VERSION}}; \
 	else \
 		echo "appimagetool not found; skipping AppImage and producing .tar.gz fallback only."; \
 	fi

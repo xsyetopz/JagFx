@@ -141,7 +141,7 @@ See `docs/synth-format-spec.md` for the binary format, `schemas/synth.schema.jso
 | `just release-desktop-macos-arm64` | `publish/JagFx-<ver>-macos-arm64.dmg` |
 | `just release-desktop-macos-x64` | `publish/JagFx-<ver>-macos-x64.dmg` |
 | `just release-desktop-windows` | `publish/JagFx-<ver>-win-x64-setup.exe` (Inno Setup) |
-| `just release-desktop-linux` | `publish/JagFx-<ver>-linux-x64.AppImage` + `.tar.gz` fallback |
+| `just release-desktop-linux` | `publish/JagFx-<ver>-x86_64.AppImage` + `.tar.gz` fallback |
 | `just release-cli` | Separate CLI archives for macOS arm64/x64, Windows x64, Linux x64 |
 | `just release-all` | Desktop installers + all CLI artifacts |
 
