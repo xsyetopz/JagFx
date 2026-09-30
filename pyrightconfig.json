@@ -1,0 +1,7 @@
+{
+  "include": ["Scripts", "Tests/RepositoryScripts"],
+  "extraPaths": ["."],
+  "venvPath": ".build",
+  "venv": "schema-validator",
+  "typeCheckingMode": "standard"
+}
