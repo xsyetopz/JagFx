@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+## [2.4.2] - 2026-09-30
+
+### Changed
+
+- **Linux AppImage** -- bundled glibc, ICU, and the X11 and font libraries so the AppImage runs without a compatible host C library, including on musl hosts. GL drivers still come from the host; if they need a newer glibc, rendering falls back to software. Renamed the artifact to `JagFx-<version>-x86_64.AppImage`.
+
+### Fixed
+
+- **Linux AppImage startup** -- fixed the crash on hosts without ICU ("Couldn't find a valid ICU package") and the "Permission denied" launch failure in sandboxes such as firejail, caused by a `0700` image root.
+
 ## [2.4.1]
 
 ### Added
