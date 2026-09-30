@@ -29,12 +29,7 @@
       "label": "watch",
       "command": "dotnet",
       "type": "process",
-      "args": [
-        "watch",
-        "run",
-        "--project",
-        "${workspaceFolder}/JagFx.sln"
-      ],
+      "args": ["watch", "run", "--project", "${workspaceFolder}/JagFx.sln"],
       "problemMatcher": "$msCompile"
     }
   ]

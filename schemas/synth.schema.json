@@ -5,9 +5,7 @@
   "description": "JSON form read and written by `JagFx.Io.Json.SynthJsonSerializer`.",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "voices"
-  ],
+  "required": ["voices"],
   "properties": {
     "voices": {
       "type": "array",
@@ -66,23 +64,13 @@
     },
     "waveform": {
       "type": "string",
-      "enum": [
-        "off",
-        "square",
-        "sine",
-        "saw",
-        "noise"
-      ],
+      "enum": ["off", "square", "sine", "saw", "noise"],
       "description": "Waveform name used by `WaveformExtensions.FromName`."
     },
     "voice": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "frequencyEnvelope",
-        "amplitudeEnvelope",
-        "durationMs"
-      ],
+      "required": ["frequencyEnvelope", "amplitudeEnvelope", "durationMs"],
       "properties": {
         "frequencyEnvelope": {
           "$ref": "#/$defs/envelope",
@@ -179,12 +167,7 @@
     "envelope": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "waveform",
-        "startValue",
-        "endValue",
-        "segments"
-      ],
+      "required": ["waveform", "startValue", "endValue", "segments"],
       "properties": {
         "waveform": {
           "$ref": "#/$defs/waveform"
@@ -210,10 +193,7 @@
     "segment": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "duration",
-        "targetLevel"
-      ],
+      "required": ["duration", "targetLevel"],
       "properties": {
         "duration": {
           "$ref": "#/$defs/uint16",
@@ -228,10 +208,7 @@
     "lfo": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "rateEnvelope",
-        "modulationDepth"
-      ],
+      "required": ["rateEnvelope", "modulationDepth"],
       "properties": {
         "rateEnvelope": {
           "$ref": "#/$defs/envelope"
@@ -244,10 +221,7 @@
     "partial": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "amplitude",
-        "pitchOffsetSemitones"
-      ],
+      "required": ["amplitude", "pitchOffsetSemitones"],
       "properties": {
         "amplitude": {
           "type": "integer",
@@ -268,10 +242,7 @@
     "echo": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "delayMilliseconds",
-        "feedbackPercent"
-      ],
+      "required": ["delayMilliseconds", "feedbackPercent"],
       "properties": {
         "delayMilliseconds": {
           "$ref": "#/$defs/usmart16",
@@ -286,12 +257,7 @@
     "filter": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "poleCounts",
-        "unityGain",
-        "polePhase",
-        "poleMagnitude"
-      ],
+      "required": ["poleCounts", "unityGain", "polePhase", "poleMagnitude"],
       "properties": {
         "poleCounts": {
           "type": "array",
@@ -335,10 +301,7 @@
     "filterCoefficients": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "feedforward",
-        "feedback"
-      ],
+      "required": ["feedforward", "feedback"],
       "properties": {
         "feedforward": {
           "$ref": "#/$defs/filterPhases",
@@ -353,10 +316,7 @@
     "filterPhases": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "baseline",
-        "modulated"
-      ],
+      "required": ["baseline", "modulated"],
       "properties": {
         "baseline": {
           "type": "array",
@@ -379,10 +339,7 @@
     "loopSegment": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "beginMs",
-        "endMs"
-      ],
+      "required": ["beginMs", "endMs"],
       "properties": {
         "beginMs": {
           "$ref": "#/$defs/uint16",

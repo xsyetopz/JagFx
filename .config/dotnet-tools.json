@@ -4,21 +4,15 @@
   "tools": {
     "husky": {
       "version": "0.9.1",
-      "commands": [
-        "husky"
-      ]
+      "commands": ["husky"]
     },
     "commitlint.net": {
       "version": "0.8.0",
-      "commands": [
-        "commit-lint"
-      ]
+      "commands": ["commit-lint"]
     },
     "csharpier": {
       "version": "1.3.0",
-      "commands": [
-        "csharpier"
-      ],
+      "commands": ["csharpier"],
       "rollForward": false
     }
   }
