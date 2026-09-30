@@ -245,48 +245,26 @@
       ],
       "durationMs": 1200,
       "filter": {
-        "poleCounts": [
-          1,
-          1
-        ],
-        "unityGain": [
-          7039,
-          1699
-        ],
+        "poleCounts": [1, 1],
+        "unityGain": [7039, 1699],
         "polePhase": {
           "feedforward": {
-            "baseline": [
-              59611
-            ],
-            "modulated": [
-              32397
-            ]
+            "baseline": [59611],
+            "modulated": [32397]
           },
           "feedback": {
-            "baseline": [
-              20179
-            ],
-            "modulated": [
-              63684
-            ]
+            "baseline": [20179],
+            "modulated": [63684]
           }
         },
         "poleMagnitude": {
           "feedforward": {
-            "baseline": [
-              25206
-            ],
-            "modulated": [
-              9951
-            ]
+            "baseline": [25206],
+            "modulated": [9951]
           },
           "feedback": {
-            "baseline": [
-              26214
-            ],
-            "modulated": [
-              3398
-            ]
+            "baseline": [26214],
+            "modulated": [3398]
           }
         },
         "modulationEnvelope": {
@@ -615,48 +593,26 @@
       ],
       "durationMs": 1200,
       "filter": {
-        "poleCounts": [
-          1,
-          1
-        ],
-        "unityGain": [
-          7039,
-          1699
-        ],
+        "poleCounts": [1, 1],
+        "unityGain": [7039, 1699],
         "polePhase": {
           "feedforward": {
-            "baseline": [
-              59611
-            ],
-            "modulated": [
-              32397
-            ]
+            "baseline": [59611],
+            "modulated": [32397]
           },
           "feedback": {
-            "baseline": [
-              20179
-            ],
-            "modulated": [
-              63684
-            ]
+            "baseline": [20179],
+            "modulated": [63684]
           }
         },
         "poleMagnitude": {
           "feedforward": {
-            "baseline": [
-              25206
-            ],
-            "modulated": [
-              9951
-            ]
+            "baseline": [25206],
+            "modulated": [9951]
           },
           "feedback": {
-            "baseline": [
-              26214
-            ],
-            "modulated": [
-              3398
-            ]
+            "baseline": [26214],
+            "modulated": [3398]
           }
         },
         "modulationEnvelope": {
@@ -876,52 +832,26 @@
       },
       "durationMs": 1500,
       "filter": {
-        "poleCounts": [
-          1,
-          2
-        ],
-        "unityGain": [
-          6796,
-          1699
-        ],
+        "poleCounts": [1, 2],
+        "unityGain": [6796, 1699],
         "polePhase": {
           "feedforward": {
-            "baseline": [
-              24992
-            ],
-            "modulated": [
-              47763
-            ]
+            "baseline": [24992],
+            "modulated": [47763]
           },
           "feedback": {
-            "baseline": [
-              7220,
-              65535
-            ],
-            "modulated": [
-              29625,
-              51651
-            ]
+            "baseline": [7220, 65535],
+            "modulated": [29625, 51651]
           }
         },
         "poleMagnitude": {
           "feedforward": {
-            "baseline": [
-              29127
-            ],
-            "modulated": [
-              13835
-            ]
+            "baseline": [29127],
+            "modulated": [13835]
           },
           "feedback": {
-            "baseline": [
-              33010,
-              8738
-            ],
-            "modulated": [
-              4718,
-              7039
-            ]
+            "baseline": [33010, 8738],
+            "modulated": [4718, 7039]
           }
         },
         "modulationEnvelope": {
