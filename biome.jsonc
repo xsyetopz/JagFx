@@ -12,6 +12,8 @@
 			"!!**/.agents",
 			"!!**/node_modules",
 			"!!**/dist",
+			// SynthJsonSerializer output, compared byte for byte by JagFx.Io.Tests
+			"!!references/json",
 			"!!**/*.generated.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"
 		],
 		"ignoreUnknown": true

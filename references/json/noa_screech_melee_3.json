@@ -260,16 +260,26 @@
       "durationMs": 200,
       "offsetMs": 550,
       "filter": {
-        "poleCounts": [0, 1],
-        "unityGain": [48758, 0],
+        "poleCounts": [
+          0,
+          1
+        ],
+        "unityGain": [
+          48758,
+          0
+        ],
         "polePhase": {
           "feedforward": {
             "baseline": [],
             "modulated": []
           },
           "feedback": {
-            "baseline": [45785],
-            "modulated": [45785]
+            "baseline": [
+              45785
+            ],
+            "modulated": [
+              45785
+            ]
           }
         },
         "poleMagnitude": {
@@ -278,8 +288,12 @@
             "modulated": []
           },
           "feedback": {
-            "baseline": [12582],
-            "modulated": [12582]
+            "baseline": [
+              12582
+            ],
+            "modulated": [
+              12582
+            ]
           }
         },
         "modulationEnvelope": {
