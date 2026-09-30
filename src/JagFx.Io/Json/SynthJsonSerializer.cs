@@ -15,7 +15,8 @@ public static class SynthJsonSerializer
     public static string Serialize(Patch patch)
     {
         var json = SynthJsonMapper.ToJson(patch);
-        return JsonSerializer.Serialize(json, Options);
+        // net8 indents with Environment.NewLine; emit LF on every platform to match the fixtures.
+        return JsonSerializer.Serialize(json, Options).ReplaceLineEndings("\n");
     }
 
     public static Patch Deserialize(string json)

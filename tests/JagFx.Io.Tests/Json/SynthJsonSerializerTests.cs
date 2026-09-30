@@ -53,6 +53,17 @@ public class SynthJsonSerializerTests
     }
 
     [Fact]
+    public void SerializeUsesLfLineEndingsOnEveryPlatform()
+    {
+        var patch = SynthFileReader.Read(TestResources.CowDeath);
+
+        var json = SynthJsonSerializer.Serialize(patch);
+
+        Assert.Contains('\n', json);
+        Assert.DoesNotContain('\r', json);
+    }
+
+    [Fact]
     public void ReferenceJsonFilesMatchSynthSerializerOutput()
     {
         var repoRoot = FindRepositoryRoot();
