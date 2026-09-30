@@ -10,3 +10,8 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    ignore:
+      # Avalonia 12.1+ analyzers need Roslyn 4.14, newer than the .NET 8 SDK's
+      # compiler (CS9057). Stay on 12.0.x while global.json pins SDK 8.0.
+      - dependency-name: "Avalonia*"
+        versions: [">= 12.1.0"]
