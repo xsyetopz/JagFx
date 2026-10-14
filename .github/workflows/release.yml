@@ -183,7 +183,7 @@ jobs:
           tools/release/sign-notarize-macos.sh "$APP_PATH" "$DMG_PATH"
 
       - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: jagfx-macos-${{ matrix.rid }}
           path: |
@@ -224,7 +224,7 @@ jobs:
           Compress-Archive -Path publish/cli/win-x64/JagFx.Cli.exe -DestinationPath "publish/JagFx.Cli-$version-win-x64.zip"
 
       - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: jagfx-windows-win-x64
           path: |
@@ -273,7 +273,7 @@ jobs:
           just release-cli-linux
 
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: jagfx-linux-x64
           path: |
