@@ -296,7 +296,7 @@ jobs:
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
-      - uses: actions/download-artifact@v8.0.1
+      - uses: actions/download-artifact@v8.0.2
         with:
           path: release-artifacts
           merge-multiple: true
