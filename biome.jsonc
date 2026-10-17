@@ -12,7 +12,7 @@
 			"!!**/.agents",
 			"!!**/node_modules",
 			"!!**/dist",
-			// SynthJsonSerializer output, compared byte for byte by JagFx.Io.Tests
+			// SynthJson.encode output, compared byte for byte by :core:format tests
 			"!!references/json",
 			"!!**/*.generated.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"
 		],

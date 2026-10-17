@@ -1,14 +1,10 @@
 * text=auto eol=lf
-*.cs text eol=lf
-*.csproj text eol=lf
-*.sln text eol=lf
 *.md text eol=lf
 *.json text eol=lf
 *.yml text eol=lf
 *.sh text eol=lf
+*.bat text eol=crlf
 *.csv text eol=lf
-*.axaml text eol=lf
-*.resx text eol=lf
 *.exe binary
 *.dll binary
 *.png binary

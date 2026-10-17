@@ -1,0 +1,117 @@
+public final class io/github/xsyetopz/jagfx/core/format/DecodeResult {
+	public fun <init> (Lio/github/xsyetopz/jagfx/core/model/Patch;Ljava/util/List;)V
+	public final fun component1 ()Lio/github/xsyetopz/jagfx/core/model/Patch;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Lio/github/xsyetopz/jagfx/core/model/Patch;Ljava/util/List;)Lio/github/xsyetopz/jagfx/core/format/DecodeResult;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/format/DecodeResult;Lio/github/xsyetopz/jagfx/core/model/Patch;Ljava/util/List;ILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/format/DecodeResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPatch ()Lio/github/xsyetopz/jagfx/core/model/Patch;
+	public final fun getWarnings ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/format/FilterDecodeResult {
+	public fun <init> (Lio/github/xsyetopz/jagfx/core/model/Filter;Ljava/util/List;)V
+	public final fun component1 ()Lio/github/xsyetopz/jagfx/core/model/Filter;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Lio/github/xsyetopz/jagfx/core/model/Filter;Ljava/util/List;)Lio/github/xsyetopz/jagfx/core/format/FilterDecodeResult;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/format/FilterDecodeResult;Lio/github/xsyetopz/jagfx/core/model/Filter;Ljava/util/List;ILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/format/FilterDecodeResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilter ()Lio/github/xsyetopz/jagfx/core/model/Filter;
+	public final fun getWarnings ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/format/InvalidPatchException : java/lang/Exception {
+	public fun <init> (Lio/github/xsyetopz/jagfx/core/format/PatchInvariant;ILjava/lang/String;)V
+	public final fun getInvariant ()Lio/github/xsyetopz/jagfx/core/format/PatchInvariant;
+	public final fun getSlot ()I
+}
+
+public final class io/github/xsyetopz/jagfx/core/format/PatchInvariant : java/lang/Enum {
+	public static final field I1 Lio/github/xsyetopz/jagfx/core/format/PatchInvariant;
+	public static final field I2 Lio/github/xsyetopz/jagfx/core/format/PatchInvariant;
+	public static final field I3 Lio/github/xsyetopz/jagfx/core/format/PatchInvariant;
+	public static final field I4 Lio/github/xsyetopz/jagfx/core/format/PatchInvariant;
+	public final fun getDescription ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/xsyetopz/jagfx/core/format/PatchInvariant;
+	public static fun values ()[Lio/github/xsyetopz/jagfx/core/format/PatchInvariant;
+}
+
+public final class io/github/xsyetopz/jagfx/core/format/SynthCodec {
+	public static final field INSTANCE Lio/github/xsyetopz/jagfx/core/format/SynthCodec;
+	public final fun decode ([B)Lio/github/xsyetopz/jagfx/core/format/DecodeResult;
+	public final fun decode ([BLkotlin/jvm/functions/Function1;)Lio/github/xsyetopz/jagfx/core/format/DecodeResult;
+	public final fun decodeFilter ([B)Lio/github/xsyetopz/jagfx/core/format/FilterDecodeResult;
+	public final fun decodeTone ([B)Lio/github/xsyetopz/jagfx/core/format/ToneDecodeResult;
+	public final fun encode (Lio/github/xsyetopz/jagfx/core/model/Patch;)[B
+	public final fun encodeFilter (Lio/github/xsyetopz/jagfx/core/model/Filter;)[B
+	public final fun encodeTone (Lio/github/xsyetopz/jagfx/core/model/Voice;)[B
+}
+
+public final class io/github/xsyetopz/jagfx/core/format/SynthFormatError : java/lang/Enum {
+	public static final field GitLfsPointer Lio/github/xsyetopz/jagfx/core/format/SynthFormatError;
+	public static final field InvalidPoleCount Lio/github/xsyetopz/jagfx/core/format/SynthFormatError;
+	public static final field TooManyPartials Lio/github/xsyetopz/jagfx/core/format/SynthFormatError;
+	public static final field TrailingData Lio/github/xsyetopz/jagfx/core/format/SynthFormatError;
+	public final fun getCode ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/xsyetopz/jagfx/core/format/SynthFormatError;
+	public static fun values ()[Lio/github/xsyetopz/jagfx/core/format/SynthFormatError;
+}
+
+public final class io/github/xsyetopz/jagfx/core/format/SynthFormatException : java/lang/Exception {
+	public fun <init> (Lio/github/xsyetopz/jagfx/core/format/SynthFormatError;ILjava/lang/String;Ljava/lang/String;)V
+	public final fun getError ()Lio/github/xsyetopz/jagfx/core/format/SynthFormatError;
+	public final fun getField ()Ljava/lang/String;
+	public final fun getOffset ()I
+}
+
+public final class io/github/xsyetopz/jagfx/core/format/SynthJson {
+	public static final field INSTANCE Lio/github/xsyetopz/jagfx/core/format/SynthJson;
+	public final fun decode (Ljava/lang/String;)Lio/github/xsyetopz/jagfx/core/model/Patch;
+	public final fun decodeFilter (Ljava/lang/String;)Lio/github/xsyetopz/jagfx/core/model/Filter;
+	public final fun decodeVoice (Ljava/lang/String;)Lio/github/xsyetopz/jagfx/core/model/Voice;
+	public final fun encode (Lio/github/xsyetopz/jagfx/core/model/Patch;)Ljava/lang/String;
+	public final fun encodeFilter (Lio/github/xsyetopz/jagfx/core/model/Filter;)Ljava/lang/String;
+	public final fun encodeVoice (Lio/github/xsyetopz/jagfx/core/model/Voice;)Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/format/SynthJsonException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/github/xsyetopz/jagfx/core/format/ToneDecodeResult {
+	public fun <init> (Lio/github/xsyetopz/jagfx/core/model/Voice;Ljava/util/List;)V
+	public final fun component1 ()Lio/github/xsyetopz/jagfx/core/model/Voice;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Lio/github/xsyetopz/jagfx/core/model/Voice;Ljava/util/List;)Lio/github/xsyetopz/jagfx/core/format/ToneDecodeResult;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/format/ToneDecodeResult;Lio/github/xsyetopz/jagfx/core/model/Voice;Ljava/util/List;ILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/format/ToneDecodeResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getVoice ()Lio/github/xsyetopz/jagfx/core/model/Voice;
+	public final fun getWarnings ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/format/TracedField {
+	public fun <init> (IILjava/lang/String;I)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()I
+	public final fun copy (IILjava/lang/String;I)Lio/github/xsyetopz/jagfx/core/format/TracedField;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/format/TracedField;IILjava/lang/String;IILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/format/TracedField;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOffset ()I
+	public final fun getPath ()Ljava/lang/String;
+	public final fun getSize ()I
+	public final fun getValue ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

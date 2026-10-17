@@ -1,16 +1,15 @@
 {
   "name": "@xsyetopz/jagfx-wasm",
-  "version": "2.4.2",
-  "description": "Browser WebAssembly bindings for JagFx.",
+  "version": "3.0.0",
+  "description": "Browser WebAssembly bindings for JagFx, built on Kotlin/Wasm.",
   "type": "module",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "default": "./dist/index.mjs"
     }
   },
   "files": [
@@ -20,12 +19,11 @@
   ],
   "scripts": {
     "test": "bun test test/index.test.mjs",
-    "build:wasm": "dotnet publish ../../src/JagFx.Wasm -c Release",
+    "build:kotlin": "../../gradlew -p ../.. :bindings:syncNpmPackages",
     "playground": "bun playground/serve.mjs",
     "build:esm": "bun build ./src/index.ts --target=node --format=esm --packages=external --outfile=./dist/index.mjs",
-    "build:cjs": "bun build ./src/index.ts --target=node --format=cjs --packages=external --outfile=./dist/index.cjs",
     "build:types": "tsc -p tsconfig.build.json",
-    "build": "bun run build:esm && bun run build:cjs && bun run build:types"
+    "build": "bun run build:esm && bun run build:types"
   },
   "license": "MIT",
   "engines": {

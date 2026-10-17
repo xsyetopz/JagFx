@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/xsyetopz/JagFx/blob/main/schemas/synth.schema.json",
   "title": "JagFx synth JSON",
-  "description": "JSON form read and written by `JagFx.Io.Json.SynthJsonSerializer`.",
+  "description": "JSON form read and written by `SynthJson` in `core/format`.",
   "type": "object",
   "additionalProperties": false,
   "required": ["voices"],
@@ -59,18 +59,30 @@
     },
     "smart16": {
       "type": "integer",
-      "minimum": -32768,
+      "minimum": -16384,
       "maximum": 16383
     },
     "waveform": {
-      "type": "string",
-      "enum": ["off", "square", "sine", "saw", "noise"],
-      "description": "Waveform name used by `WaveformExtensions.FromName`."
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": ["off", "square", "sine", "saw", "noise"]
+        },
+        {
+          "type": "string",
+          "pattern": "^undefined([5-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+        }
+      ],
+      "description": "Waveform name. The binary ids are off 0, square 1, sine 2, saw 3, noise 4. `undefined<id>` names an id from 5 to 255, which the game client renders as silence."
     },
     "voice": {
       "type": "object",
       "additionalProperties": false,
       "required": ["frequencyEnvelope", "amplitudeEnvelope", "durationMs"],
+      "dependentRequired": {
+        "gapOffEnvelope": ["gapOnEnvelope"],
+        "gapOnEnvelope": ["gapOffEnvelope"]
+      },
       "properties": {
         "frequencyEnvelope": {
           "$ref": "#/$defs/envelope",
@@ -126,8 +138,8 @@
         },
         "partials": {
           "type": "array",
-          "description": "Up to 10 oscillator partials. Omitted or `null` writes only the partial terminator.",
-          "maxItems": 10,
+          "description": "Up to 5 oscillator partials. Omitted or `null` writes only the partial terminator.",
+          "maxItems": 5,
           "items": {
             "$ref": "#/$defs/partial"
           }
@@ -261,13 +273,13 @@
       "properties": {
         "poleCounts": {
           "type": "array",
-          "description": "Two 4-bit pole counts: [feedforward, feedback].",
+          "description": "Pole counts: [feedforward, feedback]. Each array in `polePhase` and `poleMagnitude` has the pole count of its direction as its length.",
           "minItems": 2,
           "maxItems": 2,
           "items": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 15
+            "maximum": 4
           }
         },
         "unityGain": {
@@ -288,13 +300,27 @@
         "modulationEnvelope": {
           "anyOf": [
             {
-              "$ref": "#/$defs/envelope"
+              "$ref": "#/$defs/filterModulationEnvelope"
             },
             {
               "type": "null"
             }
           ],
-          "description": "Filter modulation envelope. Omitted or `null` writes no modulation envelope."
+          "description": "Filter modulation envelope. Omitted or `null` writes no modulation envelope. The binary format stores only its segments."
+        }
+      }
+    },
+    "filterModulationEnvelope": {
+      "$ref": "#/$defs/envelope",
+      "properties": {
+        "waveform": {
+          "const": "off"
+        },
+        "startValue": {
+          "const": 0
+        },
+        "endValue": {
+          "const": 0
         }
       }
     },
@@ -321,7 +347,7 @@
         "baseline": {
           "type": "array",
           "description": "Baseline phase coefficients as unsigned 16-bit integers.",
-          "maxItems": 15,
+          "maxItems": 4,
           "items": {
             "$ref": "#/$defs/uint16"
           }
@@ -329,7 +355,7 @@
         "modulated": {
           "type": "array",
           "description": "Modulated phase coefficients as unsigned 16-bit integers.",
-          "maxItems": 15,
+          "maxItems": 4,
           "items": {
             "$ref": "#/$defs/uint16"
           }

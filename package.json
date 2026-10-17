@@ -6,16 +6,21 @@
     "packages/*"
   ],
   "scripts": {
+    "prepare": "husky",
     "build:js": "bun run --cwd packages/jagfx build && bun run --cwd packages/jagfx-wasm build && bun run --cwd packages/jagfx-node build",
     "typecheck": "tsc --noEmit",
     "biome:check": "biome check . --error-on-warnings --max-diagnostics 16384",
-    "biome:fix": "biome check . --write --max-diagnostics 16384"
+    "biome:fix": "biome check . --write --max-diagnostics 16384",
+    "test:js": "bun run --cwd packages/jagfx test && bun run --cwd packages/jagfx-wasm test && bun run --cwd packages/jagfx-node test"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
     "@types/bun": "1.4.2",
     "@types/node": "26.6.3",
     "bun-types": "1.4.2",
+    "husky": "9.1.7",
     "typescript": "7.0.2"
   }
 }

@@ -1,0 +1,10 @@
+naming:
+  FunctionNaming:
+    # Composable functions are PascalCase by the Compose API guidelines.
+    ignoreAnnotated:
+      - Composable
+
+complexity:
+  LongParameterList:
+    # Composables take optional modifier, state, and style parameters by the Compose API guidelines.
+    ignoreDefaultParameters: true

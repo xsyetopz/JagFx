@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [3.0.0]
+
+### Added
+
+- **Vorbis samples** -- the new `:core:vorbis` module reads and writes `.jagvorbis` files, the Vorbis sample that the game cache stores next to some sound effects, and decodes them to the same PCM as the game client.
+  The CLI converts and inspects `.jagvorbis` files, and the editor opens them as a separate document with playback, end trim, and loop editing.
+  The npm packages read sample headers and decode samples to PCM (`jagfx-node`, `jagfx-wasm`) or WAV (`jagfx`).
+- **Tone and filter JSON** -- `SynthJson.encodeVoice`, `decodeVoice`, `encodeFilter`, and `decodeFilter` convert one voice or one filter in the schema's `voice` and `filter` forms.
+  `@xsyetopz/jagfx` uses them to convert `.tone` and `.filter` files to and from JSON.
+
+### Changed
+
+- **Kotlin Multiplatform port** -- rewrote JagFx in Kotlin 2.4 with Compose Multiplatform, replacing the C# .NET 8 code base. The `:core:model`, `:core:format`, and `:core:engine` modules keep binary and JSON output byte-exact against every file in `references/`, and rendering matches the 2.x goldens.
+- **Editor** -- the Compose editor in `:sharedUI` runs on desktop (JVM) and in the browser (Kotlin/Wasm), replacing the Avalonia desktop app.
+- **CLI** -- the Clikt CLI ships as `jagfx-cli-<version>.zip` and needs Java 21 or later instead of being a self-contained native binary.
+- **Installers** -- desktop releases are Compose jpackage builds: signed and notarized macOS DMGs (arm64 and x64), a Windows MSI, and a Linux DEB. The Windows Inno Setup installer and the Linux AppImage are gone.
+- **npm packages** -- `@xsyetopz/jagfx*` packages are built from Kotlin/JS and Kotlin/Wasm. `jagfx-wasm` is ESM only with an async loader; `jagfx-node` no longer ships the N-API addon. Conversion failures use the `JAGFX_CONVERSION_FAILED` code, and invalid arguments use `JAGFX_INVALID_ARGUMENT`.
+- **Tooling** -- Gradle replaces `dotnet` for build, test, format (Spotless and detekt), and release; npm `@commitlint/cli` and `husky` replace Husky.Net and CommitLint.Net. Dependabot tracks Gradle and Bun instead of NuGet.
+
 ## [2.4.2] - 2026-09-30
 
 ### Changed

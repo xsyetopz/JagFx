@@ -10,32 +10,52 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
-  build-and-test:
+  gradle-check:
+    # macOS builds every target: JVM, Android, iOS simulator, JS and Wasm.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-java@v6.0.1
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v6.4.0
+
+      - run: ./gradlew check --continue
+
+  js-packages:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-dotnet@v6
+      - uses: actions/setup-java@v6.0.1
         with:
-          dotnet-version: "8.0.x"
+          distribution: temurin
+          java-version: "21"
 
-      - run: dotnet restore
+      - uses: gradle/actions/setup-gradle@v6.4.0
 
-      - run: dotnet build --no-restore
-
-      - run: dotnet test --no-build --verbosity normal
-
-  format-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: actions/setup-dotnet@v6
+      - uses: actions/setup-node@v7.0.0
         with:
-          dotnet-version: "8.0.x"
+          node-version: "22"
 
-      - run: dotnet tool restore
-      - run: dotnet csharpier check .
+      - uses: oven-sh/setup-bun@v2.2.0
+
+      - run: bun install --frozen-lockfile
+
+      - run: ./gradlew :bindings:syncNpmPackages
+
+      - run: bun run build:js
+
+      - run: bun run typecheck
+
+      - run: bun run test:js
 
   conventional-commits:
     if: github.event_name == 'pull_request'
@@ -45,33 +65,25 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-dotnet@v6
-        with:
-          dotnet-version: "8.0.x"
+      - uses: oven-sh/setup-bun@v2.2.0
 
-      - run: dotnet tool restore
+      - run: bun install --frozen-lockfile
 
       - name: Validate commit messages
-        run: |
-          failed=0
-          git log --format="%H" "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" | while read -r sha; do
-            git log -1 --format="%B" "$sha" > /tmp/commit-msg.txt
-            if ! dotnet commit-lint --commit-file /tmp/commit-msg.txt --commit-message-config-file .commitlintrc.json; then
-              echo "::error::Invalid commit message in $sha"
-              failed=1
-            fi
-          done
-          exit $failed
+        run: >-
+          bunx commitlint --verbose
+          --from "${{ github.event.pull_request.base.sha }}"
+          --to "${{ github.event.pull_request.head.sha }}"
 
   ci-gate:
-    needs: [build-and-test, format-check, conventional-commits]
+    needs: [gradle-check, js-packages, conventional-commits]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Check results
         run: |
-          if [[ "${{ needs.build-and-test.result }}" == "failure" ]] || \
-             [[ "${{ needs.format-check.result }}" == "failure" ]] || \
+          if [[ "${{ needs.gradle-check.result }}" == "failure" ]] || \
+             [[ "${{ needs.js-packages.result }}" == "failure" ]] || \
              [[ "${{ needs.conventional-commits.result }}" == "failure" ]]; then
             echo "::error::One or more CI jobs failed"
             exit 1

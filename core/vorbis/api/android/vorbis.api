@@ -1,0 +1,41 @@
+public final class io/github/xsyetopz/jagfx/core/vorbis/JagVorbis {
+	public fun <init> (IIIIZLio/github/xsyetopz/jagfx/core/vorbis/VorbisStream;)V
+	public synthetic fun <init> (IIIIZLio/github/xsyetopz/jagfx/core/vorbis/VorbisStream;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun copy (IIIIZ)Lio/github/xsyetopz/jagfx/core/vorbis/JagVorbis;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/vorbis/JagVorbis;IIIIZILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/vorbis/JagVorbis;
+	public final fun decodePcm ()[S
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAudio ()Lio/github/xsyetopz/jagfx/core/vorbis/VorbisStream;
+	public final fun getLoopBegin ()I
+	public final fun getLoopEnd ()I
+	public final fun getPacketCount ()I
+	public final fun getPackets ()Ljava/util/List;
+	public final fun getPingPong ()Z
+	public final fun getSampleCount ()I
+	public final fun getSampleRate ()I
+	public final fun getSetup ()[B
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/vorbis/JagVorbisCodec {
+	public static final field INSTANCE Lio/github/xsyetopz/jagfx/core/vorbis/JagVorbisCodec;
+	public final fun decode ([B)Lio/github/xsyetopz/jagfx/core/vorbis/JagVorbis;
+	public final fun encode (Lio/github/xsyetopz/jagfx/core/vorbis/JagVorbis;)[B
+}
+
+public final class io/github/xsyetopz/jagfx/core/vorbis/JagVorbisFormatException : java/lang/Exception {
+	public fun <init> (ILjava/lang/String;)V
+	public final fun getOffset ()I
+}
+
+public final class io/github/xsyetopz/jagfx/core/vorbis/VorbisStream {
+	public fun <init> ([BLjava/util/List;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPacketCount ()I
+	public final fun getPackets ()Ljava/util/List;
+	public final fun getSetup ()[B
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

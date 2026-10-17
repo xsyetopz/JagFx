@@ -1,7 +1,7 @@
 {
   "name": "@xsyetopz/jagfx-node",
-  "version": "2.4.2",
-  "description": "Node native bindings for JagFx.",
+  "version": "3.0.0",
+  "description": "Node bindings for JagFx, built on Kotlin/JS.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -14,13 +14,12 @@
     }
   },
   "files": [
-    "binding.gyp",
     "dist",
-    "prebuilds",
     "src"
   ],
   "scripts": {
     "build": "bun run build:esm && bun run build:cjs && bun run build:types",
+    "build:kotlin": "../../gradlew -p ../.. :bindings:syncNpmPackages",
     "test": "node --test test/index.test.mjs",
     "build:esm": "bun build ./src/index.ts --target=node --format=esm --packages=external --outfile=./dist/index.mjs",
     "build:cjs": "bun build ./src/index.ts --target=node --format=cjs --packages=external --outfile=./dist/index.cjs",
