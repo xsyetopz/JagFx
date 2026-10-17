@@ -1,39 +1,5 @@
-# ===-----------------------------------------------------------------------===
-# .NET build outputs
-# ===-----------------------------------------------------------------------===
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
-x64/
-x86/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-artifacts/
+# Release artifacts collected by the justfile
 publish/
-!tools/release/
-!tools/release/*.sh
-
-# .NET Core
-project.lock.json
-project.fragment.lock.json
-
-# NuGet
-*.nupkg
-*.snupkg
-
-# MSBuild logs
-*.binlog
-
-# Test results
-[Tt]est[Rr]esult*/
-[Bb]uild[Ll]og.*
-CodeCoverage/
 
 # ===-----------------------------------------------------------------------===
 # IDE / Editor
@@ -42,8 +8,6 @@ CodeCoverage/
 .idea/
 *.suo
 *.user
-*.userosscache
-*.sln.docstates
 
 # VS Code — track shared settings only
 .vscode/*
@@ -54,9 +18,6 @@ CodeCoverage/
 !.vscode/*.code-snippets
 !*.code-workspace
 *.vsix
-
-# Rider
-*.sln.iml
 
 # ===-----------------------------------------------------------------------===
 # OS files
@@ -79,9 +40,11 @@ $RECYCLE.BIN/
 node_modules/
 dist/
 coverage/
+!references/coverage/
 packages/*/bun.lock
 packages/*/bun.lockb
-packages/jagfx-node/build/
+# Kotlin/JS library output, copied in by `./gradlew :bindings:syncNpmPackages`
+packages/*/kotlin/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -110,3 +73,15 @@ pnpm-lock.yaml
 
 # Codebase MCP
 .codebase-memory/
+
+# ===-----------------------------------------------------------------------===
+# Gradle / Kotlin Multiplatform
+# ===-----------------------------------------------------------------------===
+.gradle/
+.kotlin/
+build/
+!**/src/**/build/
+local.properties
+*.iml
+iosApp/**/xcuserdata/
+iosApp/**/*.xcworkspace/xcuserdata/

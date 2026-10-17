@@ -11,5 +11,6 @@
 
 ## Test plan
 
-- [ ] `dotnet test` passes
+- [ ] `./gradlew check` passes
+- [ ] `bun run test:js` passes (JS package changes)
 - [ ] Manual verification (describe below)

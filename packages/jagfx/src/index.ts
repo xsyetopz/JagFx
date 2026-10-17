@@ -2,10 +2,17 @@ import { Buffer } from "node:buffer";
 import { spawn } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+import * as kotlin from "../kotlin/jagfx-bindings.mjs";
 
-export type Waveform = "off" | "square" | "sine" | "saw" | "noise";
+/** `undefined<id>` names a waveform id from 5 to 255, which the game client renders as silence. */
+export type Waveform =
+	| "off"
+	| "square"
+	| "sine"
+	| "saw"
+	| "noise"
+	| `undefined${number}`;
 
 export interface JagFxCommand {
 	command: string;
@@ -113,6 +120,8 @@ interface CommandResult {
 
 const gitLfsPrefix = "version https://git-lfs.github.com/spec/";
 const gitLfsPrefixBytes = Buffer.from(gitLfsPrefix, "ascii");
+const undefinedWaveform =
+	/^undefined([5-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
 const emptyArray = Object.freeze([]) as readonly never[];
 const emptyOptions = Object.freeze({}) as Readonly<Record<string, never>>;
 
@@ -287,6 +296,17 @@ export function createPatch(
 	return patch;
 }
 
+/** Header fields of a `.jagvorbis` sample. */
+export interface SampleInfo {
+	sampleRate: number;
+	sampleCount: number;
+	loopBegin: number;
+	/** Sample after the loop region. */
+	loopEnd: number;
+	pingPong: boolean;
+	packetCount: number;
+}
+
 export async function readPatchJson(path: string): Promise<PatchJson> {
 	return JSON.parse(await readFile(path, "utf8")) as PatchJson;
 }
@@ -310,6 +330,14 @@ export async function synthToJson(
 	assertRealSynthData(synthData);
 
 	const command = resolveCommand(options.command);
+	if (!command) {
+		const json = convert(() => kotlin.synthToJson(toInt8Array(synthData)));
+		if (options.outputPath) {
+			await writeFile(options.outputPath, `${json}\n`);
+		}
+		return JSON.parse(json) as PatchJson;
+	}
+
 	if (options.outputPath) {
 		await runCommand(
 			command.command,
@@ -340,6 +368,11 @@ export async function jsonToSynth(
 	}
 
 	const command = resolveCommand(options.command);
+	if (!command) {
+		await writeFile(outputPath, await encodeSynth(patchOrPath));
+		return;
+	}
+
 	if (typeof patchOrPath === "string") {
 		await runCommand(
 			command.command,
@@ -363,6 +396,22 @@ export async function renderPatchToWav(
 	outputPath: string,
 	options: RenderSynthToWavOptions = emptyOptions,
 ): Promise<void> {
+	if (!resolveCommand(options.command)) {
+		if (!patchOrPath || !outputPath) {
+			throw new JagFxError(
+				"patchOrPath and outputPath are required.",
+				"JAGFX_INVALID_ARGUMENT",
+			);
+		}
+		const loops = loopCount(options.loops);
+		const synth = await encodeSynth(patchOrPath);
+		await writeFile(
+			outputPath,
+			convert(() => kotlin.renderWav(synth, loops)),
+		);
+		return;
+	}
+
 	const dir = await mkdtemp(join(tmpdir(), "jagfx-patch-"));
 	const synthPath = join(dir, "patch.synth");
 	try {
@@ -388,7 +437,119 @@ export async function renderSynthToWav(
 	const synthData = await readFile(inputPath);
 	assertRealSynthData(synthData);
 
-	const optionLoops = options.loops;
+	const loops = loopCount(options.loops);
+	const command = resolveCommand(options.command);
+	if (!command) {
+		await writeFile(
+			outputPath,
+			convert(() => kotlin.renderWav(toInt8Array(synthData), loops)),
+		);
+		return;
+	}
+
+	await runCommand(
+		command.command,
+		[...command.args, inputPath, outputPath, String(loops)],
+		options.cwd,
+	);
+}
+
+/** Reads a `.tone` file as the JSON form of one voice. */
+export async function toneToJson(inputPath: string): Promise<VoiceJson> {
+	const data = await readInput(inputPath);
+	return JSON.parse(
+		convert(() => kotlin.toneToJson(toInt8Array(data))),
+	) as VoiceJson;
+}
+
+/** Writes a voice, or the JSON file at a path, as a `.tone` file. */
+export async function jsonToTone(
+	voiceOrPath: VoiceJson | string,
+	outputPath: string,
+): Promise<void> {
+	const json = await readJsonInput(voiceOrPath, outputPath);
+	await writeFile(
+		outputPath,
+		convert(() => kotlin.jsonToTone(json)),
+	);
+}
+
+/** Reads a `.filter` file as the JSON form of a filter, or `null` for no filter. */
+export async function filterToJson(
+	inputPath: string,
+): Promise<FilterJson | null> {
+	const data = await readInput(inputPath);
+	return JSON.parse(
+		convert(() => kotlin.filterToJson(toInt8Array(data))),
+	) as FilterJson | null;
+}
+
+/** Writes a filter, `null` for no filter, or the JSON file at a path, as a `.filter` file. */
+export async function jsonToFilter(
+	filterOrPath: FilterJson | null | string,
+	outputPath: string,
+): Promise<void> {
+	if (!outputPath) {
+		throw new JagFxError("outputPath is required.", "JAGFX_INVALID_ARGUMENT");
+	}
+	const json =
+		typeof filterOrPath === "string"
+			? await readFile(filterOrPath, "utf8")
+			: JSON.stringify(filterOrPath);
+	await writeFile(
+		outputPath,
+		convert(() => kotlin.jsonToFilter(json)),
+	);
+}
+
+/** Reads the header fields of a `.jagvorbis` sample. */
+export async function readSampleInfo(inputPath: string): Promise<SampleInfo> {
+	const data = await readInput(inputPath);
+	return JSON.parse(
+		convert(() => kotlin.sampleInfo(toInt8Array(data))),
+	) as SampleInfo;
+}
+
+/** Decodes a `.jagvorbis` sample to a 16-bit WAV file at the sample's rate, without looping. */
+export async function sampleToWav(
+	inputPath: string,
+	outputPath: string,
+): Promise<void> {
+	if (!outputPath) {
+		throw new JagFxError("outputPath is required.", "JAGFX_INVALID_ARGUMENT");
+	}
+	const data = await readInput(inputPath);
+	await writeFile(
+		outputPath,
+		convert(() => kotlin.sampleToWav(toInt8Array(data))),
+	);
+}
+
+async function readInput(inputPath: string): Promise<Buffer> {
+	if (!inputPath) {
+		throw new JagFxError("inputPath is required.", "JAGFX_INVALID_ARGUMENT");
+	}
+	const data = await readFile(inputPath);
+	assertRealSynthData(data);
+	return data;
+}
+
+async function readJsonInput(
+	valueOrPath: object | string,
+	outputPath: string,
+): Promise<string> {
+	if (!valueOrPath || !outputPath) {
+		throw new JagFxError(
+			"an input and outputPath are required.",
+			"JAGFX_INVALID_ARGUMENT",
+		);
+	}
+	return typeof valueOrPath === "string"
+		? readFile(valueOrPath, "utf8")
+		: JSON.stringify(valueOrPath);
+}
+
+function loopCount(optionLoops?: number): number {
 	const loops =
 		typeof optionLoops === "number" && Number.isInteger(optionLoops)
 			? optionLoops
@@ -399,13 +560,31 @@ export async function renderSynthToWav(
 			"JAGFX_INVALID_ARGUMENT",
 		);
 	}
+	return loops;
+}
 
-	const command = resolveCommand(options.command);
-	await runCommand(
-		command.command,
-		[...command.args, inputPath, outputPath, String(loops)],
-		options.cwd,
-	);
+async function encodeSynth(patchOrPath: PatchJson | string): Promise<Int8Array> {
+	const json =
+		typeof patchOrPath === "string"
+			? await readFile(patchOrPath, "utf8")
+			: JSON.stringify(patchOrPath);
+	return convert(() => kotlin.jsonToSynth(json));
+}
+
+function toInt8Array(data: Uint8Array): Int8Array {
+	return new Int8Array(data.buffer, data.byteOffset, data.byteLength);
+}
+
+/** Runs a Kotlin/JS conversion and rethrows its failure as a {@link JagFxError}. */
+function convert<T>(conversion: () => T): T {
+	try {
+		return conversion();
+	} catch (error) {
+		throw new JagFxError(
+			error instanceof Error ? error.message : String(error),
+			"JAGFX_CONVERSION_FAILED",
+		);
+	}
 }
 
 function assertWaveform(waveform: string): asserts waveform is Waveform {
@@ -417,6 +596,7 @@ function assertWaveform(waveform: string): asserts waveform is Waveform {
 		case "noise":
 			return;
 		default:
+			if (undefinedWaveform.test(waveform)) return;
 			throw new JagFxError(
 				`unknown waveform: ${waveform}`,
 				"JAGFX_INVALID_ARGUMENT",
@@ -542,7 +722,10 @@ async function withTempJson<T>(
 	}
 }
 
-function resolveCommand(command?: string | JagFxCommand): CommandResolution {
+/** The CLI to run, or `undefined` to convert in-process with Kotlin/JS. */
+function resolveCommand(
+	command?: string | JagFxCommand,
+): CommandResolution | undefined {
 	if (typeof command === "string" && command.length > 0) {
 		return { command, args: [] };
 	}
@@ -556,22 +739,7 @@ function resolveCommand(command?: string | JagFxCommand): CommandResolution {
 	}
 
 	const envCommand = process.env["JAGFX_CLI"];
-	if (envCommand) {
-		return { command: envCommand, args: [] };
-	}
-
-	const packageDir = dirname(fileURLToPath(import.meta.url));
-	const repoRoot = resolve(packageDir, "../../..");
-	return {
-		command: "dotnet",
-		args: [
-			"run",
-			"--no-restore",
-			"--project",
-			resolve(repoRoot, "src/JagFx.Cli"),
-			"--",
-		],
-	};
+	return envCommand ? { command: envCommand, args: [] } : undefined;
 }
 
 function cloneCommandArgs(args?: readonly string[]): string[] {

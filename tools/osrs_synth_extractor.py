@@ -43,12 +43,12 @@ def read_group_from_dat2(
         while remaining > 0 and sector_id != 0:
             f.seek(sector_id * SECTOR_SIZE)
             raw = f.read(SECTOR_SIZE)
-            if len(raw) < SECTOR_SIZE:
+            to_take = min(remaining, DATA_SIZE)
+            if len(raw) < HEADER_SIZE + to_take:
                 raise IOError("Short read on dat2")
 
             next_sector = read_medium(raw[4:7])
             data = raw[HEADER_SIZE:HEADER_SIZE + DATA_SIZE]
-            to_take = min(remaining, DATA_SIZE)
             buf.extend(data[:to_take])
             remaining -= to_take
             sector_id = next_sector
@@ -115,6 +115,104 @@ def extract_group(
     compression_type, uncompressed_len, payload, _ = parse_js5_container(container)
     return decompress_js5(compression_type, payload, uncompressed_len)
 
+REFERENCE_TABLE_ARCHIVE = 255
+FLAG_NAMED = 0x1
+FLAG_DIGESTS = 0x2
+FLAG_LENGTHS = 0x4
+FLAG_UNCOMPRESSED_CHECKSUMS = 0x8
+
+# A sound effect group holds the synth as file 0 and, when the sound uses a
+# recorded sample, the Jagex-packed Vorbis sample as file 1. The client plays
+# only the last file of the group.
+FILE_EXTENSIONS = {(4, 0): ".synth", (4, 1): ".jagvorbis"}
+
+class Reader:
+    def __init__(self, data: bytes):
+        self.data = data
+        self.pos = 0
+
+    def u8(self) -> int:
+        self.pos += 1
+        return self.data[self.pos - 1]
+
+    def u16(self) -> int:
+        self.pos += 2
+        return struct.unpack(">H", self.data[self.pos - 2:self.pos])[0]
+
+    def s32(self) -> int:
+        self.pos += 4
+        return struct.unpack(">i", self.data[self.pos - 4:self.pos])[0]
+
+    def big_smart(self) -> int:
+        if self.data[self.pos] < 0x80:
+            return self.u16()
+        return self.s32() & 0x7FFFFFFF
+
+def read_file_ids(cache_dir: Path, archive_id: int) -> dict[int, list[int]]:
+    """Read the file IDs of every group from the archive's JS5 reference table."""
+    data = extract_group(cache_dir, REFERENCE_TABLE_ARCHIVE, archive_id)
+    if data is None:
+        raise IOError(f"Reference table for idx{archive_id} not found")
+
+    r = Reader(data)
+    protocol = r.u8()
+    if protocol < 5 or protocol > 7:
+        raise ValueError(f"Unsupported reference table protocol {protocol}")
+    if protocol >= 6:
+        r.s32()
+    flags = r.u8()
+    count = r.big_smart if protocol >= 7 else r.u16
+
+    group_ids = []
+    last = 0
+    for _ in range(count()):
+        last += count()
+        group_ids.append(last)
+
+    n = len(group_ids)
+    if flags & FLAG_NAMED:
+        r.pos += 4 * n
+    r.pos += 4 * n
+    if flags & FLAG_UNCOMPRESSED_CHECKSUMS:
+        r.pos += 4 * n
+    if flags & FLAG_DIGESTS:
+        r.pos += 64 * n
+    if flags & FLAG_LENGTHS:
+        r.pos += 8 * n
+    r.pos += 4 * n
+
+    file_counts = [count() for _ in group_ids]
+    file_ids = {}
+    for group_id, file_count in zip(group_ids, file_counts):
+        ids = []
+        last = 0
+        for _ in range(file_count):
+            last += count()
+            ids.append(last)
+        file_ids[group_id] = ids
+    return file_ids
+
+def split_group(data: bytes, file_count: int) -> list[bytes]:
+    """Split a decompressed JS5 group into its files."""
+    if file_count == 1:
+        return [data]
+
+    chunks = data[-1]
+    sizes_pos = len(data) - 1 - chunks * file_count * 4
+    r = Reader(data)
+    r.pos = sizes_pos
+    files = [bytearray() for _ in range(file_count)]
+    pos = 0
+    for _ in range(chunks):
+        chunk_size = 0
+        for file in files:
+            chunk_size += r.s32()
+            file.extend(data[pos:pos + chunk_size])
+            pos += chunk_size
+    if pos != sizes_pos:
+        raise ValueError(f"Group files end at {pos}, size table starts at {sizes_pos}")
+    return [bytes(file) for file in files]
+
 def get_ids_to_extract(
     idx_path: Path,
     ids: Optional[list[int]] = None,
@@ -165,6 +263,8 @@ def dump_index(
     else:
         print(f"Dumping idx{archive_id} ({len(ids_to_extract)} groups)...")
 
+    file_ids = {} if raw else read_file_ids(cache_dir, archive_id)
+
     extracted = 0
     for group_id in ids_to_extract:
         data = extract_group(cache_dir, archive_id, group_id, raw=raw)
@@ -172,9 +272,15 @@ def dump_index(
         if data is None:
             continue
 
-        ext = ".bin" if raw else ".synth"
-        out_path = index_out_dir / f"{group_id}{ext}"
-        out_path.write_bytes(data)
+        if raw:
+            (index_out_dir / f"{group_id}.bin").write_bytes(data)
+        else:
+            ids = file_ids[group_id]
+            for file_id, file_data in zip(ids, split_group(data, len(ids))):
+                ext = FILE_EXTENSIONS.get((archive_id, file_id))
+                if ext is None:
+                    ext = ".synth" if file_id == 0 else f"-{file_id}.bin"
+                (index_out_dir / f"{group_id}{ext}").write_bytes(file_data)
         extracted += 1
 
     print(f"Extracted {extracted} groups from idx{archive_id}")

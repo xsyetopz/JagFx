@@ -1,6 +1,6 @@
 {
   "name": "@xsyetopz/jagfx",
-  "version": "2.4.2",
+  "version": "3.0.0",
   "description": "JavaScript and TypeScript bindings for JagFx synth rendering.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "test": "bun test test/index.test.mjs",
+    "build:kotlin": "../../gradlew -p ../.. :bindings:syncNpmPackages",
     "build:esm": "bun build ./src/index.ts --target=node --format=esm --packages=external --outfile=./dist/index.mjs",
     "build:cjs": "bun build ./src/index.ts --target=node --format=cjs --packages=external --outfile=./dist/index.cjs",
     "build:types": "tsc -p tsconfig.build.json",

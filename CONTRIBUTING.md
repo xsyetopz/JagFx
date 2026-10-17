@@ -10,10 +10,10 @@ This guide defines the contribution workflow and review expectations.
 
 1. Fork the repository.
 2. Clone your fork: `git clone https://github.com/<your-user>/JagFx.git`.
-3. Restore tools: `dotnet tool restore` (installs Husky.Net + CommitLint.Net git hooks automatically).
+3. Install JDK 21 and Bun, then run `bun install` (installs the husky + commitlint commit-msg hook).
 4. Create a topic branch: `git checkout -b feat/<short-description>`.
 5. Make focused changes.
-6. Run `dotnet build && dotnet test && dotnet format`.
+6. Run `./gradlew spotlessApply check`. For JS package changes, also run `./gradlew :bindings:syncNpmPackages`, `bun run build:js`, `bun run typecheck`, and `bun run test:js`.
 7. Commit using [Conventional Commits](#commit-style). The commit-msg hook validates automatically.
 8. Push and open a pull request that describes behaviour changes and test coverage.
 
@@ -29,14 +29,14 @@ This guide defines the contribution workflow and review expectations.
 
 Domain model field names follow DSP conventions. Use `docs/synth-format-spec.md` as the reference:
 
-- Envelope boundary fields are `StartValue` / `EndValue` (not "samples").
-- Segment fields are `Duration` / `TargetLevel`.
-- Voice timing fields are `DurationMs` / `OffsetMs`.
-- Loop region fields are `BeginMs` / `EndMs`.
-- Gating envelopes are `GapOffEnvelope` / `GapOnEnvelope`.
-- LFO carrier is `RateEnvelope`; filter modulation is `ModulationEnvelope`.
-- Echo wet level is `FeedbackPercent`.
-- The patch synthesis entry point is `PatchRenderer`.
+- Envelope boundary fields are `startValue` / `endValue` (not "samples").
+- Segment fields are `duration` / `targetLevel`.
+- Voice timing fields are `duration` / `offset` (`Milliseconds`).
+- Loop region fields are `begin` / `end`.
+- Gating envelopes are `Gate.gapOff` / `Gate.gapOn`.
+- LFO carrier is `Lfo.rate`; filter modulation is `Filter.modulationEnvelope`.
+- Echo wet level is `Echo.feedback`.
+- The patch synthesis entry point is `Renderer.render`.
 
 ### Comments and Docs
 
@@ -45,7 +45,7 @@ Domain model field names follow DSP conventions. Use `docs/synth-format-spec.md`
 
 ## Commit Style
 
-This repository uses Conventional Commits, enforced by [CommitLint.Net](https://github.com/tomwis/CommitLint.Net) via [Husky.Net](https://github.com/alirezanet/Husky.Net) git hooks.
+This repository uses Conventional Commits, enforced by [commitlint](https://commitlint.js.org) via a [husky](https://typicode.github.io/husky/) git hook.
 
 Format: `type(scope): description`
 
@@ -58,11 +58,11 @@ Examples:
 - `docs: update CLI usage in README`
 - `refactor(synthesis): extract envelope generator`
 
-The `commit-msg` hook runs after `dotnet tool restore`. CI validates commit messages on pull requests.
+The `commit-msg` hook runs after `bun install`. CI validates commit messages on pull requests.
 
 ## Testing Expectations
 
-- Run `dotnet test` before every push.
+- Run `./gradlew check` before every push.
 - Add or update targeted tests for every bug fix or new feature.
 - Mention skipped or flaky tests in the pull request.
 
@@ -76,8 +76,8 @@ AI tooling is allowed. Contributors own the code they submit:
 
 ## Pull Request Checklist
 
-- [ ] Tests pass locally with `dotnet test`.
-- [ ] Code formatted with `dotnet format`.
+- [ ] Checks pass locally with `./gradlew check`.
+- [ ] Code formatted with `./gradlew spotlessApply`.
 - [ ] Commit messages follow [Conventional Commits](#commit-style).
 - [ ] Docs and comments updated if behaviour changed.
 - [ ] PR description covers motivation, approach, and test coverage.

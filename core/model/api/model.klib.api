@@ -1,0 +1,333 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, macosArm64, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.xsyetopz.jagfx:model>
+final class io.github.xsyetopz.jagfx.core.model/Coefficient { // io.github.xsyetopz.jagfx.core.model/Coefficient|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int) // io.github.xsyetopz.jagfx.core.model/Coefficient.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
+
+    final val magnitude // io.github.xsyetopz.jagfx.core.model/Coefficient.magnitude|{}magnitude[0]
+        final fun <get-magnitude>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Coefficient.magnitude.<get-magnitude>|<get-magnitude>(){}[0]
+    final val phase // io.github.xsyetopz.jagfx.core.model/Coefficient.phase|{}phase[0]
+        final fun <get-phase>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Coefficient.phase.<get-phase>|<get-phase>(){}[0]
+
+    final fun component1(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Coefficient.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Coefficient.component2|component2(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/Int = ...): io.github.xsyetopz.jagfx.core.model/Coefficient // io.github.xsyetopz.jagfx.core.model/Coefficient.copy|copy(kotlin.Int;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Coefficient.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Coefficient.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Coefficient.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Echo { // io.github.xsyetopz.jagfx.core.model/Echo|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Milliseconds, io.github.xsyetopz.jagfx.core.model/Percent) // io.github.xsyetopz.jagfx.core.model/Echo.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Milliseconds;io.github.xsyetopz.jagfx.core.model.Percent){}[0]
+
+    final val delay // io.github.xsyetopz.jagfx.core.model/Echo.delay|{}delay[0]
+        final fun <get-delay>(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Echo.delay.<get-delay>|<get-delay>(){}[0]
+    final val feedback // io.github.xsyetopz.jagfx.core.model/Echo.feedback|{}feedback[0]
+        final fun <get-feedback>(): io.github.xsyetopz.jagfx.core.model/Percent // io.github.xsyetopz.jagfx.core.model/Echo.feedback.<get-feedback>|<get-feedback>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Echo.component1|component1(){}[0]
+    final fun component2(): io.github.xsyetopz.jagfx.core.model/Percent // io.github.xsyetopz.jagfx.core.model/Echo.component2|component2(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Milliseconds = ..., io.github.xsyetopz.jagfx.core.model/Percent = ...): io.github.xsyetopz.jagfx.core.model/Echo // io.github.xsyetopz.jagfx.core.model/Echo.copy|copy(io.github.xsyetopz.jagfx.core.model.Milliseconds;io.github.xsyetopz.jagfx.core.model.Percent){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Echo.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Echo.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Echo.toString|toString(){}[0]
+
+    final object Companion { // io.github.xsyetopz.jagfx.core.model/Echo.Companion|null[0]
+        final val None // io.github.xsyetopz.jagfx.core.model/Echo.Companion.None|{}None[0]
+            final fun <get-None>(): io.github.xsyetopz.jagfx.core.model/Echo // io.github.xsyetopz.jagfx.core.model/Echo.Companion.None.<get-None>|<get-None>(){}[0]
+    }
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Envelope { // io.github.xsyetopz.jagfx.core.model/Envelope|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Waveform, kotlin/Int, kotlin/Int, kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Segment>) // io.github.xsyetopz.jagfx.core.model/Envelope.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Waveform;kotlin.Int;kotlin.Int;kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Segment>){}[0]
+
+    final val endValue // io.github.xsyetopz.jagfx.core.model/Envelope.endValue|{}endValue[0]
+        final fun <get-endValue>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Envelope.endValue.<get-endValue>|<get-endValue>(){}[0]
+    final val segments // io.github.xsyetopz.jagfx.core.model/Envelope.segments|{}segments[0]
+        final fun <get-segments>(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Segment> // io.github.xsyetopz.jagfx.core.model/Envelope.segments.<get-segments>|<get-segments>(){}[0]
+    final val startValue // io.github.xsyetopz.jagfx.core.model/Envelope.startValue|{}startValue[0]
+        final fun <get-startValue>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Envelope.startValue.<get-startValue>|<get-startValue>(){}[0]
+    final val waveform // io.github.xsyetopz.jagfx.core.model/Envelope.waveform|{}waveform[0]
+        final fun <get-waveform>(): io.github.xsyetopz.jagfx.core.model/Waveform // io.github.xsyetopz.jagfx.core.model/Envelope.waveform.<get-waveform>|<get-waveform>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Waveform // io.github.xsyetopz.jagfx.core.model/Envelope.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Envelope.component2|component2(){}[0]
+    final fun component3(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Envelope.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Segment> // io.github.xsyetopz.jagfx.core.model/Envelope.component4|component4(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Waveform = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Segment> = ...): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Envelope.copy|copy(io.github.xsyetopz.jagfx.core.model.Waveform;kotlin.Int;kotlin.Int;kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Segment>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Envelope.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Envelope.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Envelope.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Filter { // io.github.xsyetopz.jagfx.core.model/Filter|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Pole>, kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Pole>, kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Segment>?) // io.github.xsyetopz.jagfx.core.model/Filter.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Pole>;kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Pole>;kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Segment>?){}[0]
+
+    final val feedback // io.github.xsyetopz.jagfx.core.model/Filter.feedback|{}feedback[0]
+        final fun <get-feedback>(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Pole> // io.github.xsyetopz.jagfx.core.model/Filter.feedback.<get-feedback>|<get-feedback>(){}[0]
+    final val feedforward // io.github.xsyetopz.jagfx.core.model/Filter.feedforward|{}feedforward[0]
+        final fun <get-feedforward>(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Pole> // io.github.xsyetopz.jagfx.core.model/Filter.feedforward.<get-feedforward>|<get-feedforward>(){}[0]
+    final val modulationEnvelope // io.github.xsyetopz.jagfx.core.model/Filter.modulationEnvelope|{}modulationEnvelope[0]
+        final fun <get-modulationEnvelope>(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Segment>? // io.github.xsyetopz.jagfx.core.model/Filter.modulationEnvelope.<get-modulationEnvelope>|<get-modulationEnvelope>(){}[0]
+    final val modulationMask // io.github.xsyetopz.jagfx.core.model/Filter.modulationMask|{}modulationMask[0]
+        final fun <get-modulationMask>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Filter.modulationMask.<get-modulationMask>|<get-modulationMask>(){}[0]
+    final val needsModulationEnvelope // io.github.xsyetopz.jagfx.core.model/Filter.needsModulationEnvelope|{}needsModulationEnvelope[0]
+        final fun <get-needsModulationEnvelope>(): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Filter.needsModulationEnvelope.<get-needsModulationEnvelope>|<get-needsModulationEnvelope>(){}[0]
+    final val unityGain0 // io.github.xsyetopz.jagfx.core.model/Filter.unityGain0|{}unityGain0[0]
+        final fun <get-unityGain0>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Filter.unityGain0.<get-unityGain0>|<get-unityGain0>(){}[0]
+    final val unityGain1 // io.github.xsyetopz.jagfx.core.model/Filter.unityGain1|{}unityGain1[0]
+        final fun <get-unityGain1>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Filter.unityGain1.<get-unityGain1>|<get-unityGain1>(){}[0]
+
+    final fun component1(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Filter.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Filter.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Pole> // io.github.xsyetopz.jagfx.core.model/Filter.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Pole> // io.github.xsyetopz.jagfx.core.model/Filter.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Segment>? // io.github.xsyetopz.jagfx.core.model/Filter.component5|component5(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/Int = ..., kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Pole> = ..., kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Pole> = ..., kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Segment>? = ...): io.github.xsyetopz.jagfx.core.model/Filter // io.github.xsyetopz.jagfx.core.model/Filter.copy|copy(kotlin.Int;kotlin.Int;kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Pole>;kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Pole>;kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Segment>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Filter.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Filter.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Filter.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Gate { // io.github.xsyetopz.jagfx.core.model/Gate|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Envelope, io.github.xsyetopz.jagfx.core.model/Envelope) // io.github.xsyetopz.jagfx.core.model/Gate.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Envelope;io.github.xsyetopz.jagfx.core.model.Envelope){}[0]
+
+    final val gapOff // io.github.xsyetopz.jagfx.core.model/Gate.gapOff|{}gapOff[0]
+        final fun <get-gapOff>(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Gate.gapOff.<get-gapOff>|<get-gapOff>(){}[0]
+    final val gapOn // io.github.xsyetopz.jagfx.core.model/Gate.gapOn|{}gapOn[0]
+        final fun <get-gapOn>(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Gate.gapOn.<get-gapOn>|<get-gapOn>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Gate.component1|component1(){}[0]
+    final fun component2(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Gate.component2|component2(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Envelope = ..., io.github.xsyetopz.jagfx.core.model/Envelope = ...): io.github.xsyetopz.jagfx.core.model/Gate // io.github.xsyetopz.jagfx.core.model/Gate.copy|copy(io.github.xsyetopz.jagfx.core.model.Envelope;io.github.xsyetopz.jagfx.core.model.Envelope){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Gate.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Gate.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Gate.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Lfo { // io.github.xsyetopz.jagfx.core.model/Lfo|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Envelope, io.github.xsyetopz.jagfx.core.model/Envelope) // io.github.xsyetopz.jagfx.core.model/Lfo.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Envelope;io.github.xsyetopz.jagfx.core.model.Envelope){}[0]
+
+    final val depth // io.github.xsyetopz.jagfx.core.model/Lfo.depth|{}depth[0]
+        final fun <get-depth>(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Lfo.depth.<get-depth>|<get-depth>(){}[0]
+    final val rate // io.github.xsyetopz.jagfx.core.model/Lfo.rate|{}rate[0]
+        final fun <get-rate>(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Lfo.rate.<get-rate>|<get-rate>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Lfo.component1|component1(){}[0]
+    final fun component2(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Lfo.component2|component2(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Envelope = ..., io.github.xsyetopz.jagfx.core.model/Envelope = ...): io.github.xsyetopz.jagfx.core.model/Lfo // io.github.xsyetopz.jagfx.core.model/Lfo.copy|copy(io.github.xsyetopz.jagfx.core.model.Envelope;io.github.xsyetopz.jagfx.core.model.Envelope){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Lfo.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Lfo.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Lfo.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Loop { // io.github.xsyetopz.jagfx.core.model/Loop|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Milliseconds, io.github.xsyetopz.jagfx.core.model/Milliseconds) // io.github.xsyetopz.jagfx.core.model/Loop.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Milliseconds;io.github.xsyetopz.jagfx.core.model.Milliseconds){}[0]
+
+    final val begin // io.github.xsyetopz.jagfx.core.model/Loop.begin|{}begin[0]
+        final fun <get-begin>(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Loop.begin.<get-begin>|<get-begin>(){}[0]
+    final val end // io.github.xsyetopz.jagfx.core.model/Loop.end|{}end[0]
+        final fun <get-end>(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Loop.end.<get-end>|<get-end>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Loop.component1|component1(){}[0]
+    final fun component2(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Loop.component2|component2(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Milliseconds = ..., io.github.xsyetopz.jagfx.core.model/Milliseconds = ...): io.github.xsyetopz.jagfx.core.model/Loop // io.github.xsyetopz.jagfx.core.model/Loop.copy|copy(io.github.xsyetopz.jagfx.core.model.Milliseconds;io.github.xsyetopz.jagfx.core.model.Milliseconds){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Loop.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Loop.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Loop.toString|toString(){}[0]
+
+    final object Companion { // io.github.xsyetopz.jagfx.core.model/Loop.Companion|null[0]
+        final val None // io.github.xsyetopz.jagfx.core.model/Loop.Companion.None|{}None[0]
+            final fun <get-None>(): io.github.xsyetopz.jagfx.core.model/Loop // io.github.xsyetopz.jagfx.core.model/Loop.Companion.None.<get-None>|<get-None>(){}[0]
+    }
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Partial { // io.github.xsyetopz.jagfx.core.model/Partial|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Percent, kotlin/Int, io.github.xsyetopz.jagfx.core.model/Milliseconds) // io.github.xsyetopz.jagfx.core.model/Partial.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Percent;kotlin.Int;io.github.xsyetopz.jagfx.core.model.Milliseconds){}[0]
+
+    final val amplitude // io.github.xsyetopz.jagfx.core.model/Partial.amplitude|{}amplitude[0]
+        final fun <get-amplitude>(): io.github.xsyetopz.jagfx.core.model/Percent // io.github.xsyetopz.jagfx.core.model/Partial.amplitude.<get-amplitude>|<get-amplitude>(){}[0]
+    final val delay // io.github.xsyetopz.jagfx.core.model/Partial.delay|{}delay[0]
+        final fun <get-delay>(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Partial.delay.<get-delay>|<get-delay>(){}[0]
+    final val pitchOffset // io.github.xsyetopz.jagfx.core.model/Partial.pitchOffset|{}pitchOffset[0]
+        final fun <get-pitchOffset>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Partial.pitchOffset.<get-pitchOffset>|<get-pitchOffset>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Percent // io.github.xsyetopz.jagfx.core.model/Partial.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Partial.component2|component2(){}[0]
+    final fun component3(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Partial.component3|component3(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Percent = ..., kotlin/Int = ..., io.github.xsyetopz.jagfx.core.model/Milliseconds = ...): io.github.xsyetopz.jagfx.core.model/Partial // io.github.xsyetopz.jagfx.core.model/Partial.copy|copy(io.github.xsyetopz.jagfx.core.model.Percent;kotlin.Int;io.github.xsyetopz.jagfx.core.model.Milliseconds){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Partial.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Partial.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Partial.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Patch { // io.github.xsyetopz.jagfx.core.model/Patch|null[0]
+    constructor <init>(kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Voice?>, io.github.xsyetopz.jagfx.core.model/Loop) // io.github.xsyetopz.jagfx.core.model/Patch.<init>|<init>(kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Voice?>;io.github.xsyetopz.jagfx.core.model.Loop){}[0]
+
+    final val loop // io.github.xsyetopz.jagfx.core.model/Patch.loop|{}loop[0]
+        final fun <get-loop>(): io.github.xsyetopz.jagfx.core.model/Loop // io.github.xsyetopz.jagfx.core.model/Patch.loop.<get-loop>|<get-loop>(){}[0]
+    final val voices // io.github.xsyetopz.jagfx.core.model/Patch.voices|{}voices[0]
+        final fun <get-voices>(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Voice?> // io.github.xsyetopz.jagfx.core.model/Patch.voices.<get-voices>|<get-voices>(){}[0]
+
+    final fun component1(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Voice?> // io.github.xsyetopz.jagfx.core.model/Patch.component1|component1(){}[0]
+    final fun component2(): io.github.xsyetopz.jagfx.core.model/Loop // io.github.xsyetopz.jagfx.core.model/Patch.component2|component2(){}[0]
+    final fun copy(kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Voice?> = ..., io.github.xsyetopz.jagfx.core.model/Loop = ...): io.github.xsyetopz.jagfx.core.model/Patch // io.github.xsyetopz.jagfx.core.model/Patch.copy|copy(kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Voice?>;io.github.xsyetopz.jagfx.core.model.Loop){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Patch.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Patch.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Patch.toString|toString(){}[0]
+
+    final object Companion { // io.github.xsyetopz.jagfx.core.model/Patch.Companion|null[0]
+        final val Empty // io.github.xsyetopz.jagfx.core.model/Patch.Companion.Empty|{}Empty[0]
+            final fun <get-Empty>(): io.github.xsyetopz.jagfx.core.model/Patch // io.github.xsyetopz.jagfx.core.model/Patch.Companion.Empty.<get-Empty>|<get-Empty>(){}[0]
+    }
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Pole { // io.github.xsyetopz.jagfx.core.model/Pole|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Coefficient, io.github.xsyetopz.jagfx.core.model/Coefficient) // io.github.xsyetopz.jagfx.core.model/Pole.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Coefficient;io.github.xsyetopz.jagfx.core.model.Coefficient){}[0]
+
+    final val end // io.github.xsyetopz.jagfx.core.model/Pole.end|{}end[0]
+        final fun <get-end>(): io.github.xsyetopz.jagfx.core.model/Coefficient // io.github.xsyetopz.jagfx.core.model/Pole.end.<get-end>|<get-end>(){}[0]
+    final val isModulated // io.github.xsyetopz.jagfx.core.model/Pole.isModulated|{}isModulated[0]
+        final fun <get-isModulated>(): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Pole.isModulated.<get-isModulated>|<get-isModulated>(){}[0]
+    final val start // io.github.xsyetopz.jagfx.core.model/Pole.start|{}start[0]
+        final fun <get-start>(): io.github.xsyetopz.jagfx.core.model/Coefficient // io.github.xsyetopz.jagfx.core.model/Pole.start.<get-start>|<get-start>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Coefficient // io.github.xsyetopz.jagfx.core.model/Pole.component1|component1(){}[0]
+    final fun component2(): io.github.xsyetopz.jagfx.core.model/Coefficient // io.github.xsyetopz.jagfx.core.model/Pole.component2|component2(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Coefficient = ..., io.github.xsyetopz.jagfx.core.model/Coefficient = ...): io.github.xsyetopz.jagfx.core.model/Pole // io.github.xsyetopz.jagfx.core.model/Pole.copy|copy(io.github.xsyetopz.jagfx.core.model.Coefficient;io.github.xsyetopz.jagfx.core.model.Coefficient){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Pole.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Pole.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Pole.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Segment { // io.github.xsyetopz.jagfx.core.model/Segment|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int) // io.github.xsyetopz.jagfx.core.model/Segment.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
+
+    final val duration // io.github.xsyetopz.jagfx.core.model/Segment.duration|{}duration[0]
+        final fun <get-duration>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Segment.duration.<get-duration>|<get-duration>(){}[0]
+    final val targetLevel // io.github.xsyetopz.jagfx.core.model/Segment.targetLevel|{}targetLevel[0]
+        final fun <get-targetLevel>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Segment.targetLevel.<get-targetLevel>|<get-targetLevel>(){}[0]
+
+    final fun component1(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Segment.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Segment.component2|component2(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/Int = ...): io.github.xsyetopz.jagfx.core.model/Segment // io.github.xsyetopz.jagfx.core.model/Segment.copy|copy(kotlin.Int;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Segment.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Segment.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Segment.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.model/Voice { // io.github.xsyetopz.jagfx.core.model/Voice|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Envelope, io.github.xsyetopz.jagfx.core.model/Envelope, io.github.xsyetopz.jagfx.core.model/Lfo?, io.github.xsyetopz.jagfx.core.model/Lfo?, io.github.xsyetopz.jagfx.core.model/Gate?, kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Partial>, io.github.xsyetopz.jagfx.core.model/Echo, io.github.xsyetopz.jagfx.core.model/Milliseconds, io.github.xsyetopz.jagfx.core.model/Milliseconds, io.github.xsyetopz.jagfx.core.model/Filter?) // io.github.xsyetopz.jagfx.core.model/Voice.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Envelope;io.github.xsyetopz.jagfx.core.model.Envelope;io.github.xsyetopz.jagfx.core.model.Lfo?;io.github.xsyetopz.jagfx.core.model.Lfo?;io.github.xsyetopz.jagfx.core.model.Gate?;kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Partial>;io.github.xsyetopz.jagfx.core.model.Echo;io.github.xsyetopz.jagfx.core.model.Milliseconds;io.github.xsyetopz.jagfx.core.model.Milliseconds;io.github.xsyetopz.jagfx.core.model.Filter?){}[0]
+
+    final val amplitudeEnvelope // io.github.xsyetopz.jagfx.core.model/Voice.amplitudeEnvelope|{}amplitudeEnvelope[0]
+        final fun <get-amplitudeEnvelope>(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Voice.amplitudeEnvelope.<get-amplitudeEnvelope>|<get-amplitudeEnvelope>(){}[0]
+    final val amplitudeLfo // io.github.xsyetopz.jagfx.core.model/Voice.amplitudeLfo|{}amplitudeLfo[0]
+        final fun <get-amplitudeLfo>(): io.github.xsyetopz.jagfx.core.model/Lfo? // io.github.xsyetopz.jagfx.core.model/Voice.amplitudeLfo.<get-amplitudeLfo>|<get-amplitudeLfo>(){}[0]
+    final val duration // io.github.xsyetopz.jagfx.core.model/Voice.duration|{}duration[0]
+        final fun <get-duration>(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Voice.duration.<get-duration>|<get-duration>(){}[0]
+    final val echo // io.github.xsyetopz.jagfx.core.model/Voice.echo|{}echo[0]
+        final fun <get-echo>(): io.github.xsyetopz.jagfx.core.model/Echo // io.github.xsyetopz.jagfx.core.model/Voice.echo.<get-echo>|<get-echo>(){}[0]
+    final val filter // io.github.xsyetopz.jagfx.core.model/Voice.filter|{}filter[0]
+        final fun <get-filter>(): io.github.xsyetopz.jagfx.core.model/Filter? // io.github.xsyetopz.jagfx.core.model/Voice.filter.<get-filter>|<get-filter>(){}[0]
+    final val frequencyEnvelope // io.github.xsyetopz.jagfx.core.model/Voice.frequencyEnvelope|{}frequencyEnvelope[0]
+        final fun <get-frequencyEnvelope>(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Voice.frequencyEnvelope.<get-frequencyEnvelope>|<get-frequencyEnvelope>(){}[0]
+    final val gate // io.github.xsyetopz.jagfx.core.model/Voice.gate|{}gate[0]
+        final fun <get-gate>(): io.github.xsyetopz.jagfx.core.model/Gate? // io.github.xsyetopz.jagfx.core.model/Voice.gate.<get-gate>|<get-gate>(){}[0]
+    final val offset // io.github.xsyetopz.jagfx.core.model/Voice.offset|{}offset[0]
+        final fun <get-offset>(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Voice.offset.<get-offset>|<get-offset>(){}[0]
+    final val partials // io.github.xsyetopz.jagfx.core.model/Voice.partials|{}partials[0]
+        final fun <get-partials>(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Partial> // io.github.xsyetopz.jagfx.core.model/Voice.partials.<get-partials>|<get-partials>(){}[0]
+    final val pitchLfo // io.github.xsyetopz.jagfx.core.model/Voice.pitchLfo|{}pitchLfo[0]
+        final fun <get-pitchLfo>(): io.github.xsyetopz.jagfx.core.model/Lfo? // io.github.xsyetopz.jagfx.core.model/Voice.pitchLfo.<get-pitchLfo>|<get-pitchLfo>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Voice.component1|component1(){}[0]
+    final fun component10(): io.github.xsyetopz.jagfx.core.model/Filter? // io.github.xsyetopz.jagfx.core.model/Voice.component10|component10(){}[0]
+    final fun component2(): io.github.xsyetopz.jagfx.core.model/Envelope // io.github.xsyetopz.jagfx.core.model/Voice.component2|component2(){}[0]
+    final fun component3(): io.github.xsyetopz.jagfx.core.model/Lfo? // io.github.xsyetopz.jagfx.core.model/Voice.component3|component3(){}[0]
+    final fun component4(): io.github.xsyetopz.jagfx.core.model/Lfo? // io.github.xsyetopz.jagfx.core.model/Voice.component4|component4(){}[0]
+    final fun component5(): io.github.xsyetopz.jagfx.core.model/Gate? // io.github.xsyetopz.jagfx.core.model/Voice.component5|component5(){}[0]
+    final fun component6(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Partial> // io.github.xsyetopz.jagfx.core.model/Voice.component6|component6(){}[0]
+    final fun component7(): io.github.xsyetopz.jagfx.core.model/Echo // io.github.xsyetopz.jagfx.core.model/Voice.component7|component7(){}[0]
+    final fun component8(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Voice.component8|component8(){}[0]
+    final fun component9(): io.github.xsyetopz.jagfx.core.model/Milliseconds // io.github.xsyetopz.jagfx.core.model/Voice.component9|component9(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Envelope = ..., io.github.xsyetopz.jagfx.core.model/Envelope = ..., io.github.xsyetopz.jagfx.core.model/Lfo? = ..., io.github.xsyetopz.jagfx.core.model/Lfo? = ..., io.github.xsyetopz.jagfx.core.model/Gate? = ..., kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Partial> = ..., io.github.xsyetopz.jagfx.core.model/Echo = ..., io.github.xsyetopz.jagfx.core.model/Milliseconds = ..., io.github.xsyetopz.jagfx.core.model/Milliseconds = ..., io.github.xsyetopz.jagfx.core.model/Filter? = ...): io.github.xsyetopz.jagfx.core.model/Voice // io.github.xsyetopz.jagfx.core.model/Voice.copy|copy(io.github.xsyetopz.jagfx.core.model.Envelope;io.github.xsyetopz.jagfx.core.model.Envelope;io.github.xsyetopz.jagfx.core.model.Lfo?;io.github.xsyetopz.jagfx.core.model.Lfo?;io.github.xsyetopz.jagfx.core.model.Gate?;kotlin.collections.List<io.github.xsyetopz.jagfx.core.model.Partial>;io.github.xsyetopz.jagfx.core.model.Echo;io.github.xsyetopz.jagfx.core.model.Milliseconds;io.github.xsyetopz.jagfx.core.model.Milliseconds;io.github.xsyetopz.jagfx.core.model.Filter?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Voice.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Voice.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Voice.toString|toString(){}[0]
+}
+
+final value class io.github.xsyetopz.jagfx.core.model/Milliseconds { // io.github.xsyetopz.jagfx.core.model/Milliseconds|null[0]
+    constructor <init>(kotlin/Int) // io.github.xsyetopz.jagfx.core.model/Milliseconds.<init>|<init>(kotlin.Int){}[0]
+
+    final val value // io.github.xsyetopz.jagfx.core.model/Milliseconds.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Milliseconds.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Milliseconds.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Milliseconds.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Milliseconds.toString|toString(){}[0]
+}
+
+final value class io.github.xsyetopz.jagfx.core.model/Percent { // io.github.xsyetopz.jagfx.core.model/Percent|null[0]
+    constructor <init>(kotlin/Int) // io.github.xsyetopz.jagfx.core.model/Percent.<init>|<init>(kotlin.Int){}[0]
+
+    final val value // io.github.xsyetopz.jagfx.core.model/Percent.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Percent.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Percent.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Percent.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Percent.toString|toString(){}[0]
+}
+
+final value class io.github.xsyetopz.jagfx.core.model/Waveform { // io.github.xsyetopz.jagfx.core.model/Waveform|null[0]
+    constructor <init>(kotlin/Int) // io.github.xsyetopz.jagfx.core.model/Waveform.<init>|<init>(kotlin.Int){}[0]
+
+    final val id // io.github.xsyetopz.jagfx.core.model/Waveform.id|{}id[0]
+        final fun <get-id>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Waveform.id.<get-id>|<get-id>(){}[0]
+    final val isUndefined // io.github.xsyetopz.jagfx.core.model/Waveform.isUndefined|{}isUndefined[0]
+        final fun <get-isUndefined>(): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Waveform.isUndefined.<get-isUndefined>|<get-isUndefined>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.model/Waveform.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/Waveform.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.model/Waveform.toString|toString(){}[0]
+
+    final object Companion { // io.github.xsyetopz.jagfx.core.model/Waveform.Companion|null[0]
+        final val Noise // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.Noise|{}Noise[0]
+            final fun <get-Noise>(): io.github.xsyetopz.jagfx.core.model/Waveform // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.Noise.<get-Noise>|<get-Noise>(){}[0]
+        final val Off // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.Off|{}Off[0]
+            final fun <get-Off>(): io.github.xsyetopz.jagfx.core.model/Waveform // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.Off.<get-Off>|<get-Off>(){}[0]
+        final val Saw // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.Saw|{}Saw[0]
+            final fun <get-Saw>(): io.github.xsyetopz.jagfx.core.model/Waveform // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.Saw.<get-Saw>|<get-Saw>(){}[0]
+        final val Sine // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.Sine|{}Sine[0]
+            final fun <get-Sine>(): io.github.xsyetopz.jagfx.core.model/Waveform // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.Sine.<get-Sine>|<get-Sine>(){}[0]
+        final val Square // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.Square|{}Square[0]
+            final fun <get-Square>(): io.github.xsyetopz.jagfx.core.model/Waveform // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.Square.<get-Square>|<get-Square>(){}[0]
+        final val selectable // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.selectable|{}selectable[0]
+            final fun <get-selectable>(): kotlin.collections/List<io.github.xsyetopz.jagfx.core.model/Waveform> // io.github.xsyetopz.jagfx.core.model/Waveform.Companion.selectable.<get-selectable>|<get-selectable>(){}[0]
+    }
+}
+
+final object io.github.xsyetopz.jagfx.core.model/SynthLimits { // io.github.xsyetopz.jagfx.core.model/SynthLimits|null[0]
+    final const val MAX_PARTIALS // io.github.xsyetopz.jagfx.core.model/SynthLimits.MAX_PARTIALS|{}MAX_PARTIALS[0]
+        final fun <get-MAX_PARTIALS>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/SynthLimits.MAX_PARTIALS.<get-MAX_PARTIALS>|<get-MAX_PARTIALS>(){}[0]
+    final const val MAX_POLES // io.github.xsyetopz.jagfx.core.model/SynthLimits.MAX_POLES|{}MAX_POLES[0]
+        final fun <get-MAX_POLES>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/SynthLimits.MAX_POLES.<get-MAX_POLES>|<get-MAX_POLES>(){}[0]
+    final const val MAX_SEGMENTS // io.github.xsyetopz.jagfx.core.model/SynthLimits.MAX_SEGMENTS|{}MAX_SEGMENTS[0]
+        final fun <get-MAX_SEGMENTS>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/SynthLimits.MAX_SEGMENTS.<get-MAX_SEGMENTS>|<get-MAX_SEGMENTS>(){}[0]
+    final const val SMART16_MAX // io.github.xsyetopz.jagfx.core.model/SynthLimits.SMART16_MAX|{}SMART16_MAX[0]
+        final fun <get-SMART16_MAX>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/SynthLimits.SMART16_MAX.<get-SMART16_MAX>|<get-SMART16_MAX>(){}[0]
+    final const val SMART16_MIN // io.github.xsyetopz.jagfx.core.model/SynthLimits.SMART16_MIN|{}SMART16_MIN[0]
+        final fun <get-SMART16_MIN>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/SynthLimits.SMART16_MIN.<get-SMART16_MIN>|<get-SMART16_MIN>(){}[0]
+    final const val U16_MAX // io.github.xsyetopz.jagfx.core.model/SynthLimits.U16_MAX|{}U16_MAX[0]
+        final fun <get-U16_MAX>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/SynthLimits.U16_MAX.<get-U16_MAX>|<get-U16_MAX>(){}[0]
+    final const val U8_MAX // io.github.xsyetopz.jagfx.core.model/SynthLimits.U8_MAX|{}U8_MAX[0]
+        final fun <get-U8_MAX>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/SynthLimits.U8_MAX.<get-U8_MAX>|<get-U8_MAX>(){}[0]
+    final const val USMART16_MAX // io.github.xsyetopz.jagfx.core.model/SynthLimits.USMART16_MAX|{}USMART16_MAX[0]
+        final fun <get-USMART16_MAX>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/SynthLimits.USMART16_MAX.<get-USMART16_MAX>|<get-USMART16_MAX>(){}[0]
+    final const val VOICE_SLOTS // io.github.xsyetopz.jagfx.core.model/SynthLimits.VOICE_SLOTS|{}VOICE_SLOTS[0]
+        final fun <get-VOICE_SLOTS>(): kotlin/Int // io.github.xsyetopz.jagfx.core.model/SynthLimits.VOICE_SLOTS.<get-VOICE_SLOTS>|<get-VOICE_SLOTS>(){}[0]
+}

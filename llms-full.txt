@@ -1,6 +1,6 @@
 # JagFx
 
-JagFx is a .NET 8 toolkit for Old School RuneScape `.synth` sound-effect files. The repository includes a binary reader/writer, JSON interchange format, DSP renderer, CLI, Avalonia desktop editor, JavaScript helpers, and WASM package work.
+JagFx is a Kotlin Multiplatform toolkit (Kotlin 2.4.20, Compose Multiplatform 1.12.1, JDK 21) for Old School RuneScape `.synth` sound-effect files. The repository includes a binary codec, JSON interchange format, DSP renderer, CLI, a Compose editor for desktop and the browser, and npm packages built from Kotlin/JS and Kotlin/Wasm.
 
 ## `.synth` format
 
@@ -43,25 +43,26 @@ Important binary/JSON constraints:
 - Partial amplitude `0` is the binary terminator, so stored partial amplitudes use `1` through `32767`.
 - `USmart16` values use `0` through `32767`.
 - `Smart16` values use `-32768` through `16383`.
-- Four reference files have known binary round-trip asymmetries; tests compare against `SynthFileWriter.Write(SynthFileReader.Read(bytes))` for those files.
+- Every reference file round-trips byte-exact through JSON and the binary codec. If a future file has a binary asymmetry, its tests compare against `SynthCodec.encode(SynthCodec.decode(bytes).patch)`, not the original bytes.
 
 ## CLI
 
 Run from the repository:
 
 ```bash
-dotnet run --project src/JagFx.Cli -- to-json input.synth output.json
-dotnet run --project src/JagFx.Cli -- from-json input.json output.synth
-dotnet run --project src/JagFx.Cli -- convert input.synth output.wav
-dotnet run --project src/JagFx.Cli -- inspect input.synth
+./gradlew :cli:run --args='to-json input.synth output.json'
+./gradlew :cli:run --args='from-json input.json output.synth'
+./gradlew :cli:run --args='input.synth output.wav'
+./gradlew :cli:run --args='inspect input.synth'
 ```
 
-Installed CLI shape:
+Installed CLI shape (`./gradlew :cli:installDist` installs `cli/build/install/jagfx/bin/jagfx`; release zips need Java 21 or later):
 
 ```bash
 jagfx to-json <input.synth> [output.json]
 jagfx from-json <input.json> <output.synth>
-jagfx convert <input.synth> <output.wav> [loopCount]
+jagfx <input.synth> <output.wav> [loopCount]
+jagfx -i <input.synth> -o <output.wav> [-l <loops>]
 jagfx inspect <file.synth>
 ```
 
@@ -96,31 +97,30 @@ jagfx inspect <file.synth>
 
 ## Project layout
 
-| Project | Role |
+| Module | Role |
 | --- | --- |
-| `JagFx.Core` | Value types and `AudioConstants`. |
-| `JagFx.Domain` | Immutable records for patches, voices, envelopes, filters, partials, echo, and loop segments. |
-| `JagFx.Io` | Binary `.synth` reader/writer, JSON serializer/mapper, and WAV writer. |
-| `JagFx.Synthesis` | DSP renderer: `PatchRenderer`, `VoiceSynthesizer`, `AudioFilter`, waveform tables, and envelope generator. |
-| `JagFx.Cli` | `System.CommandLine` CLI commands. |
-| `JagFx.Desktop` | Avalonia 11 MVVM editor. |
-| `JagFx.TestData` | Embedded test fixtures. |
-| `JavaRandom` | Java-compatible RNG for OSRS noise waveform generation. |
-| `SmartInt` | Variable-length integer codec. |
-| `packages/jagfx` | JavaScript/TypeScript helpers around the CLI and JSON patch format. |
-| `packages/jagfx-wasm` | WASM package and browser playground. |
+| `:core:model` | Immutable data classes for patches, voices, envelopes, filters, partials, echo, and loops; `Milliseconds` and `Percent` value classes. |
+| `:core:format` | Binary `.synth` codec (`SynthCodec`) and JSON (`SynthJson`). |
+| `:core:engine` | DSP renderer: `Renderer`, `VoiceSynthesizer`, `VoiceFilter`, waveform tables with a Java-compatible noise RNG, envelope generator, and `Wav` writer. |
+| `:sharedUI` | Compose Multiplatform editor UI. |
+| `:desktopApp` | JVM desktop app. |
+| `:webApp` | Kotlin/Wasm browser app. |
+| `:cli` | Clikt CLI commands. |
+| `:benchmark` | Render benchmarks. |
+| `:bindings` | Kotlin/JS and Kotlin/Wasm exports for the npm packages. |
+| `packages/jagfx` | JavaScript/TypeScript helpers for the JSON patch format, backed by Kotlin/JS. |
+| `packages/jagfx-node` | Node rendering bindings, backed by Kotlin/JS. |
+| `packages/jagfx-wasm` | Kotlin/Wasm ESM package and browser playground. |
 
 ## Build and test
 
 ```bash
-dotnet build
-dotnet test
-dotnet format
-bun --cwd=packages/jagfx test
-bun --cwd=packages/jagfx-wasm test
+./gradlew check            # tests, spotless, detekt
+./gradlew spotlessApply
+./gradlew :bindings:syncNpmPackages
+bun run build:js
+bun run test:js
 ```
-
-Use `/usr/local/share/dotnet/dotnet` if the default `dotnet` resolves to an SDK newer than the repository expects.
 
 ## Repository docs
 

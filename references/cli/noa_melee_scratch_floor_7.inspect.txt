@@ -1,0 +1,85 @@
+; File: noa_melee_scratch_floor_7.synth
+; Size: 148 bytes
+
+0000:                    voice 0   , active, wf=noise
+0000: 04                           wf=4
+0001: 00 00 00 28                  start=40
+0005: 00 00 04 B0                  end=1200
+0009: 04                           segs=4
+000A: 00 00                        seg0.dur=0
+000C: 00 00                        seg0.peak=0
+000E: 50 FE                        seg1.dur=20734
+0010: 09 E0                        seg1.peak=2528
+0012: DA 65                        seg2.dur=55909
+0014: 3F 2E                        seg2.peak=16174
+0016: FF FF                        seg3.dur=65535
+0018: FF FF                        seg3.peak=65535
+001A: 00                           wf=0
+001B: 00 00 00 00                  start=0
+001F: 00 00 00 64                  end=100
+0023: 05                           segs=5
+0024: 00 00                        seg0.dur=0
+0026: 00 00                        seg0.peak=0
+0028: 58 39                        seg1.dur=22585
+002A: C6 3D                        seg1.peak=50749
+002C: B3 58                        seg2.dur=45912
+002E: E3 1F                        seg2.peak=58143
+0030: FF FE                        seg3.dur=65534
+0032: FF FF                        seg3.peak=65535
+0034: FF FF                        seg4.dur=65535
+0036: 00 00                        seg4.peak=0
+0038: 00                           vib=none=0
+0039: 00                           trem=none=0
+003A:                    gate      , present
+003A: 01                           wf=1
+003B: 00 00 01 90                  start=400
+003F: 00 00 03 E8                  end=1000
+0043: 05                           segs=5
+0044: 00 00                        seg0.dur=0
+0046: 23 73                        seg0.peak=9075
+0048: 30 73                        seg1.dur=12403
+004A: 4E 1D                        seg1.peak=19997
+004C: 72 42                        seg2.dur=29250
+004E: 56 A6                        seg2.peak=22182
+0050: F7 52                        seg3.dur=63314
+0052: 8D 21                        seg3.peak=36129
+0054: FF FF                        seg4.dur=65535
+0056: 00 00                        seg4.peak=0
+0058: 00                           wf=0
+0059: 00 00 00 00                  start=0
+005D: 00 00 00 64                  end=100
+0061: 05                           segs=5
+0062: 00 00                        seg0.dur=0
+0064: 81 07                        seg0.peak=33031
+0066: 5B E1                        seg1.dur=23521
+0068: C4 9C                        seg1.peak=50332
+006A: 9F E9                        seg2.dur=40937
+006C: CB C7                        seg2.peak=52167
+006E: CC CC                        seg3.dur=52428
+0070: CC CD                        seg3.peak=52429
+0072: FF FF                        seg4.dur=65535
+0074: CA C1                        seg4.peak=51905
+0076: 64                           osc0=100
+0077: C0 46                        pitch=70
+0079: 00                           delay=0
+007A: 59                           osc1=89
+007B: C0 78                        pitch=120
+007D: 00                           delay=0
+007E: 00                           osc=end=0
+007F: 81 5E              echo      , delay=350
+0081: 00                           feedback=0
+0082: 01 F4              time      , dur=500
+0084: 00 00                        start=0
+0086: 00                           filt=none=0
+0087: 00                 empty     , voice 1=0
+0088: 00                 empty     , voice 2=0
+0089: 00                 empty     , voice 3=0
+008A: 00                 empty     , voice 4=0
+008B: 00                 empty     , voice 5=0
+008C: 00                 empty     , voice 6=0
+008D: 00                 empty     , voice 7=0
+008E: 00                 empty     , voice 8=0
+008F: 00                 empty     , voice 9=0
+0090: 00 00              loop      , start=0
+0092: 00 00                        end=0
+; Parsed 148/148 bytes (100.0%)

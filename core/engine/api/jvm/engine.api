@@ -1,0 +1,22 @@
+public final class io/github/xsyetopz/jagfx/core/engine/PcmEncoding : java/lang/Enum {
+	public static final field Pcm16 Lio/github/xsyetopz/jagfx/core/engine/PcmEncoding;
+	public static final field Pcm8 Lio/github/xsyetopz/jagfx/core/engine/PcmEncoding;
+	public final fun getBitsPerSample ()I
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/xsyetopz/jagfx/core/engine/PcmEncoding;
+	public static fun values ()[Lio/github/xsyetopz/jagfx/core/engine/PcmEncoding;
+}
+
+public final class io/github/xsyetopz/jagfx/core/engine/Renderer {
+	public static final field INSTANCE Lio/github/xsyetopz/jagfx/core/engine/Renderer;
+	public static final field SAMPLE_RATE I
+	public final fun render (Lio/github/xsyetopz/jagfx/core/model/Patch;ILjava/lang/Integer;)[S
+	public static synthetic fun render$default (Lio/github/xsyetopz/jagfx/core/engine/Renderer;Lio/github/xsyetopz/jagfx/core/model/Patch;ILjava/lang/Integer;ILjava/lang/Object;)[S
+}
+
+public final class io/github/xsyetopz/jagfx/core/engine/Wav {
+	public static final field INSTANCE Lio/github/xsyetopz/jagfx/core/engine/Wav;
+	public final fun encode ([SLio/github/xsyetopz/jagfx/core/engine/PcmEncoding;I)[B
+	public static synthetic fun encode$default (Lio/github/xsyetopz/jagfx/core/engine/Wav;[SLio/github/xsyetopz/jagfx/core/engine/PcmEncoding;IILjava/lang/Object;)[B
+}
+

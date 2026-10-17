@@ -45,10 +45,18 @@ if command -v sips >/dev/null 2>&1 && command -v iconutil >/dev/null 2>&1; then
   mkdir -p "$iconset"
   trap 'rm -rf "$icon_tmp"' EXIT
 
+  # Apple icon grid: 824x824 rounded-rect body centred in a 1024 canvas (100 px margin), with a soft shadow.
+  macos_png="$icon_tmp/macos-1024.png"
+  magick -size 824x824 xc:none -fill white -draw "roundrectangle 0,0 823,823 185,185" "$icon_tmp/mask.png"
+  magick "$PNG" -resize 824x824 "$icon_tmp/mask.png" -compose DstIn -composite "$icon_tmp/rounded.png"
+  magick "$icon_tmp/rounded.png" -background none -gravity center -extent 1024x1024 "$icon_tmp/body.png"
+  magick "$icon_tmp/body.png" \( +clone -background black -shadow 50x12+0+10 \) +swap \
+    -background none -gravity center -compose Over -composite -extent 1024x1024 "$macos_png"
+
   for size in 16 32 128 256 512; do
-    sips -z "$size" "$size" "$PNG" --out "$iconset/icon_${size}x${size}.png" >/dev/null
+    sips -z "$size" "$size" "$macos_png" --out "$iconset/icon_${size}x${size}.png" >/dev/null
     doubled=$((size * 2))
-    sips -z "$doubled" "$doubled" "$PNG" --out "$iconset/icon_${size}x${size}@2x.png" >/dev/null
+    sips -z "$doubled" "$doubled" "$macos_png" --out "$iconset/icon_${size}x${size}@2x.png" >/dev/null
   done
 
   iconutil -c icns "$iconset" -o "$ICNS"

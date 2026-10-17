@@ -1,0 +1,204 @@
+; File: coverage_gate_echo_loop.synth
+; Size: 367 bytes
+
+0000:                    voice 0   , active, wf=square
+0000: 01                           wf=1
+0001: 00 00 00 C8                  start=200
+0005: 00 00 01 90                  end=400
+0009: 02                           segs=2
+000A: 00 00                        seg0.dur=0
+000C: 4E 20                        seg0.peak=20000
+000E: FF FF                        seg1.dur=65535
+0010: AF C8                        seg1.peak=45000
+0012: 00                           wf=0
+0013: 00 00 00 00                  start=0
+0017: 00 00 00 64                  end=100
+001B: 03                           segs=3
+001C: 00 00                        seg0.dur=0
+001E: 00 00                        seg0.peak=0
+0020: 17 70                        seg1.dur=6000
+0022: FF FF                        seg1.peak=65535
+0024: FF FF                        seg2.dur=65535
+0026: 75 30                        seg2.peak=30000
+0028:                    vib       , present
+0028: 04                           wf=4
+0029: 00 00 00 0A                  start=10
+002D: 00 00 00 3C                  end=60
+0031: 01                           segs=1
+0032: 00 00                        seg0.dur=0
+0034: FF FF                        seg0.peak=65535
+0036: 00                           wf=0
+0037: 00 00 00 00                  start=0
+003B: 00 00 00 64                  end=100
+003F: 02                           segs=2
+0040: 00 00                        seg0.dur=0
+0042: 1F 40                        seg0.peak=8000
+0044: FF FF                        seg1.dur=65535
+0046: 4E 20                        seg1.peak=20000
+0048:                    trem      , present
+0048: 03                           wf=3
+0049: 00 00 00 14                  start=20
+004D: 00 00 00 50                  end=80
+0051: 02                           segs=2
+0052: 00 00                        seg0.dur=0
+0054: 75 30                        seg0.peak=30000
+0056: FF FF                        seg1.dur=65535
+0058: FF FF                        seg1.peak=65535
+005A: 00                           wf=0
+005B: 00 00 00 00                  start=0
+005F: 00 00 00 64                  end=100
+0063: 01                           segs=1
+0064: 00 00                        seg0.dur=0
+0066: 9C 40                        seg0.peak=40000
+0068:                    gate      , present
+0068: 02                           wf=2
+0069: 00 00 4E 20                  start=20000
+006D: 00 00 EA 60                  end=60000
+0071: 02                           segs=2
+0072: 00 00                        seg0.dur=0
+0074: 00 00                        seg0.peak=0
+0076: FF FF                        seg1.dur=65535
+0078: 00 FF                        seg1.peak=255
+007A: 00                           wf=0
+007B: 00 00 00 00                  start=0
+007F: 00 00 00 00                  end=0
+0083: 02                           segs=2
+0084: 00 00                        seg0.dur=0
+0086: 00 80                        seg0.peak=128
+0088: FF FF                        seg1.dur=65535
+008A: 00 40                        seg1.peak=64
+008C: 64                           osc0=100
+008D: 40                           pitch=0
+008E: 00                           delay=0
+008F: 32                           osc1=50
+0090: C0 78                        pitch=120
+0092: 28                           delay=40
+0093: 1E                           osc2=30
+0094: 04                           pitch=-60
+0095: 0A                           delay=10
+0096: 00                           osc=end=0
+0097: 3C                 echo      , delay=60
+0098: 2D                           feedback=45
+0099: 01 F4              time      , dur=500
+009B: 00 00                        start=0
+009D: 00                           filt=none=0
+009E:                    voice 1   , active, wf=saw
+009E: 03                           wf=3
+009F: 00 00 00 64                  start=100
+00A3: 00 00 00 FA                  end=250
+00A7: 02                           segs=2
+00A8: 00 00                        seg0.dur=0
+00AA: 75 30                        seg0.peak=30000
+00AC: FF FF                        seg1.dur=65535
+00AE: 27 10                        seg1.peak=10000
+00B0: 00                           wf=0
+00B1: 00 00 00 00                  start=0
+00B5: 00 00 00 64                  end=100
+00B9: 02                           segs=2
+00BA: 00 00                        seg0.dur=0
+00BC: FF FF                        seg0.peak=65535
+00BE: FF FF                        seg1.dur=65535
+00C0: 00 00                        seg1.peak=0
+00C2: 00                           vib=none=0
+00C3: 00                           trem=none=0
+00C4: 00                           gate=none=0
+00C5: 50                           osc0=80
+00C6: 40                           pitch=0
+00C7: 00                           delay=0
+00C8: 00                           osc=end=0
+00C9: 00                 echo      , delay=0
+00CA: 00                           feedback=0
+00CB: 01 90              time      , dur=400
+00CD: 00 96                        start=150
+00CF: 22                           filt: ch0=2, ch1=2=34
+00D0: 00 64                        unity0=100
+00D2: 0F A0                        unity1=4000
+00D4: 33                           modmask=51
+00D5: 75 30                        ch0.pole0.freq=30000
+00D7: 27 10                        mag=10000
+00D9: 9C 40                        ch0.pole1.freq=40000
+00DB: 3A 98                        mag=15000
+00DD: AF C8                        ch1.pole0.freq=45000
+00DF: 4E 20                        mag=20000
+00E1: C3 50                        ch1.pole1.freq=50000
+00E3: 61 A8                        mag=25000
+00E5: 88 B8                        ch0.pole0.freq_mod=35000
+00E7: 27 10                        mag_mod=10000
+00E9: A0 28                        ch0.pole1.freq_mod=41000
+00EB: 2E E0                        mag_mod=12000
+00ED: B3 B0                        ch1.pole0.freq_mod=46000
+00EF: 55 F0                        mag_mod=22000
+00F1: CB 20                        ch1.pole1.freq_mod=52000
+00F3: 61 A8                        mag_mod=25000
+00F5: 02                           env_segs=2
+00F6: 00 00                        seg0.dur=0
+00F8: 00 00                        seg0.peak=0
+00FA: FF FF                        seg1.dur=65535
+00FC: FF FF                        seg1.peak=65535
+00FE:                    voice 2   , active, wf=noise
+00FE: 04                           wf=4
+00FF: 00 00 01 2C                  start=300
+0103: 00 00 03 84                  end=900
+0107: 00                           segs=0
+0108: 00                           wf=0
+0109: 00 00 00 00                  start=0
+010D: 00 00 75 30                  end=30000
+0111: 00                           segs=0
+0112: 00                           vib=none=0
+0113: 00                           trem=none=0
+0114:                    gate      , present
+0114: 01                           wf=1
+0115: 00 00 27 10                  start=10000
+0119: 00 00 75 30                  end=30000
+011D: 01                           segs=1
+011E: 00 00                        seg0.dur=0
+0120: 00 C8                        seg0.peak=200
+0122: 00                           wf=0
+0123: 00 00 00 00                  start=0
+0127: 00 00 00 00                  end=0
+012B: 01                           segs=1
+012C: 00 00                        seg0.dur=0
+012E: 00 64                        seg0.peak=100
+0130: 46                           osc0=70
+0131: 40                           pitch=0
+0132: 00                           delay=0
+0133: 00                           osc=end=0
+0134: 00                 echo      , delay=0
+0135: 00                           feedback=0
+0136: 01 2C              time      , dur=300
+0138: 00 32                        start=50
+013A: 00                           filt=none=0
+013B: 00                 empty     , voice 3=0
+013C: 00                 empty     , voice 4=0
+013D: 00                 empty     , voice 5=0
+013E: 00                 empty     , voice 6=0
+013F: 00                 empty     , voice 7=0
+0140: 00                 empty     , voice 8=0
+0141:                    voice 9   , active, wf=sine
+0141: 02                           wf=2
+0142: 00 00 00 64                  start=100
+0146: 00 00 00 64                  end=100
+014A: 01                           segs=1
+014B: 00 00                        seg0.dur=0
+014D: 75 30                        seg0.peak=30000
+014F: 00                           wf=0
+0150: 00 00 00 00                  start=0
+0154: 00 00 00 64                  end=100
+0158: 01                           segs=1
+0159: 00 00                        seg0.dur=0
+015B: FF FF                        seg0.peak=65535
+015D: 00                           vib=none=0
+015E: 00                           trem=none=0
+015F: 00                           gate=none=0
+0160: 64                           osc0=100
+0161: 40                           pitch=0
+0162: 00                           delay=0
+0163: 00                           osc=end=0
+0164: 00                 echo      , delay=0
+0165: 00                           feedback=0
+0166: 00 05              time      , dur=5
+0168: 02 58                        start=600
+016A: 00                           filt=none=0
+016B: 00 64              loop      , start=100
+016D: 01 2C                        end=300
+; Parsed 367/367 bytes (100.0%)

@@ -1,0 +1,150 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, macosArm64, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.xsyetopz.jagfx:format>
+final enum class io.github.xsyetopz.jagfx.core.format/PatchInvariant : kotlin/Enum<io.github.xsyetopz.jagfx.core.format/PatchInvariant> { // io.github.xsyetopz.jagfx.core.format/PatchInvariant|null[0]
+    enum entry I1 // io.github.xsyetopz.jagfx.core.format/PatchInvariant.I1|null[0]
+    enum entry I2 // io.github.xsyetopz.jagfx.core.format/PatchInvariant.I2|null[0]
+    enum entry I3 // io.github.xsyetopz.jagfx.core.format/PatchInvariant.I3|null[0]
+    enum entry I4 // io.github.xsyetopz.jagfx.core.format/PatchInvariant.I4|null[0]
+
+    final val description // io.github.xsyetopz.jagfx.core.format/PatchInvariant.description|{}description[0]
+        final fun <get-description>(): kotlin/String // io.github.xsyetopz.jagfx.core.format/PatchInvariant.description.<get-description>|<get-description>(){}[0]
+    final val entries // io.github.xsyetopz.jagfx.core.format/PatchInvariant.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<io.github.xsyetopz.jagfx.core.format/PatchInvariant> // io.github.xsyetopz.jagfx.core.format/PatchInvariant.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): io.github.xsyetopz.jagfx.core.format/PatchInvariant // io.github.xsyetopz.jagfx.core.format/PatchInvariant.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<io.github.xsyetopz.jagfx.core.format/PatchInvariant> // io.github.xsyetopz.jagfx.core.format/PatchInvariant.values|values#static(){}[0]
+}
+
+final enum class io.github.xsyetopz.jagfx.core.format/SynthFormatError : kotlin/Enum<io.github.xsyetopz.jagfx.core.format/SynthFormatError> { // io.github.xsyetopz.jagfx.core.format/SynthFormatError|null[0]
+    enum entry GitLfsPointer // io.github.xsyetopz.jagfx.core.format/SynthFormatError.GitLfsPointer|null[0]
+    enum entry InvalidPoleCount // io.github.xsyetopz.jagfx.core.format/SynthFormatError.InvalidPoleCount|null[0]
+    enum entry TooManyPartials // io.github.xsyetopz.jagfx.core.format/SynthFormatError.TooManyPartials|null[0]
+    enum entry TrailingData // io.github.xsyetopz.jagfx.core.format/SynthFormatError.TrailingData|null[0]
+
+    final val code // io.github.xsyetopz.jagfx.core.format/SynthFormatError.code|{}code[0]
+        final fun <get-code>(): kotlin/String // io.github.xsyetopz.jagfx.core.format/SynthFormatError.code.<get-code>|<get-code>(){}[0]
+    final val entries // io.github.xsyetopz.jagfx.core.format/SynthFormatError.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<io.github.xsyetopz.jagfx.core.format/SynthFormatError> // io.github.xsyetopz.jagfx.core.format/SynthFormatError.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): io.github.xsyetopz.jagfx.core.format/SynthFormatError // io.github.xsyetopz.jagfx.core.format/SynthFormatError.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<io.github.xsyetopz.jagfx.core.format/SynthFormatError> // io.github.xsyetopz.jagfx.core.format/SynthFormatError.values|values#static(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.format/DecodeResult { // io.github.xsyetopz.jagfx.core.format/DecodeResult|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Patch, kotlin.collections/List<kotlin/String>) // io.github.xsyetopz.jagfx.core.format/DecodeResult.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Patch;kotlin.collections.List<kotlin.String>){}[0]
+
+    final val patch // io.github.xsyetopz.jagfx.core.format/DecodeResult.patch|{}patch[0]
+        final fun <get-patch>(): io.github.xsyetopz.jagfx.core.model/Patch // io.github.xsyetopz.jagfx.core.format/DecodeResult.patch.<get-patch>|<get-patch>(){}[0]
+    final val warnings // io.github.xsyetopz.jagfx.core.format/DecodeResult.warnings|{}warnings[0]
+        final fun <get-warnings>(): kotlin.collections/List<kotlin/String> // io.github.xsyetopz.jagfx.core.format/DecodeResult.warnings.<get-warnings>|<get-warnings>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Patch // io.github.xsyetopz.jagfx.core.format/DecodeResult.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<kotlin/String> // io.github.xsyetopz.jagfx.core.format/DecodeResult.component2|component2(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Patch = ..., kotlin.collections/List<kotlin/String> = ...): io.github.xsyetopz.jagfx.core.format/DecodeResult // io.github.xsyetopz.jagfx.core.format/DecodeResult.copy|copy(io.github.xsyetopz.jagfx.core.model.Patch;kotlin.collections.List<kotlin.String>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.format/DecodeResult.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/DecodeResult.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.format/DecodeResult.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.format/FilterDecodeResult { // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Filter?, kotlin.collections/List<kotlin/String>) // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Filter?;kotlin.collections.List<kotlin.String>){}[0]
+
+    final val filter // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.filter|{}filter[0]
+        final fun <get-filter>(): io.github.xsyetopz.jagfx.core.model/Filter? // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.filter.<get-filter>|<get-filter>(){}[0]
+    final val warnings // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.warnings|{}warnings[0]
+        final fun <get-warnings>(): kotlin.collections/List<kotlin/String> // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.warnings.<get-warnings>|<get-warnings>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Filter? // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<kotlin/String> // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.component2|component2(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Filter? = ..., kotlin.collections/List<kotlin/String> = ...): io.github.xsyetopz.jagfx.core.format/FilterDecodeResult // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.copy|copy(io.github.xsyetopz.jagfx.core.model.Filter?;kotlin.collections.List<kotlin.String>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.format/FilterDecodeResult.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.format/InvalidPatchException : kotlin/Exception { // io.github.xsyetopz.jagfx.core.format/InvalidPatchException|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.format/PatchInvariant, kotlin/Int, kotlin/String) // io.github.xsyetopz.jagfx.core.format/InvalidPatchException.<init>|<init>(io.github.xsyetopz.jagfx.core.format.PatchInvariant;kotlin.Int;kotlin.String){}[0]
+
+    final val invariant // io.github.xsyetopz.jagfx.core.format/InvalidPatchException.invariant|{}invariant[0]
+        final fun <get-invariant>(): io.github.xsyetopz.jagfx.core.format/PatchInvariant // io.github.xsyetopz.jagfx.core.format/InvalidPatchException.invariant.<get-invariant>|<get-invariant>(){}[0]
+    final val slot // io.github.xsyetopz.jagfx.core.format/InvalidPatchException.slot|{}slot[0]
+        final fun <get-slot>(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/InvalidPatchException.slot.<get-slot>|<get-slot>(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.format/SynthFormatException : kotlin/Exception { // io.github.xsyetopz.jagfx.core.format/SynthFormatException|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.format/SynthFormatError, kotlin/Int, kotlin/String, kotlin/String) // io.github.xsyetopz.jagfx.core.format/SynthFormatException.<init>|<init>(io.github.xsyetopz.jagfx.core.format.SynthFormatError;kotlin.Int;kotlin.String;kotlin.String){}[0]
+
+    final val error // io.github.xsyetopz.jagfx.core.format/SynthFormatException.error|{}error[0]
+        final fun <get-error>(): io.github.xsyetopz.jagfx.core.format/SynthFormatError // io.github.xsyetopz.jagfx.core.format/SynthFormatException.error.<get-error>|<get-error>(){}[0]
+    final val field // io.github.xsyetopz.jagfx.core.format/SynthFormatException.field|{}field[0]
+        final fun <get-field>(): kotlin/String // io.github.xsyetopz.jagfx.core.format/SynthFormatException.field.<get-field>|<get-field>(){}[0]
+    final val offset // io.github.xsyetopz.jagfx.core.format/SynthFormatException.offset|{}offset[0]
+        final fun <get-offset>(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/SynthFormatException.offset.<get-offset>|<get-offset>(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.format/SynthJsonException : kotlin/Exception { // io.github.xsyetopz.jagfx.core.format/SynthJsonException|null[0]
+    constructor <init>(kotlin/String, kotlin/Throwable? = ...) // io.github.xsyetopz.jagfx.core.format/SynthJsonException.<init>|<init>(kotlin.String;kotlin.Throwable?){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.format/ToneDecodeResult { // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult|null[0]
+    constructor <init>(io.github.xsyetopz.jagfx.core.model/Voice, kotlin.collections/List<kotlin/String>) // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.<init>|<init>(io.github.xsyetopz.jagfx.core.model.Voice;kotlin.collections.List<kotlin.String>){}[0]
+
+    final val voice // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.voice|{}voice[0]
+        final fun <get-voice>(): io.github.xsyetopz.jagfx.core.model/Voice // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.voice.<get-voice>|<get-voice>(){}[0]
+    final val warnings // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.warnings|{}warnings[0]
+        final fun <get-warnings>(): kotlin.collections/List<kotlin/String> // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.warnings.<get-warnings>|<get-warnings>(){}[0]
+
+    final fun component1(): io.github.xsyetopz.jagfx.core.model/Voice // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<kotlin/String> // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.component2|component2(){}[0]
+    final fun copy(io.github.xsyetopz.jagfx.core.model/Voice = ..., kotlin.collections/List<kotlin/String> = ...): io.github.xsyetopz.jagfx.core.format/ToneDecodeResult // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.copy|copy(io.github.xsyetopz.jagfx.core.model.Voice;kotlin.collections.List<kotlin.String>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.format/ToneDecodeResult.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.format/TracedField { // io.github.xsyetopz.jagfx.core.format/TracedField|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin/String, kotlin/Int) // io.github.xsyetopz.jagfx.core.format/TracedField.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.String;kotlin.Int){}[0]
+
+    final val offset // io.github.xsyetopz.jagfx.core.format/TracedField.offset|{}offset[0]
+        final fun <get-offset>(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/TracedField.offset.<get-offset>|<get-offset>(){}[0]
+    final val path // io.github.xsyetopz.jagfx.core.format/TracedField.path|{}path[0]
+        final fun <get-path>(): kotlin/String // io.github.xsyetopz.jagfx.core.format/TracedField.path.<get-path>|<get-path>(){}[0]
+    final val size // io.github.xsyetopz.jagfx.core.format/TracedField.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/TracedField.size.<get-size>|<get-size>(){}[0]
+    final val value // io.github.xsyetopz.jagfx.core.format/TracedField.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/TracedField.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/TracedField.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/TracedField.component2|component2(){}[0]
+    final fun component3(): kotlin/String // io.github.xsyetopz.jagfx.core.format/TracedField.component3|component3(){}[0]
+    final fun component4(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/TracedField.component4|component4(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/Int = ..., kotlin/String = ..., kotlin/Int = ...): io.github.xsyetopz.jagfx.core.format/TracedField // io.github.xsyetopz.jagfx.core.format/TracedField.copy|copy(kotlin.Int;kotlin.Int;kotlin.String;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.format/TracedField.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.format/TracedField.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.format/TracedField.toString|toString(){}[0]
+}
+
+final object io.github.xsyetopz.jagfx.core.format/SynthCodec { // io.github.xsyetopz.jagfx.core.format/SynthCodec|null[0]
+    final fun decode(kotlin/ByteArray): io.github.xsyetopz.jagfx.core.format/DecodeResult // io.github.xsyetopz.jagfx.core.format/SynthCodec.decode|decode(kotlin.ByteArray){}[0]
+    final fun decode(kotlin/ByteArray, kotlin/Function1<io.github.xsyetopz.jagfx.core.format/TracedField, kotlin/Unit>): io.github.xsyetopz.jagfx.core.format/DecodeResult // io.github.xsyetopz.jagfx.core.format/SynthCodec.decode|decode(kotlin.ByteArray;kotlin.Function1<io.github.xsyetopz.jagfx.core.format.TracedField,kotlin.Unit>){}[0]
+    final fun decodeFilter(kotlin/ByteArray): io.github.xsyetopz.jagfx.core.format/FilterDecodeResult // io.github.xsyetopz.jagfx.core.format/SynthCodec.decodeFilter|decodeFilter(kotlin.ByteArray){}[0]
+    final fun decodeTone(kotlin/ByteArray): io.github.xsyetopz.jagfx.core.format/ToneDecodeResult // io.github.xsyetopz.jagfx.core.format/SynthCodec.decodeTone|decodeTone(kotlin.ByteArray){}[0]
+    final fun encode(io.github.xsyetopz.jagfx.core.model/Patch): kotlin/ByteArray // io.github.xsyetopz.jagfx.core.format/SynthCodec.encode|encode(io.github.xsyetopz.jagfx.core.model.Patch){}[0]
+    final fun encodeFilter(io.github.xsyetopz.jagfx.core.model/Filter?): kotlin/ByteArray // io.github.xsyetopz.jagfx.core.format/SynthCodec.encodeFilter|encodeFilter(io.github.xsyetopz.jagfx.core.model.Filter?){}[0]
+    final fun encodeTone(io.github.xsyetopz.jagfx.core.model/Voice): kotlin/ByteArray // io.github.xsyetopz.jagfx.core.format/SynthCodec.encodeTone|encodeTone(io.github.xsyetopz.jagfx.core.model.Voice){}[0]
+}
+
+final object io.github.xsyetopz.jagfx.core.format/SynthJson { // io.github.xsyetopz.jagfx.core.format/SynthJson|null[0]
+    final fun decode(kotlin/String): io.github.xsyetopz.jagfx.core.model/Patch // io.github.xsyetopz.jagfx.core.format/SynthJson.decode|decode(kotlin.String){}[0]
+    final fun decodeFilter(kotlin/String): io.github.xsyetopz.jagfx.core.model/Filter? // io.github.xsyetopz.jagfx.core.format/SynthJson.decodeFilter|decodeFilter(kotlin.String){}[0]
+    final fun decodeVoice(kotlin/String): io.github.xsyetopz.jagfx.core.model/Voice // io.github.xsyetopz.jagfx.core.format/SynthJson.decodeVoice|decodeVoice(kotlin.String){}[0]
+    final fun encode(io.github.xsyetopz.jagfx.core.model/Patch): kotlin/String // io.github.xsyetopz.jagfx.core.format/SynthJson.encode|encode(io.github.xsyetopz.jagfx.core.model.Patch){}[0]
+    final fun encodeFilter(io.github.xsyetopz.jagfx.core.model/Filter?): kotlin/String // io.github.xsyetopz.jagfx.core.format/SynthJson.encodeFilter|encodeFilter(io.github.xsyetopz.jagfx.core.model.Filter?){}[0]
+    final fun encodeVoice(io.github.xsyetopz.jagfx.core.model/Voice): kotlin/String // io.github.xsyetopz.jagfx.core.format/SynthJson.encodeVoice|encodeVoice(io.github.xsyetopz.jagfx.core.model.Voice){}[0]
+}

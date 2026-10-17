@@ -3,41 +3,61 @@ export interface RenderSynthToPcmOptions {
 	voiceFilter?: number;
 }
 
+/** Header fields of a `.jagvorbis` sample. */
+export interface SampleInfo {
+	sampleRate: number;
+	sampleCount: number;
+	loopBegin: number;
+	/** Sample after the loop region. */
+	loopEnd: number;
+	pingPong: boolean;
+	packetCount: number;
+}
+
 export interface JagFxWasmBackend {
 	renderSynthToPcm(
 		data: Uint8Array,
 		options?: RenderSynthToPcmOptions,
 	): Uint8Array;
+	/** Decodes `.jagvorbis` sample bytes to mono signed 16-bit little-endian PCM, without looping. */
+	decodeSampleToPcm(data: Uint8Array): Uint8Array;
+	/** Reads the header fields of `.jagvorbis` sample bytes. */
+	readSampleInfo(data: Uint8Array): SampleInfo;
 }
 
-export type DotnetFactory = () => {
-	create(): Promise<{
-		getConfig(): { mainAssemblyName: string };
-		getAssemblyExports(assemblyName: string): Promise<Record<string, unknown>>;
-	}>;
-};
+/** The exports of the Kotlin/Wasm module `dist/kotlin/jagfx-bindings.mjs`. */
+export interface JagFxWasmModule {
+	renderPcm16Le(synth: Int8Array, loops: number, voiceFilter: number): Int8Array;
+	samplePcm16Le(sample: Int8Array): Int8Array;
+	sampleInfo(sample: Int8Array): string;
+}
 
-type RenderPcm16Le = (
-	data: Uint8Array,
-	loops: number,
-	voiceFilter: number,
-) => Uint8Array;
+export type JagFxWasmLoader = () => Promise<JagFxWasmModule>;
 
 const emptyOptions = Object.freeze({}) as Readonly<Record<string, never>>;
 
+/**
+ * Loads the Kotlin/Wasm engine and returns a renderer over it.
+ *
+ * The default loader imports `kotlin/jagfx-bindings.mjs` next to this module, which fetches
+ * `jagfx-bindings.wasm` from the same directory. Pass a loader when a bundler or server moves
+ * those files. The runtime needs WebAssembly GC.
+ */
 export async function createJagFxWasmBackend(
-	dotnetFactory: DotnetFactory,
+	loader: JagFxWasmLoader = loadBundledModule,
 ): Promise<JagFxWasmBackend> {
-	if (typeof dotnetFactory !== "function") {
+	if (typeof loader !== "function") {
 		throw new TypeError(
-			"dotnetFactory must be the dotnet export from _framework/dotnet.js.",
+			"loader must be a function that imports jagfx-bindings.mjs.",
 		);
 	}
 
-	const runtime = await dotnetFactory().create();
-	const config = runtime.getConfig();
-	const exports = await runtime.getAssemblyExports(config.mainAssemblyName);
-	const render = findRenderExport(exports);
+	const module = await loader();
+	for (const name of ["renderPcm16Le", "samplePcm16Le", "sampleInfo"] as const) {
+		if (typeof module?.[name] !== "function") {
+			throw new Error(`The JagFx Wasm module does not export ${name}.`);
+		}
+	}
 
 	return {
 		renderSynthToPcm(
@@ -59,28 +79,28 @@ export async function createJagFxWasmBackend(
 				Number.isInteger(optionVoiceFilter)
 					? optionVoiceFilter
 					: -1;
-			return render(data, loops, voiceFilter);
+			const pcm = module.renderPcm16Le(toInt8Array(data), loops, voiceFilter);
+			return new Uint8Array(pcm.buffer, pcm.byteOffset, pcm.byteLength);
+		},
+		decodeSampleToPcm(data: Uint8Array): Uint8Array {
+			const pcm = module.samplePcm16Le(toInt8Array(data));
+			return new Uint8Array(pcm.buffer, pcm.byteOffset, pcm.byteLength);
+		},
+		readSampleInfo(data: Uint8Array): SampleInfo {
+			return JSON.parse(module.sampleInfo(toInt8Array(data))) as SampleInfo;
 		},
 	};
 }
 
-function findRenderExport(exports: Record<string, unknown>): RenderPcm16Le {
-	const jagFx = getRecord(exports, "JagFx");
-	const wasm = getRecord(jagFx, "Wasm");
-	const wasmExports = getRecord(wasm, "JagFxWasmExports");
-	const render = wasmExports["RenderPcm16Le"];
-	if (typeof render !== "function") {
-		throw new Error("JagFx.Wasm export RenderPcm16Le was not found.");
+function toInt8Array(data: Uint8Array): Int8Array {
+	if (!(data instanceof Uint8Array)) {
+		throw new TypeError("data must be a Uint8Array.");
 	}
-	return render as RenderPcm16Le;
+	return new Int8Array(data.buffer, data.byteOffset, data.byteLength);
 }
 
-function getRecord(
-	source: Record<string, unknown>,
-	key: string,
-): Record<string, unknown> {
-	const value = source[key];
-	return value && typeof value === "object"
-		? (value as Record<string, unknown>)
-		: {};
+function loadBundledModule(): Promise<JagFxWasmModule> {
+	// A runtime URL keeps the bundler from inlining the module and its top-level await.
+	const url = new URL("./kotlin/jagfx-bindings.mjs", import.meta.url).href;
+	return import(url) as Promise<JagFxWasmModule>;
 }

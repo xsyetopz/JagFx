@@ -30,20 +30,17 @@ import re
 import sys
 
 version = sys.argv[1]
-assembly_version = f"{version}.0"
-props = Path("Directory.Build.props")
-text = props.read_text()
-replacements = {
-    "Version": version,
-    "AssemblyVersion": assembly_version,
-    "FileVersion": assembly_version,
-    "InformationalVersion": version,
-}
-for tag, value in replacements.items():
-    text, count = re.subn(rf"<{tag}>[^<]+</{tag}>", f"<{tag}>{value}</{tag}>", text, count=1)
-    if count != 1:
-        raise SystemExit(f"missing {tag} in {props}")
-props.write_text(text)
+
+
+def replace(path, pattern, value, expected=1):
+    file = Path(path)
+    text, count = re.subn(pattern, value, file.read_text(), flags=re.MULTILINE)
+    if count != expected:
+        raise SystemExit(f"expected {expected} match(es) of {pattern!r} in {path}, found {count}")
+    file.write_text(text)
+
+
+replace("gradle.properties", r"^version=.*$", f"version={version}")
 
 for package_json in sorted(Path("packages").glob("*/package.json")):
     payload = json.loads(package_json.read_text())

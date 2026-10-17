@@ -28,10 +28,12 @@ JagFx edits Jagex Audio Synthesis (`.synth`) files, the sound-effect format used
 
 ## Getting Started
 
+Requires JDK 21 and Bun.
+
 ```bash
 git clone https://github.com/xsyetopz/JagFx.git && cd JagFx
-dotnet tool restore   # installs Husky.Net + CommitLint.Net git hooks
-dotnet build && dotnet test
+bun install           # installs the husky + commitlint commit-msg hook
+./gradlew check       # tests, spotless, and detekt
 ```
 
 ---
@@ -40,32 +42,23 @@ dotnet build && dotnet test
 
 ```mermaid
 flowchart TD
-    subgraph src
-        JagFX_Domain["JagFx.Domain<br/><sub>immutable domain model<br/>(Patch, Voice, Envelope, Filter, ...)</sub>"]
-        JagFX_Core["JagFx.Core<br/><sub>shared utilities and binary buffer helpers</sub>"]
-        JagFX_Io["JagFx.Io<br/><sub>.synth file reader/writer + JSON serialization</sub>"]
-        JagFX_Synth["JagFx.Synthesis<br/><sub>DSP engine:<br/>renders Patch to PCM audio buffer</sub>"]
-        JagFX_Desktop["JagFx.Desktop<br/><sub>Avalonia desktop GUI (MVVM)</sub>"]
-        JagFX_Cli["JagFx.Cli<br/><sub>command-line converter and inspector</sub>"]
-    end
+    Model[":core:model<br/><sub>immutable domain model<br/>(Patch, Voice, Envelope, Filter, ...)</sub>"]
+    Format[":core:format<br/><sub>.synth codec + JSON serialization</sub>"]
+    Engine[":core:engine<br/><sub>DSP engine:<br/>renders Patch to PCM, writes WAV</sub>"]
+    UI[":sharedUI<br/><sub>Compose Multiplatform editor UI</sub>"]
+    Apps[":desktopApp / :webApp<br/><sub>platform shells around :sharedUI</sub>"]
+    Cli[":cli<br/><sub>command-line converter and inspector</sub>"]
+    Bindings[":bindings<br/><sub>Kotlin/JS + Kotlin/Wasm exports for packages/</sub>"]
 
-    JagFX_Desktop --> JagFX_Domain
-    JagFX_Desktop --> JagFX_Core
-    JagFX_Desktop --> JagFX_Io
-    JagFX_Desktop --> JagFX_Synth
-
-    JagFX_Cli --> JagFX_Domain
-    JagFX_Cli --> JagFX_Core
-    JagFX_Cli --> JagFX_Io
-    JagFX_Cli --> JagFX_Synth
-
-    JagFX_Synth --> JagFX_Domain
-    JagFX_Synth --> JagFX_Core
-
-    JagFX_Io --> JagFX_Domain
-    JagFX_Io --> JagFX_Core
-
-    JagFX_Domain --> JagFX_Core
+    Apps --> UI
+    UI --> Format
+    UI --> Engine
+    Cli --> Format
+    Cli --> Engine
+    Bindings --> Format
+    Bindings --> Engine
+    Engine --> Model
+    Format --> Model
 ```
 
 ---
@@ -73,58 +66,56 @@ flowchart TD
 ## Desktop GUI
 
 ```bash
-dotnet run --project src/JagFx.Desktop
+./gradlew :desktopApp:run
 ```
 
 ```text
 ┌-----------------------------------------------------┐
-│  Header Bar: patch name, nav, file, transport       │
+│  Toolbar: file, transport, loop, undo/redo          │
 ├--------------┬--------------------------------------┤
 │              │                                      │
-│  Inspector   │        Signal Chain Matrix           │
-│  Panel       │     (voices x envelope slots)        │
+│  Inspector   │        Canvas Grid                   │
+│  Panel       │     (envelope and filter canvases)   │
 │              │                                      │
 ├--------------┴--------------------------------------┤
-│  Partials Footer: 10 additive partials per voice    │
+│  Voice Bar: voice slots, copy/reset, grid mode      │
+│  Partial Bar: 10 additive partials + echo           │
+│  Status Bar                                         │
 └-----------------------------------------------------┘
 ```
 
-- Header bar: patch navigation, open, save, play/stop, TRUE wave toggle, and loop controls (`CNT`/`BGN`/`END`).
-- Signal chain matrix: rows are envelope slots (`PITCH`, `VOL`, `V.RATE`, ...), columns are voices. Each cell shows a thumbnail canvas.
+- Toolbar: open, save, save as, play/stop, loop controls (count, start, end), and undo/redo.
+- Canvas grid: envelope, filter, and output canvases for the selected voice; the grid mode toggles choose main, filter, or both.
 - Inspector panel: controls for the selected envelope: START/END knobs, segment list, filter editor, and echo knobs.
-- Partials footer: `10` additive partials with volume, decicent offset, delay, and active toggle.
-- Envelope canvas: double-click to insert breakpoints, right-click for context menu, Delete key to remove points. Scroll-wheel zoom (1x/2x/4x), drag to pan when zoomed.
+- Voice bar: voice slot buttons, enable, copy, and reset, plus the grid mode toggles.
+- Partial bar: `10` additive partials with volume, decicent offset, and delay, plus the echo cell.
+- Envelope canvas: double-click to insert breakpoints, right-click for context menu, Delete or Backspace to remove points. Scroll-wheel zoom, drag to pan when zoomed.
+- Narrow windows (phones, small browser windows) show all panels in one scrolling column.
 
-### Keyboard Shortcuts
-
-| Key | Action |
-| --- | --- |
-| `Space` | Play / stop |
-| `Ctrl+O` | Open file |
-| `Ctrl+S` | Save |
-| `Ctrl+Shift+S` | Save as (also supports `.wav` export) |
-| Header prev/next | Navigate to previous or next patch in directory |
-| `Up` / `Down` | Select previous or next envelope in signal chain |
-| `V` | Toggle single-voice preview mode |
-| `Delete` | Remove selected envelope breakpoint |
-| `Double-click` | Insert breakpoint / reset knob to default |
+The same UI runs in the browser (`./gradlew :webApp:wasmJsBrowserDevelopmentRun`).
 
 ---
 
 ## CLI
 
 ```bash
+./gradlew :cli:installDist        # installs cli/build/install/jagfx/bin/jagfx
+alias jagfx=cli/build/install/jagfx/bin/jagfx
+
 # convert .synth to .wav
-dotnet run --project src/JagFx.Cli -- input.synth output.wav
-dotnet run --project src/JagFx.Cli -- input.synth output.wav 4  # with loop count
+jagfx input.synth output.wav
+jagfx input.synth output.wav 4     # with loop count
+jagfx -i input.synth -o output.wav -l 4
 
 # inspect
-dotnet run --project src/JagFx.Cli -- inspect input.synth
+jagfx inspect input.synth
 
 # JSON round-trip
-dotnet run --project src/JagFx.Cli -- to-json input.synth output.json
-dotnet run --project src/JagFx.Cli -- from-json input.json output.synth
+jagfx to-json input.synth output.json
+jagfx from-json input.json output.synth
 ```
+
+Without installing: `./gradlew :cli:run --args='inspect input.synth'`.
 
 See `docs/synth-format-spec.md` for the binary format, `schemas/synth.schema.json` for the JSON schema, and `references/json/` for JSON generated from the reference `.synth` files.
 
@@ -134,22 +125,13 @@ See `docs/synth-format-spec.md` for the binary format, `schemas/synth.schema.jso
 
 | Target | Output |
 | --- | --- |
-| `just publish-desktop-macos-arm64` | `publish/desktop/osx-arm64/JagFx.app` (single-file app bundle) |
-| `just publish-desktop-macos-x64` | `publish/desktop/osx-x64/JagFx.app` (single-file app bundle) |
-| `just publish-desktop-windows` | `publish/desktop/win-x64/JagFx.Desktop.exe` (single executable) |
-| `just publish-desktop-linux` | `publish/desktop/linux-x64/JagFx.Desktop` (single executable) |
-| `just release-desktop-macos-arm64` | `publish/JagFx-<ver>-macos-arm64.dmg` |
-| `just release-desktop-macos-x64` | `publish/JagFx-<ver>-macos-x64.dmg` |
-| `just release-desktop-windows` | `publish/JagFx-<ver>-win-x64-setup.exe` (Inno Setup) |
-| `just release-desktop-linux` | `publish/JagFx-<ver>-x86_64.AppImage` + `.tar.gz` fallback |
-| `just release-cli` | Separate CLI archives for macOS arm64/x64, Windows x64, Linux x64 |
-| `just release-all` | Desktop installers + all CLI artifacts |
+| `just release-desktop` | `publish/` installer for the host OS: `.dmg` on macOS, `.msi` on Windows, `.deb` on Linux |
+| `just release-cli` | `publish/jagfx-cli-<ver>.zip` (runs anywhere with Java 21+) |
+| `just release-all` | Desktop installer + CLI zip |
 
-Release version comes from `Directory.Build.props` (currently 2.4.1). The release workflow signs and notarizes macOS DMGs when the required GitHub secrets are configured.
+jpackage builds only for the host OS and architecture. The desktop installers bundle a Temurin JRE, so users do not need Java. The release version comes from `gradle.properties` (currently 3.0.0). The release workflow builds every platform and signs and notarizes macOS DMGs when the required GitHub secrets are configured.
 
 For host-specific release steps on macOS, Windows, or Linux, see [PUBLISHING.md](PUBLISHING.md).
-
-Framework-dependent publish, for any platform with .NET 8 installed: `dotnet publish src/JagFx.Desktop -c Release -o publish`
 
 ---
 

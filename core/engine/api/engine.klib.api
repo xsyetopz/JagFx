@@ -1,0 +1,31 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, macosArm64, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.xsyetopz.jagfx:engine>
+final enum class io.github.xsyetopz.jagfx.core.engine/PcmEncoding : kotlin/Enum<io.github.xsyetopz.jagfx.core.engine/PcmEncoding> { // io.github.xsyetopz.jagfx.core.engine/PcmEncoding|null[0]
+    enum entry Pcm16 // io.github.xsyetopz.jagfx.core.engine/PcmEncoding.Pcm16|null[0]
+    enum entry Pcm8 // io.github.xsyetopz.jagfx.core.engine/PcmEncoding.Pcm8|null[0]
+
+    final val bitsPerSample // io.github.xsyetopz.jagfx.core.engine/PcmEncoding.bitsPerSample|{}bitsPerSample[0]
+        final fun <get-bitsPerSample>(): kotlin/Int // io.github.xsyetopz.jagfx.core.engine/PcmEncoding.bitsPerSample.<get-bitsPerSample>|<get-bitsPerSample>(){}[0]
+    final val entries // io.github.xsyetopz.jagfx.core.engine/PcmEncoding.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<io.github.xsyetopz.jagfx.core.engine/PcmEncoding> // io.github.xsyetopz.jagfx.core.engine/PcmEncoding.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): io.github.xsyetopz.jagfx.core.engine/PcmEncoding // io.github.xsyetopz.jagfx.core.engine/PcmEncoding.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<io.github.xsyetopz.jagfx.core.engine/PcmEncoding> // io.github.xsyetopz.jagfx.core.engine/PcmEncoding.values|values#static(){}[0]
+}
+
+final object io.github.xsyetopz.jagfx.core.engine/Renderer { // io.github.xsyetopz.jagfx.core.engine/Renderer|null[0]
+    final const val SAMPLE_RATE // io.github.xsyetopz.jagfx.core.engine/Renderer.SAMPLE_RATE|{}SAMPLE_RATE[0]
+        final fun <get-SAMPLE_RATE>(): kotlin/Int // io.github.xsyetopz.jagfx.core.engine/Renderer.SAMPLE_RATE.<get-SAMPLE_RATE>|<get-SAMPLE_RATE>(){}[0]
+
+    final fun render(io.github.xsyetopz.jagfx.core.model/Patch, kotlin/Int = ..., kotlin/Int? = ...): kotlin/ShortArray // io.github.xsyetopz.jagfx.core.engine/Renderer.render|render(io.github.xsyetopz.jagfx.core.model.Patch;kotlin.Int;kotlin.Int?){}[0]
+}
+
+final object io.github.xsyetopz.jagfx.core.engine/Wav { // io.github.xsyetopz.jagfx.core.engine/Wav|null[0]
+    final fun encode(kotlin/ShortArray, io.github.xsyetopz.jagfx.core.engine/PcmEncoding = ..., kotlin/Int = ...): kotlin/ByteArray // io.github.xsyetopz.jagfx.core.engine/Wav.encode|encode(kotlin.ShortArray;io.github.xsyetopz.jagfx.core.engine.PcmEncoding;kotlin.Int){}[0]
+}
