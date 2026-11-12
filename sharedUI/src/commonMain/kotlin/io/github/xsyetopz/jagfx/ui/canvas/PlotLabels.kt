@@ -27,6 +27,8 @@ internal const val MIN_TICK_SPACING = 120f
 /** Rows of the value grid: [VALUE_ROWS] + 1 lines, the middle one in the mid line color. */
 internal const val VALUE_ROWS = 2
 
+private const val MID_FRACTION = 0.5f
+
 /** Heights of the value grid lines as fractions of the plot height from the bottom. */
 internal fun valueGridFractions(rows: Int = VALUE_ROWS): List<Float> =
     List(rows + 1) { it.toFloat() / rows }
@@ -45,7 +47,7 @@ internal fun DrawScope.drawTimeAxis(
     labels: Boolean = true,
 ) {
     val plotWidth = size.width - 2 * ENVELOPE_PADDING
-    if (plotWidth <= 0f || durationMs <= 0 || !(lines || labels)) return
+    if (plotWidth <= 0f || durationMs <= 0) return
     val window = visibleWindow(viewport, plotWidth)
     val total = plotWidth * viewport.zoom
     for (ms in timeTicks(durationMs, window, plotWidth, MIN_TICK_SPACING)) {
@@ -71,7 +73,7 @@ internal fun DrawScope.drawValueGrid(
     for (fraction in valueGridFractions()) {
         val y = ENVELOPE_PADDING + plotHeight * (1f - fraction)
         drawLine(
-            if (fraction == 0.5f) midColor else gridColor,
+            if (fraction == MID_FRACTION) midColor else gridColor,
             Offset(0f, y),
             Offset(size.width, y),
         )

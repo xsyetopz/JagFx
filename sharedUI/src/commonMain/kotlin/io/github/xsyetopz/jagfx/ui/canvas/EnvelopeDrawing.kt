@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import io.github.xsyetopz.jagfx.ui.screen.pointLabels
 import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
@@ -56,47 +57,15 @@ internal fun Modifier.drawEnvelope(
             } else {
                 emptyList()
             }
-        val path = Path()
-        if (geometry != null && geometry.pointCount > 0) {
-            path.moveTo(geometry.pointX(0), geometry.pointY(0))
-            for (i in 1 until geometry.pointCount) {
-                path.lineTo(
-                    geometry.pointX(i),
-                    geometry.pointY(i),
-                )
-            }
-        }
+        val path = geometry?.let(::envelopePath)
         onDrawBehind {
             drawRect(palette.scope)
-            val slot = style.slot
-            val gridColor = if (style.faintGrid) palette.gridFaint else palette.grid
-            val valueAxis = slot?.range != null && view.scaleMode != EnvelopeScaleMode.AutoScale
-            if (style.gridLines) {
-                if (valueAxis) {
-                    drawValueGrid(gridColor, palette.midLine)
-                } else {
-                    drawEnvelopeGrid(gridColor, palette.midLine)
-                }
-            }
-            if (style.axisLabels && valueAxis) {
-                drawValueLabels(measurer, slot, envelope, labelStyle)
-            }
-            drawTimeAxis(
-                measurer,
-                Viewport(view.zoom, view.scrollOffset),
-                style.durationMs,
-                labelStyle,
-                gridColor,
-                lines = style.gridLines,
-                labels = style.axisLabels,
-            )
-            if (geometry != null) {
+            drawEnvelopeAxes(view, style, measurer, palette, labelStyle)
+            if (geometry != null && path != null) {
                 drawPath(path, lineColor, style = Hairline)
                 drawBreakpoints(geometry, view.selectedIndex, palette)
-                if (style.pointLabels) {
-                    for ((index, layout) in pointLabelLayouts) {
-                        drawPointLabel(layout, geometry.pointX(index), geometry.pointY(index))
-                    }
+                for ((index, layout) in pointLabelLayouts) {
+                    drawPointLabel(layout, geometry.pointX(index), geometry.pointY(index))
                 }
             }
             if (style.selected) {
@@ -109,6 +78,49 @@ internal fun Modifier.drawEnvelope(
             }
         }
     }
+
+private fun envelopePath(geometry: EnvelopeGeometry): Path {
+    val path = Path()
+    if (geometry.pointCount > 0) {
+        path.moveTo(geometry.pointX(0), geometry.pointY(0))
+        for (i in 1 until geometry.pointCount) {
+            path.lineTo(geometry.pointX(i), geometry.pointY(i))
+        }
+    }
+    return path
+}
+
+/** The grid and the value and time labels that [style] switches on. */
+private fun DrawScope.drawEnvelopeAxes(
+    view: EnvelopeView,
+    style: EnvelopeStyle,
+    measurer: TextMeasurer,
+    palette: SynthPalette,
+    labelStyle: TextStyle,
+) {
+    val slot = style.slot
+    val gridColor = if (style.faintGrid) palette.gridFaint else palette.grid
+    val valueAxis = slot?.range != null && view.scaleMode != EnvelopeScaleMode.AutoScale
+    if (style.gridLines) {
+        if (valueAxis) {
+            drawValueGrid(gridColor, palette.midLine)
+        } else {
+            drawEnvelopeGrid(gridColor, palette.midLine)
+        }
+    }
+    if (style.axisLabels && valueAxis) {
+        drawValueLabels(measurer, slot, view.envelope, labelStyle)
+    }
+    drawTimeAxis(
+        measurer,
+        Viewport(view.zoom, view.scrollOffset),
+        style.durationMs,
+        labelStyle,
+        gridColor,
+        lines = style.gridLines,
+        labels = style.axisLabels,
+    )
+}
 
 private fun DrawScope.drawEnvelopeGrid(
     gridColor: Color,
