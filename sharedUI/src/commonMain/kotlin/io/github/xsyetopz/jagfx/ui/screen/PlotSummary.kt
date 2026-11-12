@@ -4,6 +4,8 @@ import io.github.xsyetopz.jagfx.core.model.Envelope
 import io.github.xsyetopz.jagfx.core.model.Filter
 import io.github.xsyetopz.jagfx.ui.canvas.FilterFrequencyScale
 import io.github.xsyetopz.jagfx.ui.canvas.FilterResponse
+import io.github.xsyetopz.jagfx.ui.canvas.PoleRef
+import io.github.xsyetopz.jagfx.ui.canvas.poles
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.i18n.Strings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
@@ -14,6 +16,7 @@ private const val RESPONSE_POINTS = 256
 private const val MS_PER_SECOND = 1000.0
 private const val PERCENT = 100.0
 private const val ONE = 1
+private const val MAX_RAW = 65535.0
 
 /**
  * The text summary of the envelope plot of [slot], for screen readers:
@@ -99,6 +102,29 @@ internal fun poleZeroSummary(
             if (zeros == ONE) UiString.PlotSummaryZeroOne else UiString.PlotSummaryZeroMany,
             zeros,
         ),
+    )
+}
+
+/**
+ * The state of the pole-zero plot: the selected marker as `Pole 2 of 3, end: 440 Hz, 50 dB`, or
+ * `null` when nothing is selected or [selected] is not a marker of [filter].
+ */
+internal fun poleState(
+    strings: Strings,
+    filter: Filter?,
+    selected: PoleRef?,
+): String? {
+    val poles = selected?.let { filter?.poles(it.channel) }
+    if (selected == null || poles == null || selected.pole !in poles.indices) return null
+    val pole = poles[selected.pole]
+    val coefficient = if (selected.phaseIndex == 0) pole.start else pole.end
+    return strings.format(
+        if (selected.channel == 0) UiString.PlotStateZero else UiString.PlotStatePole,
+        selected.pole + ONE,
+        poles.size,
+        strings[if (selected.phaseIndex == 0) UiString.PlotStateStart else UiString.PlotStateEnd],
+        FilterFrequencyScale.rawPhaseToFrequency(coefficient.phase).roundToInt(),
+        formatDecimal(coefficient.magnitude * PERCENT / MAX_RAW, 1),
     )
 }
 

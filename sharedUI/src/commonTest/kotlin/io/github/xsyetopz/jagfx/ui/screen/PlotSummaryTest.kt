@@ -6,6 +6,7 @@ import io.github.xsyetopz.jagfx.core.model.Filter
 import io.github.xsyetopz.jagfx.core.model.Pole
 import io.github.xsyetopz.jagfx.core.model.Segment
 import io.github.xsyetopz.jagfx.core.model.Waveform
+import io.github.xsyetopz.jagfx.ui.canvas.PoleRef
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.i18n.Strings
 import io.github.xsyetopz.jagfx.ui.i18n.UiLocale
@@ -142,5 +143,27 @@ class PlotSummaryTest {
                 assertFalse('{' in text, "${locale.tag}: $text")
             }
         }
+    }
+
+    @Test
+    fun poleStateNamesTheSelectedMarkerItsPlaceAndValues() {
+        val state = poleState(en, filter(zeros = 1, poles = 3), PoleRef(1, 1, 1))
+        assertNotNull(state)
+        assertTrue(state.startsWith("Pole 2 of 3, end: "), state)
+        assertTrue(state.endsWith(" Hz, 30.5 dB"), state)
+        assertTrue(
+            poleState(
+                en,
+                filter(zeros = 2, poles = 1),
+                PoleRef(0, 0, 0),
+            )!!.startsWith("Zero 1 of 2, start: "),
+        )
+    }
+
+    @Test
+    fun poleStateIsNullWithoutAMatchingSelection() {
+        assertNull(poleState(en, filter(1, 1), null))
+        assertNull(poleState(en, null, PoleRef(0, 0, 0)))
+        assertNull(poleState(en, filter(zeros = 1, poles = 1), PoleRef(1, 1, 0)))
     }
 }

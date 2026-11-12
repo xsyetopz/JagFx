@@ -198,4 +198,8 @@ internal enum class UiString {
     PlotSummary,
     FileDialogOpen,
     FileDialogSave,
+    PlotStatePole,
+    PlotStateZero,
+    PlotStateStart,
+    PlotStateEnd,
 }

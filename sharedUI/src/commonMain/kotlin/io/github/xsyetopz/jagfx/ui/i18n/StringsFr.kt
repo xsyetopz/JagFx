@@ -216,4 +216,8 @@ internal val stringsFr: Map<UiString, String> =
         UiString.PlotSummary to "{0} : {1}, {2} points, {3} % à {4} %",
         UiString.FileDialogOpen to "Ouvrir un fichier de patch JagFx",
         UiString.FileDialogSave to "Enregistrer un fichier de patch JagFx",
+        UiString.PlotStatePole to "Pôle {0} sur {1}, {2} : {3} Hz, {4} dB",
+        UiString.PlotStateZero to "Zéro {0} sur {1}, {2} : {3} Hz, {4} dB",
+        UiString.PlotStateStart to "début",
+        UiString.PlotStateEnd to "fin",
     )

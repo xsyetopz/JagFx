@@ -40,13 +40,14 @@ internal fun SlotCanvas(
     when (slot) {
         SignalChainSlot.PoleZero -> {
             val summary = poleZeroSummary(strings, state.voice?.filter)
+            val selection = poleState(strings, state.voice?.filter, view.selectedPole)
             PoleZeroSlotCanvas(
                 state,
                 view,
                 actions,
                 modifier.semantics {
-                    contentDescription =
-                        summary
+                    contentDescription = summary
+                    selection?.let { stateDescription = it }
                 },
             )
         }
