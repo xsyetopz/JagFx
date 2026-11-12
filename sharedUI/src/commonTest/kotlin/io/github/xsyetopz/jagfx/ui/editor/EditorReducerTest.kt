@@ -49,6 +49,18 @@ class EditorReducerTest {
     }
 
     @Test
+    fun modeSetsWithoutTouchingPatchOrHistory() {
+        assertEquals(RackMode.Main, enabled.mode)
+        for (mode in RackMode.entries) {
+            val next = enabled.after(ViewIntent.SetMode(mode))
+            assertEquals(mode, next.mode)
+            assertSame(enabled.patch, next.patch)
+            assertEquals(enabled.history, next.history)
+            assertEquals(enabled.isDirty, next.isDirty)
+        }
+    }
+
+    @Test
     fun panelSideMovesWithoutTouchingPatchOrHistory() {
         assertEquals(PanelSide.Right, enabled.panelSide)
         val moved = enabled.after(ViewIntent.SetPanelSide(PanelSide.Left))

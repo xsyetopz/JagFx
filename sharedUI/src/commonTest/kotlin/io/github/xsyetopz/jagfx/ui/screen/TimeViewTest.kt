@@ -84,9 +84,4 @@ class TimeViewTest {
         assertFalse(ScreenViewState().isLinked(SignalChainSlot.Bode))
         assertTrue(ScreenViewState().isLinked(SignalChainSlot.Filter))
     }
-
-    @Test
-    fun modeDefaultsToMain() {
-        assertEquals(RackMode.Main, ScreenViewState().mode)
-    }
 }

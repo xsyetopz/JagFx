@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
+import io.github.xsyetopz.jagfx.ui.editor.RackMode
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
@@ -16,7 +17,7 @@ import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 private const val ENVELOPE_COLUMNS = 3f
 
 /**
- * The cells of the selected voice as in the original rack, by [ScreenViewState.mode]: the three
+ * The cells of the selected voice as in the original rack, by [EditorState.mode]: the three
  * [RackRows], each with its module strip after the base cell; the [FilterColumn] with the filter
  * strip; or both side by side.
  * When [ScreenViewState.openCell] is set, that cell fills the rack on its own.
@@ -35,12 +36,12 @@ internal fun Rack(
     }
     val gap = Arrangement.spacedBy(JagFxTheme.dimens.spaceSm)
     Row(modifier, horizontalArrangement = gap) {
-        if (view.mode != RackMode.Filter) {
+        if (state.mode != RackMode.Filter) {
             Column(Modifier.weight(ENVELOPE_COLUMNS).fillMaxHeight(), verticalArrangement = gap) {
                 for (row in RackRows) ModuleRow(row, state, view, actions, Modifier.weight(1f))
             }
         }
-        if (view.mode != RackMode.Main) {
+        if (state.mode != RackMode.Main) {
             FilterStrip(state, view, actions, Modifier.fillMaxHeight())
             Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = gap) {
                 for (slot in FilterColumn) {

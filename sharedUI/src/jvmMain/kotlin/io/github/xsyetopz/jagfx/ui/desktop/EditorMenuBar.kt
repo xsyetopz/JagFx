@@ -11,6 +11,7 @@ import io.github.xsyetopz.jagfx.ui.editor.EditorIntent
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.HistoryIntent
 import io.github.xsyetopz.jagfx.ui.editor.PanelSide
+import io.github.xsyetopz.jagfx.ui.editor.RackMode
 import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
 import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
 import io.github.xsyetopz.jagfx.ui.editor.ThemePreference
@@ -18,6 +19,7 @@ import io.github.xsyetopz.jagfx.ui.editor.ViewIntent
 import io.github.xsyetopz.jagfx.ui.i18n.Strings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
 import io.github.xsyetopz.jagfx.ui.i18n.rememberStrings
+import io.github.xsyetopz.jagfx.ui.screen.PlayAction
 import io.github.xsyetopz.jagfx.ui.screen.label
 
 /** Number keys for voices 1 to 10, as on the number row: 1 to 9, then 0. */
@@ -35,25 +37,15 @@ private val VoiceKeys =
         Key.Zero,
     )
 
-private val TextScaleSteps =
-    EditorState.MIN_TEXT_SCALE_PERCENT..EditorState.MAX_TEXT_SCALE_PERCENT step TEXT_SCALE_STEP
-
-private const val TEXT_SCALE_STEP = 25
-
-private val ThemePreference.label: UiString
-    get() =
-        when (this) {
-            ThemePreference.System -> UiString.ThemeSystem
-            ThemePreference.Classic -> UiString.ThemeClassic
-            ThemePreference.Light -> UiString.ThemeLight
-            ThemePreference.HighContrast -> UiString.ThemeHighContrast
-        }
+/** Number keys for the rack modes Main, Filter and Both, used with the command key and Alt. */
+private val ModeKeys = listOf(Key.One, Key.Two, Key.Three)
 
 /** A shortcut with Command on macOS and Ctrl elsewhere. */
 private fun command(
     key: Key,
     shift: Boolean = false,
-): KeyShortcut = KeyShortcut(key, ctrl = !isMacOs, meta = isMacOs, shift = shift)
+    alt: Boolean = false,
+): KeyShortcut = KeyShortcut(key, ctrl = !isMacOs, meta = isMacOs, shift = shift, alt = alt)
 
 /**
  * The menu bar of the editor window: on macOS the screen menu bar, elsewhere a bar in the window.
@@ -98,8 +90,17 @@ internal fun FrameWindowScope.EditorMenuBar(
                     }
                 }
             }
+            Menu(strings[UiString.ModeLabel]) {
+                for ((index, mode) in RackMode.entries.withIndex()) {
+                    RadioButtonItem(
+                        strings[mode.label],
+                        state.mode == mode,
+                        shortcut = ModeKeys.getOrNull(index)?.let { command(it, alt = true) },
+                    ) { dispatch(ViewIntent.SetMode(mode)) }
+                }
+            }
             Menu(strings[UiString.MenuTextSize]) {
-                for (percent in TextScaleSteps) {
+                for (percent in EditorState.TEXT_SCALE_STEPS) {
                     RadioButtonItem("$percent%", state.textScalePercent == percent) {
                         dispatch(ViewIntent.SetTextScale(percent))
                     }
@@ -156,6 +157,12 @@ private fun MenuScope.PlaybackItems(
         dispatch(RequestIntent.Stop)
     }
     Separator()
+    Item(strings[UiString.PlayAll], shortcut = command(Key.P)) {
+        PlayAction.PlayAll.intents().forEach(dispatch)
+    }
+    Item(strings[UiString.LoopAll], shortcut = command(Key.L, shift = true)) {
+        PlayAction.LoopAll.intents().forEach(dispatch)
+    }
     CheckboxItem(strings[UiString.MenuLoop], state.isLooping, shortcut = command(Key.L)) {
         dispatch(ViewIntent.SetLooping(it))
     }

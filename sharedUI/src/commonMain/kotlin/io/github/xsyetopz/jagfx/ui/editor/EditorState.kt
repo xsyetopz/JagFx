@@ -103,6 +103,18 @@ internal data class SampleDocument(
 /** The window edge the properties panel sits on, so either hand can keep it near the mouse. */
 enum class PanelSide { Left, Right }
 
+/** Which parts of the rack the editor shows. */
+internal enum class RackMode {
+    /** The three envelope rows. */
+    Main,
+
+    /** The filter column at full size. */
+    Filter,
+
+    /** The rows and the filter column side by side. */
+    Both,
+}
+
 /** The color theme the user picked. [System] follows the platform, for example high contrast. */
 enum class ThemePreference { System, Classic, Light, HighContrast }
 
@@ -138,6 +150,7 @@ internal data class EditorState(
     val panelSide: PanelSide = PanelSide.Right,
     val textScalePercent: Int = MIN_TEXT_SCALE_PERCENT,
     val theme: ThemePreference = ThemePreference.System,
+    val mode: RackMode = RackMode.Main,
 ) {
     val isDirty: Boolean get() = patch != savedPatch
 
@@ -198,6 +211,11 @@ internal data class EditorState(
         /** The in-app text size range, in percent of the normal size. */
         const val MIN_TEXT_SCALE_PERCENT: Int = 100
         const val MAX_TEXT_SCALE_PERCENT: Int = 200
+
+        /** The text sizes that the menus offer, in percent. */
+        val TEXT_SCALE_STEPS: List<Int> =
+            (MIN_TEXT_SCALE_PERCENT..MAX_TEXT_SCALE_PERCENT step TEXT_SCALE_STEP).toList()
+        private const val TEXT_SCALE_STEP: Int = 25
         const val INFINITE_LOOP_PASSES: Int = 50
     }
 }

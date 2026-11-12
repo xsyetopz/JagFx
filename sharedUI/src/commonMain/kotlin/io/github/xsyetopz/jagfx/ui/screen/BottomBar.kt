@@ -11,7 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
+import io.github.xsyetopz.jagfx.ui.editor.RackMode
 import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
+import io.github.xsyetopz.jagfx.ui.editor.ViewIntent
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
@@ -28,7 +30,6 @@ private val HarmonicBoxWidth = 120.dp
 @Composable
 internal fun BottomBar(
     state: EditorState,
-    view: ScreenViewState,
     actions: EditorActions,
     modifier: Modifier = Modifier,
 ) {
@@ -57,31 +58,34 @@ internal fun BottomBar(
             HarmonicBox(row, actions, Modifier.width(HarmonicBoxWidth))
         }
         ReverbBox(state, actions, Modifier.width(HarmonicBoxWidth))
-        ModeSwitch(view, actions)
+        ModeSwitch(state, actions)
     }
 }
 
+/** The menu and button label of this rack mode. */
+internal val RackMode.label: UiString
+    get() =
+        when (this) {
+            RackMode.Main -> UiString.ModeMain
+            RackMode.Filter -> UiString.ModeFilter
+            RackMode.Both -> UiString.ModeBoth
+        }
+
 @Composable
 private fun ModeSwitch(
-    view: ScreenViewState,
+    state: EditorState,
     actions: EditorActions,
 ) {
     val strings = LocalStrings.current
-    val labels =
-        mapOf(
-            RackMode.Main to UiString.ModeMain,
-            RackMode.Filter to UiString.ModeFilter,
-            RackMode.Both to UiString.ModeBoth,
-        )
     Column(verticalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceMd)) {
         JagLabel(strings[UiString.ModeLabel])
         JagToggleGroup(
             RackMode.entries,
-            view.mode,
-            { mode -> actions.updateView { it.copy(mode = mode) } },
-            tooltip = { strings[labels.getValue(it)] },
+            state.mode,
+            { mode -> actions.dispatch(ViewIntent.SetMode(mode)) },
+            tooltip = { strings[it.label] },
         ) { mode ->
-            JagText(strings[labels.getValue(mode)], style = JagFxTheme.typography.label)
+            JagText(strings[mode.label], style = JagFxTheme.typography.label)
         }
     }
 }

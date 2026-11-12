@@ -234,6 +234,10 @@ private fun reduceView(
         is ViewIntent.SetTheme -> {
             state.copy(theme = intent.theme)
         }
+
+        is ViewIntent.SetMode -> {
+            state.copy(mode = intent.mode)
+        }
     }
 
 private fun reduceHistory(

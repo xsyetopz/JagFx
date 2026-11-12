@@ -241,6 +241,11 @@ internal sealed interface ViewIntent : EditorIntent {
     data class SetTheme(
         val theme: ThemePreference,
     ) : ViewIntent
+
+    /** Shows the Main rack, the Filter column, or Both; the patch and history stay as they are. */
+    data class SetMode(
+        val mode: RackMode,
+    ) : ViewIntent
 }
 
 /** Undo, redo, and gesture grouping. */
