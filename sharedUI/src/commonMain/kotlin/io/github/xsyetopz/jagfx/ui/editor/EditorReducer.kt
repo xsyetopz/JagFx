@@ -3,6 +3,7 @@ package io.github.xsyetopz.jagfx.ui.editor
 import io.github.xsyetopz.jagfx.core.model.Filter
 import io.github.xsyetopz.jagfx.core.model.Loop
 import io.github.xsyetopz.jagfx.core.model.Milliseconds
+import io.github.xsyetopz.jagfx.core.model.Patch
 import io.github.xsyetopz.jagfx.core.model.SynthLimits
 import io.github.xsyetopz.jagfx.core.model.Voice
 
@@ -60,8 +61,8 @@ internal fun reduce(
             reduceResult(state, intent)
         }
 
-        RequestIntent.CloseSample -> {
-            state.copy(sample = null)
+        is DocumentIntent -> {
+            newPatch(state)
         }
 
         is SampleIntent -> {
@@ -69,7 +70,7 @@ internal fun reduce(
         }
 
         is RequestIntent -> {
-            state
+            requestState(state, intent)
         }
     }
 
@@ -247,14 +248,14 @@ private fun reduceHistory(
     when (intent) {
         HistoryIntent.Undo -> {
             state.history.undo(state.patch)?.let { (patch, history) ->
-                state.copy(patch = patch, history = history)
+                state.copy(patch = patch, history = history, statusHint = StatusHint.Undone)
             }
                 ?: state
         }
 
         HistoryIntent.Redo -> {
             state.history.redo(state.patch)?.let { (patch, history) ->
-                state.copy(patch = patch, history = history)
+                state.copy(patch = patch, history = history, statusHint = StatusHint.Redone)
             }
                 ?: state
         }
@@ -267,3 +268,26 @@ private fun reduceHistory(
             state.copy(history = state.history.endGesture(state.patch))
         }
     }
+
+private fun newPatch(state: EditorState): EditorState {
+    val patch = Patch.Empty.withVoice(0, DefaultVoice)
+    return state.copy(
+        patch = patch,
+        savedPatch = patch,
+        history = History(),
+        selectedVoice = 0,
+        selectedTarget = SignalChainSlot.Pitch,
+        fileName = EditorState.DEFAULT_FILE_NAME,
+        filePath = null,
+        isFileOpen = true,
+        isCopyMode = false,
+        bypassedFilters = List(SynthLimits.VOICE_SLOTS) { null },
+        statusHint = StatusHint.NewPatch,
+        preview = Preview.Empty,
+    )
+}
+
+private fun requestState(
+    state: EditorState,
+    intent: RequestIntent,
+): EditorState = if (intent == RequestIntent.CloseSample) state.copy(sample = null) else state

@@ -51,6 +51,16 @@ internal sealed interface StatusHint {
         val message: String,
     ) : StatusHint
 
+    /** A new patch with tone 1 on replaced the document. */
+    data object NewPatch : StatusHint
+
+    /** An accepted edit; undo reverts it. */
+    data object Edited : StatusHint
+
+    data object Undone : StatusHint
+
+    data object Redone : StatusHint
+
     data class PlaybackFailed(
         val message: String,
     ) : StatusHint
@@ -126,6 +136,7 @@ enum class ThemePreference { System, Classic, Light, HighContrast }
  * @property loopCount Loop repetitions in `0..MAX_LOOP_COUNT`; `0` loops until stopped.
  * @property bypassedFilters Per voice slot, the filter that was turned off, for turning it on.
  * @property sample The open sample, or `null`. The patch stays intact while a sample is open.
+ * @property isFileOpen `false` until a file is opened or a new patch is started.
  */
 internal data class EditorState(
     val patch: Patch = Patch.Empty,
@@ -151,6 +162,7 @@ internal data class EditorState(
     val textScalePercent: Int = MIN_TEXT_SCALE_PERCENT,
     val theme: ThemePreference = ThemePreference.System,
     val mode: RackMode = RackMode.Main,
+    val isFileOpen: Boolean = true,
 ) {
     val isDirty: Boolean get() = patch != savedPatch
 

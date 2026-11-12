@@ -39,6 +39,8 @@ internal fun EditorScreen(
     val sample = state.sample
     if (sample != null) {
         SampleContent(state, sample, view, actions, modifier)
+    } else if (!state.isFileOpen) {
+        NoFileScreen(state, actions, modifier)
     } else {
         EditorContent(state, view, actions, modifier)
     }

@@ -71,22 +71,24 @@ class PatchFileException(
 
 /**
  * The file types of the editor: a whole patch, one voice, one filter, or a sample. [extension] has
- * no leading dot.
+ * no leading dot. [description] names the type in dialogs; `.tone` and `.filter` are JagFx's own
+ * layouts, not confirmed against the original tool.
  */
 enum class PatchFileKind(
     val extension: String,
+    val description: String,
 ) {
     /** A patch of ten voice slots and a loop. */
-    Synth("synth"),
+    Synth("synth", "synth file"),
 
     /** One voice, encoded as a voice slot of a `.synth` file. */
-    Tone("tone"),
+    Tone("tone", "JagFx tone file"),
 
     /** One filter, encoded as the filter block of a voice. */
-    Filter("filter"),
+    Filter("filter", "JagFx filter file"),
 
     /** A recorded sample, a document apart from the patch. */
-    Sample("jagvorbis"),
+    Sample("jagvorbis", "jagvorbis sample"),
 }
 
 /**

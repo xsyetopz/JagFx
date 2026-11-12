@@ -325,6 +325,12 @@ internal sealed interface ResultIntent : EditorIntent {
     ) : ResultIntent
 }
 
+/** Whole-document changes that need no side effect. */
+internal sealed interface DocumentIntent : EditorIntent {
+    /** Replaces the patch with a new one that has tone 1 on, and opens the editor. */
+    data object NewPatch : DocumentIntent
+}
+
 /**
  * Requests with side effects. The ViewModel performs them and reports a [ResultIntent];
  * [reduce] leaves the state unchanged.

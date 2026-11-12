@@ -205,7 +205,7 @@ class EditorFuzzTest {
                 SlotIntent.CopyVoice,
                 SlotIntent.SelectVoice(5),
             )
-        assertNull(state.statusHint)
+        assertEquals(StatusHint.Edited, state.statusHint)
         val voice = assertNotNull(state.patch.voices[2])
         assertEquals(voice, state.patch.voices[5])
         assertEquals(Coefficient(900, 20_000), voice.filter!!.feedback[0].end)

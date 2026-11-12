@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
+import io.github.xsyetopz.jagfx.ui.editor.DocumentIntent
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.HistoryIntent
 import io.github.xsyetopz.jagfx.ui.editor.PanelSide
@@ -90,6 +91,7 @@ private fun FileMenu(
     val otherSide = if (state.panelSide == PanelSide.Left) PanelSide.Right else PanelSide.Left
     val items =
         listOf(
+            Triple(UiString.NewLabel, DocumentIntent.NewPatch, true),
             Triple(UiString.MenuOpen, RequestIntent.Open, true),
             Triple(UiString.MenuSave, RequestIntent.Save, true),
             Triple(UiString.ToolbarOpenSample, RequestIntent.OpenSample, true),

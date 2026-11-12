@@ -209,6 +209,22 @@ internal fun statusText(
             strings.format(UiString.StatusCouldNotSaveFile, hint.path, hint.message)
         }
 
+        StatusHint.NewPatch -> {
+            strings[UiString.StatusNewPatch]
+        }
+
+        StatusHint.Edited -> {
+            strings[UiString.StatusEdited]
+        }
+
+        StatusHint.Undone -> {
+            strings[UiString.StatusUndone]
+        }
+
+        StatusHint.Redone -> {
+            strings[UiString.StatusRedone]
+        }
+
         is StatusHint.PlaybackFailed -> {
             strings.format(UiString.StatusCouldNotPlay, hint.message)
         }

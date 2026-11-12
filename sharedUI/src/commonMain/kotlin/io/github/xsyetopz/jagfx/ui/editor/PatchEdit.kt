@@ -55,7 +55,7 @@ internal fun commit(
         state.copy(
             patch = patch,
             history = state.history.record(state.patch),
-            statusHint = state.statusHint.takeUnless { it is StatusHint.EditRejected },
+            statusHint = StatusHint.Edited,
         )
     }
 }

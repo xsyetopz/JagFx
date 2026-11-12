@@ -21,6 +21,7 @@ private const val ENVELOPE_COLUMNS = 3f
  * [RackRows], each with its module strip after the base cell; the [FilterColumn] with the filter
  * strip; or both side by side.
  * When [ScreenViewState.openCell] is set, that cell fills the rack on its own.
+ * While the selected tone is off, the rack is dimmed under the [ToneOffOverlay] prompt.
  */
 @Composable
 internal fun Rack(
@@ -28,6 +29,18 @@ internal fun Rack(
     view: ScreenViewState,
     actions: EditorActions,
     modifier: Modifier = Modifier,
+) {
+    ToneOffOverlay(state, actions, modifier) {
+        RackBody(state, view, actions, Modifier.fillMaxSize())
+    }
+}
+
+@Composable
+private fun RackBody(
+    state: EditorState,
+    view: ScreenViewState,
+    actions: EditorActions,
+    modifier: Modifier,
 ) {
     val openCell = view.openCell
     if (openCell != null) {

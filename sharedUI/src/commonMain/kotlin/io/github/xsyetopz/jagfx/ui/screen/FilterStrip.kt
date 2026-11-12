@@ -58,12 +58,12 @@ internal fun FilterStrip(
             )
         }
         StripButtons(
-            Button(strings[UiString.ImportFilter], null, false) {
+            Button(strings[UiString.ImportFilter], strings[UiString.TooltipImportFilter], false) {
                 actions.dispatch(RequestIntent.ImportFilter)
             },
         )
         StripButtons(
-            Button(strings[UiString.ExportFilter], null, false) {
+            Button(strings[UiString.ExportFilter], strings[UiString.TooltipExportFilter], false) {
                 actions.dispatch(RequestIntent.ExportFilter)
             },
         )

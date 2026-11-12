@@ -85,7 +85,7 @@ class EditorReducerTest {
 
         val square = state.after(EnvelopeIntent.SetWaveform(SignalChainSlot.Pitch, Waveform.Square))
         assertEquals(Waveform.Square, square.voice!!.frequencyEnvelope.waveform)
-        assertNull(square.statusHint)
+        assertEquals(StatusHint.Edited, square.statusHint)
     }
 
     @Test
@@ -273,7 +273,7 @@ class EditorReducerTest {
                 .filter!!
                 .feedback.size,
         )
-        assertNull(state.statusHint)
+        assertEquals(StatusHint.Edited, state.statusHint)
     }
 
     @Test

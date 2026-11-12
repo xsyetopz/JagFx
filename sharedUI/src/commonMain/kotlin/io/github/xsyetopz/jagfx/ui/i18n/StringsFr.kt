@@ -77,6 +77,34 @@ internal val stringsFr: Map<UiString, String> =
         UiString.SegmentDurationLabel to "Duration",
         UiString.SegmentLevelLabel to "Value",
         UiString.HarmonicsTitle to "Harmonics",
+        UiString.EmptyVibrato to
+            "Le vibrato est désactivé. Choisissez une forme d'onde pour moduler la hauteur.",
+        UiString.EmptyTremolo to
+            "Le trémolo est désactivé. Choisissez une forme d'onde pour moduler le volume.",
+        UiString.EmptyGate to
+            "La porte est désactivée. Choisissez une forme d'onde pour hacher le son.",
+        UiString.EmptyFilter to
+            "Le filtre est désactivé. Activez-le pour choisir les fréquences audibles.",
+        UiString.ToneOffTitle to "Le ton {0} est désactivé",
+        UiString.ToneOffHint to "Activez-le pour modifier sa hauteur, son volume et son filtre.",
+        UiString.TurnOn to "Activer",
+        UiString.NoFileTitle to "Aucun fichier ouvert",
+        UiString.NoFileHint to
+            "Ouvrez un fichier .synth pour le modifier, ou commencez un nouveau patch.",
+        UiString.OpenLabel to "Ouvrir",
+        UiString.NewLabel to "Nouveau",
+        UiString.StatusNewPatch to "Nouveau patch créé avec le ton 1 activé",
+        UiString.StatusEdited to "Patch modifié. Annuler rétablit l'état précédent.",
+        UiString.StatusUndone to "Dernière modification annulée. Rétablir la restaure.",
+        UiString.StatusRedone to "Modification rétablie. Annuler la défait.",
+        UiString.TooltipImportTone to
+            "Charger un fichier de ton JagFx (.tone) dans le ton sélectionné",
+        UiString.TooltipExportTone to
+            "Enregistrer le ton sélectionné comme fichier de ton JagFx (.tone)",
+        UiString.TooltipImportFilter to
+            "Charger un fichier de filtre JagFx (.filter) dans le ton sélectionné",
+        UiString.TooltipExportFilter to
+            "Enregistrer le filtre comme fichier de filtre JagFx (.filter)",
         UiString.SlotPitch to "Pitch envelope",
         UiString.SlotVibratoRate to "Vibrato rate",
         UiString.SlotVibratoDepth to "Vibrato depth",
@@ -119,10 +147,10 @@ internal val stringsFr: Map<UiString, String> =
         UiString.MenuOpenSample to "Ouvrir un échantillon…",
         UiString.MenuSave to "Enregistrer",
         UiString.MenuSaveAs to "Enregistrer sous…",
-        UiString.MenuImportTone to "Importer un ton…",
-        UiString.MenuExportTone to "Exporter un ton…",
-        UiString.MenuImportFilter to "Importer un filtre…",
-        UiString.MenuExportFilter to "Exporter un filtre…",
+        UiString.MenuImportTone to "Importer un ton JagFx…",
+        UiString.MenuExportTone to "Exporter un ton JagFx…",
+        UiString.MenuImportFilter to "Importer un filtre JagFx…",
+        UiString.MenuExportFilter to "Exporter un filtre JagFx…",
         UiString.MenuUndo to "Annuler",
         UiString.MenuRedo to "Rétablir",
         UiString.MenuPlay to "Lire",

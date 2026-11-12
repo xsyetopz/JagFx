@@ -32,7 +32,12 @@ class DesktopPatchFiles(
 ) : PatchFiles {
     override suspend fun pickAndRead(kind: PatchFileKind): OpenedFile? {
         val file =
-            showDialog(FileDialog.LOAD, "Open .${kind.extension} file", kind, suggestedName = null)
+            showDialog(
+                FileDialog.LOAD,
+                "Open ${kind.description} (.${kind.extension})",
+                kind,
+                suggestedName = null,
+            )
                 ?: return null
         return OpenedFile(file.name, file.path, read(file.path))
     }
@@ -70,7 +75,12 @@ class DesktopPatchFiles(
         kind: PatchFileKind,
     ): SavedFile? {
         val picked =
-            showDialog(FileDialog.SAVE, "Save .${kind.extension} file", kind, suggestedName)
+            showDialog(
+                FileDialog.SAVE,
+                "Save ${kind.description} (.${kind.extension})",
+                kind,
+                suggestedName,
+            )
                 ?: return null
         val file =
             if (picked.name.contains(

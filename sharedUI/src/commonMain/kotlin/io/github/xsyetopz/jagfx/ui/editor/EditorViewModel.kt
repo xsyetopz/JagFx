@@ -34,7 +34,8 @@ internal class EditorViewModel(
     private val sampleDecoder: SampleDecoder = SampleDecoder.Default,
     private val preferences: Preferences = Preferences.None,
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow(EditorState().withPreferences(preferences.load()))
+    private val mutableState =
+        MutableStateFlow(EditorState(isFileOpen = false).withPreferences(preferences.load()))
     val state: StateFlow<EditorState> = mutableState.asStateFlow()
 
     private val patchFiles = PatchFileTasks(files, { state.value }, ::dispatch)
