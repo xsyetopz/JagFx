@@ -1,42 +1,22 @@
 package io.github.xsyetopz.jagfx.ui.widgets
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LocalContentColor
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
-import io.github.xsyetopz.jagfx.ui.theme.DISABLED_ALPHA
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
 /**
- * A popup list at [offset] from the top left of its parent; a click outside or Escape calls
- * [onDismiss].
+ * A stock Material dropdown menu at [offset] from the top left of its parent; a click outside or
+ * Escape calls [onDismiss].
  * Fill it with [JagMenuItem]s.
  */
 @Composable
@@ -45,27 +25,11 @@ internal fun JagMenu(
     offset: IntOffset = IntOffset.Zero,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val colors = JagFxTheme.colors
-    val dimens = JagFxTheme.dimens
-    val shape = RoundedCornerShape(dimens.radius)
-    Popup(
-        offset = offset,
-        onDismissRequest = onDismiss,
-        properties = PopupProperties(focusable = true),
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .width(IntrinsicSize.Max)
-                    .background(colors.panel, shape)
-                    .border(dimens.border, colors.controlBorder, shape)
-                    .padding(dimens.spaceXs),
-            content = content,
-        )
-    }
+    val at = with(LocalDensity.current) { DpOffset(offset.x.toDp(), offset.y.toDp()) }
+    DropdownMenu(expanded = true, onDismissRequest = onDismiss, offset = at, content = content)
 }
 
-/** One row of a [JagMenu]; an [active] row shows in the accent color. */
+/** One row of a [JagMenu]; an [active] row is bold and reports itself selected. */
 @Composable
 internal fun JagMenuItem(
     text: String,
@@ -74,36 +38,18 @@ internal fun JagMenuItem(
     active: Boolean = false,
     icon: IconPainter? = null,
 ) {
-    val colors = JagFxTheme.colors
     val dimens = JagFxTheme.dimens
-    val interaction = remember { MutableInteractionSource() }
-    val hovered by interaction.collectIsHoveredAsState()
-    val focused by interaction.collectIsFocusedAsState()
-    Row(
+    val style = JagFxTheme.typography.body
+    DropdownMenuItem(
+        text = {
+            JagText(text, style = if (active) style.copy(fontWeight = FontWeight.Bold) else style)
+        },
+        onClick = onClick,
         modifier =
             Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = dimens.controlHeight + dimens.spaceMd)
-                .alpha(if (enabled) 1f else DISABLED_ALPHA)
-                .background(if (hovered && enabled) colors.buttonHover else colors.panel)
-                .focusRing(focused, colors.accent, dimens.focusRing, dimens.radius)
-                .hoverable(interaction)
-                .semantics { selected = active }
-                .clickable(
-                    interaction,
-                    indication = null,
-                    enabled = enabled,
-                    role = Role.Button,
-                    onClick = onClick,
-                ).padding(horizontal = dimens.spaceLg),
-        horizontalArrangement = Arrangement.spacedBy(dimens.spaceMd),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        CompositionLocalProvider(
-            LocalContentColor provides if (active) colors.accent else colors.text,
-        ) {
-            icon?.let { PainterIcon(it) }
-            JagText(text)
-        }
-    }
+                .height(dimens.controlHeight + dimens.spaceMd)
+                .semantics { selected = active },
+        leadingIcon = icon?.let { { PainterIcon(it) } },
+        enabled = enabled,
+    )
 }
