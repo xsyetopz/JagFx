@@ -149,4 +149,37 @@ internal val stringsIt: Map<UiString, String> =
         UiString.ZerosLabel to "Zeros",
         UiString.VoicesTitle to "Voci",
         UiString.PointsTitle to "Punti",
+        UiString.CellDescPitch to "Freq Base: l'altezza del suono lungo la sua durata.",
+        UiString.CellDescVibratoRate to
+            "Freq Modulation rate: quanto velocemente oscilla l'altezza (velocità del vibrato).",
+        UiString.CellDescVibratoDepth to
+            "Freq Modulation range: quanto oscilla l'altezza (profondità del vibrato).",
+        UiString.CellDescVolume to "Amp Base: il volume del suono lungo la sua durata.",
+        UiString.CellDescTremoloRate to
+            "Amp Modulation rate: quanto velocemente oscilla il volume (velocità del tremolo).",
+        UiString.CellDescTremoloDepth to
+            "Amp Modulation range: quanto oscilla il volume (profondità del tremolo).",
+        UiString.CellDescGapOff to
+            "Gap off: per quanto tempo il suono è muto in ogni ciclo del gate.",
+        UiString.CellDescGapOn to "Gap on: per quanto tempo il suono suona in ogni ciclo del gate.",
+        UiString.CellDescFilter to
+            "Transition Curve: come il filtro passa dall'impostazione iniziale a quella finale.",
+        UiString.CellDescPoleZero to
+            "Graph of poles and zeros: poli e zeri del filtro; trascinali per cambiare il suono.",
+        UiString.CellDescOutput to "Final Output: il suono generato di questo tono.",
+        UiString.CellDescBode to
+            "Frequency Response: quanto il filtro esalta o attenua ogni frequenza.",
+        UiString.TooltipZoomPreset to "Zoom a {0}x",
+        UiString.TooltipFitView to "Adatta: mostra tutta la voce",
+        UiString.TooltipTimeView to "Vista temporale: Collegata o Questa cella",
+        UiString.TooltipControlsPanel to "Mostra o nascondi i controlli di questa cella",
+        UiString.TimeViewLinked to "Collegata",
+        UiString.TimeViewThisCell to "Questa cella",
+        UiString.TimeViewLabel to "Vista temporale",
+        UiString.PointColumnTime to "Tempo (ms)",
+        UiString.PointColumnValue to "Valore ({0})",
+        UiString.PointColumnPosition to "Posizione (su 65536)",
+        UiString.PointColumnLevel to "Livello (grezzo)",
+        UiString.RangeError to "Intervallo consentito: da {0} a {1}",
+        UiString.ControlsPanelTitle to "Controlli: {0}",
     )

@@ -148,4 +148,37 @@ internal val stringsPtBr: Map<UiString, String> =
         UiString.ZerosLabel to "Zeros",
         UiString.VoicesTitle to "Vozes",
         UiString.PointsTitle to "Pontos",
+        UiString.CellDescPitch to "Freq Base: a altura do som ao longo da sua duração.",
+        UiString.CellDescVibratoRate to
+            "Freq Modulation rate: a rapidez com que a altura oscila (velocidade do vibrato).",
+        UiString.CellDescVibratoDepth to
+            "Freq Modulation range: o quanto a altura oscila (profundidade do vibrato).",
+        UiString.CellDescVolume to "Amp Base: o volume do som ao longo da sua duração.",
+        UiString.CellDescTremoloRate to
+            "Amp Modulation rate: a rapidez com que o volume oscila (velocidade do tremolo).",
+        UiString.CellDescTremoloDepth to
+            "Amp Modulation range: o quanto o volume oscila (profundidade do tremolo).",
+        UiString.CellDescGapOff to
+            "Gap off: por quanto tempo o som fica mudo em cada ciclo do gate.",
+        UiString.CellDescGapOn to "Gap on: por quanto tempo o som toca em cada ciclo do gate.",
+        UiString.CellDescFilter to
+            "Transition Curve: como o filtro vai do ajuste inicial ao final.",
+        UiString.CellDescPoleZero to
+            "Os polos e zeros do filtro; arraste um para mudar o som.",
+        UiString.CellDescOutput to "Final Output: o som gerado deste tom.",
+        UiString.CellDescBode to
+            "Frequency Response: quanto o filtro reforça ou atenua cada frequência.",
+        UiString.TooltipZoomPreset to "Zoom em {0}x",
+        UiString.TooltipFitView to "Ajustar: mostrar a voz inteira",
+        UiString.TooltipTimeView to "Vista de tempo: Vinculada ou Esta célula",
+        UiString.TooltipControlsPanel to "Mostrar ou ocultar os controles desta célula",
+        UiString.TimeViewLinked to "Vinculada",
+        UiString.TimeViewThisCell to "Esta célula",
+        UiString.TimeViewLabel to "Vista de tempo",
+        UiString.PointColumnTime to "Tempo (ms)",
+        UiString.PointColumnValue to "Valor ({0})",
+        UiString.PointColumnPosition to "Posição (de 65536)",
+        UiString.PointColumnLevel to "Nível (bruto)",
+        UiString.RangeError to "Intervalo permitido: {0} a {1}",
+        UiString.ControlsPanelTitle to "Controles: {0}",
     )

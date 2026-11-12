@@ -146,4 +146,36 @@ internal val stringsEn: Map<UiString, String> =
         UiString.ZerosLabel to "Zeros",
         UiString.VoicesTitle to "Voices",
         UiString.PointsTitle to "Points",
+        UiString.CellDescPitch to "Freq Base: the pitch of the tone over its length.",
+        UiString.CellDescVibratoRate to
+            "Freq Modulation rate: how fast the pitch wobbles (vibrato speed).",
+        UiString.CellDescVibratoDepth to
+            "Freq Modulation range: how far the pitch wobbles (vibrato depth).",
+        UiString.CellDescVolume to "Amp Base: the loudness of the tone over its length.",
+        UiString.CellDescTremoloRate to
+            "Amp Modulation rate: how fast the loudness wobbles (tremolo speed).",
+        UiString.CellDescTremoloDepth to
+            "Amp Modulation range: how far the loudness wobbles (tremolo depth).",
+        UiString.CellDescGapOff to "Gap off: how long the sound is silenced in each gate cycle.",
+        UiString.CellDescGapOn to "Gap on: how long the sound plays in each gate cycle.",
+        UiString.CellDescFilter to
+            "Transition Curve: how the filter moves from its start to its end setting.",
+        UiString.CellDescPoleZero to
+            "Graph of poles and zeros: the filter's poles and zeros; drag one to change the sound.",
+        UiString.CellDescOutput to "Final Output: the rendered sound of this tone.",
+        UiString.CellDescBode to
+            "Frequency Response: how much the filter boosts or cuts each frequency.",
+        UiString.TooltipZoomPreset to "Zoom to {0}x",
+        UiString.TooltipFitView to "Fit: show the whole voice",
+        UiString.TooltipTimeView to "Time view: Linked or This cell",
+        UiString.TooltipControlsPanel to "Show or hide the controls of this cell",
+        UiString.TimeViewLinked to "Linked",
+        UiString.TimeViewThisCell to "This cell",
+        UiString.TimeViewLabel to "Time view",
+        UiString.PointColumnTime to "Time (ms)",
+        UiString.PointColumnValue to "Value ({0})",
+        UiString.PointColumnPosition to "Position (of 65536)",
+        UiString.PointColumnLevel to "Level (raw)",
+        UiString.RangeError to "Allowed range: {0} to {1}",
+        UiString.ControlsPanelTitle to "Controls: {0}",
     )
