@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.time.TimeSource
 
 /**
  * Holds the [EditorState] and performs the side effects of [RequestIntent]s.
@@ -24,6 +25,8 @@ import kotlinx.coroutines.withContext
  * render discards an older one. With true-wave off, renders wait until no gesture is open.
  * Opening a sample decodes it on [renderDispatcher] with [sampleDecoder].
  * The panel side, text size, and theme start from [preferences] and are saved whenever they change.
+ * Playback positions reach the state at most 4 times a second, or once a second when
+ * [PlatformSettings.reducedMotion] of [settings] is on; the last position always arrives.
  * Call [dispatch] from the main thread.
  */
 internal class EditorViewModel(
@@ -33,6 +36,7 @@ internal class EditorViewModel(
     private val renderDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val sampleDecoder: SampleDecoder = SampleDecoder.Default,
     private val preferences: Preferences = Preferences.None,
+    private val settings: PlatformSettings = PlatformSettings.None,
 ) : ViewModel() {
     private val mutableState =
         MutableStateFlow(EditorState(isFileOpen = false).withPreferences(preferences.load()))
@@ -137,9 +141,16 @@ internal class EditorViewModel(
                             pcm = render(request)
                             sampleRate = Renderer.SAMPLE_RATE
                         }
+                        val throttle = PlaybackThrottle(playbackIntervalMs(settings.reducedMotion))
+                        val start = TimeSource.Monotonic.markNow()
                         audio.play(pcm, sampleRate).collect {
-                            dispatch(ResultIntent.PlaybackPosition(it))
+                            throttle
+                                .offer(it, start.elapsedNow().inWholeMilliseconds)
+                                ?.let { position ->
+                                    dispatch(ResultIntent.PlaybackPosition(position))
+                                }
                         }
+                        throttle.flush()?.let { dispatch(ResultIntent.PlaybackPosition(it)) }
                     } while (mutableState.value.let { it.isLooping && it.loopCount == 0 })
                 } catch (e: AudioOutputException) {
                     dispatch(ResultIntent.PlaybackFailed(e.message.orEmpty()))

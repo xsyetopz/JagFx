@@ -51,7 +51,15 @@ fun ApplicationScope.JagFxWindow(
         focusable = !hidden,
     ) {
         val files = remember { DesktopPatchFiles(owner = { window }) }
-        val viewModel = viewModel { EditorViewModel(files, audio, preferences = preferences) }
+        val viewModel =
+            viewModel {
+                EditorViewModel(
+                    files,
+                    audio,
+                    preferences = preferences,
+                    settings = settings,
+                )
+            }
         val state by viewModel.state.collectAsStateWithLifecycle()
         LaunchedEffect(Unit) {
             if (hidden) window.toBack()

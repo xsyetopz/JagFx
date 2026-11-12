@@ -21,6 +21,7 @@ import io.github.xsyetopz.jagfx.ui.i18n.rememberStrings
 import io.github.xsyetopz.jagfx.ui.screen.EditorScreen
 import io.github.xsyetopz.jagfx.ui.theme.JagFxAppearance
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
+import io.github.xsyetopz.jagfx.ui.theme.LocalReducedMotion
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
@@ -39,7 +40,8 @@ fun App(
     settings: PlatformSettings = PlatformSettings.None,
     onTitleChange: (String) -> Unit = {},
 ) {
-    val viewModel = viewModel { EditorViewModel(files, audio, preferences = preferences) }
+    val viewModel =
+        viewModel { EditorViewModel(files, audio, preferences = preferences, settings = settings) }
     EditorApp(viewModel, home, settings, onTitleChange)
 }
 
@@ -80,7 +82,10 @@ internal fun EditorApp(
         }
     val textScale = resolveTextScale(state.textScalePercent, settings.textScalePercent) / PERCENT
     JagFxTheme(appearance, textScale) {
-        CompositionLocalProvider(LocalStrings provides rememberStrings()) {
+        CompositionLocalProvider(
+            LocalStrings provides rememberStrings(),
+            LocalReducedMotion provides settings.reducedMotion,
+        ) {
             EditorScreen(viewModel)
         }
     }
