@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -20,6 +21,7 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.IntSize
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
@@ -32,7 +34,8 @@ private val FilterCells =
 
 /**
  * One cell of the rack: the [CellHeader] of [slot] over its scope.
- * Any press in the cell makes [slot] the selected cell, which the inspector shows; the selected
+ * A press that comes up inside the cell makes [slot] the selected cell (WCAG 2.5.2); leaving the
+ * cell before the release cancels it, which the inspector shows; the selected
  * cell has an accent border.
  */
 @Composable
@@ -62,17 +65,8 @@ internal fun GridCell(
             .focusGroup()
             .background(if (selected) colors.cellSelected else colors.cell)
             .border(dimens.border, if (selected) colors.accent else colors.border)
-            .pointerInput(slot) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val event = awaitPointerEvent(PointerEventPass.Initial)
-                        if (event.type == PointerEventType.Press) {
-                            actions.focusSelectedCell = false
-                            actions.dispatch(SlotIntent.SelectTarget(slot))
-                        }
-                    }
-                }
-            }.padding(dimens.border),
+            .selectOnRelease(slot, actions)
+            .padding(dimens.border),
     ) {
         CellHeader(slot, selected, view, actions)
         val summary = plotSummary(slot, envelopeOf(state.voice, slot), LocalStrings.current)
@@ -124,3 +118,40 @@ private fun CellScope(
         }
     }
 }
+
+private fun Offset.isInside(size: IntSize) = x >= 0f && y >= 0f && x < size.width && y < size.height
+
+/** Selects [slot] when a press in the cell comes up inside it; see [PressTracker]. */
+private fun Modifier.selectOnRelease(
+    slot: SignalChainSlot,
+    actions: EditorActions,
+): Modifier =
+    pointerInput(slot) {
+        val press = PressTracker()
+        awaitPointerEventScope {
+            while (true) {
+                val event = awaitPointerEvent(PointerEventPass.Initial)
+                val inside = event.changes.all { it.position.isInside(size) }
+                when (event.type) {
+                    PointerEventType.Press -> {
+                        press.down(inside)
+                    }
+
+                    PointerEventType.Move -> {
+                        press.move(inside)
+                    }
+
+                    PointerEventType.Exit -> {
+                        press.cancel()
+                    }
+
+                    PointerEventType.Release -> {
+                        if (press.up(inside)) {
+                            actions.focusSelectedCell = false
+                            actions.dispatch(SlotIntent.SelectTarget(slot))
+                        }
+                    }
+                }
+            }
+        }
+    }

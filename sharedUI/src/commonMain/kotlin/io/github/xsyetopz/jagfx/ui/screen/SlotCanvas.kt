@@ -23,7 +23,6 @@ import io.github.xsyetopz.jagfx.ui.canvas.PoleZeroCanvas
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.EnvelopeIntent
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
-import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
@@ -145,10 +144,7 @@ private fun EnvelopeSlotCanvas(
                     actions.updateCanvas(slot) { it.copy(selectedIndex = index) }
                 },
                 onSegmentsChange = { actions.dispatch(EnvelopeIntent.SetSegments(slot, it)) },
-                onGestureStart = {
-                    actions.dispatch(SlotIntent.SelectTarget(slot))
-                    actions.beginGesture()
-                },
+                onGestureStart = actions::beginGesture,
                 onGestureEnd = actions::endGesture,
             ),
         menuLabels =
