@@ -232,6 +232,15 @@ internal sealed interface ViewIntent : EditorIntent {
     data class SetPanelSide(
         val side: PanelSide,
     ) : ViewIntent
+
+    /** Sets the in-app text size; the reducer clamps [percent] to `100..200`. */
+    data class SetTextScale(
+        val percent: Int,
+    ) : ViewIntent
+
+    data class SetTheme(
+        val theme: ThemePreference,
+    ) : ViewIntent
 }
 
 /** Undo, redo, and gesture grouping. */

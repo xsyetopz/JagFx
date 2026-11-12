@@ -4,6 +4,7 @@ import io.github.xsyetopz.jagfx.core.engine.Renderer
 import io.github.xsyetopz.jagfx.core.model.Patch
 import io.github.xsyetopz.jagfx.core.vorbis.JagVorbis
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.Serializable
 
 /** Renders [patch] to 16-bit PCM at [Renderer.SAMPLE_RATE]; see [Renderer.render]. */
 internal fun interface PatchRenderer {
@@ -110,3 +111,78 @@ interface PatchFiles {
         kind: PatchFileKind,
     ): SavedFile?
 }
+
+/** What the editor keeps across restarts: the side panel edge, the text size, and the theme. */
+@Serializable
+data class EditorPreferences(
+    val panelSide: PanelSide = PanelSide.Right,
+    val textScalePercent: Int = 100,
+    val theme: ThemePreference = ThemePreference.System,
+)
+
+/**
+ * Keeps [EditorPreferences] between runs. Each platform supplies one. [load] returns the defaults
+ * when nothing is stored or the stored data is unreadable. [save] never throws; a failed write
+ * loses the setting but not the session.
+ */
+interface Preferences {
+    fun load(): EditorPreferences
+
+    fun save(preferences: EditorPreferences)
+
+    companion object {
+        /** Stores nothing. */
+        val None: Preferences =
+            object : Preferences {
+                override fun load(): EditorPreferences = EditorPreferences()
+
+                override fun save(preferences: EditorPreferences) = Unit
+            }
+    }
+}
+
+/**
+ * Read-only settings of the platform (EN 301 549 clause 11.7). Each platform reports what it
+ * exposes and leaves the rest at the defaults.
+ *
+ * @property highContrast The user asked the platform for high contrast.
+ * @property reducedMotion The user asked the platform for less motion.
+ * @property textScalePercent The platform text size in percent, `100` when it is not exposed.
+ */
+interface PlatformSettings {
+    val highContrast: Boolean
+    val reducedMotion: Boolean
+    val textScalePercent: Int
+
+    companion object {
+        /** Reports no platform preferences. */
+        val None: PlatformSettings =
+            object : PlatformSettings {
+                override val highContrast: Boolean = false
+                override val reducedMotion: Boolean = false
+                override val textScalePercent: Int = 100
+            }
+    }
+}
+
+/** The theme to draw: a stored [System] becomes [ThemePreference.HighContrast] on a high-contrast platform. */
+fun resolveTheme(
+    stored: ThemePreference,
+    platformHighContrast: Boolean,
+): ThemePreference =
+    if (stored == ThemePreference.System && platformHighContrast) {
+        ThemePreference.HighContrast
+    } else {
+        stored
+    }
+
+/** The text size to draw: the in-app size times the platform size, within `100..200`. */
+fun resolveTextScale(
+    storedPercent: Int,
+    platformPercent: Int,
+): Int =
+    (
+        storedPercent.toLong() * platformPercent.coerceAtLeast(EditorState.MIN_TEXT_SCALE_PERCENT) /
+            EditorState.MIN_TEXT_SCALE_PERCENT
+    ).toInt()
+        .coerceIn(EditorState.MIN_TEXT_SCALE_PERCENT, EditorState.MAX_TEXT_SCALE_PERCENT)

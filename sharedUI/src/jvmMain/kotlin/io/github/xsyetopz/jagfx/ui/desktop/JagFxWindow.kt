@@ -16,6 +16,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.xsyetopz.jagfx.ui.EditorApp
 import io.github.xsyetopz.jagfx.ui.editor.AudioOutput
 import io.github.xsyetopz.jagfx.ui.editor.EditorViewModel
+import io.github.xsyetopz.jagfx.ui.editor.PlatformSettings
+import io.github.xsyetopz.jagfx.ui.editor.Preferences
 import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
 import io.github.xsyetopz.jagfx.ui.platform.DesktopPatchFiles
 import java.io.File
@@ -33,6 +35,8 @@ internal val isMacOs: Boolean = System.getProperty("os.name").orEmpty().startsWi
 @Composable
 fun ApplicationScope.JagFxWindow(
     audio: AudioOutput,
+    preferences: Preferences,
+    settings: PlatformSettings,
     home: String?,
     icon: Painter?,
     hidden: Boolean = false,
@@ -47,7 +51,7 @@ fun ApplicationScope.JagFxWindow(
         focusable = !hidden,
     ) {
         val files = remember { DesktopPatchFiles(owner = { window }) }
-        val viewModel = viewModel { EditorViewModel(files, audio) }
+        val viewModel = viewModel { EditorViewModel(files, audio, preferences = preferences) }
         val state by viewModel.state.collectAsStateWithLifecycle()
         LaunchedEffect(Unit) {
             if (hidden) window.toBack()
@@ -64,6 +68,6 @@ fun ApplicationScope.JagFxWindow(
                 window.rootPane.putClientProperty("Window.documentFile", path?.let(::File))
             }
         }
-        EditorApp(viewModel, home) { if (!isMacOs) title = it }
+        EditorApp(viewModel, home, settings) { if (!isMacOs) title = it }
     }
 }

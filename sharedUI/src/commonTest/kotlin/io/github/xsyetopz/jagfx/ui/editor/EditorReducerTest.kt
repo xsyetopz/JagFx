@@ -34,6 +34,21 @@ class EditorReducerTest {
     }
 
     @Test
+    fun textScaleClampsAndThemeSetsWithoutTouchingPatchOrHistory() {
+        assertEquals(100, enabled.textScalePercent)
+        assertEquals(ThemePreference.System, enabled.theme)
+        val scaled = enabled.after(ViewIntent.SetTextScale(150))
+        assertEquals(150, scaled.textScalePercent)
+        assertEquals(200, enabled.after(ViewIntent.SetTextScale(900)).textScalePercent)
+        assertEquals(100, enabled.after(ViewIntent.SetTextScale(10)).textScalePercent)
+        val themed = scaled.after(ViewIntent.SetTheme(ThemePreference.Light))
+        assertEquals(ThemePreference.Light, themed.theme)
+        assertSame(enabled.patch, themed.patch)
+        assertEquals(enabled.history, themed.history)
+        assertEquals(enabled.isDirty, themed.isDirty)
+    }
+
+    @Test
     fun panelSideMovesWithoutTouchingPatchOrHistory() {
         assertEquals(PanelSide.Right, enabled.panelSide)
         val moved = enabled.after(ViewIntent.SetPanelSide(PanelSide.Left))

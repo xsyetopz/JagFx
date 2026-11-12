@@ -45,6 +45,37 @@ class EditorViewModelTest {
 
     private fun EditorViewModel.close() = viewModelScope.cancel()
 
+    private class FakePreferences(
+        var stored: EditorPreferences = EditorPreferences(),
+    ) : Preferences {
+        var saves = 0
+
+        override fun load() = stored
+
+        override fun save(preferences: EditorPreferences) {
+            saves++
+            stored = preferences
+        }
+    }
+
+    @Test
+    fun preferencesAreSavedOnChangeAndAppliedAtStart() {
+        val prefs = FakePreferences()
+        val first = EditorViewModel(files, audio, renderer, dispatcher, preferences = prefs)
+        first.dispatch(ViewIntent.SetPanelSide(PanelSide.Left))
+        first.dispatch(ViewIntent.SetTextScale(130))
+        first.dispatch(ViewIntent.SetTheme(ThemePreference.Classic))
+        first.dispatch(ViewIntent.SetLooping(true))
+        assertEquals(3, prefs.saves)
+        first.close()
+
+        val second = EditorViewModel(files, audio, renderer, dispatcher, preferences = prefs)
+        assertEquals(PanelSide.Left, second.state.value.panelSide)
+        assertEquals(130, second.state.value.textScalePercent)
+        assertEquals(ThemePreference.Classic, second.state.value.theme)
+        second.close()
+    }
+
     @Test
     fun editRendersOnePassPreviewOfWholePatch() =
         runTest(dispatcher) {

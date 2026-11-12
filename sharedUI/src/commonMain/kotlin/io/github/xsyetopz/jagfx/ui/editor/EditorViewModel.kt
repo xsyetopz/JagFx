@@ -23,6 +23,7 @@ import kotlinx.coroutines.withContext
  * Every patch or playback-slot change renders a one-pass preview on [renderDispatcher]; a newer
  * render discards an older one. With true-wave off, renders wait until no gesture is open.
  * Opening a sample decodes it on [renderDispatcher] with [sampleDecoder].
+ * The panel side, text size, and theme start from [preferences] and are saved whenever they change.
  * Call [dispatch] from the main thread.
  */
 internal class EditorViewModel(
@@ -31,8 +32,9 @@ internal class EditorViewModel(
     private val renderer: PatchRenderer = PatchRenderer.Default,
     private val renderDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val sampleDecoder: SampleDecoder = SampleDecoder.Default,
+    private val preferences: Preferences = Preferences.None,
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow(EditorState())
+    private val mutableState = MutableStateFlow(EditorState().withPreferences(preferences.load()))
     val state: StateFlow<EditorState> = mutableState.asStateFlow()
 
     private val patchFiles = PatchFileTasks(files, { state.value }, ::dispatch)
@@ -48,8 +50,10 @@ internal class EditorViewModel(
     }
 
     fun dispatch(intent: EditorIntent) {
-        val next = reduce(mutableState.value, intent)
+        val previous = mutableState.value
+        val next = reduce(previous, intent)
         mutableState.value = next
+        if (next.preferences != previous.preferences) preferences.save(next.preferences)
         if (intent is RequestIntent) perform(intent) else schedulePreview(next)
     }
 
@@ -189,3 +193,17 @@ internal class EditorViewModel(
         val slot: Int?,
     )
 }
+
+private val EditorState.preferences: EditorPreferences
+    get() = EditorPreferences(panelSide, textScalePercent, theme)
+
+private fun EditorState.withPreferences(stored: EditorPreferences): EditorState =
+    copy(
+        panelSide = stored.panelSide,
+        textScalePercent =
+            stored.textScalePercent.coerceIn(
+                EditorState.MIN_TEXT_SCALE_PERCENT,
+                EditorState.MAX_TEXT_SCALE_PERCENT,
+            ),
+        theme = stored.theme,
+    )

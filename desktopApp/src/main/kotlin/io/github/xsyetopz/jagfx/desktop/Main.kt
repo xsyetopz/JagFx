@@ -4,6 +4,8 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.window.application
 import io.github.xsyetopz.jagfx.ui.desktop.JagFxWindow
+import io.github.xsyetopz.jagfx.ui.platform.DesktopPlatformSettings
+import io.github.xsyetopz.jagfx.ui.platform.DesktopPreferences
 import io.github.xsyetopz.jagfx.ui.platform.JavaSoundOutput
 import javax.imageio.ImageIO
 
@@ -32,10 +34,14 @@ fun main(args: Array<String>) {
             }
         }
     val audio = JavaSoundOutput()
+    val preferences = DesktopPreferences()
+    val settings = DesktopPlatformSettings()
     val home: String? = System.getProperty("user.home")
     application {
         JagFxWindow(
             audio = audio,
+            preferences = preferences,
+            settings = settings,
             home = home,
             icon = icon,
             hidden = hidden,

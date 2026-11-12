@@ -101,7 +101,10 @@ internal data class SampleDocument(
 }
 
 /** The window edge the properties panel sits on, so either hand can keep it near the mouse. */
-internal enum class PanelSide { Left, Right }
+enum class PanelSide { Left, Right }
+
+/** The color theme the user picked. [System] follows the platform, for example high contrast. */
+enum class ThemePreference { System, Classic, Light, HighContrast }
 
 /**
  * Complete editor state. [reduce] is the only function that makes a new state from an intent.
@@ -133,6 +136,8 @@ internal data class EditorState(
     val preview: Preview = Preview.Empty,
     val sample: SampleDocument? = null,
     val panelSide: PanelSide = PanelSide.Right,
+    val textScalePercent: Int = MIN_TEXT_SCALE_PERCENT,
+    val theme: ThemePreference = ThemePreference.System,
 ) {
     val isDirty: Boolean get() = patch != savedPatch
 
@@ -189,6 +194,10 @@ internal data class EditorState(
     companion object {
         const val DEFAULT_FILE_NAME: String = "untitled"
         const val MAX_LOOP_COUNT: Int = 999
+
+        /** The in-app text size range, in percent of the normal size. */
+        const val MIN_TEXT_SCALE_PERCENT: Int = 100
+        const val MAX_TEXT_SCALE_PERCENT: Int = 200
         const val INFINITE_LOOP_PASSES: Int = 50
     }
 }

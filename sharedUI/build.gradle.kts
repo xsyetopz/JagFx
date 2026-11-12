@@ -1,5 +1,6 @@
 plugins {
     id("jagfx.kmp.ui")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -14,6 +15,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
         }
         wasmJsMain.dependencies {
             implementation(libs.kotlinx.browser)

@@ -220,6 +220,20 @@ private fun reduceView(
         is ViewIntent.SetPanelSide -> {
             state.copy(panelSide = intent.side)
         }
+
+        is ViewIntent.SetTextScale -> {
+            state.copy(
+                textScalePercent =
+                    intent.percent.coerceIn(
+                        EditorState.MIN_TEXT_SCALE_PERCENT,
+                        EditorState.MAX_TEXT_SCALE_PERCENT,
+                    ),
+            )
+        }
+
+        is ViewIntent.SetTheme -> {
+            state.copy(theme = intent.theme)
+        }
     }
 
 private fun reduceHistory(
