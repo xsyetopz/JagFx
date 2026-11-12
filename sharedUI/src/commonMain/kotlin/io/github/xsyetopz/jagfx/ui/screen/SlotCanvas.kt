@@ -7,6 +7,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import io.github.xsyetopz.jagfx.ui.canvas.ENVELOPE_PADDING
 import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeCallbacks
 import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeCanvas
@@ -35,25 +38,41 @@ internal fun SlotCanvas(
     actions: EditorActions,
     modifier: Modifier,
 ) {
+    val strings = LocalStrings.current
     when (slot) {
         SignalChainSlot.PoleZero -> {
-            PoleZeroSlotCanvas(state, view, actions, modifier)
+            val summary = poleZeroSummary(strings, state.voice?.filter)
+            PoleZeroSlotCanvas(
+                state,
+                view,
+                actions,
+                modifier.semantics {
+                    contentDescription =
+                        summary
+                },
+            )
         }
 
         SignalChainSlot.Bode -> {
+            val summary = responseSummary(strings, state.voice?.filter)
             FrequencyResponseCanvas(
                 filter = state.voice?.filter,
-                modifier = modifier,
+                modifier = modifier.semantics { contentDescription = summary },
                 panZoom = actions.panZoom(slot, view.canvas(slot)),
             )
         }
 
         SignalChainSlot.Output -> {
             var width by remember { mutableIntStateOf(0) }
+            val summary =
+                remember(state.preview.samples) { outputSummary(strings, state.preview.samples) }
             OutputWaveCanvas(
                 samples = state.preview.samples,
                 playbackPosition = state.playbackPosition,
-                modifier = modifier.onSizeChanged { width = it.width },
+                modifier =
+                    modifier
+                        .onSizeChanged { width = it.width }
+                        .semantics { contentDescription = summary },
                 panZoom = actions.timePanZoom(slot, view, width.toFloat()),
             )
         }
@@ -104,6 +123,9 @@ private fun EnvelopeSlotCanvas(
     val envelope = envelopeOf(state.voice, slot)
     val canvasView = view.canvas(slot)
     var width by remember { mutableIntStateOf(0) }
+    val durationMs = state.voice?.duration?.value ?: 0
+    val summary = envelopeSummary(strings, slot, envelope, durationMs)
+    val selection = envelopeState(strings, slot, envelope, canvasView.selectedIndex, durationMs)
     val plotWidth = (width - 2 * ENVELOPE_PADDING).coerceAtLeast(0f)
     val panZoom = actions.timePanZoom(slot, view, plotWidth)
     EnvelopeCanvas(
@@ -136,13 +158,19 @@ private fun EnvelopeSlotCanvas(
                 addPointHere = strings[UiString.MenuAddPointHere],
                 addPointAtEnd = strings[UiString.MenuAddPointEnd],
             ),
-        modifier = modifier.onSizeChanged { width = it.width },
+        modifier =
+            modifier
+                .onSizeChanged { width = it.width }
+                .semantics {
+                    contentDescription = summary
+                    selection?.let { stateDescription = it }
+                },
         style =
             EnvelopeStyle(
                 slot = slot,
                 lineColor = slotColor(slot, JagFxTheme.palette),
                 selected = slot == state.selectedTarget,
-                durationMs = state.voice?.duration?.value ?: 0,
+                durationMs = durationMs,
             ),
     )
 }

@@ -161,7 +161,7 @@ internal object PoleZeroGeometry {
 private const val MARKER_HALF_SIZE = 3f
 private const val SELECTION_RADIUS = 5f
 private const val LINE_WIDTH = 1f
-private const val RAIL_ALPHA = 0.5f
+internal const val RAIL_ALPHA = 0.7f
 
 /** Drag snapping and the [selected] marker of [PoleZeroCanvas]. */
 @Immutable
@@ -220,7 +220,7 @@ internal fun PoleZeroCanvas(
                 val current = panZoom.viewport
                 onDrawBehind {
                     drawRect(palette.scope)
-                    drawAnalysisGrid(current.zoom, current.scrollOffset)
+                    drawAnalysisGrid(palette, current.zoom, current.scrollOffset)
                     if (filter != null) drawPoles(filter, current, view.selected, stroke, palette)
                 }
             },

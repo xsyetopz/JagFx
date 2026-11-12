@@ -24,7 +24,7 @@ private const val SECTIONS = 4
 private val SectionFactors = DoubleArray(SECTIONS - 1) { (it + 1).toDouble() / SECTIONS }
 private const val END_FACTOR = 1.0
 private const val START_FACTOR = 0.0
-private const val SECTION_TRACE_ALPHA = 0.45f
+internal const val SECTION_TRACE_ALPHA = 0.6f
 
 /**
  * Magnitude response of [filter] from -80 dB to 80 dB over the C1–C9 frequency axis.
@@ -73,7 +73,7 @@ internal fun FrequencyResponseCanvas(
                 val stroke = Stroke(width = TRACE_WIDTH * density)
                 onDrawBehind {
                     drawRect(palette.scope)
-                    drawAnalysisGrid(viewport.zoom, viewport.scrollOffset)
+                    drawAnalysisGrid(palette, viewport.zoom, viewport.scrollOffset)
                     translate(left = -viewport.scrollOffset) {
                         for ((path, color) in traces) drawPath(path, color, style = stroke)
                     }

@@ -1,6 +1,9 @@
 package io.github.xsyetopz.jagfx.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import io.github.xsyetopz.jagfx.ui.canvas.RAIL_ALPHA
+import io.github.xsyetopz.jagfx.ui.canvas.SECTION_TRACE_ALPHA
 import kotlin.math.roundToInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -38,7 +41,14 @@ class ContrastTest {
     private fun floor(
         appearance: JagFxAppearance,
         normal: Float,
-    ) = if (appearance == JagFxAppearance.HighContrast) HIGH_TEXT else normal
+        name: String = "",
+    ) = if (appearance == JagFxAppearance.HighContrast &&
+        name !in HIGH_EXEMPT
+    ) {
+        HIGH_TEXT
+    } else {
+        normal
+    }
 
     @Test
     fun luminanceMatchesTheWcagReferencePoints() {
@@ -88,22 +98,72 @@ class ContrastTest {
         assertTrue(contrastRatio(subtle, Color(0xFF1E1E1E)) >= TEXT_MIN)
     }
 
+    /** Every palette color drawn as a line, marker, or trace; [SynthPalette.grid] and the fills are checked apart. */
+    private fun SynthPalette.graphics() =
+        mapOf(
+            "envelope" to envelope,
+            "marker" to marker,
+            "output" to output,
+            "filter" to filter,
+            "zero" to zero,
+            "pole" to pole,
+            "midLine" to midLine,
+            "loop" to loop,
+            "playhead" to playhead,
+            "inactive" to inactive,
+        )
+
     @Test
     fun plotLinesAndMarkersReachThreeToOneOnTheScope() {
         for (appearance in JagFxAppearance.entries) {
             val palette = SynthPalette.of(appearance)
-            val minimum = floor(appearance, NON_TEXT_MIN)
             val scope = mapOf("scope" to palette.scope)
-            check(appearance, "envelope", palette.envelope, scope, minimum)
-            check(appearance, "marker", palette.marker, scope, minimum)
-            check(appearance, "output", palette.output, scope, minimum)
-            check(appearance, "filter", palette.filter, scope, minimum)
-            check(appearance, "zero", palette.zero, scope, minimum)
-            check(appearance, "pole", palette.pole, scope, minimum)
-            check(appearance, "midLine", palette.midLine, scope, NON_TEXT_MIN)
-            check(appearance, "loop", palette.loop, scope, minimum)
-            check(appearance, "playhead", palette.playhead, scope, minimum)
+            for ((name, color) in palette.graphics()) {
+                check(appearance, name, color, scope, floor(appearance, NON_TEXT_MIN, name))
+            }
             check(appearance, "scopeText", palette.scopeText, scope, floor(appearance, TEXT_MIN))
+        }
+    }
+
+    @Test
+    fun translucentPlotColorsReachThreeToOneOnTheScope() {
+        for (appearance in JagFxAppearance.entries) {
+            val palette = SynthPalette.of(appearance)
+            val scope = mapOf("scope" to palette.scope)
+            val blended =
+                mapOf(
+                    "filter at section alpha" to palette.filter.copy(alpha = SECTION_TRACE_ALPHA),
+                    "zero rail" to palette.zero.copy(alpha = RAIL_ALPHA),
+                    "pole rail" to palette.pole.copy(alpha = RAIL_ALPHA),
+                )
+            for ((name, color) in blended) {
+                check(appearance, name, color.compositeOver(palette.scope), scope, NON_TEXT_MIN)
+            }
+        }
+    }
+
+    @Test
+    fun markerRingReachesThreeToOneOnTheSelectionFill() {
+        for (appearance in JagFxAppearance.entries) {
+            val palette = SynthPalette.of(appearance)
+            val fill = palette.selection.compositeOver(palette.scope)
+            val onFill = mapOf("selection fill" to fill)
+            check(appearance, "marker", palette.marker, onFill, NON_TEXT_MIN)
+            check(appearance, "envelope", palette.envelope, onFill, NON_TEXT_MIN)
+            check(appearance, "zero", palette.zero, onFill, NON_TEXT_MIN)
+            check(appearance, "pole", palette.pole, onFill, NON_TEXT_MIN)
+        }
+    }
+
+    @Test
+    fun gridStaysBelowTheLinesItSupports() {
+        for (appearance in JagFxAppearance.entries) {
+            val palette = SynthPalette.of(appearance)
+            assertTrue(
+                contrastRatio(palette.grid, palette.scope) <
+                    contrastRatio(palette.envelope, palette.scope),
+                "$appearance grid must not outshine envelope lines",
+            )
         }
     }
 
@@ -122,5 +182,6 @@ class ContrastTest {
         const val TEXT_MIN = 4.5f
         const val NON_TEXT_MIN = 3f
         const val HIGH_TEXT = 7f
+        val HIGH_EXEMPT = setOf("midLine", "inactive")
     }
 }

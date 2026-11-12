@@ -63,7 +63,7 @@ internal data class SynthPalette(
                 filter = Color(0xFFD2E08A),
                 zero = Color(0xFF5CC8F0),
                 pole = Color(0xFFF08CC0),
-                inactive = Color(0xFF555555),
+                inactive = Color(0xFF6A6A6A),
             )
 
         /** The Scala JagFX hues on a near-black scope, for the light chrome. */
@@ -83,7 +83,7 @@ internal data class SynthPalette(
                 filter = Color(0xFF33BBEE),
                 zero = Color(0xFF33BBEE),
                 pole = Color(0xFFCC79A7),
-                inactive = Color(0xFF555555),
+                inactive = Color(0xFF6A6A6A),
             )
 
         /** Pure black with white, yellow, green, cyan, and pink lines, every pair at 7:1 or more. */

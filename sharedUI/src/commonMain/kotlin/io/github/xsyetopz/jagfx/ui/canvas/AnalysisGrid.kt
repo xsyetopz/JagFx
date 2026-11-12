@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipRect
+import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
 import kotlin.math.floor
 import kotlin.math.max
 
@@ -20,28 +21,25 @@ private const val HALF_PIXEL = 0.5
 private val VerticalStrides =
     (1..SemitoneScale.SEMITONES_PER_OCTAVE).filter { SemitoneScale.SEMITONES_PER_OCTAVE % it == 0 }
 
-private val VerticalLine = Color.White.copy(alpha = 0.05f)
-private val MajorRule = Color.White.copy(alpha = 0.13f)
-private val MinorRule = Color.White.copy(alpha = 0.06f)
-
 /**
  * Draws the grid that the game's sound editor shares between the pole-zero map and the frequency
  * response: an even faint line per semitone of the frequency axis, and horizontal rules that
  * alternate between bright and faint.
- * It has no labels and no octave marks.
+ * It has no labels and no octave marks. The lines take [SynthPalette.grid] and [SynthPalette.gridFaint].
  *
  * A semitone `f` sits at `width * max(1, zoom) * normX(f) - scroll`; [scroll] is in pixels of
  * this draw scope.
  */
 internal fun DrawScope.drawAnalysisGrid(
+    palette: SynthPalette,
     zoom: Int,
     scroll: Float = 0f,
 ) {
     if (size.width < 1f || size.height < 1f) return
     clipRect {
-        drawSemitoneLines(size.width * max(1, zoom), scroll)
-        drawRules(0.0, HORIZONTAL_STEP, MajorRule)
-        drawRules(HORIZONTAL_STEP / 2.0, HORIZONTAL_STEP, MinorRule)
+        drawSemitoneLines(size.width * max(1, zoom), scroll, palette.gridFaint)
+        drawRules(0.0, HORIZONTAL_STEP, palette.grid)
+        drawRules(HORIZONTAL_STEP / 2.0, HORIZONTAL_STEP, palette.gridFaint)
     }
 }
 
@@ -49,6 +47,7 @@ internal fun DrawScope.drawAnalysisGrid(
 private fun DrawScope.drawSemitoneLines(
     effectiveWidth: Float,
     scroll: Float,
+    color: Color,
 ) {
     val first = SemitoneScale.firstVisibleSemitone
     val last = SemitoneScale.lastVisibleSemitone
@@ -65,7 +64,7 @@ private fun DrawScope.drawSemitoneLines(
         if (visible) {
             val x = effectiveWidth * FilterFrequencyScale.frequencyToNormalizedX(frequency) - scroll
             val snapped = snapToPx(x / density.toDouble())
-            drawLine(VerticalLine, Offset(snapped, 0f), Offset(snapped, size.height), density)
+            drawLine(color, Offset(snapped, 0f), Offset(snapped, size.height), density)
         }
     }
 }
