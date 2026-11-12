@@ -78,10 +78,6 @@ internal val stringsDe: Map<UiString, String> =
         UiString.ToneOffTitle to "Stimme {0} ist aus",
         UiString.ToneOffHint to "Schalte ihn ein, um Tonhöhe, Lautstärke und Filter zu bearbeiten.",
         UiString.TurnOn to "Einschalten",
-        UiString.NoFileTitle to "Keine Datei geöffnet",
-        UiString.NoFileHint to
-            "Öffne eine .synth-Datei zum Bearbeiten oder starte einen neuen Patch.",
-        UiString.OpenLabel to "Öffnen",
         UiString.NewLabel to "Neu",
         UiString.StatusNewPatch to "Neuen Patch mit eingeschalteter Stimme 1 angelegt",
         UiString.StatusEdited to "Patch geändert. Rückgängig macht es ungeschehen.",

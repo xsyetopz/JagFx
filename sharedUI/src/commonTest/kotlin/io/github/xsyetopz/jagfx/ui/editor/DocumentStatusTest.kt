@@ -15,10 +15,8 @@ import kotlin.test.assertTrue
 
 class DocumentStatusTest {
     @Test
-    fun newPatchOpensEditorWithToneOneOn() {
-        val closed = EditorState(isFileOpen = false)
-        val state = closed.after(DocumentIntent.NewPatch)
-        assertTrue(state.isFileOpen)
+    fun newPatchHasToneOneOn() {
+        val state = EditorState().after(DocumentIntent.NewPatch)
         assertEquals(DefaultVoice, state.voice)
         assertEquals(0, state.selectedVoice)
         assertFalse(state.isDirty)
@@ -37,20 +35,6 @@ class DocumentStatusTest {
         assertNull(state.filePath)
         assertNull(state.patch.voices[3])
         assertFalse(state.canUndo)
-    }
-
-    @Test
-    fun loadingFileOpensEditor() {
-        val state =
-            EditorState(isFileOpen = false)
-                .after(ResultIntent.Loaded("bell.synth", "/sfx/bell.synth", Patch.Empty))
-        assertTrue(state.isFileOpen)
-    }
-
-    @Test
-    fun failedOpenKeepsNoFileScreen() {
-        val state = EditorState(isFileOpen = false).after(ResultIntent.LoadFailed("a.synth", "bad"))
-        assertFalse(state.isFileOpen)
     }
 
     @Test

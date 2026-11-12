@@ -77,6 +77,17 @@ class EditorViewModelTest {
     }
 
     @Test
+    fun startsOnUntitledPatchWithToneOneOn() {
+        val vm = viewModel()
+        val state = vm.state.value
+        assertEquals(Patch.Empty.withVoice(0, DefaultVoice), state.patch)
+        assertEquals(EditorState.DEFAULT_FILE_NAME, state.fileName)
+        assertFalse(state.isDirty)
+        assertNull(state.statusHint)
+        vm.close()
+    }
+
+    @Test
     fun editRendersOnePassPreviewOfWholePatch() =
         runTest(dispatcher) {
             val vm = viewModel()
@@ -228,13 +239,14 @@ class EditorViewModelTest {
             val lfsPointer = "version https://git-lfs.github.com/spec/v1\n".encodeToByteArray()
             files.picked = OpenedFile("bad.synth", "/sfx/bad.synth", lfsPointer)
             val vm = viewModel()
+            val before = vm.state.value.patch
 
             vm.dispatch(RequestIntent.Open)
             dispatcher.scheduler.advanceUntilIdle()
 
             val hint = assertIs<StatusHint.OpenFailed>(vm.state.value.statusHint)
             assertEquals("bad", hint.name)
-            assertEquals(Patch.Empty, vm.state.value.patch)
+            assertEquals(before, vm.state.value.patch)
             vm.close()
         }
 

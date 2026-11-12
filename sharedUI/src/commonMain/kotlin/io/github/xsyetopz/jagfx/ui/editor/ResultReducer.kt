@@ -19,7 +19,6 @@ internal fun reduceResult(
                         .coerceAtLeast(0),
                 fileName = intent.name,
                 filePath = intent.path,
-                isFileOpen = true,
                 isCopyMode = false,
                 bypassedFilters = List(SynthLimits.VOICE_SLOTS) { null },
                 statusHint = StatusHint.Loaded(intent.name),

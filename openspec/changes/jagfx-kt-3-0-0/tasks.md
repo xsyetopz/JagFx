@@ -32,7 +32,7 @@
 
 - [x] 4.1 Add the empty-module prompts with inline waveform buttons and the filter-off prompt
 - [x] 4.2 Add the disabled-tone prompt with Turn on
-- [x] 4.3 Add the no-file screen with Open and New
+- [x] 4.3 Start the editor on an untitled patch with tone 1 on
 - [x] 4.4 Make the status bar report each action and its undo, and label `.tone` and `.filter` files as JagFx files in tooltips and dialogs
 
 ## 5. Theme and accessibility

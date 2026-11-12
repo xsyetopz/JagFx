@@ -269,7 +269,8 @@ private fun reduceHistory(
         }
     }
 
-private fun newPatch(state: EditorState): EditorState {
+/** [state] with untitled patch that has tone 1 on, and no history. */
+internal fun newPatch(state: EditorState): EditorState {
     val patch = Patch.Empty.withVoice(0, DefaultVoice)
     return state.copy(
         patch = patch,
@@ -279,7 +280,6 @@ private fun newPatch(state: EditorState): EditorState {
         selectedTarget = SignalChainSlot.Pitch,
         fileName = EditorState.DEFAULT_FILE_NAME,
         filePath = null,
-        isFileOpen = true,
         isCopyMode = false,
         bypassedFilters = List(SynthLimits.VOICE_SLOTS) { null },
         statusHint = StatusHint.NewPatch,

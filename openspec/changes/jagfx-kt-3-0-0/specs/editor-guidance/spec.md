@@ -39,16 +39,14 @@ When the selected tone is off, the rack SHALL appear dimmed and SHALL show which
 - **WHEN** tone 3 is off and the user presses Turn on
 - **THEN** tone 3 is on and the rack shows its cells at full strength
 
-### Requirement: No-file screen
+### Requirement: Untitled patch at start
 
-When no file is open, the editor SHALL show Open and New in place of the rack.
+When the editor starts without a file, it SHALL show an untitled patch with tone 1 on, the same patch that New makes.
 
 #### Scenario: First start
 
 - **WHEN** the editor starts without a file
-- **THEN** it shows Open and New
-- **WHEN** the user presses New
-- **THEN** the editor shows a new patch with tone 1 on
+- **THEN** the title says `untitled` and the rack shows tone 1
 
 ### Requirement: Status feedback
 

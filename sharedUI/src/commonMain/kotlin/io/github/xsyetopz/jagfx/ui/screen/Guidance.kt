@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -15,11 +14,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import io.github.xsyetopz.jagfx.core.model.Waveform
-import io.github.xsyetopz.jagfx.ui.editor.DocumentIntent
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.EnvelopeIntent
 import io.github.xsyetopz.jagfx.ui.editor.FilterIntent
-import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
@@ -114,35 +111,6 @@ internal fun ToneOffOverlay(
                 )
             }
         }
-    }
-}
-
-/** Screen with no file open: Open and New in place of rack. */
-@Composable
-internal fun NoFileScreen(
-    state: EditorState,
-    actions: EditorActions,
-    modifier: Modifier = Modifier,
-) {
-    val strings = LocalStrings.current
-    Column(modifier.fillMaxSize().background(JagFxTheme.colors.root)) {
-        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-            PromptBox {
-                JagText(strings[UiString.NoFileTitle], style = MaterialTheme.typography.titleSmall)
-                JagText(strings[UiString.NoFileHint], textAlign = TextAlign.Center, wrap = true)
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceMd),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    JagButton(strings[UiString.OpenLabel], { actions.dispatch(RequestIntent.Open) })
-                    JagButton(
-                        strings[UiString.NewLabel],
-                        { actions.dispatch(DocumentIntent.NewPatch) },
-                    )
-                }
-            }
-        }
-        StatusBar(state.statusHint, Modifier.fillMaxWidth())
     }
 }
 

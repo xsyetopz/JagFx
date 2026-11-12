@@ -136,7 +136,6 @@ enum class ThemePreference { System, Classic, Light, HighContrast }
  * @property loopCount Loop repetitions in `0..MAX_LOOP_COUNT`; `0` loops until stopped.
  * @property bypassedFilters Per voice slot, filter that was turned off, for turning it on.
  * @property sample Open sample, or `null`. Patch stays intact while sample is open.
- * @property isFileOpen `false` until file is opened or new patch is started.
  */
 internal data class EditorState(
     val patch: Patch = Patch.Empty,
@@ -162,7 +161,6 @@ internal data class EditorState(
     val textScalePercent: Int = MIN_TEXT_SCALE_PERCENT,
     val theme: ThemePreference = ThemePreference.System,
     val mode: RackMode = RackMode.Main,
-    val isFileOpen: Boolean = true,
 ) {
     val isDirty: Boolean get() = patch != savedPatch
 

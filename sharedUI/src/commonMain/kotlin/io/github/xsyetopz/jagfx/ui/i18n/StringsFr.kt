@@ -79,10 +79,6 @@ internal val stringsFr: Map<UiString, String> =
         UiString.ToneOffTitle to "La voix {0} est désactivée",
         UiString.ToneOffHint to "Activez-le pour modifier sa hauteur, son volume et son filtre.",
         UiString.TurnOn to "Activer",
-        UiString.NoFileTitle to "Aucun fichier ouvert",
-        UiString.NoFileHint to
-            "Ouvrez un fichier .synth pour le modifier, ou commencez un nouveau patch.",
-        UiString.OpenLabel to "Ouvrir",
         UiString.NewLabel to "Nouveau",
         UiString.StatusNewPatch to "Nouveau patch créé avec la voix 1 activée",
         UiString.StatusEdited to "Patch modifié. Annuler rétablit l'état précédent.",

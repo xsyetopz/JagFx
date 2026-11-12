@@ -145,7 +145,7 @@ Why: light lines on black exceed 7:1 contrast, so the classic look is also the h
 
 - A pair cell whose module is off shows "Vibrato is off. Pick a waveform to make the pitch wobble." with the waveform buttons inline.
 - A voice that is off dims the rack, shows "Tone 3 is off", and offers a Turn on button.
-- The screen with no file open offers Open and New.
+- The editor starts on an untitled patch with tone 1 on, so it never shows an empty screen.
 - The status bar reports what an action did and how to undo it.
 
 ### D12. Target EN 301 549 at WCAG 2.2 AA

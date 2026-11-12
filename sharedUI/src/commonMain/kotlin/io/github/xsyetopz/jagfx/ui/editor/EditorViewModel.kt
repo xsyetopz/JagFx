@@ -39,7 +39,9 @@ internal class EditorViewModel(
     private val settings: PlatformSettings = PlatformSettings.None,
 ) : ViewModel() {
     private val mutableState =
-        MutableStateFlow(EditorState(isFileOpen = false).withPreferences(preferences.load()))
+        MutableStateFlow(
+            newPatch(EditorState()).copy(statusHint = null).withPreferences(preferences.load()),
+        )
     val state: StateFlow<EditorState> = mutableState.asStateFlow()
 
     private val patchFiles = PatchFileTasks(files, { state.value }, ::dispatch)

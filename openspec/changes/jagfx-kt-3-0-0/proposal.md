@@ -12,7 +12,7 @@ Its text is 9 to 10 sp, its controls are 18 dp high, and its dimmest text has ab
 - Move the voice selector ("Editing Tone" 1 to 10 with Copy and Reset) and the five harmonics with reverb into a bottom bar, as in the original.
 - **BREAKING (UI only)**: remove the right-hand inspector panel. Its exact point table moves to a per-cell controls panel that the `▼` header button shows and hides. The filter fields, with Import Filter and Export Filter, move to a strip by the pole and zero graph.
 - Keep the original's cell header buttons in their order and give each a stated job: `1x 2x 4x` zoom presets and `S` (Fit) on every plot; `M…` (time view, linked or per cell) and `▼` (controls panel) on time-domain cells only. Add wheel zoom and drag pan, a time axis in ms, and a value axis in the cell's unit. While a point is hovered or dragged, a readout shows its time in ms, its value in the cell's unit, and the raw `u16` position and level stored in the file.
-- Make the tool readable for newcomers. Each cell keeps its classic title and gains a plain-language description. An empty module shows what turning it on does and offers the waveform buttons in place. The screen with no file open offers Open and New.
+- Make the tool readable for newcomers. Each cell keeps its classic title and gains a plain-language description. An empty module shows what turning it on does and offers the waveform buttons in place. The editor starts on an untitled patch with tone 1 on.
 - Restyle with a Classic dark palette modeled on the 2025 theme: dark grey chrome, black plots, pale yellow-green envelope lines, a pale green output wave, and green active toggles. Raise text, target size, and contrast to the WCAG 2.2 AA minimums.
 - Target EN 301 549 chapter 11 at WCAG 2.2 AA, the EU's harmonised accessibility standard: screen reader names and states, plot summaries, announced status messages, the platform's contrast and text size settings, a 200% text size, and an accessibility statement.
 - Let the user put the side panel on the left or the right, so left-handed users keep it on their mouse side. The choice survives a restart.
@@ -24,7 +24,7 @@ Its text is 9 to 10 sp, its controls are 18 dp high, and its dimmest text has ab
 
 - `editor-layout`: the classic rack, module strips, Mode switch, left voice strip, bottom tone and harmonics bar, filter strip, and per-cell controls panel.
 - `envelope-cells`: time and value axes, the shared zoom and pan, the hover and drag readout with raw `u16` values, and editing points with mouse and keyboard.
-- `editor-guidance`: classic titles with plain-language descriptions, empty-module prompts, the no-file screen, and status messages.
+- `editor-guidance`: classic titles with plain-language descriptions, empty-module prompts, the untitled patch at start, and status messages.
 - `editor-accessibility`: EN 301 549 / WCAG 2.2 AA conformance, the sidebar side, platform preferences, and the text size, contrast, target size, focus, and keyboard reach of every control.
 
 ### Modified Capabilities
