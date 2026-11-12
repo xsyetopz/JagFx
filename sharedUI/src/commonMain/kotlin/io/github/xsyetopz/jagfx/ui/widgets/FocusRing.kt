@@ -31,19 +31,3 @@ internal fun Modifier.focusRing(
             )
         }
     }
-
-/** Draws a [thickness] bar in [color] along the bottom edge while [active], a mark besides color. */
-internal fun Modifier.activeMark(
-    active: Boolean,
-    color: Color,
-    thickness: Dp,
-): Modifier =
-    if (!active) {
-        this
-    } else {
-        drawWithContent {
-            drawContent()
-            val bar = thickness.toPx()
-            drawRect(color, Offset(0f, size.height - bar), Size(size.width, bar))
-        }
-    }

@@ -174,10 +174,8 @@ internal data class JagFxDimens(
     val stripWidth: Dp = 160.dp,
     val voiceChipWidth: Dp = 28.dp,
     val voiceChipHeight: Dp = 24.dp,
-    val fieldWidth: Dp = 44.dp,
     val buttonMinWidth: Dp = 24.dp,
     val iconSize: Dp = 12.dp,
-    val barHeight: Dp = 4.dp,
     val focusRing: Dp = 2.dp,
     val radius: Dp = 2.dp,
     val border: Dp = 1.dp,
@@ -196,7 +194,6 @@ internal data class JagFxDimens(
             stripWidth = stripWidth * scale,
             voiceChipWidth = voiceChipWidth * scale,
             voiceChipHeight = voiceChipHeight * scale,
-            fieldWidth = fieldWidth * scale,
         )
 }
 

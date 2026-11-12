@@ -54,7 +54,6 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagCheck
 import io.github.xsyetopz.jagfx.ui.widgets.JagIconButton
 import io.github.xsyetopz.jagfx.ui.widgets.JagLabel
 import io.github.xsyetopz.jagfx.ui.widgets.JagText
-import io.github.xsyetopz.jagfx.ui.widgets.focusRing
 
 private val IndexWidth = 24.dp
 
