@@ -2,30 +2,34 @@
 
 Use this guide when cutting a JagFx release or testing release artifacts locally.
 
-## Release checklist
+## Release Checklist
 
 1. Confirm required GitHub Actions secrets are present. See [Secrets](#secrets).
-2. Add the `CHANGELOG.md` entry, then bump the version: `scripts/bump-version.sh <version>`. See [Version bump](#version-bump).
+2. Add the `CHANGELOG.md` entry, then bump the version: `scripts/bump-version.sh <version>`. See [Version Bump](#version-bump).
 3. Run local checks:
+
    ```bash
    ./gradlew check
    ```
-4. Build local artifacts supported by the host OS. See [Host support](#host-support).
+
+4. Build local artifacts supported by the host OS. See [Host Support](#host-support).
 5. Create and push a version tag:
+
    ```bash
    git tag v<version>
    git push origin v<version>
    ```
+
 6. Watch GitHub Actions -> `Release`.
 7. Download artifacts from the workflow run.
 
-## Secret handling
+## Secret Handling
 
 - Do not commit secrets.
 - Store release credentials only in GitHub Actions secrets.
 - Add or edit secrets at `Settings -> Secrets and variables -> Actions`.
 
-## Host support
+## Host Support
 
 | Host OS | Local installer | Local signing/notarization | Release path |
 | --- | --- | --- | --- |
@@ -35,9 +39,9 @@ Use this guide when cutting a JagFx release or testing release artifacts locally
 
 jpackage builds only for the host OS and architecture, so CI builds macOS arm64 on `macos-latest` and macOS x64 on `macos-15-intel`. `just release-cli` builds the platform-independent CLI zip on any host.
 
-## Host commands
+## Host Commands
 
-### macOS
+### On macOS
 
 ```bash
 ./gradlew check
@@ -67,7 +71,7 @@ CI handles macOS notarization and the Windows installer.
 
 ## Secrets
 
-### macOS signing and notarization
+### Signing and Notarization on macOS
 
 The release workflow uses these secrets for macOS DMG signing and notarization. It passes them to `./gradlew :desktopApp:notarizeReleaseDmg` as `-Pcompose.desktop.mac.sign`, `.signing.identity`, `.signing.keychain`, `.notarization.appleID`, `.notarization.teamID`, and `.notarization.password`. The app is signed with `desktopApp/macos/entitlements.plist`. When a secret is missing or `notarytool` rejects the credentials, the workflow builds an unsigned DMG instead.
 
@@ -118,7 +122,7 @@ Use an Apple app-specific password, not the normal Apple ID password.
 
 Create one at <https://account.apple.com/account/manage> under `Sign-In and Security -> App-Specific Passwords`.
 
-## Version bump
+## Version Bump
 
 Add the new version's entry at the top of `CHANGELOG.md` first, then run:
 
@@ -128,7 +132,7 @@ scripts/bump-version.sh 3.0.1
 
 The script updates `version` in `gradle.properties` and `version` in `packages/*/package.json`.
 
-## Triggering the release workflow
+## Triggering the Release Workflow
 
 Workflow file: `.github/workflows/release.yml`.
 
@@ -159,11 +163,11 @@ The desktop installers bundle a Temurin JRE and use a ProGuard-shrunk release bu
 
 ## Troubleshooting
 
-### Can macOS apps be notarized from Linux or Windows?
+### Can macOS Apps Be Notarized From Linux or Windows?
 
 No. Notarization runs on a macOS runner.
 
-### Apple notarization returns HTTP 401
+### Apple Notarization Returns HTTP 401
 
 The release workflow checks notarization credentials before the macOS build. If `notarytool` reports HTTP 401, the workflow warns and builds an unsigned DMG so other artifacts can publish.
 

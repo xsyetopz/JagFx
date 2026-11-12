@@ -1,4 +1,4 @@
-# @xsyetopz/jagfx
+# `@xsyetopz/jagfx`
 
 JavaScript and TypeScript helpers for JagFx synth patches.
 

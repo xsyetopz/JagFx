@@ -1,4 +1,4 @@
-# Render benchmark baseline
+# Render Benchmark Baseline
 
 `RenderBenchmark.renderReferenceSynths` renders every file in `references/synths/` once per op.
 These reports come from an Apple Silicon Mac (`Apple M1 Max`, macOS 27.0).

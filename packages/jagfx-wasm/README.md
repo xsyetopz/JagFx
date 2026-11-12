@@ -1,4 +1,4 @@
-# @xsyetopz/jagfx-wasm
+# `@xsyetopz/jagfx-wasm`
 
 Browser WebAssembly bindings for JagFx.
 
