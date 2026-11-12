@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 
-import { JagFxError } from "./errors.js";
 import * as kotlin from "../kotlin/jagfx-bindings.mjs";
 import { convert, readInput, readJsonInput, toInt8Array } from "./convert.js";
+import { JagFxError } from "./errors.js";
 import type { FilterJson, SampleInfo, VoiceJson } from "./types.js";
 import {
 	isBlank,
@@ -65,7 +65,9 @@ export const jsonToFilter = async (
 };
 
 /** Reads the header fields of a `.jagvorbis` sample. */
-export const readSampleInfo = async (inputPath: string): Promise<SampleInfo> => {
+export const readSampleInfo = async (
+	inputPath: string,
+): Promise<SampleInfo> => {
 	const data = await readInput(inputPath);
 	return parseJson(
 		convert(() => kotlin.sampleInfo(toInt8Array(data))),

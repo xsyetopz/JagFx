@@ -2,10 +2,10 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { assertRealSynthData, JagFxError } from "./errors.js";
 import * as kotlin from "../kotlin/jagfx-bindings.mjs";
 import { resolveCommand, runCommand } from "./command.js";
 import { convert, encodeSynth, loopCount, toInt8Array } from "./convert.js";
+import { assertRealSynthData, JagFxError } from "./errors.js";
 import type {
 	CommandOptions,
 	PatchJson,

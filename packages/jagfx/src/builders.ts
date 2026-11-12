@@ -55,10 +55,9 @@ const cloneLoop = (loop: LoopSegmentJson): LoopSegmentJson => ({
 	endMs: loop.endMs,
 });
 
-const cloneNumberPair = (values: readonly [number, number]): [number, number] => [
-	values[0],
-	values[1],
-];
+const cloneNumberPair = (
+	values: readonly [number, number],
+): [number, number] => [values[0], values[1]];
 
 const cloneFilterPhases = (phases: FilterPhasesJson): FilterPhasesJson => ({
 	baseline: [...phases.baseline],
@@ -153,8 +152,13 @@ export const createLoop = (beginMs = 0, endMs = 0): LoopSegmentJson => ({
 });
 
 const cloneLayerFields = (input: Partial<VoiceJson>): Partial<VoiceJson> => {
-	const { offsetMs = 0, pitchLfo, amplitudeLfo, gapOffEnvelope, gapOnEnvelope } =
-		input;
+	const {
+		offsetMs = 0,
+		pitchLfo,
+		amplitudeLfo,
+		gapOffEnvelope,
+		gapOnEnvelope,
+	} = input;
 	const fields: Partial<VoiceJson> = {};
 	if (offsetMs !== 0) {
 		fields.offsetMs = offsetMs;

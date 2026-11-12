@@ -1,8 +1,8 @@
 import type { Buffer } from "node:buffer";
 import { readFile } from "node:fs/promises";
 
-import { assertRealSynthData, JagFxError } from "./errors.js";
 import * as kotlin from "../kotlin/jagfx-bindings.mjs";
+import { assertRealSynthData, JagFxError } from "./errors.js";
 import type { PatchJson } from "./types.js";
 import { isBlank } from "./util.js";
 

@@ -252,7 +252,9 @@ describe("in-process conversions", () => {
 
 		try {
 			await writeFile(jsonPath, "{");
-			const error = await rejection(jsonToSynth(jsonPath, join(dir, "bad.synth")));
+			const error = await rejection(
+				jsonToSynth(jsonPath, join(dir, "bad.synth")),
+			);
 			expect(error).toMatchObject({ code: "JAGFX_CONVERSION_FAILED" });
 		} finally {
 			await rm(dir, { recursive: true, force: true });

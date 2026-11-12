@@ -46,10 +46,7 @@ if (args[0] === "to-json") {
 } else {
 	const outputPath = args[1];
 	if (isPresent(outputPath)) {
-		await writeFile(
-			outputPath,
-			Buffer.from("RIFF$\u0000\u0000\u0000WAVEfmt "),
-		);
+		await writeFile(outputPath, Buffer.from("RIFF$\u0000\u0000\u0000WAVEfmt "));
 	} else {
 		process.exitCode = 1;
 	}

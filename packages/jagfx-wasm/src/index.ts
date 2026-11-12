@@ -68,7 +68,9 @@ const sampleInfoKeys = [
 const isJagFxWasmModule = (value: unknown): value is JagFxWasmModule =>
 	typeof value === "object" &&
 	value !== null &&
-	moduleExportNames.every((name) => typeof Reflect.get(value, name) === "function");
+	moduleExportNames.every(
+		(name) => typeof Reflect.get(value, name) === "function",
+	);
 
 const isSampleInfo = (value: unknown): value is SampleInfo =>
 	typeof value === "object" &&
@@ -142,7 +144,9 @@ export const createJagFxWasmBackend = async (
 		readSampleInfo: (data: Uint8Array): SampleInfo => {
 			const info: unknown = JSON.parse(module.sampleInfo(toInt8Array(data)));
 			if (!isSampleInfo(info)) {
-				throw new TypeError("The JagFx Wasm module returned malformed sample info.");
+				throw new TypeError(
+					"The JagFx Wasm module returned malformed sample info.",
+				);
 			}
 			return info;
 		},

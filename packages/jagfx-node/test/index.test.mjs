@@ -44,8 +44,12 @@ test("rejects invalid arguments", async () => {
 	const synth = await readFile(cowDeathPath);
 
 	expect(() => renderSynthToPcm(new Uint8Array([1]))).toThrow(TypeError);
-	expect(() => renderSynthToPcm(synth, { loops: 0 })).toThrow(expect.objectContaining({ code: "JAGFX_INVALID_ARGUMENT" }));
-	expect(() => renderSynthToPcm(synth, { voiceFilter: 10 })).toThrow(expect.objectContaining({ code: "JAGFX_INVALID_ARGUMENT" }));
+	expect(() => renderSynthToPcm(synth, { loops: 0 })).toThrow(
+		expect.objectContaining({ code: "JAGFX_INVALID_ARGUMENT" }),
+	);
+	expect(() => renderSynthToPcm(synth, { voiceFilter: 10 })).toThrow(
+		expect.objectContaining({ code: "JAGFX_INVALID_ARGUMENT" }),
+	);
 });
 
 test("decodes a sample to PCM", async () => {
@@ -58,5 +62,7 @@ test("decodes a sample to PCM", async () => {
 	expect(typeof info.pingPong).toBe("boolean");
 	expect(pcm.length).toBe(info.sampleCount * 2);
 	expect(() => decodeSampleToPcm(new Uint8Array([1]))).toThrow(TypeError);
-	expect(() => readSampleInfo(sample.subarray(0, 3))).toThrow(expect.objectContaining({ code: "JAGFX_DECODE_FAILED" }));
+	expect(() => readSampleInfo(sample.subarray(0, 3))).toThrow(
+		expect.objectContaining({ code: "JAGFX_DECODE_FAILED" }),
+	);
 });

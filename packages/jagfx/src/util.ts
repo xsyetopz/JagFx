@@ -16,8 +16,9 @@ export const isPatchJson = (value: unknown): value is PatchJson =>
 export const isVoiceJson = (value: unknown): value is VoiceJson =>
 	isObject(value);
 
-export const isFilterJsonOrNull = (value: unknown): value is FilterJson | null =>
-	value === null || isObject(value);
+export const isFilterJsonOrNull = (
+	value: unknown,
+): value is FilterJson | null => value === null || isObject(value);
 
 export const isSampleInfo = (value: unknown): value is SampleInfo =>
 	isObject(value) && typeof value["sampleRate"] === "number";
