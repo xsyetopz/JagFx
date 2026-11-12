@@ -1,10 +1,10 @@
 ## 1. Screen state and models
 
-- [ ] 1.1 Add `RackMode` (Main, Filter, Both) and `mode` to `ScreenViewState`; add the shared `timeView` viewport and a per-cell "linked" flag to `CanvasView`
-- [ ] 1.2 Change `RackRows` in `GridModel.kt` to the Freq, Amp, and Output rows; make `FilterColumn` PoleZero, Filter (Transition Curve), and Bode; update `RackCells`
-- [ ] 1.3 Add the axis math: tick values in ms for a viewport and voice length, and value ticks in the slot unit from `SignalChainSlot.ValueRange`
-- [ ] 1.4 Add the readout model: time in ms, value in unit, raw position, and raw level of a point
-- [ ] 1.5 Update `GridModelTest`, `ScreenModelTest`, and `LaneModelTest`, and add tests for the axis, readout, and linked-viewport math; run `./gradlew :sharedUI:jvmTest`
+- [x] 1.1 Add `RackMode` (Main, Filter, Both) and `mode` to `ScreenViewState`; add the shared `timeView` viewport and a per-cell "linked" flag to `CanvasView`
+- [x] 1.2 Change `RackRows` in `GridModel.kt` to the Freq, Amp, and Output rows; make `FilterColumn` PoleZero, Filter (Transition Curve), and Bode; update `RackCells`
+- [x] 1.3 Add the axis math: tick values in ms for a viewport and voice length, and value ticks in the slot unit from `SignalChainSlot.ValueRange`
+- [x] 1.4 Add the readout model: time in ms, value in unit, raw position, and raw level of a point
+- [x] 1.5 Update `GridModelTest`, `ScreenModelTest`, and `LaneModelTest`, and add tests for the axis, readout, and linked-viewport math; run `./gradlew :sharedUI:jvmTest`
 
 ## 2. Layout
 
@@ -15,7 +15,7 @@
 - [ ] 2.5 Build the filter strip: Off and On, Import Filter, Export Filter, pole counts, unity gains, selected pole Hz and dB, and Snap
 - [ ] 2.6 Slim `Toolbar.kt` to the title bar: file name, file menu, Undo, Redo
 - [ ] 2.7 Remove `Inspector.kt` and the panel toggle; move its remaining fields into the strips and the controls panel
-- [ ] 2.8 Delete `widgets/Knob.kt`
+- [x] 2.8 Delete `widgets/Knob.kt`
 - [ ] 2.9 Run `./gradlew :sharedUI:jvmTest`
 
 ## 3. Cells

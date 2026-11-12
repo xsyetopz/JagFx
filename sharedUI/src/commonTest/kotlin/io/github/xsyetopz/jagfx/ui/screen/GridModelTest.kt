@@ -15,9 +15,7 @@ class GridModelTest {
     }
 
     @Test
-    fun rackColumnsHoldPitchVolumeAndFilterWithTheirPairsBelow() {
-        val columns = RackRows.first().indices.map { column -> RackRows.map { it[column] } }
-
+    fun rackRowsAreFreqAmpAndOutputAndTheFilterColumnHoldsThePlots() {
         assertEquals(
             listOf(
                 listOf(
@@ -30,9 +28,13 @@ class GridModelTest {
                     SignalChainSlot.TremoloRate,
                     SignalChainSlot.TremoloDepth,
                 ),
-                listOf(SignalChainSlot.Filter, SignalChainSlot.GapOff, SignalChainSlot.GapOn),
+                listOf(SignalChainSlot.Output, SignalChainSlot.GapOff, SignalChainSlot.GapOn),
             ),
-            columns,
+            RackRows,
+        )
+        assertEquals(
+            listOf(SignalChainSlot.PoleZero, SignalChainSlot.Filter, SignalChainSlot.Bode),
+            FilterColumn,
         )
     }
 

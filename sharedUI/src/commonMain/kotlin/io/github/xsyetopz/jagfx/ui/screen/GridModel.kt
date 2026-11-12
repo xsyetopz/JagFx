@@ -8,23 +8,25 @@ import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
 
 /**
- * The envelope cells of the rack, as in the Scala JagFX: one column each for pitch, volume, and
- * the filter sweep, with the modulation or gate pair of that column under it.
+ * The rows of the rack, as in the original: Freq, Amp, and Output, each with its base cell and
+ * its modulation or gate pair.
  */
 internal val RackRows: List<List<SignalChainSlot>> =
     listOf(
-        listOf(SignalChainSlot.Pitch, SignalChainSlot.Volume, SignalChainSlot.Filter),
-        listOf(SignalChainSlot.VibratoRate, SignalChainSlot.TremoloRate, SignalChainSlot.GapOff),
-        listOf(SignalChainSlot.VibratoDepth, SignalChainSlot.TremoloDepth, SignalChainSlot.GapOn),
+        listOf(SignalChainSlot.Pitch, SignalChainSlot.VibratoRate, SignalChainSlot.VibratoDepth),
+        listOf(SignalChainSlot.Volume, SignalChainSlot.TremoloRate, SignalChainSlot.TremoloDepth),
+        listOf(SignalChainSlot.Output, SignalChainSlot.GapOff, SignalChainSlot.GapOn),
     )
 
-/** The filter column right of the rack: the pole-zero map above the frequency response. */
+/**
+ * The filter column right of the rack: the graph of poles and zeros, the transition curve, and
+ * the frequency response.
+ */
 internal val FilterColumn: List<SignalChainSlot> =
-    listOf(SignalChainSlot.PoleZero, SignalChainSlot.Bode)
+    listOf(SignalChainSlot.PoleZero, SignalChainSlot.Filter, SignalChainSlot.Bode)
 
-/** Every cell of the rack in reading order; the output spans the row under the envelopes. */
-internal val RackCells: List<SignalChainSlot> =
-    RackRows.flatten() + SignalChainSlot.Output + FilterColumn
+/** Every cell of the rack in reading order, each slot once: the rows, then the filter column. */
+internal val RackCells: List<SignalChainSlot> = RackRows.flatten() + FilterColumn
 
 /**
  * The first envelope of the LFO or gate pair that [slot] belongs to, whose waveform creates and

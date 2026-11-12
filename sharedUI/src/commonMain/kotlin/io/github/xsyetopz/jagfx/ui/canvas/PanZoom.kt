@@ -11,6 +11,51 @@ internal data class Viewport(
     val scrollOffset: Float = 0f,
 )
 
+/**
+ * The part of the voice a time-domain plot shows, independent of its width: [zoom] and the start
+ * of the visible window as a [scroll] fraction of the voice, from 0 to `1 - 1 / zoom`.
+ */
+@Immutable
+internal data class TimeView(
+    val zoom: Int = 1,
+    val scroll: Float = 0f,
+) {
+    /** The fraction of the voice that the plot shows. */
+    val span: Float get() = 1f / zoom
+
+    /** The point of the voice, as a fraction, at [relative] (0 to 1) across the plot. */
+    fun timeAt(relative: Float): Float = scroll + relative * span
+
+    /**
+     * This view at [zoom], limited to 1..[MAX_ZOOM], with the voice fraction [anchor] kept at
+     * [relative] across the plot. By default the start of the window stays.
+     */
+    fun zoomedTo(
+        zoom: Int,
+        anchor: Float = scroll,
+        relative: Float = 0f,
+    ): TimeView {
+        val level = zoom.coerceIn(1, MAX_ZOOM)
+        return TimeView(level, (anchor - relative / level).coerceIn(0f, 1f - 1f / level))
+    }
+
+    /** The [Viewport] of this view on a plot [plotWidth] px wide. */
+    fun toViewport(plotWidth: Float): Viewport = Viewport(zoom, scroll * plotWidth * zoom)
+
+    companion object {
+        /** The whole voice: zoom 1, scroll 0. */
+        val Fit: TimeView = TimeView()
+    }
+}
+
+/** The [TimeView] of this viewport on a plot [plotWidth] px wide. */
+internal fun Viewport.toTimeView(plotWidth: Float): TimeView =
+    if (plotWidth <= 0f) {
+        TimeView(zoom)
+    } else {
+        TimeView(zoom, (scrollOffset / (plotWidth * zoom)).coerceIn(0f, 1f - 1f / zoom))
+    }
+
 /** A [viewport] with the callbacks through which the canvas reports a zoom or scroll change. */
 internal class PanZoom(
     val viewport: Viewport = Viewport(),

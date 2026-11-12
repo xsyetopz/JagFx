@@ -9,15 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
-import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
 /** The envelope columns take this share of the rack width; the filter column takes one share. */
 private const val ENVELOPE_COLUMNS = 3f
 
 /**
- * All cells of the selected voice, as in the Scala JagFX rack: the [RackRows] over the output,
- * with the [FilterColumn] on the right.
+ * All cells of the selected voice, as in the Scala JagFX rack: the [RackRows] with the [FilterColumn] on the right.
  * When [ScreenViewState.openCell] is set, that cell fills the rack on its own.
  */
 @Composable
@@ -42,13 +40,6 @@ internal fun Rack(
                     }
                 }
             }
-            GridCell(
-                SignalChainSlot.Output,
-                state,
-                view,
-                actions,
-                Modifier.weight(1f).fillMaxWidth(),
-            )
         }
         Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = gap) {
             for (slot in FilterColumn) {
