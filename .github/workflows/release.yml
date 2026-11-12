@@ -171,8 +171,11 @@ jobs:
           MACOS_NOTARY_TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAM_ID }}
           MACOS_NOTARY_PASSWORD: ${{ secrets.MACOS_NOTARY_PASSWORD }}
         # Compose signs the app and its bundled runtime, then notarizes and staples the DMG.
+        # The notarization task cannot be stored in the configuration cache: its deprecated
+        # ascProvider property throws when Gradle serializes it.
         run: >-
           ./gradlew :desktopApp:notarizeReleaseDmg
+          --no-configuration-cache
           -Pcompose.desktop.mac.sign=true
           "-Pcompose.desktop.mac.signing.identity=$MACOS_SIGN_IDENTITY"
           "-Pcompose.desktop.mac.signing.keychain=$KEYCHAIN_PATH"

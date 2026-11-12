@@ -12,9 +12,9 @@
 			"markdownlint-cli2": "0.24.1",
 			"markdownlint-rule-title-case-style": "0.4.3",
 			"oxlint": "1.93.0",
-			"oxlint-tsgolint": "7.0.2006",
+			"oxlint-tsgolint": "7.0.2007",
 			"typescript": "7.0.2",
-			"typescript-bedrock": "0.1.12"
+			"typescript-bedrock": "0.1.13"
 		}
 	},
 	"type": "module",
