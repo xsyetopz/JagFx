@@ -37,14 +37,14 @@
 
 ## 5. Theme and accessibility
 
-- [ ] 5.1 Add the Classic dark palette to `SynthPalette` and `JagFxColorSchemes`, tuned to at least 4.5:1 text contrast and 3:1 focus contrast
-- [ ] 5.2 Raise `JagFxTheme` text to 12, 11, and 14 sp, and give every control a hit area of at least 24 dp
-- [ ] 5.3 Add a 2 dp focus ring to every focusable control and a non-color mark to active toggles
+- [x] 5.1 Add the Classic dark palette to `SynthPalette` and `JagFxColorSchemes`, tuned to at least 4.5:1 text contrast and 3:1 focus contrast
+- [x] 5.2 Raise `JagFxTheme` text to 12, 11, and 14 sp, and give every control a hit area of at least 24 dp
+- [x] 5.3 Add a 2 dp focus ring to every focusable control and a non-color mark to active toggles
 - [ ] 5.4 Set the Tab order and wire Alt and arrow keys to `SlotIntent.SelectTargetByOffset`
 - [ ] 5.5 Add Play All, Loop All, and Mode shortcuts to `EditorMenuBar.kt`
 - [x] 5.6 Add `PanelSide`, `EditorState.panelSide`, and `ViewIntent.SetPanelSide`; place the properties panel by it; add the file menu item and the desktop View menu; test in `EditorReducerTest`
 - [ ] 5.7 After task 2.7, place the voice strip by `panelSide` instead of the properties panel
-- [ ] 5.8 Add a `Preferences` service to `EditorServices.kt` with desktop and web implementations, and keep the panel side, text size, and theme across restarts
+- [x] 5.8 Add a `Preferences` service to `EditorServices.kt` with desktop and web implementations, and keep the panel side, text size, and theme across restarts
 - [ ] 5.9 Read the platform's high-contrast, text scale, and reduced-motion settings where exposed; add the in-app text size (100% to 200%) and the high-contrast theme
 - [ ] 5.10 Give plot lines, markers, borders, and focus rings at least 3:1 contrast, and add a text summary to each plot
 - [ ] 5.11 Set accessible names, roles, values, and states on every control; announce status messages; show tooltips on focus and close them with Escape

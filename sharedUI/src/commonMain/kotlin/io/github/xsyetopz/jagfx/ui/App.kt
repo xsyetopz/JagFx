@@ -1,5 +1,6 @@
 package io.github.xsyetopz.jagfx.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -12,11 +13,13 @@ import io.github.xsyetopz.jagfx.ui.editor.EditorViewModel
 import io.github.xsyetopz.jagfx.ui.editor.PatchFiles
 import io.github.xsyetopz.jagfx.ui.editor.PlatformSettings
 import io.github.xsyetopz.jagfx.ui.editor.Preferences
+import io.github.xsyetopz.jagfx.ui.editor.ThemePreference
 import io.github.xsyetopz.jagfx.ui.editor.resolveTextScale
 import io.github.xsyetopz.jagfx.ui.editor.resolveTheme
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.i18n.rememberStrings
 import io.github.xsyetopz.jagfx.ui.screen.EditorScreen
+import io.github.xsyetopz.jagfx.ui.theme.JagFxAppearance
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -57,15 +60,30 @@ internal fun EditorApp(
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    // The theme and text scale to draw; pass them to JagFxTheme once it takes them.
-    @Suppress("UNUSED_VARIABLE")
-    val effectiveTheme = resolveTheme(state.theme, settings.highContrast)
+    val appearance =
+        when (resolveTheme(state.theme, settings.highContrast)) {
+            ThemePreference.System -> {
+                if (isSystemInDarkTheme()) JagFxAppearance.Classic else JagFxAppearance.Light
+            }
 
-    @Suppress("UNUSED_VARIABLE")
-    val effectiveTextScale = resolveTextScale(state.textScalePercent, settings.textScalePercent)
-    JagFxTheme {
+            ThemePreference.Classic -> {
+                JagFxAppearance.Classic
+            }
+
+            ThemePreference.Light -> {
+                JagFxAppearance.Light
+            }
+
+            ThemePreference.HighContrast -> {
+                JagFxAppearance.HighContrast
+            }
+        }
+    val textScale = resolveTextScale(state.textScalePercent, settings.textScalePercent) / PERCENT
+    JagFxTheme(appearance, textScale) {
         CompositionLocalProvider(LocalStrings provides rememberStrings()) {
             EditorScreen(viewModel)
         }
     }
 }
+
+private const val PERCENT = 100f
