@@ -14,3 +14,8 @@ release-cli:
 
 # Build the desktop installer and the CLI zip.
 release-all: release-desktop release-cli
+
+# Build the Kotlin/JS output and package dist files that `bun check` imports.
+project-pre-typecheck:
+    ./gradlew :bindings:syncNpmPackages
+    bun run build:js
