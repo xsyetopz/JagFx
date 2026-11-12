@@ -29,7 +29,7 @@ class StripModelTest {
     }
 
     @Test
-    fun averageIsTheMeanOfTheRawValuesInTheUnit() {
+    fun averageIsMeanOfRawValuesInUnit() {
         for (unit in ValueUnit.entries) {
             assertEquals(unit.fromRaw(500.0), averageIn(unit, 200, 800))
         }
@@ -41,7 +41,7 @@ class StripModelTest {
     }
 
     @Test
-    fun everyPlayActionSetsTheOptionsBeforeItStartsPlaying() {
+    fun everyPlayActionSetsOptionsBeforeItStartsPlaying() {
         for (action in PlayAction.entries) {
             val intents = action.intents()
             assertEquals(ViewIntent.SetPlaySingleVoice(action.singleTone), intents.first())
@@ -57,7 +57,7 @@ class StripModelTest {
     }
 
     @Test
-    fun everySelectableWaveformHasAName() {
+    fun everySelectableWaveformHasName() {
         val strings = Strings(UiLocale.En)
         val names = Waveform.selectable.map { waveformName(strings, it) }
         assertTrue(names.all { it.isNotEmpty() })
@@ -73,7 +73,7 @@ class StripModelTest {
     }
 
     @Test
-    fun formatDecimalDropsTheSignOfAValueThatRoundsToZero() {
+    fun formatDecimalDropsSignOfValueThatRoundsToZero() {
         assertEquals("0.00", formatDecimal(-0.001, 2))
     }
 }

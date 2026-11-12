@@ -39,7 +39,7 @@ class CliTest {
         SynthJson.encode(SynthJson.decode(referenceJson(synth).readText()))
 
     @Test
-    fun toJsonPrintsTheReferenceJson() {
+    fun toJsonPrintsReferenceJson() {
         assertEquals(REFERENCE_SYNTHS, synths.size)
         for (synth in synths) {
             val result = run("to-json", synth.path)
@@ -49,7 +49,7 @@ class CliTest {
     }
 
     @Test
-    fun toJsonWritesTheReferenceJsonWithoutTrailingNewline() {
+    fun toJsonWritesReferenceJsonWithoutTrailingNewline() {
         val synth = synths.first()
         val out = temp.resolve("out.json")
         val result = run("to-json", synth.path, out.path)
@@ -58,7 +58,7 @@ class CliTest {
     }
 
     @Test
-    fun fromJsonWritesTheReferenceSynth() {
+    fun fromJsonWritesReferenceSynth() {
         for (synth in synths) {
             val out = temp.resolve(synth.name)
             val result = run("from-json", referenceJson(synth).path, out.path)
@@ -68,7 +68,7 @@ class CliTest {
     }
 
     @Test
-    fun convertWritesTheReferenceWav() {
+    fun convertWritesReferenceWav() {
         for (synth in synths) {
             val out = temp.resolve("${synth.nameWithoutExtension}.wav")
             val result = run(synth.path, out.path)
@@ -96,7 +96,7 @@ class CliTest {
     }
 
     @Test
-    fun convertWritesASampleAtItsSampleRate() {
+    fun convertWritesSampleAtItsSampleRate() {
         val sample = references.resolve("vorbis/12015.jagvorbis")
         val out = temp.resolve("12015.wav")
         val pcm = JagVorbisCodec.decode(sample.readBytes()).decodePcm()
@@ -112,7 +112,7 @@ class CliTest {
     }
 
     @Test
-    fun convertRejectsALoopCountForASample() {
+    fun convertRejectsLoopCountForSample() {
         val sample = references.resolve("vorbis/12015.jagvorbis")
 
         val result = run(sample.path, temp.resolve("a.wav").path, "2")
@@ -122,7 +122,7 @@ class CliTest {
     }
 
     @Test
-    fun inspectPrintsTheSampleHeader() {
+    fun inspectPrintsSampleHeader() {
         val sample = references.resolve("vorbis/12015.jagvorbis")
 
         val result = run("inspect", sample.path)
@@ -137,7 +137,7 @@ class CliTest {
     }
 
     @Test
-    fun inspectReportsASampleError() {
+    fun inspectReportsSampleError() {
         val bad = temp.resolve("bad.jagvorbis").apply { writeBytes(ByteArray(3)) }
 
         val result = run("inspect", bad.path)
@@ -150,7 +150,7 @@ class CliTest {
     }
 
     @Test
-    fun inspectPrintsTheReferenceListing() {
+    fun inspectPrintsReferenceListing() {
         val listings = references.resolve("cli").listFiles()!!.sortedBy { it.name }
         assertEquals(REFERENCE_SYNTHS + 1, listings.size)
         for (listing in listings) {
@@ -167,7 +167,7 @@ class CliTest {
     }
 
     @Test
-    fun inspectReportsADecoderError() {
+    fun inspectReportsDecoderError() {
         // Ten empty slots and the loop region, then one byte more.
         val bad = temp.resolve("bad.synth")
         bad.writeBytes(ByteArray(15))
@@ -179,7 +179,7 @@ class CliTest {
     }
 
     @Test
-    fun errorsMatchTheTwoXMessages() {
+    fun errorsMatchTwoXMessages() {
         val missing = temp.resolve("missing.synth").path
         val text = temp.resolve("a.txt").apply { writeText("") }.path
         val synth = synths.first().path
@@ -206,7 +206,7 @@ class CliTest {
     }
 
     @Test
-    fun toneInputPrintsTheUnsupportedNotice() {
+    fun toneInputPrintsUnsupportedNotice() {
         val tone = temp.resolve("a.TONE").apply { writeText("") }
         val result = run(tone.path, "o.wav")
         assertEquals(1, result.statusCode)

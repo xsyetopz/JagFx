@@ -143,7 +143,7 @@ class EditorFuzzTest {
         }
 
     @Test
-    fun randomIntentsAlwaysLeaveAnEncodablePatch() {
+    fun randomIntentsAlwaysLeaveEncodablePatch() {
         val random = Random(20261003)
         var state = EditorState()
         var accepted = 0

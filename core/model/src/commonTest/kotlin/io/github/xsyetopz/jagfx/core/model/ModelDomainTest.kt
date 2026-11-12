@@ -100,7 +100,7 @@ class ModelDomainTest {
     }
 
     @Test
-    fun waveformIdsMatchTheFormat() {
+    fun waveformIdsMatchFormat() {
         assertEquals(listOf(0, 1, 2, 3, 4), Waveform.selectable.map { it.id })
         assertEquals(listOf(false, true, true), listOf(4, 5, 255).map { Waveform(it).isUndefined })
         assertFailsWith<IllegalArgumentException> { Waveform(256) }

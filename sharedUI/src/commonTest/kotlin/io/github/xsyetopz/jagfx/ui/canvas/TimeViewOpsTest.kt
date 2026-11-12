@@ -8,7 +8,7 @@ class TimeViewOpsTest {
     private val plotWidth = 400f
 
     @Test
-    fun scrollOffsetConvertsToAFractionOfTheVoice() {
+    fun scrollOffsetConvertsToFractionOfVoice() {
         val view = TimeView(zoom = 4).withScrollOffset(offset = plotWidth, plotWidth = plotWidth)
 
         assertEquals(plotWidth / (plotWidth * 4), view.scroll)
@@ -16,7 +16,7 @@ class TimeViewOpsTest {
     }
 
     @Test
-    fun scrollOffsetIsLimitedToTheEndOfTheVoice() {
+    fun scrollOffsetIsLimitedToEndOfVoice() {
         val view =
             TimeView(
                 zoom = 2,
@@ -26,14 +26,14 @@ class TimeViewOpsTest {
     }
 
     @Test
-    fun anEmptyPlotLeavesTheViewAlone() {
+    fun emptyPlotLeavesViewAlone() {
         val view = TimeView(zoom = 2, scroll = 0.25f)
 
         assertEquals(view, view.withScrollOffset(offset = 50f, plotWidth = 0f))
     }
 
     @Test
-    fun zoomingAroundTheCenterKeepsTheCenterTime() {
+    fun zoomingAroundCenterKeepsCenterTime() {
         val view = TimeView(zoom = 2, scroll = 0.25f)
         val center = view.timeAt(0.5f)
 
@@ -41,7 +41,7 @@ class TimeViewOpsTest {
     }
 
     @Test
-    fun zoomingInWithTheWheelKeepsTheTimeUnderThePointer() {
+    fun zoomingInWithWheelKeepsTimeUnderPointer() {
         val view = TimeView(zoom = 2, scroll = 0.25f)
         val relative = 0.3f
         val zoomed = view.zoomedStepAt(delta = 1f, relative = relative)
@@ -50,7 +50,7 @@ class TimeViewOpsTest {
     }
 
     @Test
-    fun zoomingNeverScrollsPastTheEndsOfTheVoice() {
+    fun zoomingNeverScrollsPastEndsOfVoice() {
         for (delta in listOf(-1f, 1f)) {
             for (relative in listOf(0f, 1f)) {
                 val zoomed = TimeView(zoom = 2, scroll = 0.5f).zoomedStepAt(delta, relative)

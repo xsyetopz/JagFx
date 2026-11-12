@@ -208,7 +208,7 @@ class EditorReducerTest {
     }
 
     @Test
-    fun setVoiceReplacesTheSlotAsOneUndoStep() {
+    fun setVoiceReplacesSlotAsOneUndoStep() {
         val voice = DefaultVoice.copy(duration = Milliseconds(250))
         val state = EditorState().after(SlotIntent.SetVoice(3, voice))
         assertEquals(voice, state.patch.voices[3])
@@ -218,7 +218,7 @@ class EditorReducerTest {
     }
 
     @Test
-    fun setFilterReplacesTheFilterOfTheSelectedVoice() {
+    fun setFilterReplacesFilterOfSelectedVoice() {
         val filter = DefaultFilter.copy(unityGain0 = 7, unityGain1 = 7)
         assertEquals(filter, enabled.after(FilterIntent.SetFilter(filter)).voice!!.filter)
         assertEquals(
@@ -228,7 +228,7 @@ class EditorReducerTest {
     }
 
     @Test
-    fun turningTheFilterOffKeepsItForTurningItOn() {
+    fun turningFilterOffKeepsItForTurningItOn() {
         val filter = DefaultFilter.copy(unityGain0 = 9, unityGain1 = 9)
         val withFilter = enabled.after(FilterIntent.SetFilter(filter))
         val off = withFilter.after(FilterIntent.SetEnabled(false))

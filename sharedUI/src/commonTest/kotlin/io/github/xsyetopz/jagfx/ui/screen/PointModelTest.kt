@@ -25,7 +25,7 @@ class PointModelTest {
     ) = editField(field, text, SignalChainSlot.Pitch, envelope, index, durationMs)
 
     @Test
-    fun everySlotHasATitleAndADescriptionOfItsOwn() {
+    fun everySlotHasTitleAndDescriptionOfItsOwn() {
         val titles = SignalChainSlot.entries.map(::titleOf)
         val descriptions = SignalChainSlot.entries.map(::descriptionOf)
 
@@ -35,7 +35,7 @@ class PointModelTest {
     }
 
     @Test
-    fun formatDecimalTrimsTrailingZerosAndKeepsTheSign() {
+    fun formatDecimalTrimsTrailingZerosAndKeepsSign() {
         assertEquals("220", formatDecimal(220.0, 2))
         assertEquals("87.5", formatDecimal(87.5, 2))
         assertEquals("-0.25", formatDecimal(-0.25, 2))
@@ -43,13 +43,13 @@ class PointModelTest {
     }
 
     @Test
-    fun suffixFollowsTheUnit() {
+    fun suffixFollowsUnit() {
         assertEquals(" Hz", ValueUnit.Hz.suffix())
         assertEquals("", (null as ValueUnit?).suffix())
     }
 
     @Test
-    fun positionAndLevelFieldsShowTheStoredNumbers() {
+    fun positionAndLevelFieldsShowStoredNumbers() {
         val shown = { field: PointField ->
             fieldText(field, SignalChainSlot.Pitch, pitch, 1, durationMs)
         }
@@ -59,21 +59,21 @@ class PointModelTest {
     }
 
     @Test
-    fun theFirstPointIsAlwaysShownAtTimeZero() {
+    fun firstPointIsAlwaysShownAtTimeZero() {
         val first = pitch.copy(segments = listOf(Segment(500, 0)) + segments.drop(1))
 
         assertEquals("0", fieldText(PointField.Time, SignalChainSlot.Pitch, first, 0, durationMs))
     }
 
     @Test
-    fun aTimeEntryConvertsToTheRawPosition() {
+    fun timeEntryConvertsToRawPosition() {
         val half = edit(PointField.Time, "500")
 
         assertEquals(segments[1].copy(duration = 32768), assertIs<FieldEdit.Applied>(half).segment)
     }
 
     @Test
-    fun aTimeEntryPastTheLastRawPositionReportsTheRange() {
+    fun timeEntryPastLastRawPositionReportsRange() {
         val past = assertIs<FieldEdit.OutOfRange>(edit(PointField.Time, durationMs.toString()))
 
         assertEquals("0", past.min)
@@ -81,7 +81,7 @@ class PointModelTest {
     }
 
     @Test
-    fun rawEntriesAcceptTheWholeU16RangeAndReportTheRest() {
+    fun rawEntriesAcceptWholeU16RangeAndReportRest() {
         val top = assertIs<FieldEdit.Applied>(edit(PointField.Level, "${SynthLimits.U16_MAX}"))
         val over =
             assertIs<FieldEdit.OutOfRange>(edit(PointField.Position, "${SynthLimits.U16_MAX + 1}"))
@@ -93,7 +93,7 @@ class PointModelTest {
     }
 
     @Test
-    fun aValueEntryInTheSlotUnitRoundTripsThroughTheTable() {
+    fun valueEntryInSlotUnitRoundTripsThroughTable() {
         val shown = fieldText(PointField.Value, SignalChainSlot.Pitch, pitch, 1, durationMs)
         val applied = assertIs<FieldEdit.Applied>(edit(PointField.Value, shown))
 
@@ -105,20 +105,20 @@ class PointModelTest {
     }
 
     @Test
-    fun aValueEntryOnAFlatEnvelopeIsRefusedInsteadOfDividingByZero() {
+    fun valueEntryOnFlatEnvelopeIsRefusedInsteadOfDividingByZero() {
         val flat = pitch.copy(startValue = 100, endValue = 100)
 
         assertIs<FieldEdit.NotANumber>(edit(PointField.Value, "100", envelope = flat))
     }
 
     @Test
-    fun textThatIsNotANumberIsRefused() {
+    fun textThatIsNotNumberIsRefused() {
         assertIs<FieldEdit.NotANumber>(edit(PointField.Position, "abc"))
         assertIs<FieldEdit.NotANumber>(edit(PointField.Time, ""))
     }
 
     @Test
-    fun aCommaIsAcceptedAsTheDecimalSeparator() {
+    fun commaIsAcceptedAsDecimalSeparator() {
         val comma = assertIs<FieldEdit.Applied>(edit(PointField.Time, "250,5"))
         val dot = assertIs<FieldEdit.Applied>(edit(PointField.Time, "250.5"))
 

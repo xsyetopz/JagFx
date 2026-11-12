@@ -10,25 +10,25 @@ import kotlin.test.assertEquals
 
 class PointLabelTest {
     @Test
-    fun aLabelHasTheTimeAndTheValueInTheUnitOfTheSlot() {
+    fun labelHasTimeAndValueInUnitOfSlot() {
         val readout = PointReadout(12.5f, 300.0, ValueUnit.Hz, 800, 40000)
         assertEquals("12.5 ms · 300 Hz", pointLabelText(readout))
     }
 
     @Test
-    fun aLabelOmitsTheRawPositionAndLevel() {
+    fun labelOmitsRawPositionAndLevel() {
         val readout = PointReadout(500f, 87.25, ValueUnit.Percent, 32768, 1)
         assertEquals("500 ms · 87.25%", pointLabelText(readout))
     }
 
     @Test
-    fun aUnitlessPointShowsTheRawLevel() {
+    fun unitlessPointShowsRawLevel() {
         val readout = PointReadout(0f, 40000.0, null, 0, 40000)
         assertEquals("0 ms · 40000", pointLabelText(readout))
     }
 
     @Test
-    fun everyPointOfAnEnvelopeGetsALabel() {
+    fun everyPointOfEnvelopeGetsLabel() {
         val envelope =
             Envelope(Waveform.Sine, 100, 300, listOf(Segment(0, 0), Segment(32768, 65535)))
         val labels = pointLabels(SignalChainSlot.Pitch, envelope, durationMs = 1000)

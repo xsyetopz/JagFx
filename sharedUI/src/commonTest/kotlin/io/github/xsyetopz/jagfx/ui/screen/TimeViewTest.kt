@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 
 class TimeViewTest {
     @Test
-    fun presetFourShowsAQuarterOfTheVoice() {
+    fun presetFourShowsQuarterOfVoice() {
         val view = TimeView().zoomedTo(4)
 
         assertEquals(0.25f, view.span)
@@ -20,7 +20,7 @@ class TimeViewTest {
     }
 
     @Test
-    fun wheelZoomKeepsTheTimeUnderThePointer() {
+    fun wheelZoomKeepsTimeUnderPointer() {
         val start = TimeView(2, 0.25f)
         val relative = 0.4f
         val anchor = start.timeAt(relative)
@@ -32,7 +32,7 @@ class TimeViewTest {
     }
 
     @Test
-    fun wheelZoomAtTheEdgeClampsScrollButKeepsTheZoom() {
+    fun wheelZoomAtEdgeClampsScrollButKeepsZoom() {
         val zoomed = TimeView().zoomedTo(4, anchor = 0.05f, relative = 0.5f)
 
         assertEquals(TimeView(4, 0f), zoomed)
@@ -55,7 +55,7 @@ class TimeViewTest {
     }
 
     @Test
-    fun linkedCellsShareTheViewAndWritesGoToIt() {
+    fun linkedCellsShareViewAndWritesGoToIt() {
         val state = ScreenViewState().withTimeView(SignalChainSlot.Pitch, TimeView(2, 0.5f))
 
         assertEquals(TimeView(2, 0.5f), state.timeView)
@@ -63,7 +63,7 @@ class TimeViewTest {
     }
 
     @Test
-    fun unlinkedCellKeepsItsViewWhenTheSharedOneChanges() {
+    fun unlinkedCellKeepsItsViewWhenSharedOneChanges() {
         val own = TimeView(4, 0.25f)
         val state =
             ScreenViewState()

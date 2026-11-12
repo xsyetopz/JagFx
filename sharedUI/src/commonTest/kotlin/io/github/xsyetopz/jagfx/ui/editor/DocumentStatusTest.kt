@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 
 class DocumentStatusTest {
     @Test
-    fun newPatchOpensTheEditorWithToneOneOn() {
+    fun newPatchOpensEditorWithToneOneOn() {
         val closed = EditorState(isFileOpen = false)
         val state = closed.after(DocumentIntent.NewPatch)
         assertTrue(state.isFileOpen)
@@ -28,7 +28,7 @@ class DocumentStatusTest {
     }
 
     @Test
-    fun newPatchDropsTheOpenFileAndHistory() {
+    fun newPatchDropsOpenFileAndHistory() {
         val edited =
             EditorState(fileName = "bell", filePath = "/sfx/bell.synth")
                 .after(SlotIntent.SetVoiceEnabled(3, true))
@@ -40,7 +40,7 @@ class DocumentStatusTest {
     }
 
     @Test
-    fun loadingAFileOpensTheEditor() {
+    fun loadingFileOpensEditor() {
         val state =
             EditorState(isFileOpen = false)
                 .after(ResultIntent.Loaded("bell.synth", "/sfx/bell.synth", Patch.Empty))
@@ -48,7 +48,7 @@ class DocumentStatusTest {
     }
 
     @Test
-    fun failedOpenKeepsTheNoFileScreen() {
+    fun failedOpenKeepsNoFileScreen() {
         val state = EditorState(isFileOpen = false).after(ResultIntent.LoadFailed("a.synth", "bad"))
         assertFalse(state.isFileOpen)
     }
@@ -63,7 +63,7 @@ class DocumentStatusTest {
     }
 
     @Test
-    fun undoWithNothingToUndoKeepsTheHint() {
+    fun undoWithNothingToUndoKeepsHint() {
         val state = EditorState(statusHint = StatusHint.NewPatch).after(HistoryIntent.Undo)
         assertEquals(StatusHint.NewPatch, state.statusHint)
     }
@@ -79,7 +79,7 @@ class DocumentStatusTest {
     }
 
     @Test
-    fun exactlyTheModuleStartSlotsHaveAnEmptyPrompt() {
+    fun exactlyModuleStartSlotsHaveEmptyPrompt() {
         for (slot in SignalChainSlot.entries) {
             val prompt = emptyPromptKey(slot)
             val startsModule = pairFirstOf(slot) == slot

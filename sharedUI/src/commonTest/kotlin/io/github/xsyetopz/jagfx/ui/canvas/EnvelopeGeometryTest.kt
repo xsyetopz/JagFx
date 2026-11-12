@@ -67,7 +67,7 @@ class EnvelopeGeometryTest {
     }
 
     @Test
-    fun autoScaleSpansTheEnvelopeLevels() {
+    fun autoScaleSpansEnvelopeLevels() {
         val g =
             geometry(
                 listOf(Segment(0, 1000), Segment(1, 3000), Segment(2, 2000)),
@@ -92,7 +92,7 @@ class EnvelopeGeometryTest {
     }
 
     @Test
-    fun normalizedUsesTheFullScale() {
+    fun normalizedUsesFullScale() {
         val g = geometry(listOf(Segment(1, 3000)), scaleMode = EnvelopeScaleMode.Normalized)
 
         assertEquals(0, g.minValue)
@@ -111,7 +111,7 @@ class EnvelopeGeometryTest {
     }
 
     @Test
-    fun lineHitTestReturnsTheBreakpointThatEndsTheLine() {
+    fun lineHitTestReturnsBreakpointThatEndsLine() {
         val g = geometry(rise)
 
         assertEquals(1, g.lineHitTest(16.5f, 54f))
@@ -130,7 +130,7 @@ class EnvelopeGeometryTest {
     }
 
     @Test
-    fun movePointOfTheLastBreakpointStopsAtTheVoiceEnd() {
+    fun movePointOfLastBreakpointStopsAtVoiceEnd() {
         val g = geometry(rise)
 
         assertEquals(listOf(0, QUARTER, 65535), positions(g.movePoint(rise, 2, 500f)))
@@ -138,7 +138,7 @@ class EnvelopeGeometryTest {
     }
 
     @Test
-    fun movePointLeavesTheFirstBreakpointAtTimeZero() {
+    fun movePointLeavesFirstBreakpointAtTimeZero() {
         val g = geometry(rise)
 
         assertEquals(rise, g.movePoint(rise, 0, 54f))
@@ -161,7 +161,7 @@ class EnvelopeGeometryTest {
     }
 
     @Test
-    fun insertPointOnLineAddsABreakpointAtTheClick() {
+    fun insertPointOnLineAddsBreakpointAtClick() {
         val g = geometry(rise)
 
         assertEquals(
@@ -180,7 +180,7 @@ class EnvelopeGeometryTest {
     }
 
     @Test
-    fun insertPointOnLineRefusesAtTheSegmentLimit() {
+    fun insertPointOnLineRefusesAtSegmentLimit() {
         val full = List(255) { Segment(it, 0) }
 
         assertNull(geometry(full).insertPointOnLine(full, 1, 4f, 50f))
@@ -189,7 +189,7 @@ class EnvelopeGeometryTest {
     }
 
     @Test
-    fun removeAndAppendRespectTheSegmentBounds() {
+    fun removeAndAppendRespectSegmentBounds() {
         assertNull(removeSegment(listOf(Segment(1, 0)), 0))
         assertEquals(listOf(Segment(2, 0)), removeSegment(listOf(Segment(1, 0), Segment(2, 0)), 0))
         assertNull(appendSegment(List(255) { Segment(1, 0) }))

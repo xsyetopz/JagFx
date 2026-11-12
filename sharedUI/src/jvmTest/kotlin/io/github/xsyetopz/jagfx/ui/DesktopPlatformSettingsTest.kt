@@ -111,7 +111,7 @@ class DesktopPlatformSettingsTest {
     }
 
     @Test
-    fun kdeFontSizeIsTheTextScale() {
+    fun kdeFontSizeIsTextScale() {
         assertEquals(
             120,
             linux(mapOf(kdeFont to "Noto Sans,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1")).textScalePercent,
@@ -124,7 +124,7 @@ class DesktopPlatformSettingsTest {
     }
 
     @Test
-    fun linuxTakesTheLargerOfGnomeAndKde() {
+    fun linuxTakesLargerOfGnomeAndKde() {
         val s =
             linux(
                 mapOf(
@@ -152,7 +152,7 @@ class DesktopPlatformSettingsTest {
         }.textScalePercent
 
     @Test
-    fun windowsTextScaleReadsTheRegistryPercent() {
+    fun windowsTextScaleReadsRegistryPercent() {
         val output =
             "\r\nHKEY_CURRENT_USER\\Software\\Microsoft\\Accessibility\r\n" +
                 "    TextScaleFactor    REG_DWORD    0x7d\r\n"
@@ -174,7 +174,7 @@ class DesktopPlatformSettingsTest {
     }
 
     @Test
-    fun gettersDoNotWaitForTheProbe() {
+    fun gettersDoNotWaitForProbe() {
         val release = CountDownLatch(1)
         var started: (() -> Unit)? = null
         val s =
@@ -190,7 +190,7 @@ class DesktopPlatformSettingsTest {
     }
 
     @Test
-    fun finishedProbeRecomposesAReader() {
+    fun finishedProbeRecomposesReader() {
         var finish: (() -> Unit)? = null
         val s = DesktopPlatformSettings("Linux", { false }, { finish = it }) { "1.5" }
         val seen = mutableListOf<Int>()

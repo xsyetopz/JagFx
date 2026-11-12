@@ -30,7 +30,7 @@ class TipTest {
         }
 
     @Test
-    fun hoveringTheAnchorShowsTheTooltipAndMovingOntoItKeepsItOpen() =
+    fun hoveringAnchorShowsTooltipAndMovingOntoItKeepsItOpen() =
         runComposeUiTest {
             show()
             anchor().performMouseInput { moveTo(center) }
@@ -44,7 +44,7 @@ class TipTest {
         }
 
     @Test
-    fun keyboardFocusShowsTheTooltipAndEscapeClosesIt() =
+    fun keyboardFocusShowsTooltipAndEscapeClosesIt() =
         runComposeUiTest {
             show()
             anchor().requestFocus()

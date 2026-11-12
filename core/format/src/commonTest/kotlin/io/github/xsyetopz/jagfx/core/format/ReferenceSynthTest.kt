@@ -9,7 +9,7 @@ import kotlin.test.fail
 
 class ReferenceSynthTest {
     @Test
-    fun everyReferenceFileIsAConformingFile() {
+    fun everyReferenceFileIsConformingFile() {
         assertTrue(ReferenceSynths.hex.isNotEmpty())
         val mismatches =
             ReferenceSynths.hex.keys.mapNotNull { name ->
@@ -82,7 +82,7 @@ class ReferenceSynthTest {
 
     /** Spec §6.9 and §7.3: any decodable input gives a valid patch that round-trips. */
     @Test
-    fun everyPrefixOfEveryReferenceFileDecodesToAValidPatch() {
+    fun everyPrefixOfEveryReferenceFileDecodesToValidPatch() {
         for ((name, hex) in ReferenceSynths.hex) {
             val bytes = hexToBytes(hex)
             for (length in 0..bytes.size) {

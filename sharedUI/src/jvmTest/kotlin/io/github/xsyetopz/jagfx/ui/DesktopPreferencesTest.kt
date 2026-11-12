@@ -43,7 +43,7 @@ class DesktopPreferencesTest {
     }
 
     @Test
-    fun configFolderFollowsThePlatform() {
+    fun configFolderFollowsPlatform() {
         val env = mapOf("XDG_CONFIG_HOME" to "/xdg", "APPDATA" to "C:/Roaming")
         assertEquals(File("/xdg/jagfx"), defaultConfigDirectory("Linux", "/h", env::get))
         assertEquals(File("/h/.config/jagfx"), defaultConfigDirectory("Linux", "/h") { null })

@@ -51,7 +51,7 @@ class ContrastTest {
     }
 
     @Test
-    fun luminanceMatchesTheWcagReferencePoints() {
+    fun luminanceMatchesWcagReferencePoints() {
         assertEquals(21f, contrastRatio(Color.Black, Color.White), 0.01f)
         assertEquals(1f, contrastRatio(Color.Red, Color.Red), 0.001f)
         assertEquals(
@@ -90,7 +90,7 @@ class ContrastTest {
     }
 
     @Test
-    fun darkSubtleTextIsAtLeast8A8A8AOnPanel() {
+    fun darkSubtleTextIsAtLeast888OnPanel() {
         val subtle = JagFxColors.Classic.textSubtle
         assertTrue(
             subtle.red >= 0x8A / 255f && subtle.green >= 0x8A / 255f && subtle.blue >= 0x8A / 255f,
@@ -114,7 +114,7 @@ class ContrastTest {
         )
 
     @Test
-    fun plotLinesAndMarkersReachThreeToOneOnTheScope() {
+    fun plotLinesAndMarkersReachThreeToOneOnScope() {
         for (appearance in JagFxAppearance.entries) {
             val palette = SynthPalette.of(appearance)
             val scope = mapOf("scope" to palette.scope)
@@ -126,7 +126,7 @@ class ContrastTest {
     }
 
     @Test
-    fun translucentPlotColorsReachThreeToOneOnTheScope() {
+    fun translucentPlotColorsReachThreeToOneOnScope() {
         for (appearance in JagFxAppearance.entries) {
             val palette = SynthPalette.of(appearance)
             val scope = mapOf("scope" to palette.scope)
@@ -143,7 +143,7 @@ class ContrastTest {
     }
 
     @Test
-    fun markerRingReachesThreeToOneOnTheSelectionFill() {
+    fun markerRingReachesThreeToOneOnSelectionFill() {
         for (appearance in JagFxAppearance.entries) {
             val palette = SynthPalette.of(appearance)
             val fill = palette.selection.compositeOver(palette.scope)
@@ -156,7 +156,7 @@ class ContrastTest {
     }
 
     @Test
-    fun gridStaysBelowTheLinesItSupports() {
+    fun gridStaysBelowLinesItSupports() {
         for (appearance in JagFxAppearance.entries) {
             val palette = SynthPalette.of(appearance)
             assertTrue(

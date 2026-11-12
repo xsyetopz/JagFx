@@ -14,7 +14,7 @@ class GoldenWavTest {
     private val synths = ReferenceSynths.hex + CoverageSynths.hex
 
     @Test
-    fun everyReferenceSynthHasAGoldenWav() {
+    fun everyReferenceSynthHasGoldenWav() {
         val names =
             ReferenceWavs.hex.keys
                 .map { it.substringBefore('.') }

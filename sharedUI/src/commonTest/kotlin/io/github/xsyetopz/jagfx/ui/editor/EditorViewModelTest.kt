@@ -239,7 +239,7 @@ class EditorViewModelTest {
         }
 
     @Test
-    fun importToneReplacesTheSelectedSlot() =
+    fun importToneReplacesSelectedSlot() =
         runTest(dispatcher) {
             val voice = samplePatch().voices[0]!!
             files.picked = OpenedFile("hit.tone", "/sfx/hit.tone", SynthCodec.encodeTone(voice))
@@ -256,7 +256,7 @@ class EditorViewModelTest {
         }
 
     @Test
-    fun importFilterReplacesTheFilterOfTheSelectedVoice() =
+    fun importFilterReplacesFilterOfSelectedVoice() =
         runTest(dispatcher) {
             val filter = DefaultFilter.copy(unityGain0 = 5, unityGain1 = 5)
             files.picked =

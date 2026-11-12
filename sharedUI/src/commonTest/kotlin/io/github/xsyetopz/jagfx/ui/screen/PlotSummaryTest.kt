@@ -38,7 +38,7 @@ class PlotSummaryTest {
     )
 
     @Test
-    fun envelopeSummaryNamesTheEnvelopeItsPointsRangeAndLength() {
+    fun envelopeSummaryNamesEnvelopeItsPointsRangeAndLength() {
         val summary = envelopeSummary(en, SignalChainSlot.Pitch, pitch, durationMs)
 
         assertTrue(summary.startsWith(en[titleOf(SignalChainSlot.Pitch)]), summary)
@@ -66,7 +66,7 @@ class PlotSummaryTest {
     }
 
     @Test
-    fun envelopeSummaryOfAMissingEnvelopeSaysSo() {
+    fun envelopeSummaryOfMissingEnvelopeSaysSo() {
         val missing = envelopeSummary(en, SignalChainSlot.Pitch, null, durationMs)
         val empty =
             envelopeSummary(
@@ -81,7 +81,7 @@ class PlotSummaryTest {
     }
 
     @Test
-    fun envelopeStateDescribesTheSelectedPointOnly() {
+    fun envelopeStateDescribesSelectedPointOnly() {
         assertNull(envelopeState(en, SignalChainSlot.Pitch, pitch, -1, durationMs))
         assertNull(envelopeState(en, SignalChainSlot.Pitch, null, 0, durationMs))
         val state = envelopeState(en, SignalChainSlot.Pitch, pitch, 1, durationMs)
@@ -115,7 +115,7 @@ class PlotSummaryTest {
     }
 
     @Test
-    fun responseSummaryNamesThePeakAndEmptyFiltersSayNone() {
+    fun responseSummaryNamesPeakAndEmptyFiltersSayNone() {
         val summary = responseSummary(en, filter(zeros = 0, poles = 2))
 
         assertTrue(" dB at " in summary && summary.endsWith(" Hz"), summary)
@@ -146,7 +146,7 @@ class PlotSummaryTest {
     }
 
     @Test
-    fun poleStateNamesTheSelectedMarkerItsPlaceAndValues() {
+    fun poleStateNamesSelectedMarkerItsPlaceAndValues() {
         val state = poleState(en, filter(zeros = 1, poles = 3), PoleRef(1, 1, 1))
         assertNotNull(state)
         assertTrue(state.startsWith("Pole 2 of 3, end: "), state)
@@ -161,7 +161,7 @@ class PlotSummaryTest {
     }
 
     @Test
-    fun poleStateIsNullWithoutAMatchingSelection() {
+    fun poleStateIsNullWithoutMatchingSelection() {
         assertNull(poleState(en, filter(1, 1), null))
         assertNull(poleState(en, null, PoleRef(0, 0, 0)))
         assertNull(poleState(en, filter(zeros = 1, poles = 1), PoleRef(1, 1, 0)))

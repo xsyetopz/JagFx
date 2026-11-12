@@ -6,14 +6,14 @@ import kotlin.test.assertEquals
 
 class LaneModelTest {
     @Test
-    fun pressNearTheEndResizesAndElsewhereMoves() {
+    fun pressNearEndResizesAndElsewhereMoves() {
         assertEquals(LaneDrag.Move, laneDragAt(x = 50f, barStart = 0f, barEnd = 100f, edge = 6f))
         assertEquals(LaneDrag.Resize, laneDragAt(x = 94f, barStart = 0f, barEnd = 100f, edge = 6f))
         assertEquals(LaneDrag.Resize, laneDragAt(x = 5f, barStart = 0f, barEnd = 10f, edge = 6f))
     }
 
     @Test
-    fun dragsKeepTimesInTheFormatRange() {
+    fun dragsKeepTimesInFormatRange() {
         assertEquals(
             110 to 50,
             draggedTimes(LaneDrag.Move, offset = 100, duration = 50, deltaMs = 9.6f),
@@ -33,7 +33,7 @@ class LaneModelTest {
     }
 
     @Test
-    fun rulerStepIsTheSmallestRoundStepWithRoomForLabels() {
+    fun rulerStepIsSmallestRoundStepWithRoomForLabels() {
         assertEquals(1, rulerStep(spanMs = 10, widthPx = 1000f, minGapPx = 50f))
         assertEquals(50, rulerStep(spanMs = 1000, widthPx = 1000f, minGapPx = 50f))
         assertEquals(100, rulerStep(spanMs = 1000, widthPx = 500f, minGapPx = 50f))

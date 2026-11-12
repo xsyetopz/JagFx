@@ -15,7 +15,7 @@ class GridModelTest {
     }
 
     @Test
-    fun rackRowsAreFreqAmpAndOutputAndTheFilterColumnHoldsThePlots() {
+    fun rackRowsAreFreqAmpAndOutputAndFilterColumnHoldsPlots() {
         assertEquals(
             listOf(
                 listOf(
@@ -39,13 +39,13 @@ class GridModelTest {
     }
 
     @Test
-    fun magnitudeMapsToDecibelsAsTheFilterDoes() {
+    fun magnitudeMapsToDecibelsAsFilterDoes() {
         assertEquals(0.0, magnitudeToDb(0))
         assertEquals(100.0, magnitudeToDb(65535), 0.01)
     }
 
     @Test
-    fun positionMapsToMillisecondsOfTheVoice() {
+    fun positionMapsToMillisecondsOfVoice() {
         assertEquals(0f, positionToMs(0f, 1000))
         assertEquals(250f, positionToMs(16384f, 1000))
         assertEquals(1000f, positionToMs(65536f, 1000))

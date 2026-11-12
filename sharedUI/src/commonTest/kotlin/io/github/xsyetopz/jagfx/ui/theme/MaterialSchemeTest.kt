@@ -6,7 +6,7 @@ import kotlin.test.assertTrue
 
 class MaterialSchemeTest {
     @Test
-    fun schemeFollowsTheJagFxColors() {
+    fun schemeFollowsJagFxColors() {
         for (appearance in JagFxAppearance.entries) {
             val colors = JagFxColors.of(appearance)
             val scheme = jagFxColorScheme(appearance)

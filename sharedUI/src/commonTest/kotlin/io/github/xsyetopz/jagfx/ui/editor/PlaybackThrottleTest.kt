@@ -6,13 +6,13 @@ import kotlin.test.assertNull
 
 class PlaybackThrottleTest {
     @Test
-    fun theIntervalFollowsTheAudioClockAndIsOneHertzWhenMotionIsReduced() {
+    fun intervalFollowsAudioClockAndIsOneHertzWhenMotionIsReduced() {
         assertEquals(0L, playbackIntervalMs(reducedMotion = false))
         assertEquals(1000L, playbackIntervalMs(reducedMotion = true))
     }
 
     @Test
-    fun aZeroIntervalPassesEveryPosition() {
+    fun zeroIntervalPassesEveryPosition() {
         val throttle = PlaybackThrottle(playbackIntervalMs(reducedMotion = false))
         val passed = (0 until 100).count { throttle.offer(it / 100f, it * 10L) != null }
         assertEquals(100, passed)
@@ -20,7 +20,7 @@ class PlaybackThrottleTest {
     }
 
     @Test
-    fun theFirstPositionPassesAndLaterOnesWaitForTheInterval() {
+    fun firstPositionPassesAndLaterOnesWaitForInterval() {
         val throttle = PlaybackThrottle(250)
         assertEquals(0.0f, throttle.offer(0.0f, 0))
         assertNull(throttle.offer(0.1f, 16))
@@ -31,7 +31,7 @@ class PlaybackThrottleTest {
     }
 
     @Test
-    fun aSixtyHertzStreamForOneSecondPassesAboutFourPositions() {
+    fun sixtyHertzStreamForOneSecondPassesAboutFourPositions() {
         val throttle = PlaybackThrottle(250)
         val passed = (0 until 60).count { throttle.offer(it / 60f, it * 1000L / 60) != null }
         assertEquals(4, passed)
@@ -45,7 +45,7 @@ class PlaybackThrottleTest {
     }
 
     @Test
-    fun flushReturnsTheHeldBackFinalPositionOnce() {
+    fun flushReturnsHeldBackFinalPositionOnce() {
         val throttle = PlaybackThrottle(250)
         throttle.offer(0.0f, 0)
         throttle.offer(0.9f, 100)
@@ -54,14 +54,14 @@ class PlaybackThrottleTest {
     }
 
     @Test
-    fun flushReturnsNothingWhenTheLastPositionWasPassed() {
+    fun flushReturnsNothingWhenLastPositionWasPassed() {
         val throttle = PlaybackThrottle(250)
         throttle.offer(0.5f, 0)
         assertNull(throttle.flush())
     }
 
     @Test
-    fun aTimestampThatGoesBackwardsDoesNotStallTheStream() {
+    fun timestampThatGoesBackwardsDoesNotStallStream() {
         val throttle = PlaybackThrottle(250)
         throttle.offer(0.1f, 1000)
         assertEquals(0.2f, throttle.offer(0.2f, 0))

@@ -5,12 +5,12 @@ import kotlin.test.assertEquals
 
 class TitleBarItemsTest {
     @Test
-    fun aNativeMenuLeavesOnlyTheFileName() {
+    fun nativeMenuLeavesOnlyFileName() {
         assertEquals(TitleBarItems(fileMenu = false, history = false), titleBarItems(true))
     }
 
     @Test
-    fun withoutANativeMenuTheTitleBarKeepsTheMenuAndHistory() {
+    fun withoutNativeMenuTitleBarKeepsMenuAndHistory() {
         assertEquals(TitleBarItems(fileMenu = true, history = true), titleBarItems(false))
     }
 }

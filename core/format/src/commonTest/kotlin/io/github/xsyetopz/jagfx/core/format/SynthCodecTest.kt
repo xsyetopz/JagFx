@@ -58,7 +58,7 @@ class SynthCodecTest {
     }
 
     @Test
-    fun smartIntegersUseTheShortestForm() {
+    fun smartIntegersUseShortestForm() {
         val oneByte =
             SynthCodec.encode(
                 patchOf(voice(partials = listOf(partial(pitchOffset = 63, delay = 127)))),
@@ -94,7 +94,7 @@ class SynthCodecTest {
 
     /** Spec §5 rule 7 and §12 item a. */
     @Test
-    fun fivePartialsKeepTheTerminatorByte() {
+    fun fivePartialsKeepTerminatorByte() {
         val four =
             voice(
                 partials = List(4) { partial(amplitude = it + 1) },
@@ -132,7 +132,7 @@ class SynthCodecTest {
     }
 
     @Test
-    fun bytesAfterTheLoopAreRejected() {
+    fun bytesAfterLoopAreRejected() {
         val synth = SynthCodec.encode(patchOf(voice()))
         val group = synth + byteArrayOf(0, 0, 15, -64, 1, 2, 3)
 
@@ -202,7 +202,7 @@ class SynthCodecTest {
 
     /** Spec §12 item f. */
     @Test
-    fun trailingEmptySlotsKeepTheLoop() {
+    fun trailingEmptySlotsKeepLoop() {
         val patch =
             SynthCodec
                 .decode(
@@ -243,7 +243,7 @@ class SynthCodecTest {
 
     /** Game file 11870 starts with frequency waveform `245`. */
     @Test
-    fun undefinedFrequencyWaveformStartsAVoice() {
+    fun undefinedFrequencyWaveformStartsVoice() {
         val bytes = SynthCodec.encode(patchOf(null, voice()))
         bytes[1] = -11
 
@@ -323,7 +323,7 @@ class SynthCodecTest {
     }
 
     @Test
-    fun filterWhoseBytesLookLikeAnEnvelopeRoundTrips() {
+    fun filterWhoseBytesLookLikeEnvelopeRoundTrips() {
         val envelopeLike = filter(feedback = listOf(pole(0, 15)), unityGain0 = 0, unityGain1 = 0)
         val patch = patchOf(voice(filter = envelopeLike), voice())
 

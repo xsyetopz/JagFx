@@ -20,7 +20,7 @@ class WaveTablesTest {
 
     /** Spec §8.2. */
     @Test
-    fun sineTableHasTheSpecifiedHash() {
+    fun sineTableHasSpecifiedHash() {
         assertEquals(
             "235defb8b6d7c1db0137caec395de88f299393de4c5a3f95a2b5536c525c3513",
             Sha256.hex(bigEndian(WaveTables.sine)),
@@ -29,7 +29,7 @@ class WaveTablesTest {
 
     /** Spec §8.2. */
     @Test
-    fun noiseTableHasTheSpecifiedHash() {
+    fun noiseTableHasSpecifiedHash() {
         assertEquals(
             "09b13db6e95d0057e3e6a6f342285ccd00d4b34cb08b7855b3ab02393e7f8f25",
             Sha256.hex(bigEndian(WaveTables.noise)),

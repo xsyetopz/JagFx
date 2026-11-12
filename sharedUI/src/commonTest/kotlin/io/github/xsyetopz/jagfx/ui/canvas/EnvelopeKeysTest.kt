@@ -29,19 +29,19 @@ class EnvelopeKeysTest {
     }
 
     @Test
-    fun selectingWithNothingSelectedStartsFromTheNearEnd() {
+    fun selectingWithNothingSelectedStartsFromNearEnd() {
         assertEquals(0, run(EnvelopeKeyCommand.SelectNext, -1)?.selection)
         assertEquals(segments.lastIndex, run(EnvelopeKeyCommand.SelectPrevious, -1)?.selection)
     }
 
     @Test
-    fun selectingPastAnEndIsLeftToTheCellNavigation() {
+    fun selectingPastEndIsLeftToCellNavigation() {
         assertNull(run(EnvelopeKeyCommand.SelectNext, segments.lastIndex))
         assertNull(run(EnvelopeKeyCommand.SelectPrevious, 0))
     }
 
     @Test
-    fun aMoveStaysBetweenItsNeighbours() {
+    fun moveStaysBetweenItsNeighbours() {
         val later = assertNotNull(run(EnvelopeKeyCommand.MoveLater, 1, step = Int.MAX_VALUE / 2))
         val earlier =
             assertNotNull(run(EnvelopeKeyCommand.MoveEarlier, 1, step = Int.MAX_VALUE / 2))
@@ -51,7 +51,7 @@ class EnvelopeKeysTest {
     }
 
     @Test
-    fun aFineMoveIsSmallerThanACoarseOne() {
+    fun fineMoveIsSmallerThanCoarseOne() {
         val coarse = assertNotNull(run(EnvelopeKeyCommand.MoveLater, 1, step = KEY_STEP))
         val fine = assertNotNull(run(EnvelopeKeyCommand.MoveLater, 1, step = KEY_FINE_STEP))
 
@@ -61,7 +61,7 @@ class EnvelopeKeysTest {
     }
 
     @Test
-    fun theFirstPointKeepsItsTimeButMovesInLevel() {
+    fun firstPointKeepsItsTimeButMovesInLevel() {
         assertNull(run(EnvelopeKeyCommand.MoveLater, 0))
         val up = assertNotNull(run(EnvelopeKeyCommand.MoveUp, 0))
 
@@ -70,7 +70,7 @@ class EnvelopeKeysTest {
     }
 
     @Test
-    fun aLevelMoveStopsAtTheEndsOfTheRange() {
+    fun levelMoveStopsAtEndsOfRange() {
         val top = listOf(Segment(0, SynthLimits.U16_MAX), Segment(100, 0))
 
         assertNull(run(EnvelopeKeyCommand.MoveUp, 0, top))
@@ -78,7 +78,7 @@ class EnvelopeKeysTest {
     }
 
     @Test
-    fun addPutsAPointHalfwayAfterTheSelectedOneAndSelectsIt() {
+    fun addPutsPointHalfwayAfterSelectedOneAndSelectsIt() {
         val edit = assertNotNull(run(EnvelopeKeyCommand.Add, 1))
         val added = edit.segments?.get(2)
 
@@ -89,7 +89,7 @@ class EnvelopeKeysTest {
     }
 
     @Test
-    fun addAfterTheLastPointReachesTowardsTheEndOfTheVoice() {
+    fun addAfterLastPointReachesTowardsEndOfVoice() {
         val edit = assertNotNull(run(EnvelopeKeyCommand.Add, segments.lastIndex))
 
         assertEquals(
@@ -99,14 +99,14 @@ class EnvelopeKeysTest {
     }
 
     @Test
-    fun addStopsAtTheSegmentLimit() {
+    fun addStopsAtSegmentLimit() {
         val full = List(SynthLimits.MAX_SEGMENTS) { Segment(it, 0) }
 
         assertNull(run(EnvelopeKeyCommand.Add, 0, full))
     }
 
     @Test
-    fun deleteRemovesTheSelectedPointAndKeepsTheSelectionInRange() {
+    fun deleteRemovesSelectedPointAndKeepsSelectionInRange() {
         val edit = assertNotNull(run(EnvelopeKeyCommand.Delete, segments.lastIndex))
 
         assertEquals(segments.dropLast(1), edit.segments)
@@ -114,7 +114,7 @@ class EnvelopeKeysTest {
     }
 
     @Test
-    fun deleteKeepsTheLastRemainingPointAndNeedsASelection() {
+    fun deleteKeepsLastRemainingPointAndNeedsSelection() {
         assertNull(run(EnvelopeKeyCommand.Delete, 0, listOf(Segment(0, 0))))
         assertNull(run(EnvelopeKeyCommand.Delete, -1))
     }

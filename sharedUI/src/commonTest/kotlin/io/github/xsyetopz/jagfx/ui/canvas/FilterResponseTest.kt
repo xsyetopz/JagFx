@@ -56,7 +56,7 @@ class FilterResponseTest {
     }
 
     @Test
-    fun singleFeedbackPoleMatchesTheAnalyticResponse() {
+    fun singleFeedbackPoleMatchesAnalyticResponse() {
         val p = pole(phase = 40000, magnitude = 30000)
         val points = 120
         val db = FilterResponse.magnitudeDb(filter(feedback = listOf(p)), 0.0, points)
@@ -67,7 +67,7 @@ class FilterResponseTest {
     }
 
     @Test
-    fun singleFeedforwardPoleMatchesTheAnalyticResponse() {
+    fun singleFeedforwardPoleMatchesAnalyticResponse() {
         val p = pole(phase = 50000, magnitude = 20000)
         val points = 80
         val db = FilterResponse.magnitudeDb(filter(feedforward = listOf(p)), 0.0, points)
@@ -108,7 +108,7 @@ class FilterResponseTest {
     }
 
     @Test
-    fun unityGainScalesTheResponse() {
+    fun unityGainScalesResponse() {
         val gained = Filter(1000, 1000, emptyList(), listOf(pole(30000, 10000)), null)
         val plain = filter(feedback = listOf(pole(30000, 10000)))
         val a = FilterResponse.magnitudeDb(gained, 0.0, 16)

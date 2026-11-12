@@ -23,14 +23,14 @@ class CellChromeTest {
     )
 
     @Test
-    fun aCellIsEnlargedOnlyWhenItIsTheOpenCell() {
+    fun cellIsEnlargedOnlyWhenItIsOpenCell() {
         assertTrue(cellChromeOf(slot, slot).enlarged)
         assertFalse(cellChromeOf(slot, null).enlarged)
         assertFalse(cellChromeOf(slot, SignalChainSlot.Volume).enlarged)
     }
 
     @Test
-    fun aSmallCellShowsOnlyTheTitle() {
+    fun smallCellShowsOnlyTitle() {
         val chrome = cellChromeOf(slot, null)
         assertFalse(chrome.headerControls)
         assertFalse(chrome.viewToggles)
@@ -38,7 +38,7 @@ class CellChromeTest {
     }
 
     @Test
-    fun anEnlargedCellShowsEverything() {
+    fun enlargedCellShowsEverything() {
         val chrome = cellChromeOf(slot, slot)
         assertTrue(chrome.headerControls)
         assertTrue(chrome.viewToggles)
@@ -64,7 +64,7 @@ class CellChromeTest {
     }
 
     @Test
-    fun aSmallCellStyleDrawsFaintGridWithoutLabelsOrReadouts() {
+    fun smallCellStyleDrawsFaintGridWithoutLabelsOrReadouts() {
         val style = style(cellChromeOf(slot, null), CanvasView(pointReadouts = true))
         assertFalse(style.axisLabels)
         assertTrue(style.gridLines)
@@ -73,7 +73,7 @@ class CellChromeTest {
     }
 
     @Test
-    fun anEnlargedCellStyleFollowsTheToggles() {
+    fun enlargedCellStyleFollowsToggles() {
         val defaults = style(cellChromeOf(slot, slot))
         assertTrue(defaults.axisLabels)
         assertTrue(defaults.gridLines)
@@ -91,7 +91,7 @@ class CellChromeTest {
     }
 
     @Test
-    fun theStyleKeepsSlotDurationAndSelection() {
+    fun styleKeepsSlotDurationAndSelection() {
         val built =
             envelopeStyleOf(
                 slot,

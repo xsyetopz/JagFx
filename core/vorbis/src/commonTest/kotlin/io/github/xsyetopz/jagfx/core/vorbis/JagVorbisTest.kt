@@ -7,7 +7,7 @@ import kotlin.test.assertFailsWith
 
 class JagVorbisTest {
     @Test
-    fun decodeThenEncodeGivesTheSameBytes() {
+    fun decodeThenEncodeGivesSameBytes() {
         for ((name, hex) in ReferenceSamples.hex) {
             val bytes = hexToBytes(hex)
 
@@ -18,7 +18,7 @@ class JagVorbisTest {
     }
 
     @Test
-    fun decodeReadsTheHeader() {
+    fun decodeReadsHeader() {
         val bytes = sample("12015")
 
         val sample = JagVorbisCodec.decode(bytes)
@@ -65,7 +65,7 @@ class JagVorbisTest {
 
     /** FNV-1a hashes of the big-endian PCM that the game client decodes from each sample. */
     @Test
-    fun decodePcmMatchesTheGameClient() {
+    fun decodePcmMatchesGameClient() {
         val expected = mapOf("11102" to 0x20f98fc5303c7cabUL, "12015" to 0xea1064f064dc8d7bUL)
         for ((name, hash) in expected) {
             val sample = JagVorbisCodec.decode(sample(name))
@@ -78,7 +78,7 @@ class JagVorbisTest {
     }
 
     @Test
-    fun decodePcmStopsAtTheSampleCount() {
+    fun decodePcmStopsAtSampleCount() {
         val full = JagVorbisCodec.decode(sample("12015"))
         val trimmed = full.copy(sampleCount = 1000)
 

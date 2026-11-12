@@ -15,7 +15,7 @@ class AxisModelTest {
         Envelope(Waveform.Sine, 30, 250, listOf(Segment(0, 0), Segment(32768, 32768)))
 
     @Test
-    fun timeTicksSpanTheWholeVoiceAtZoomOne() {
+    fun timeTicksSpanWholeVoiceAtZoomOne() {
         val ticks = timeTicks(1200, 0f..1f, plotWidth = 600f, minGapPx = 50f)
 
         assertEquals(0, ticks.first())
@@ -24,7 +24,7 @@ class AxisModelTest {
     }
 
     @Test
-    fun timeTicksStayInsideTheVisibleWindow() {
+    fun timeTicksStayInsideVisibleWindow() {
         val ticks = timeTicks(1000, 0.25f..0.5f, plotWidth = 500f, minGapPx = 50f)
 
         assertTrue(ticks.all { it in 250..500 })
@@ -32,12 +32,12 @@ class AxisModelTest {
     }
 
     @Test
-    fun timeTicksOfAnEmptyVoiceAreEmpty() {
+    fun timeTicksOfEmptyVoiceAreEmpty() {
         assertEquals(emptyList(), timeTicks(0, 0f..1f, 600f, 50f))
     }
 
     @Test
-    fun valueTicksRunFromStartToEndInTheSlotUnit() {
+    fun valueTicksRunFromStartToEndInSlotUnit() {
         val ticks = valueTicks(SignalChainSlot.Pitch, pitch, count = 3)
 
         assertEquals(listOf(0f, 0.5f, 1f), ticks.map { it.fraction })
@@ -45,7 +45,7 @@ class AxisModelTest {
     }
 
     @Test
-    fun valueTicksConvertPercentAndSkipSlotsWithoutAUnit() {
+    fun valueTicksConvertPercentAndSkipSlotsWithoutUnit() {
         val volume = Envelope(Waveform.Sine, 0, 65535, emptyList())
 
         assertEquals(100.0, valueTicks(SignalChainSlot.Volume, volume).last().value, 0.01)
@@ -73,7 +73,7 @@ class AxisModelTest {
     }
 
     @Test
-    fun readoutOfAMissingPointIsNull() {
+    fun readoutOfMissingPointIsNull() {
         assertNull(pointReadout(SignalChainSlot.Pitch, pitch, 5, 1000))
     }
 

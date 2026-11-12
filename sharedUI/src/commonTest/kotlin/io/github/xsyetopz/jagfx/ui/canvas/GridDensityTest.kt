@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 
 class GridDensityTest {
     @Test
-    fun theValueGridHasTwoRowsAndThreeLines() {
+    fun valueGridHasTwoRowsAndThreeLines() {
         assertEquals(2, VALUE_ROWS)
         assertEquals(listOf(0f, 0.5f, 1f), valueGridFractions())
     }
@@ -24,7 +24,7 @@ class GridDensityTest {
     }
 
     @Test
-    fun theAnalysisGridDrawsOneLineAtEachOctaveOfTheAxis() {
+    fun analysisGridDrawsOneLineAtEachOctaveOfAxis() {
         val octaves = octaveSemitones()
         assertEquals((0..96 step 12).toList(), octaves)
         assertEquals(FilterFrequencyScale.OCTAVES + 1, octaves.size)

@@ -9,7 +9,7 @@ import kotlin.test.assertNull
 
 class ToneAndFilterCodecTest {
     @Test
-    fun referenceSlotsAreTheTonesOfTheirVoices() {
+    fun referenceSlotsAreTonesOfTheirVoices() {
         for (name in ReferenceSynths.hex.keys) {
             val bytes = referenceSynth(name)
             val patch = SynthCodec.decode(bytes).patch
@@ -60,7 +60,7 @@ class ToneAndFilterCodecTest {
     }
 
     @Test
-    fun bytesAfterAToneGiveAWarning() {
+    fun bytesAfterToneGiveWarning() {
         val bytes = SynthCodec.encodeTone(voice()) + byteArrayOf(1, 2)
 
         val result = SynthCodec.decodeTone(bytes)
@@ -70,7 +70,7 @@ class ToneAndFilterCodecTest {
     }
 
     @Test
-    fun truncatedToneGivesAWarning() {
+    fun truncatedToneGivesWarning() {
         val bytes = SynthCodec.encodeTone(voice())
 
         val result = SynthCodec.decodeTone(bytes.copyOf(bytes.size - 3))

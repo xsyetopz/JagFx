@@ -42,7 +42,7 @@ class ScreenModelTest {
     }
 
     @Test
-    fun timelineSpansTheLatestVoiceOrLoopEnd() {
+    fun timelineSpansLatestVoiceOrLoopEnd() {
         assertEquals(1, timelineSpan(Patch.Empty))
         val voice = DefaultVoice.copy(offset = Milliseconds(100), duration = Milliseconds(400))
         val patch =
@@ -81,7 +81,7 @@ class ScreenModelTest {
     }
 
     @Test
-    fun envelopeOfAnEmptyVoiceIsNull() {
+    fun envelopeOfEmptyVoiceIsNull() {
         for (slot in SignalChainSlot.entries) {
             assertNull(envelopeOf(null as Voice?, slot), slot.name)
         }
@@ -104,7 +104,7 @@ class ScreenModelTest {
     }
 
     @Test
-    fun statusTextNamesTheRejectReason() {
+    fun statusTextNamesRejectReason() {
         assertEquals(
             "Enable this voice slot to edit it",
             statusText(StatusHint.EditRejected(RejectReason.DisabledSlot), strings),

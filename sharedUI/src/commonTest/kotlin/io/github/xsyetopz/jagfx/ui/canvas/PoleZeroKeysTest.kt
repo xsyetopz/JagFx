@@ -38,7 +38,7 @@ class PoleZeroKeysTest {
     }
 
     @Test
-    fun withNothingSelectedNextPicksTheFirstAndPreviousTheLast() {
+    fun withNothingSelectedNextPicksFirstAndPreviousLast() {
         assertEquals(a, edit(Key.DirectionRight, null)?.selection)
         assertEquals(c, edit(Key.DirectionLeft, null)?.selection)
     }
@@ -56,7 +56,7 @@ class PoleZeroKeysTest {
     }
 
     @Test
-    fun shiftLeftRightMovesOneSemitoneAndKeepsTheMagnitude() {
+    fun shiftLeftRightMovesOneSemitoneAndKeepsMagnitude() {
         val later = edit(Key.DirectionRight, a, nudge = true)?.coefficient
         val earlier = edit(Key.DirectionLeft, a, nudge = true)?.coefficient
         assertTrue(later != null && earlier != null)
@@ -66,7 +66,7 @@ class PoleZeroKeysTest {
     }
 
     @Test
-    fun shiftUpDownMovesOneMagnitudeStepOnTheGrid() {
+    fun shiftUpDownMovesOneMagnitudeStepOnGrid() {
         val up = edit(Key.DirectionUp, a, nudge = true)?.coefficient
         val down = edit(Key.DirectionDown, a, nudge = true)?.coefficient
         assertTrue(up != null && down != null)
@@ -77,7 +77,7 @@ class PoleZeroKeysTest {
     }
 
     @Test
-    fun nudgesStopAtTheEdgesOfTheRange() {
+    fun nudgesStopAtEdgesOfRange() {
         assertEquals(65535, edit(Key.DirectionUp, c, nudge = true)?.coefficient?.magnitude)
         assertEquals(65535, edit(Key.DirectionRight, c, nudge = true)?.coefficient?.phase)
         assertEquals(0, edit(Key.DirectionDown, b, nudge = true)?.coefficient?.magnitude)

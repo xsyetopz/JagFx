@@ -50,7 +50,7 @@ class RendererTest {
     }
 
     @Test
-    fun lengthIsTheLatestVoiceEnd() {
+    fun lengthIsLatestVoiceEnd() {
         assertEquals(
             samplesOf(150),
             Renderer.render(patch(voice(100), voice(50, offset = 100))).size,
@@ -65,7 +65,7 @@ class RendererTest {
     }
 
     @Test
-    fun loopRepeatsTheLoopRegion() {
+    fun loopRepeatsLoopRegion() {
         val loop = Loop(Milliseconds(20), Milliseconds(60))
         val once = Renderer.render(patch(voice(100), loop = loop))
         val thrice = Renderer.render(patch(voice(100), loop = loop), loopCount = 3)
@@ -77,7 +77,7 @@ class RendererTest {
     }
 
     @Test
-    fun loopPastTheEndDoesNotRepeat() {
+    fun loopPastEndDoesNotRepeat() {
         val loop = Loop(Milliseconds(20), Milliseconds(200))
         assertEquals(
             samplesOf(100),
@@ -100,7 +100,7 @@ class RendererTest {
     }
 
     @Test
-    fun pcm8WavHasAnEightBitHeaderAndOffsetSamples() {
+    fun pcm8WavHasEightBitHeaderAndOffsetSamples() {
         val wav = Wav.encode(shortArrayOf(-32768, 0, 32767, 256), PcmEncoding.Pcm8)
         assertEquals(48, wav.size)
         assertEquals(40, wav[4].toInt())

@@ -15,7 +15,7 @@ class FilterFrequencyScaleTest {
     }
 
     @Test
-    fun axisSpansTheEightOctavesOfThePhaseFromC1ToC9() {
+    fun axisSpansEightOctavesOfPhaseFromC1ToC9() {
         assertEquals(32.703, FilterFrequencyScale.rawPhaseToFrequency(0), 1e-3)
         assertEquals(8372.0, FilterFrequencyScale.rawPhaseToFrequency(65535), 1.0)
         assertEquals(0.0, FilterFrequencyScale.rawPhaseToNormalizedX(0), 1e-9)
@@ -47,7 +47,7 @@ class FilterFrequencyScaleTest {
     }
 
     @Test
-    fun snapsRawPhaseToTheNearestSemitone() {
+    fun snapsRawPhaseToNearestSemitone() {
         val a4 = SemitoneScale.semitoneToFrequency(45)
         assertEquals(440.0, a4, 0.01)
         val snapped = SemitoneScale.snapRawPhaseToSemitone(37000)

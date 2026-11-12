@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
 
 class SynthJsonTest {
     @Test
-    fun everyReferenceJsonFileIsTheEncodingOfItsSynthFile() {
+    fun everyReferenceJsonFileIsEncodingOfItsSynthFile() {
         assertEquals(ReferenceSynths.hex.keys, ReferenceJson.hex.keys)
         for (name in ReferenceSynths.hex.keys) {
             val patch = SynthCodec.decode(referenceSynth(name)).patch
@@ -31,7 +31,7 @@ class SynthJsonTest {
     }
 
     @Test
-    fun everyReferenceJsonFileDecodesToTheBytesOfItsSynthFile() {
+    fun everyReferenceJsonFileDecodesToBytesOfItsSynthFile() {
         for (name in ReferenceJson.hex.keys) {
             val patch = SynthJson.decode(referenceJson(name))
             assertTrue(SynthCodec.encode(patch).contentEquals(referenceSynth(name)), name)
@@ -62,7 +62,7 @@ class SynthJsonTest {
     }
 
     @Test
-    fun voiceJsonIsTheVoiceObjectOfPatchJson() {
+    fun voiceJsonIsVoiceObjectOfPatchJson() {
         val patch = SynthCodec.decode(referenceSynth(ReferenceSynths.hex.keys.first())).patch
         val voice = patch.voices.filterNotNull().first()
 
@@ -143,7 +143,7 @@ class SynthJsonTest {
     }
 
     @Test
-    fun decoderRejectsTextOutsideTheSchema() {
+    fun decoderRejectsTextOutsideSchema() {
         val cases =
             mapOf(
                 "not json" to "Unexpected JSON token",

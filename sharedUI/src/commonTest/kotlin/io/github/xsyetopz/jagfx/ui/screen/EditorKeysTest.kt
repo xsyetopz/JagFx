@@ -74,7 +74,7 @@ class EditorKeysTest {
     }
 
     @Test
-    fun spaceTogglesPlaybackOnlyInTheBrowserAndUnmodified() {
+    fun spaceTogglesPlaybackOnlyInBrowserAndUnmodified() {
         assertTrue(togglesPlayback(Key.Spacebar, modified = false, nativeMenu = false))
         assertFalse(togglesPlayback(Key.Spacebar, modified = false, nativeMenu = true))
         assertFalse(togglesPlayback(Key.Spacebar, modified = true, nativeMenu = false))
