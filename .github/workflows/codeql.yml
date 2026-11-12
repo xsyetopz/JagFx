@@ -8,18 +8,56 @@ on:
   schedule:
     - cron: "0 6 * * 1" # Weekly Monday 6am UTC
 
+permissions:
+  contents: read
+
 jobs:
   analyze:
+    name: Analyze ${{ matrix.language }}
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: java-kotlin
+            build-mode: manual
+          - language: javascript-typescript
+            build-mode: none
+          - language: actions
+            build-mode: none
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: github/codeql-action/init@v4.38.2
+      - if: matrix.build-mode == 'manual'
+        uses: actions/setup-java@v6.2.0
         with:
-          languages: csharp
+          distribution: temurin
+          java-version: "21"
 
-      - uses: github/codeql-action/autobuild@v4.38.2
+      - if: matrix.build-mode == 'manual'
+        uses: gradle/actions/setup-gradle@v6.4.1
+        with:
+          # Restores downloaded dependencies only; the build below skips the build cache.
+          cache-read-only: true
 
-      - uses: github/codeql-action/analyze@v4.38.2
+      - uses: github/codeql-action/init@v4.39.3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      # The Kotlin extractor sees only JVM compilations that run in this process, so the build
+      # skips the build cache and the Kotlin daemon.
+      - if: matrix.build-mode == 'manual'
+        run: >-
+          ./gradlew --no-daemon --no-build-cache --no-configuration-cache
+          -Pkotlin.compiler.execution.strategy=in-process
+          :core:model:compileKotlinJvm :core:format:compileKotlinJvm
+          :core:engine:compileKotlinJvm :sharedUI:compileKotlinJvm
+          :cli:compileKotlin :desktopApp:compileKotlin
+
+      - uses: github/codeql-action/analyze@v4.39.3
+        with:
+          category: /language:${{ matrix.language }}

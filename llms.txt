@@ -1,6 +1,6 @@
 # JagFx
 
-JagFx is a .NET 8 toolkit for Old School RuneScape `.synth` sound-effect files. It includes a binary reader/writer, JSON interchange format, DSP renderer, CLI, Avalonia desktop editor, JavaScript helpers, and WASM package work.
+JagFx is a Kotlin Multiplatform toolkit for Old School RuneScape `.synth` sound-effect files. It includes a binary codec, JSON interchange format, DSP renderer, CLI, a Compose Multiplatform editor for desktop and the browser, and npm packages built from Kotlin/JS and Kotlin/Wasm.
 
 Full LLM context: [`llms-full.txt`](llms-full.txt).
 
@@ -28,30 +28,34 @@ Key constraints:
 ## CLI
 
 ```bash
-dotnet run --project src/JagFx.Cli -- to-json input.synth output.json
-dotnet run --project src/JagFx.Cli -- from-json input.json output.synth
-dotnet run --project src/JagFx.Cli -- convert input.synth output.wav
-dotnet run --project src/JagFx.Cli -- inspect input.synth
+./gradlew :cli:installDist   # then use cli/build/install/jagfx/bin/jagfx
+jagfx to-json input.synth output.json
+jagfx from-json input.json output.synth
+jagfx input.synth output.wav [loopCount]
+jagfx inspect input.synth
 ```
 
 ## Projects
 
-| Project | Role |
+| Module | Role |
 | --- | --- |
-| `JagFx.Core` | Shared types and constants. |
-| `JagFx.Domain` | Immutable patch model. |
-| `JagFx.Io` | Binary, JSON, and WAV I/O. |
-| `JagFx.Synthesis` | DSP rendering. |
-| `JagFx.Cli` | CLI commands. |
-| `JagFx.Desktop` | Avalonia editor. |
-| `packages/jagfx` | JS/TS CLI-backed helpers. |
-| `packages/jagfx-wasm` | WASM package and playground. |
+| `:core:model` | Immutable patch model. |
+| `:core:format` | Binary `.synth` codec and JSON. |
+| `:core:engine` | DSP rendering and WAV writing. |
+| `:core:vorbis` | `.jagvorbis` sample codec and Vorbis decoder. |
+| `:sharedUI` | Compose editor UI. |
+| `:desktopApp`, `:webApp` | Platform apps. |
+| `:cli` | Clikt CLI (`jagfx`). |
+| `:bindings` | Kotlin/JS and Kotlin/Wasm exports for `packages/`. |
+| `packages/jagfx` | JS/TS JSON patch helpers. |
+| `packages/jagfx-node` | Node rendering bindings. |
+| `packages/jagfx-wasm` | Kotlin/Wasm package and playground. |
 
 ## Build
 
 ```bash
-dotnet build
-dotnet test
-bun --cwd=packages/jagfx test
-bun --cwd=packages/jagfx-wasm test
+./gradlew check
+./gradlew :bindings:syncNpmPackages
+bun run build:js
+bun run test:js
 ```

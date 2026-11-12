@@ -1,16 +1,6 @@
 # Jagex Synth Editor
 
-<p align="left">
-  <img
-    src="assets/relic_unlock_spinning_hover.png"
-    alt="Cow Death"
-    onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/xsyetopz/JagFx/main/assets/relic_unlock_spinning_hover.png';"
-  >
-</p>
-
-JagFx edits Jagex Audio Synthesis (`.synth`) files, the sound-effect format used by OldSchool RuneScape. It opens, edits, images, and exports OSRS synth patches.
-
----
+JagFx is an editor for Jagex Audio Synthesis (`.synth`) files, the sound-effect format of Old School RuneScape (OSRS). It plays patches and exports them to WAV and JSON.
 
 ## Features
 
@@ -24,158 +14,140 @@ JagFx edits Jagex Audio Synthesis (`.synth`) files, the sound-effect format used
 | Export | Saves `.synth`, exports `.wav`, and converts `.synth` to JSON. |
 | JSON | Uses a schema-backed JSON format for patch generation, inspection, and diffs. |
 
----
-
 ## Getting Started
+
+Requires JDK 21 and Bun.
 
 ```bash
 git clone https://github.com/xsyetopz/JagFx.git && cd JagFx
-dotnet tool restore   # installs Husky.Net + CommitLint.Net git hooks
-dotnet build && dotnet test
+bun install           # installs the husky + commitlint commit-msg hook
+./gradlew check       # tests, spotless, and detekt
 ```
-
----
 
 ## Project Structure
 
 ```mermaid
 flowchart TD
-    subgraph src
-        JagFX_Domain["JagFx.Domain<br/><sub>immutable domain model<br/>(Patch, Voice, Envelope, Filter, ...)</sub>"]
-        JagFX_Core["JagFx.Core<br/><sub>shared utilities and binary buffer helpers</sub>"]
-        JagFX_Io["JagFx.Io<br/><sub>.synth file reader/writer + JSON serialization</sub>"]
-        JagFX_Synth["JagFx.Synthesis<br/><sub>DSP engine:<br/>renders Patch to PCM audio buffer</sub>"]
-        JagFX_Desktop["JagFx.Desktop<br/><sub>Avalonia desktop GUI (MVVM)</sub>"]
-        JagFX_Cli["JagFx.Cli<br/><sub>command-line converter and inspector</sub>"]
-    end
+    Model[":core:model<br/><sub>immutable domain model<br/>(Patch, Voice, Envelope, Filter, ...)</sub>"]
+    Format[":core:format<br/><sub>.synth codec + JSON serialization</sub>"]
+    Engine[":core:engine<br/><sub>DSP engine:<br/>renders Patch to PCM, writes WAV</sub>"]
+    UI[":sharedUI<br/><sub>Compose Multiplatform editor UI</sub>"]
+    Apps[":desktopApp / :webApp<br/><sub>platform shells around :sharedUI</sub>"]
+    Cli[":cli<br/><sub>command-line converter and inspector</sub>"]
+    Bindings[":bindings<br/><sub>Kotlin/JS + Kotlin/Wasm exports for packages/</sub>"]
 
-    JagFX_Desktop --> JagFX_Domain
-    JagFX_Desktop --> JagFX_Core
-    JagFX_Desktop --> JagFX_Io
-    JagFX_Desktop --> JagFX_Synth
-
-    JagFX_Cli --> JagFX_Domain
-    JagFX_Cli --> JagFX_Core
-    JagFX_Cli --> JagFX_Io
-    JagFX_Cli --> JagFX_Synth
-
-    JagFX_Synth --> JagFX_Domain
-    JagFX_Synth --> JagFX_Core
-
-    JagFX_Io --> JagFX_Domain
-    JagFX_Io --> JagFX_Core
-
-    JagFX_Domain --> JagFX_Core
+    Apps --> UI
+    UI --> Format
+    UI --> Engine
+    Cli --> Format
+    Cli --> Engine
+    Bindings --> Format
+    Bindings --> Engine
+    Engine --> Model
+    Format --> Model
 ```
-
----
 
 ## Desktop GUI
 
 ```bash
-dotnet run --project src/JagFx.Desktop
+./gradlew :desktopApp:run
 ```
 
-```text
-┌-----------------------------------------------------┐
-│  Header Bar: patch name, nav, file, transport       │
-├--------------┬--------------------------------------┤
-│              │                                      │
-│  Inspector   │        Signal Chain Matrix           │
-│  Panel       │     (voices x envelope slots)        │
-│              │                                      │
-├--------------┴--------------------------------------┤
-│  Partials Footer: 10 additive partials per voice    │
-└-----------------------------------------------------┘
-```
+![The editor in Main mode at 1280 by 800](docs/images/editor-main-1280x800.png)
 
-- Header bar: patch navigation, open, save, play/stop, TRUE wave toggle, and loop controls (`CNT`/`BGN`/`END`).
-- Signal chain matrix: rows are envelope slots (`PITCH`, `VOL`, `V.RATE`, ...), columns are voices. Each cell shows a thumbnail canvas.
-- Inspector panel: controls for the selected envelope: START/END knobs, segment list, filter editor, and echo knobs.
-- Partials footer: `10` additive partials with volume, decicent offset, delay, and active toggle.
-- Envelope canvas: double-click to insert breakpoints, right-click for context menu, Delete key to remove points. Scroll-wheel zoom (1x/2x/4x), drag to pan when zoomed.
+The editor follows the layout of the original JagFx tool:
 
-### Keyboard Shortcuts
+- Title bar: the file name, the View switch, the File menu (Open, New, Save As, Import Tone, Export Tone, Theme, Text Size, panel side), Undo, and Redo.
+- Rack: three rows (Pitch, Volume, Output) across the envelope, rate, and depth cells. A strip beside each envelope cell holds the module's waveform, Start, End, and Average, or the gate's Off/On and closed-time Start, End, and Average.
+- Cell headers: `1x 2x 4x` zoom presets, Values, Grid, and Points toggles, Fit fits the view, the time view menu (Linked or This Cell) links the cell's time view to the other cells or gives it its own, and Controls opens the cell's controls panel with the exact point table.
+- Voice strip: the oscillator, Length, Offset, Loop start, Loop end, Play, Loop, Stop, Play All, Loop All, Loop count, Load, Save, and Live Preview. The File menu moves it to the left or right edge.
+- Bottom bar: Voices 1 to 10 with Copy Voice and Reset Voice, five harmonic boxes (Pitch, Level, Delay), and Echo (Feedback, Delay).
+- View switch: Envelopes shows the rack, Filter shows the filter column (Poles and zeros, Filter envelope, Frequency response), and All shows the two side by side.
 
-| Key | Action |
+![The editor in Both mode at 1920 by 1080](docs/images/editor-both-1920x1080.png)
+
+### Mouse
+
+- Drag a point to move it. Double-click a line to add a point, and right-click for the point menu.
+- Ctrl or Cmd with the wheel zooms around the pointer. A middle-button drag pans.
+- Double-click a cell header to open the cell over the whole rack.
+
+### Keyboard
+
+Ctrl means Cmd on macOS.
+
+| Keys | Action |
 | --- | --- |
-| `Space` | Play / stop |
-| `Ctrl+O` | Open file |
-| `Ctrl+S` | Save |
-| `Ctrl+Shift+S` | Save as (also supports `.wav` export) |
-| Header prev/next | Navigate to previous or next patch in directory |
-| `Up` / `Down` | Select previous or next envelope in signal chain |
-| `V` | Toggle single-voice preview mode |
-| `Delete` | Remove selected envelope breakpoint |
-| `Double-click` | Insert breakpoint / reset knob to default |
+| Tab, Shift+Tab | Move through the title bar, the voice strip, the rack row by row, and the bottom bar |
+| Alt+Left, Alt+Right | Select the previous or next cell |
+| Alt+Up, Alt+Down | Select the cell one rack row up or down |
+| Left, Right | Select the previous or next point of the focused envelope |
+| Home, End | Select the first or last point |
+| Shift+Arrows | Move the selected point 1024 raw units |
+| Ctrl+Arrows | Move the selected point 64 raw units |
+| Insert or `+` | Add a point after the selected one |
+| Delete or Backspace | Remove the selected point |
+| Ctrl+`+`, Ctrl+`-` | Zoom the focused plot in or out |
+| Shift+Page Up, Shift+Page Down | Pan a time plot by one screen |
+| Space | Play or stop the selected tone (desktop) |
+| Escape | Stop playback |
+| Ctrl+P, Ctrl+Shift+L | Play All, Loop All (desktop) |
+| Ctrl+L, Ctrl+. | Loop, Stop (desktop) |
+| Ctrl+1 to Ctrl+0 | Select tone 1 to 10 (desktop) |
+| Ctrl+Alt+1, 2, 3 | View Envelopes, Filter, All (desktop) |
+| Ctrl+O, Ctrl+S, Ctrl+Shift+S | Open, Save, Save As (desktop) |
+| Ctrl+Z, Ctrl+Shift+Z | Undo, Redo (desktop) |
 
----
+See [`docs/accessibility.md`](docs/accessibility.md) for the accessibility statement.
+
+The same UI runs in the browser (`./gradlew :webApp:wasmJsBrowserDevelopmentRun`).
 
 ## CLI
 
 ```bash
+./gradlew :cli:installDist        # installs cli/build/install/jagfx/bin/jagfx
+alias jagfx=cli/build/install/jagfx/bin/jagfx
+
 # convert .synth to .wav
-dotnet run --project src/JagFx.Cli -- input.synth output.wav
-dotnet run --project src/JagFx.Cli -- input.synth output.wav 4  # with loop count
+jagfx input.synth output.wav
+jagfx input.synth output.wav 4     # with loop count
+jagfx -i input.synth -o output.wav -l 4
 
 # inspect
-dotnet run --project src/JagFx.Cli -- inspect input.synth
+jagfx inspect input.synth
 
 # JSON round-trip
-dotnet run --project src/JagFx.Cli -- to-json input.synth output.json
-dotnet run --project src/JagFx.Cli -- from-json input.json output.synth
+jagfx to-json input.synth output.json
+jagfx from-json input.json output.synth
 ```
 
-See `docs/synth-format-spec.md` for the binary format, `schemas/synth.schema.json` for the JSON schema, and `references/json/` for JSON generated from the reference `.synth` files.
+Without installing: `./gradlew :cli:run --args='inspect input.synth'`.
 
----
+See `docs/synth-format-spec.md` for the binary format, `schemas/synth.schema.json` for the JSON schema, and `references/json/` for JSON generated from the reference `.synth` files.
 
 ## Building for Distribution
 
 | Target | Output |
 | --- | --- |
-| `just publish-desktop-macos-arm64` | `publish/desktop/osx-arm64/JagFx.app` (single-file app bundle) |
-| `just publish-desktop-macos-x64` | `publish/desktop/osx-x64/JagFx.app` (single-file app bundle) |
-| `just publish-desktop-windows` | `publish/desktop/win-x64/JagFx.Desktop.exe` (single executable) |
-| `just publish-desktop-linux` | `publish/desktop/linux-x64/JagFx.Desktop` (single executable) |
-| `just release-desktop-macos-arm64` | `publish/JagFx-<ver>-macos-arm64.dmg` |
-| `just release-desktop-macos-x64` | `publish/JagFx-<ver>-macos-x64.dmg` |
-| `just release-desktop-windows` | `publish/JagFx-<ver>-win-x64-setup.exe` (Inno Setup) |
-| `just release-desktop-linux` | `publish/JagFx-<ver>-x86_64.AppImage` + `.tar.gz` fallback |
-| `just release-cli` | Separate CLI archives for macOS arm64/x64, Windows x64, Linux x64 |
-| `just release-all` | Desktop installers + all CLI artifacts |
+| `just release-desktop` | `publish/` installer for the host OS: `.dmg` on macOS, `.msi` on Windows, `.deb` on Linux |
+| `just release-cli` | `publish/jagfx-cli-<ver>.zip` (runs anywhere with Java 21+) |
+| `just release-all` | Desktop installer + CLI zip |
 
-Release version comes from `Directory.Build.props` (currently 2.4.1). The release workflow signs and notarizes macOS DMGs when the required GitHub secrets are configured.
+jpackage builds only for the host OS and architecture. The desktop installers bundle a Temurin JRE, so users do not need Java. The release version comes from `gradle.properties` (currently 3.0.0). The release workflow builds every platform and signs and notarizes macOS DMGs when the required GitHub secrets are configured.
 
 For host-specific release steps on macOS, Windows, or Linux, see [PUBLISHING.md](PUBLISHING.md).
-
-Framework-dependent publish, for any platform with .NET 8 installed: `dotnet publish src/JagFx.Desktop -c Release -o publish`
-
----
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow, coding guidelines, and pull request checklist.
 
----
-
 ## Star History
 
-<a href="https://www.star-history.com/?repos=xsyetopz%2FJagFx&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=xsyetopz/JagFx&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=xsyetopz/JagFx&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=xsyetopz/JagFx&type=date&legend=top-left" />
- </picture>
-</a>
-
----
+[![Star History Chart](https://api.star-history.com/chart?repos=xsyetopz/JagFx&type=date&legend=top-left)](https://www.star-history.com/?repos=xsyetopz%2FJagFx&type=date&legend=top-left)
 
 ## License
 
 [MIT](LICENSE)
-
----
 
 ## Acknowledgments
 

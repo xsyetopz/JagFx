@@ -1,150 +1,118 @@
-# JagFx build and release targets
-#
-# Development
-#   just run
-#   just build
-#   just test
-#   just format
-#   just format-check
-#
-# Desktop publish (single-file, self-contained)
-#   just publish-desktop-macos-arm64
-#   just publish-desktop-macos-x64
-#   just publish-desktop-windows
-#   just publish-desktop-linux
-#
-# Desktop installers
-#   just release-desktop-macos-arm64   # .dmg
-#   just release-desktop-macos-x64     # .dmg
-#   just release-desktop-windows       # Inno Setup .exe
-#   just release-desktop-linux         # .AppImage + .tar.gz
-#
-# CLI artifacts
-#   just release-cli-macos-arm64
-#   just release-cli-macos-x64
-#   just release-cli-windows
-#   just release-cli-linux
-#
-# Convenience
-#   just release-macos
-#   just release-cli
-#   just release-all
+# Every bedrock repo shares this file. Each language adds `.just/<language>.just`,
+# so `just <task>` runs the task for every language the repo has. Put project
+# recipes in `project.just`; a recipe there named `project-<task>`, such as
+# `project-verify`, runs after the languages' <task>.
 
-DESKTOP := "src/JagFx.Desktop"
-CLI     := "src/JagFx.Cli"
-CONF    := "Release"
-VERSION := `grep -oE '<Version>[^<]+' Directory.Build.props | head -1 | sed 's/<Version>//'`
-CURDIR  := `pwd`
+set shell := ["bash", "-euo", "pipefail", "-c"]
 
-PUBLISH_FLAGS := "--self-contained /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true /p:IncludeAllContentForSelfExtract=true /p:DebugSymbols=false /p:DebugType=None"
+mod? typescript ".just/typescript.just"
+mod? rust ".just/rust.just"
+mod? swift ".just/swift.just"
+mod? cpp ".just/cpp.just"
+mod? jvm ".just/jvm.just"
+mod? go ".just/go.just"
 
-run:
-	dotnet run --project {{DESKTOP}}
+import? "project.just"
 
-build:
-	dotnet build --nologo
+languages := "typescript rust swift cpp jvm go"
 
-format:
-	dotnet tool restore
-	dotnet csharpier format .
+# List the recipes.
+default:
+    @just --list --list-submodules
 
-format-check:
-	dotnet tool restore
-	dotnet csharpier check .
+# Install the pinned tools and point git at .githooks.
+setup: (each "setup")
+    @if [[ -z "${CI:-}" ]]; then git config core.hooksPath .githooks; fi
 
-test:
-	dotnet test --nologo
+# Format every file in place.
+format: (each "format")
 
-clean:
-	rm -rf publish
+# Fail if a file is not formatted.
+format-check: (each "format-check")
 
+# Type-check or build without running anything.
+typecheck: (each "typecheck")
 
-# -- Desktop publish -----------------------------------------------------------
+# Run every linter.
+lint: lint-markdown lint-hooks (each "lint")
 
-publish-desktop-macos-arm64:
-	dotnet publish {{DESKTOP}} -c {{CONF}} -r osx-arm64 -o publish/desktop/osx-arm64 --nologo {{PUBLISH_FLAGS}}
+# Apply the fixes the linters can make.
+lint-fix: lint-markdown-fix (each "lint-fix")
 
-publish-desktop-macos-x64:
-	dotnet publish {{DESKTOP}} -c {{CONF}} -r osx-x64 -o publish/desktop/osx-x64 --nologo {{PUBLISH_FLAGS}}
+# Run the tests.
+test: (each "test")
 
-publish-desktop-windows:
-	dotnet publish {{DESKTOP}} -c {{CONF}} -r win-x64 -o publish/desktop/win-x64 --nologo {{PUBLISH_FLAGS}}
+# Report what the linters cannot see: suppressions, foreign tools, and drift.
+guard: guard-base (each "guard")
 
-publish-desktop-linux:
-	dotnet publish {{DESKTOP}} -c {{CONF}} -r linux-x64 -o publish/desktop/linux-x64 --nologo {{PUBLISH_FLAGS}}
+# Run every check CI runs.
+verify: guard-base lint-markdown lint-hooks (each "verify")
 
-# -- Desktop installers --------------------------------------------------------
+# The checks the pre-commit hook runs.
+pre-commit: guard-base (each "pre-commit")
 
-package-desktop-macos-arm64:
-	tools/release/create-dmg.sh publish/desktop/osx-arm64/JagFx.app publish/JagFx-{{VERSION}}-macos-arm64.dmg "JagFx macOS arm64"
+[private]
+each recipe:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for language in {{ languages }}; do
+        if [[ -f ".just/$language.just" ]]; then
+            {{ just_executable() }} "$language::{{ recipe }}"
+        fi
+    done
+    # project.just extends a task with a recipe named project-<task>.
+    case " $({{ just_executable() }} --summary) " in
+        *" project-{{ recipe }} "*) {{ just_executable() }} "project-{{ recipe }}" ;;
+    esac
 
-package-desktop-macos-x64:
-	tools/release/create-dmg.sh publish/desktop/osx-x64/JagFx.app publish/JagFx-{{VERSION}}-macos-x64.dmg "JagFx macOS x64"
+[private]
+lint-markdown *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ -x node_modules/.bin/markdownlint-cli2 ]]; then
+        exec bun run markdownlint-cli2 {{ args }}
+    elif command -v markdownlint-cli2 >/dev/null; then
+        exec markdownlint-cli2 {{ args }}
+    elif [[ -n "${CI:-}" ]]; then
+        echo "markdownlint-cli2 is not installed" >&2
+        exit 1
+    fi
+    echo "Skipped Markdown: markdownlint-cli2 is not installed. CI runs it."
 
-release-desktop-macos-arm64: publish-desktop-macos-arm64 package-desktop-macos-arm64
+[private]
+lint-markdown-fix: (lint-markdown "--fix")
 
-release-desktop-macos-x64: publish-desktop-macos-x64 package-desktop-macos-x64
+[private]
+lint-hooks:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if command -v shellcheck >/dev/null; then
+        exec shellcheck .githooks/*
+    elif [[ -n "${CI:-}" ]]; then
+        echo "shellcheck is not installed" >&2
+        exit 1
+    fi
+    echo "Skipped hooks: shellcheck is not installed. CI runs it."
 
-release-desktop-windows: publish-desktop-windows
-	@if command -v ISCC >/dev/null 2>&1; then \
-		ISCC /DAppVersion={{VERSION}} /DSourceDir="{{CURDIR}}\publish\desktop\win-x64" /DOutputDir="{{CURDIR}}\publish" /DIconFile="{{CURDIR}}\assets\jagfx-icon.ico" packaging/windows/JagFx.iss; \
-	else \
-		echo "ISCC not found. Install Inno Setup and ensure ISCC is on PATH."; \
-		exit 1; \
-	fi
-
-release-desktop-linux: publish-desktop-linux
-	@if command -v appimagetool >/dev/null 2>&1; then \
-		tools/release/create-appimage.sh publish/desktop/linux-x64/JagFx.Desktop publish/JagFx-{{VERSION}}-x86_64.AppImage {{VERSION}}; \
-	else \
-		echo "appimagetool not found; skipping AppImage and producing .tar.gz fallback only."; \
-	fi
-	tar -czf publish/JagFx-{{VERSION}}-linux-x64.tar.gz -C publish/desktop/linux-x64 JagFx.Desktop
-
-# -- CLI publish ---------------------------------------------------------------
-
-publish-cli-macos-arm64:
-	dotnet publish {{CLI}} -c {{CONF}} -r osx-arm64 -o publish/cli/osx-arm64 --nologo {{PUBLISH_FLAGS}}
-
-publish-cli-macos-x64:
-	dotnet publish {{CLI}} -c {{CONF}} -r osx-x64 -o publish/cli/osx-x64 --nologo {{PUBLISH_FLAGS}}
-
-publish-cli-windows:
-	dotnet publish {{CLI}} -c {{CONF}} -r win-x64 -o publish/cli/win-x64 --nologo {{PUBLISH_FLAGS}}
-
-publish-cli-linux:
-	dotnet publish {{CLI}} -c {{CONF}} -r linux-x64 -o publish/cli/linux-x64 --nologo {{PUBLISH_FLAGS}}
-
-# -- CLI artifacts -------------------------------------------------------------
-
-release-cli-macos-arm64: publish-cli-macos-arm64
-	tar -czf publish/JagFx.Cli-{{VERSION}}-macos-arm64.tar.gz -C publish/cli/osx-arm64 JagFx.Cli
-
-release-cli-macos-x64: publish-cli-macos-x64
-	tar -czf publish/JagFx.Cli-{{VERSION}}-macos-x64.tar.gz -C publish/cli/osx-x64 JagFx.Cli
-
-release-cli-windows: publish-cli-windows
-	cd publish/cli/win-x64 && zip -rq ../../JagFx.Cli-{{VERSION}}-win-x64.zip JagFx.Cli.exe
-
-release-cli-linux: publish-cli-linux
-	tar -czf publish/JagFx.Cli-{{VERSION}}-linux-x64.tar.gz -C publish/cli/linux-x64 JagFx.Cli
-
-# -- Convenience ---------------------------------------------------------------
-
-release-macos: release-desktop-macos-arm64 release-desktop-macos-x64
-
-release-cli: release-cli-macos-arm64 release-cli-macos-x64 release-cli-windows release-cli-linux
-
-release-all: release-macos release-desktop-windows release-desktop-linux release-cli
-
-# -- Backwards-compatible aliases ---------------------------------------------
-
-publish-macos-arm64: publish-desktop-macos-arm64
-publish-macos-x64: publish-desktop-macos-x64
-publish-windows: publish-desktop-windows
-publish-linux: publish-desktop-linux
-
-release-macos-arm64: release-desktop-macos-arm64
-release-macos-x64: release-desktop-macos-x64
-release-windows: release-desktop-windows
-release-linux: release-desktop-linux
+[private]
+guard-base:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    status=0
+    for agent in CLAUDE.md GEMINI.md; do
+        if [[ "$(readlink "$agent" || true)" != AGENTS.md ]]; then
+            echo "$agent: make it a symlink to AGENTS.md" >&2
+            status=1
+        fi
+    done
+    for path in .husky .lefthook.yml .pre-commit-config.yaml .simple-git-hooks.json lefthook.yaml lefthook.yml Makefile; do
+        if [[ -e "$path" ]]; then
+            echo "$path: replaced by justfile and .githooks; move what it still does into project.just" >&2
+            status=1
+        fi
+    done
+    if [[ -z "${CI:-}" && "$(git config core.hooksPath || true)" != .githooks ]]; then
+        echo "git hooks are off: run just setup" >&2
+        status=1
+    fi
+    exit "$status"

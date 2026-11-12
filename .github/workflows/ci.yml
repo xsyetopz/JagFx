@@ -8,72 +8,142 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # A new push to a PR supersedes the old run; every main commit keeps its own run.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+  gradle-check:
+    # macOS builds every target: JVM, Android, iOS simulator, JS and Wasm.
+    runs-on: macos-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-dotnet@v6
+      - uses: actions/setup-java@v6.2.0
         with:
-          dotnet-version: "8.0.x"
+          distribution: temurin
+          java-version: "21"
 
-      - run: dotnet restore
+      # The Kotlin/Native toolchain lives outside the Gradle user home and is over 1 GB.
+      - uses: actions/cache@v6.1.0
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('gradle/libs.versions.toml') }}
 
-      - run: dotnet build --no-restore
+      - uses: gradle/actions/setup-gradle@v6.4.1
+        with:
+          # Kotlin/JS and Kotlin/Wasm download Node and Binaryen into these directories.
+          gradle-home-cache-includes: |
+            caches
+            notifications
+            nodejs
+            binaryen
 
-      - run: dotnet test --no-build --verbosity normal
+      - run: ./gradlew check --continue
 
-  format-check:
-    runs-on: ubuntu-latest
+  jvm-tests:
+    # The desktop app and CLI ship on Linux and Windows too, so their JVM tests run there.
+    name: JVM tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7.0.1
-      - uses: actions/setup-dotnet@v6
-        with:
-          dotnet-version: "8.0.x"
 
-      - run: dotnet tool restore
-      - run: dotnet csharpier check .
+      - uses: actions/setup-java@v6.2.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v6.4.1
+
+      - run: ./gradlew jvmTest :cli:test --continue
+
+  js-packages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-java@v6.2.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v6.4.1
+        with:
+          gradle-home-cache-includes: |
+            caches
+            notifications
+            nodejs
+            binaryen
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: "26.13.1"
+
+      - uses: oven-sh/setup-bun@v2.2.0
+        with:
+          bun-version-file: .bun-version
+
+      # setup-bun caches only the Bun binary, not the packages.
+      - uses: actions/cache@v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - run: bun install --frozen-lockfile
+
+      - run: ./gradlew :bindings:syncNpmPackages
+
+      - run: bun run build:js
+
+      - run: bun run typecheck
+
+      - run: bun run test:js
 
   conventional-commits:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-dotnet@v6
+      - uses: oven-sh/setup-bun@v2.2.0
         with:
-          dotnet-version: "8.0.x"
+          bun-version-file: .bun-version
 
-      - run: dotnet tool restore
+      - uses: actions/cache@v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - run: bun install --frozen-lockfile
 
       - name: Validate commit messages
-        run: |
-          failed=0
-          git log --format="%H" "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" | while read -r sha; do
-            git log -1 --format="%B" "$sha" > /tmp/commit-msg.txt
-            if ! dotnet commit-lint --commit-file /tmp/commit-msg.txt --commit-message-config-file .commitlintrc.json; then
-              echo "::error::Invalid commit message in $sha"
-              failed=1
-            fi
-          done
-          exit $failed
+        run: >-
+          bunx commitlint --verbose
+          --from "${{ github.event.pull_request.base.sha }}"
+          --to "${{ github.event.pull_request.head.sha }}"
 
   ci-gate:
-    needs: [build-and-test, format-check, conventional-commits]
+    needs: [gradle-check, jvm-tests, js-packages, conventional-commits]
     if: always()
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Check results
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          if [[ "${{ needs.build-and-test.result }}" == "failure" ]] || \
-             [[ "${{ needs.format-check.result }}" == "failure" ]] || \
-             [[ "${{ needs.conventional-commits.result }}" == "failure" ]]; then
-            echo "::error::One or more CI jobs failed"
-            exit 1
-          fi
-          echo "All CI checks passed"
+          echo "::error::One or more CI jobs failed or were cancelled"
+          exit 1

@@ -1,0 +1,268 @@
+public final class io/github/xsyetopz/jagfx/core/model/Coefficient {
+	public fun <init> (II)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lio/github/xsyetopz/jagfx/core/model/Coefficient;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/model/Coefficient;IIILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Coefficient;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMagnitude ()I
+	public final fun getPhase ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Echo {
+	public static final field Companion Lio/github/xsyetopz/jagfx/core/model/Echo$Companion;
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-IqwHx2Q ()I
+	public final fun component2-H1Qds2Q ()I
+	public final fun copy-b1baIbo (II)Lio/github/xsyetopz/jagfx/core/model/Echo;
+	public static synthetic fun copy-b1baIbo$default (Lio/github/xsyetopz/jagfx/core/model/Echo;IIILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Echo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDelay-IqwHx2Q ()I
+	public final fun getFeedback-H1Qds2Q ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Echo$Companion {
+	public final fun getNone ()Lio/github/xsyetopz/jagfx/core/model/Echo;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Envelope {
+	public synthetic fun <init> (IIILjava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-6WBRTFc ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy-1BgvwR8 (IIILjava/util/List;)Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public static synthetic fun copy-1BgvwR8$default (Lio/github/xsyetopz/jagfx/core/model/Envelope;IIILjava/util/List;ILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEndValue ()I
+	public final fun getSegments ()Ljava/util/List;
+	public final fun getStartValue ()I
+	public final fun getWaveform-6WBRTFc ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Filter {
+	public fun <init> (IILjava/util/List;Ljava/util/List;Ljava/util/List;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (IILjava/util/List;Ljava/util/List;Ljava/util/List;)Lio/github/xsyetopz/jagfx/core/model/Filter;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/model/Filter;IILjava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Filter;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFeedback ()Ljava/util/List;
+	public final fun getFeedforward ()Ljava/util/List;
+	public final fun getModulationEnvelope ()Ljava/util/List;
+	public final fun getModulationMask ()I
+	public final fun getNeedsModulationEnvelope ()Z
+	public final fun getUnityGain0 ()I
+	public final fun getUnityGain1 ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Gate {
+	public fun <init> (Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Envelope;)V
+	public final fun component1 ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public final fun component2 ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public final fun copy (Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Envelope;)Lio/github/xsyetopz/jagfx/core/model/Gate;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/model/Gate;Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Envelope;ILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Gate;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGapOff ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public final fun getGapOn ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Lfo {
+	public fun <init> (Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Envelope;)V
+	public final fun component1 ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public final fun component2 ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public final fun copy (Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Envelope;)Lio/github/xsyetopz/jagfx/core/model/Lfo;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/model/Lfo;Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Envelope;ILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Lfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDepth ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public final fun getRate ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Loop {
+	public static final field Companion Lio/github/xsyetopz/jagfx/core/model/Loop$Companion;
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-IqwHx2Q ()I
+	public final fun component2-IqwHx2Q ()I
+	public final fun copy-TjY7sUU (II)Lio/github/xsyetopz/jagfx/core/model/Loop;
+	public static synthetic fun copy-TjY7sUU$default (Lio/github/xsyetopz/jagfx/core/model/Loop;IIILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Loop;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBegin-IqwHx2Q ()I
+	public final fun getEnd-IqwHx2Q ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Loop$Companion {
+	public final fun getNone ()Lio/github/xsyetopz/jagfx/core/model/Loop;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Milliseconds {
+	public static final synthetic fun box-impl (I)Lio/github/xsyetopz/jagfx/core/model/Milliseconds;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getValue ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Partial {
+	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-H1Qds2Q ()I
+	public final fun component2 ()I
+	public final fun component3-IqwHx2Q ()I
+	public final fun copy-jj1F6bE (III)Lio/github/xsyetopz/jagfx/core/model/Partial;
+	public static synthetic fun copy-jj1F6bE$default (Lio/github/xsyetopz/jagfx/core/model/Partial;IIIILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Partial;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmplitude-H1Qds2Q ()I
+	public final fun getDelay-IqwHx2Q ()I
+	public final fun getPitchOffset ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Patch {
+	public static final field Companion Lio/github/xsyetopz/jagfx/core/model/Patch$Companion;
+	public fun <init> (Ljava/util/List;Lio/github/xsyetopz/jagfx/core/model/Loop;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Lio/github/xsyetopz/jagfx/core/model/Loop;
+	public final fun copy (Ljava/util/List;Lio/github/xsyetopz/jagfx/core/model/Loop;)Lio/github/xsyetopz/jagfx/core/model/Patch;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/model/Patch;Ljava/util/List;Lio/github/xsyetopz/jagfx/core/model/Loop;ILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Patch;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLoop ()Lio/github/xsyetopz/jagfx/core/model/Loop;
+	public final fun getVoices ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Patch$Companion {
+	public final fun getEmpty ()Lio/github/xsyetopz/jagfx/core/model/Patch;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Percent {
+	public static final synthetic fun box-impl (I)Lio/github/xsyetopz/jagfx/core/model/Percent;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getValue ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Pole {
+	public fun <init> (Lio/github/xsyetopz/jagfx/core/model/Coefficient;Lio/github/xsyetopz/jagfx/core/model/Coefficient;)V
+	public final fun component1 ()Lio/github/xsyetopz/jagfx/core/model/Coefficient;
+	public final fun component2 ()Lio/github/xsyetopz/jagfx/core/model/Coefficient;
+	public final fun copy (Lio/github/xsyetopz/jagfx/core/model/Coefficient;Lio/github/xsyetopz/jagfx/core/model/Coefficient;)Lio/github/xsyetopz/jagfx/core/model/Pole;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/model/Pole;Lio/github/xsyetopz/jagfx/core/model/Coefficient;Lio/github/xsyetopz/jagfx/core/model/Coefficient;ILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Pole;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEnd ()Lio/github/xsyetopz/jagfx/core/model/Coefficient;
+	public final fun getStart ()Lio/github/xsyetopz/jagfx/core/model/Coefficient;
+	public fun hashCode ()I
+	public final fun isModulated ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Segment {
+	public fun <init> (II)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lio/github/xsyetopz/jagfx/core/model/Segment;
+	public static synthetic fun copy$default (Lio/github/xsyetopz/jagfx/core/model/Segment;IIILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Segment;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDuration ()I
+	public final fun getTargetLevel ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/SynthLimits {
+	public static final field INSTANCE Lio/github/xsyetopz/jagfx/core/model/SynthLimits;
+	public static final field MAX_PARTIALS I
+	public static final field MAX_POLES I
+	public static final field MAX_SEGMENTS I
+	public static final field SMART16_MAX I
+	public static final field SMART16_MIN I
+	public static final field U16_MAX I
+	public static final field U8_MAX I
+	public static final field USMART16_MAX I
+	public static final field VOICE_SLOTS I
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Voice {
+	public synthetic fun <init> (Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Lfo;Lio/github/xsyetopz/jagfx/core/model/Lfo;Lio/github/xsyetopz/jagfx/core/model/Gate;Ljava/util/List;Lio/github/xsyetopz/jagfx/core/model/Echo;IILio/github/xsyetopz/jagfx/core/model/Filter;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public final fun component10 ()Lio/github/xsyetopz/jagfx/core/model/Filter;
+	public final fun component2 ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public final fun component3 ()Lio/github/xsyetopz/jagfx/core/model/Lfo;
+	public final fun component4 ()Lio/github/xsyetopz/jagfx/core/model/Lfo;
+	public final fun component5 ()Lio/github/xsyetopz/jagfx/core/model/Gate;
+	public final fun component6 ()Ljava/util/List;
+	public final fun component7 ()Lio/github/xsyetopz/jagfx/core/model/Echo;
+	public final fun component8-IqwHx2Q ()I
+	public final fun component9-IqwHx2Q ()I
+	public final fun copy-XbeSvfw (Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Lfo;Lio/github/xsyetopz/jagfx/core/model/Lfo;Lio/github/xsyetopz/jagfx/core/model/Gate;Ljava/util/List;Lio/github/xsyetopz/jagfx/core/model/Echo;IILio/github/xsyetopz/jagfx/core/model/Filter;)Lio/github/xsyetopz/jagfx/core/model/Voice;
+	public static synthetic fun copy-XbeSvfw$default (Lio/github/xsyetopz/jagfx/core/model/Voice;Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Envelope;Lio/github/xsyetopz/jagfx/core/model/Lfo;Lio/github/xsyetopz/jagfx/core/model/Lfo;Lio/github/xsyetopz/jagfx/core/model/Gate;Ljava/util/List;Lio/github/xsyetopz/jagfx/core/model/Echo;IILio/github/xsyetopz/jagfx/core/model/Filter;ILjava/lang/Object;)Lio/github/xsyetopz/jagfx/core/model/Voice;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmplitudeEnvelope ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public final fun getAmplitudeLfo ()Lio/github/xsyetopz/jagfx/core/model/Lfo;
+	public final fun getDuration-IqwHx2Q ()I
+	public final fun getEcho ()Lio/github/xsyetopz/jagfx/core/model/Echo;
+	public final fun getFilter ()Lio/github/xsyetopz/jagfx/core/model/Filter;
+	public final fun getFrequencyEnvelope ()Lio/github/xsyetopz/jagfx/core/model/Envelope;
+	public final fun getGate ()Lio/github/xsyetopz/jagfx/core/model/Gate;
+	public final fun getOffset-IqwHx2Q ()I
+	public final fun getPartials ()Ljava/util/List;
+	public final fun getPitchLfo ()Lio/github/xsyetopz/jagfx/core/model/Lfo;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Waveform {
+	public static final field Companion Lio/github/xsyetopz/jagfx/core/model/Waveform$Companion;
+	public static final synthetic fun box-impl (I)Lio/github/xsyetopz/jagfx/core/model/Waveform;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getId ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public static final fun isUndefined-impl (I)Z
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class io/github/xsyetopz/jagfx/core/model/Waveform$Companion {
+	public final fun getNoise-6WBRTFc ()I
+	public final fun getOff-6WBRTFc ()I
+	public final fun getSaw-6WBRTFc ()I
+	public final fun getSelectable ()Ljava/util/List;
+	public final fun getSine-6WBRTFc ()I
+	public final fun getSquare-6WBRTFc ()I
+}
+

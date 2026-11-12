@@ -1,0 +1,63 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, macosArm64, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.xsyetopz.jagfx:vorbis>
+final class io.github.xsyetopz.jagfx.core.vorbis/JagVorbis { // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Boolean = ..., io.github.xsyetopz.jagfx.core.vorbis/VorbisStream) // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Boolean;io.github.xsyetopz.jagfx.core.vorbis.VorbisStream){}[0]
+
+    final val audio // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.audio|{}audio[0]
+        final fun <get-audio>(): io.github.xsyetopz.jagfx.core.vorbis/VorbisStream // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.audio.<get-audio>|<get-audio>(){}[0]
+    final val loopBegin // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.loopBegin|{}loopBegin[0]
+        final fun <get-loopBegin>(): kotlin/Int // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.loopBegin.<get-loopBegin>|<get-loopBegin>(){}[0]
+    final val loopEnd // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.loopEnd|{}loopEnd[0]
+        final fun <get-loopEnd>(): kotlin/Int // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.loopEnd.<get-loopEnd>|<get-loopEnd>(){}[0]
+    final val packetCount // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.packetCount|{}packetCount[0]
+        final fun <get-packetCount>(): kotlin/Int // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.packetCount.<get-packetCount>|<get-packetCount>(){}[0]
+    final val packets // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.packets|{}packets[0]
+        final fun <get-packets>(): kotlin.collections/List<kotlin/ByteArray> // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.packets.<get-packets>|<get-packets>(){}[0]
+    final val pingPong // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.pingPong|{}pingPong[0]
+        final fun <get-pingPong>(): kotlin/Boolean // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.pingPong.<get-pingPong>|<get-pingPong>(){}[0]
+    final val sampleCount // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.sampleCount|{}sampleCount[0]
+        final fun <get-sampleCount>(): kotlin/Int // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.sampleCount.<get-sampleCount>|<get-sampleCount>(){}[0]
+    final val sampleRate // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.sampleRate|{}sampleRate[0]
+        final fun <get-sampleRate>(): kotlin/Int // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.sampleRate.<get-sampleRate>|<get-sampleRate>(){}[0]
+    final val setup // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.setup|{}setup[0]
+        final fun <get-setup>(): kotlin/ByteArray // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.setup.<get-setup>|<get-setup>(){}[0]
+
+    final fun copy(kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/Boolean = ...): io.github.xsyetopz.jagfx.core.vorbis/JagVorbis // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.copy|copy(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Boolean){}[0]
+    final fun decodePcm(): kotlin/ShortArray // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.decodePcm|decodePcm(){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.vorbis/JagVorbis.toString|toString(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.vorbis/JagVorbisFormatException : kotlin/Exception { // io.github.xsyetopz.jagfx.core.vorbis/JagVorbisFormatException|null[0]
+    constructor <init>(kotlin/Int, kotlin/String) // io.github.xsyetopz.jagfx.core.vorbis/JagVorbisFormatException.<init>|<init>(kotlin.Int;kotlin.String){}[0]
+
+    final val offset // io.github.xsyetopz.jagfx.core.vorbis/JagVorbisFormatException.offset|{}offset[0]
+        final fun <get-offset>(): kotlin/Int // io.github.xsyetopz.jagfx.core.vorbis/JagVorbisFormatException.offset.<get-offset>|<get-offset>(){}[0]
+}
+
+final class io.github.xsyetopz.jagfx.core.vorbis/VorbisStream { // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream|null[0]
+    constructor <init>(kotlin/ByteArray, kotlin.collections/List<kotlin/ByteArray>) // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream.<init>|<init>(kotlin.ByteArray;kotlin.collections.List<kotlin.ByteArray>){}[0]
+
+    final val packetCount // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream.packetCount|{}packetCount[0]
+        final fun <get-packetCount>(): kotlin/Int // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream.packetCount.<get-packetCount>|<get-packetCount>(){}[0]
+    final val packets // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream.packets|{}packets[0]
+        final fun <get-packets>(): kotlin.collections/List<kotlin/ByteArray> // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream.packets.<get-packets>|<get-packets>(){}[0]
+    final val setup // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream.setup|{}setup[0]
+        final fun <get-setup>(): kotlin/ByteArray // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream.setup.<get-setup>|<get-setup>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.xsyetopz.jagfx.core.vorbis/VorbisStream.toString|toString(){}[0]
+}
+
+final object io.github.xsyetopz.jagfx.core.vorbis/JagVorbisCodec { // io.github.xsyetopz.jagfx.core.vorbis/JagVorbisCodec|null[0]
+    final fun decode(kotlin/ByteArray): io.github.xsyetopz.jagfx.core.vorbis/JagVorbis // io.github.xsyetopz.jagfx.core.vorbis/JagVorbisCodec.decode|decode(kotlin.ByteArray){}[0]
+    final fun encode(io.github.xsyetopz.jagfx.core.vorbis/JagVorbis): kotlin/ByteArray // io.github.xsyetopz.jagfx.core.vorbis/JagVorbisCodec.encode|encode(io.github.xsyetopz.jagfx.core.vorbis.JagVorbis){}[0]
+}

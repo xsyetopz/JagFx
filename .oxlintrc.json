@@ -1,0 +1,10 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"extends": ["./node_modules/typescript-bedrock/oxlintrc.json"],
+	"ignorePatterns": [
+		"**/coverage/**",
+		"**/dist/**",
+		"**/node_modules/**",
+		"**/*.gen.*"
+	]
+}

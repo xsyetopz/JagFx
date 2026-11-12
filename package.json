@@ -1,21 +1,56 @@
 {
-  "name": "jagfx-workspace",
-  "private": true,
-  "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "build:js": "bun run --cwd packages/jagfx build && bun run --cwd packages/jagfx-wasm build && bun run --cwd packages/jagfx-node build",
-    "typecheck": "tsc --noEmit",
-    "biome:check": "biome check . --error-on-warnings --max-diagnostics 16384",
-    "biome:fix": "biome check . --write --max-diagnostics 16384"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.5.14",
-    "@types/bun": "1.4.2",
-    "@types/node": "26.6.3",
-    "bun-types": "1.4.2",
-    "typescript": "7.0.2"
-  }
+	"name": "jagfx-workspace",
+	"private": true,
+	"workspaces": {
+		"packages": [
+			"packages/*"
+		],
+		"catalog": {
+			"@types/bun": "1.4.4",
+			"@types/node": "26.6.6",
+			"eslint-plugin-jsdoc": "65.4.5",
+			"markdownlint-cli2": "0.24.1",
+			"markdownlint-rule-title-case-style": "0.4.3",
+			"oxlint": "1.93.0",
+			"oxlint-tsgolint": "7.0.2006",
+			"typescript": "7.0.2",
+			"typescript-bedrock": "0.1.12"
+		}
+	},
+	"type": "module",
+	"scripts": {
+		"biome:check": "typescript-bedrock lint",
+		"biome:fix": "typescript-bedrock lint --fix",
+		"build:js": "bun run --cwd packages/jagfx build && bun run --cwd packages/jagfx-wasm build && bun run --cwd packages/jagfx-node build",
+		"format": "bun fmt",
+		"format:check": "bun fmt --check",
+		"guard": "typescript-bedrock guard",
+		"lint": "bun run --sequential --no-exit-on-error 'typescript-bedrock lint' markdownlint-cli2",
+		"lint:fix": "bun run --sequential --no-exit-on-error 'typescript-bedrock lint --fix' 'markdownlint-cli2 --fix'",
+		"test": "bun test --pass-with-no-tests",
+		"test:js": "bun run --cwd packages/jagfx test && bun run --cwd packages/jagfx-wasm test && bun run --cwd packages/jagfx-node test",
+		"typecheck": "bun check",
+		"verify": "bun run --sequential format:check typecheck lint guard test"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "21.2.4",
+		"@commitlint/config-conventional": "21.2.4",
+		"@types/bun": "catalog:",
+		"@types/node": "catalog:",
+		"bun-types": "1.4.4",
+		"eslint-plugin-jsdoc": "catalog:",
+		"markdownlint-cli2": "catalog:",
+		"markdownlint-rule-title-case-style": "catalog:",
+		"oxlint": "catalog:",
+		"oxlint-tsgolint": "catalog:",
+		"typescript": "catalog:",
+		"typescript-bedrock": "catalog:"
+	},
+	"overrides": {
+		"@types/node": "26.6.6"
+	},
+	"engines": {
+		"bun": ">=1.4.4"
+	},
+	"packageManager": "bun@1.4.4"
 }

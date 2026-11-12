@@ -1,0 +1,77 @@
+; File: cow_death.synth
+; Size: 130 bytes
+
+0000:                    voice 0   , active, wf=sine
+0000: 02                           wf=2
+0001: 00 00 00 1E                  start=30
+0005: 00 00 01 2C                  end=300
+0009: 05                           segs=5
+000A: 00 00                        seg0.dur=0
+000C: 00 00                        seg0.peak=0
+000E: 15 BE                        seg1.dur=5566
+0010: 57 0B                        seg1.peak=22283
+0012: 59 C6                        seg2.dur=22982
+0014: B6 46                        seg2.peak=46662
+0016: 88 C4                        seg3.dur=35012
+0018: 48 B5                        seg3.peak=18613
+001A: FF FF                        seg4.dur=65535
+001C: 00 00                        seg4.peak=0
+001E: 00                           wf=0
+001F: 00 00 00 00                  start=0
+0023: 00 00 00 64                  end=100
+0027: 05                           segs=5
+0028: 00 00                        seg0.dur=0
+002A: 7B E8                        seg0.peak=31720
+002C: 2E FD                        seg1.dur=12029
+002E: B5 40                        seg1.peak=46400
+0030: 8C F9                        seg2.dur=36089
+0032: 84 19                        seg2.peak=33817
+0034: BF 79                        seg3.dur=49017
+0036: 27 F0                        seg3.peak=10224
+0038: FF FF                        seg4.dur=65535
+003A: 00 00                        seg4.peak=0
+003C:                    vib       , present
+003C: 01                           wf=1
+003D: 00 00 00 00                  start=0
+0041: 00 00 00 96                  end=150
+0045: 02                           segs=2
+0046: 00 00                        seg0.dur=0
+0048: 7D F4                        seg0.peak=32244
+004A: FF FF                        seg1.dur=65535
+004C: 7B E8                        seg1.peak=31720
+004E: 00                           wf=0
+004F: 00 00 00 00                  start=0
+0053: 00 00 00 64                  end=100
+0057: 03                           segs=3
+0058: 00 00                        seg0.dur=0
+005A: 06 25                        seg0.peak=1573
+005C: 33 E6                        seg1.dur=13286
+005E: 4D D3                        seg1.peak=19923
+0060: FF FF                        seg2.dur=65535
+0062: FF FF                        seg2.peak=65535
+0064: 00                           trem=none=0
+0065: 00                           gate=none=0
+0066: 64                           osc0=100
+0067: 40                           pitch=0
+0068: 00                           delay=0
+0069: 3C                           osc1=60
+006A: C0 85                        pitch=133
+006C: 00                           delay=0
+006D: 00                           osc=end=0
+006E: 00                 echo      , delay=0
+006F: 64                           feedback=100
+0070: 03 84              time      , dur=900
+0072: 00 00                        start=0
+0074: 00                           filt=none=0
+0075: 00                 empty     , voice 1=0
+0076: 00                 empty     , voice 2=0
+0077: 00                 empty     , voice 3=0
+0078: 00                 empty     , voice 4=0
+0079: 00                 empty     , voice 5=0
+007A: 00                 empty     , voice 6=0
+007B: 00                 empty     , voice 7=0
+007C: 00                 empty     , voice 8=0
+007D: 00                 empty     , voice 9=0
+007E: 00 00              loop      , start=0
+0080: 00 00                        end=0
+; Parsed 130/130 bytes (100.0%)

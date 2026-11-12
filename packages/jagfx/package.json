@@ -1,42 +1,43 @@
 {
-  "name": "@xsyetopz/jagfx",
-  "version": "2.4.2",
-  "description": "JavaScript and TypeScript bindings for JagFx synth rendering.",
-  "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "src"
-  ],
-  "scripts": {
-    "test": "bun test test/index.test.mjs",
-    "build:esm": "bun build ./src/index.ts --target=node --format=esm --packages=external --outfile=./dist/index.mjs",
-    "build:cjs": "bun build ./src/index.ts --target=node --format=cjs --packages=external --outfile=./dist/index.cjs",
-    "build:types": "tsc -p tsconfig.build.json",
-    "build": "bun run build:esm && bun run build:cjs && bun run build:types"
-  },
-  "keywords": [
-    "jagfx",
-    "osrs",
-    "synth",
-    "audio"
-  ],
-  "license": "MIT",
-  "engines": {
-    "bun": ">=1.4.2"
-  },
-  "source": "./src/index.ts",
-  "devDependencies": {
-    "@types/node": "26.6.3"
-  }
+	"name": "@xsyetopz/jagfx",
+	"version": "3.0.0",
+	"description": "JavaScript and TypeScript bindings for JagFx synth rendering.",
+	"keywords": [
+		"audio",
+		"jagfx",
+		"osrs",
+		"synth"
+	],
+	"license": "MIT",
+	"source": "./src/index.ts",
+	"files": [
+		"dist",
+		"README.md",
+		"src"
+	],
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"scripts": {
+		"build": "bun run build:esm && bun run build:cjs && bun run build:types",
+		"build:cjs": "bun build ./src/index.ts --target=node --format=cjs --packages=external --outfile=./dist/index.cjs",
+		"build:esm": "bun build ./src/index.ts --target=node --format=esm --packages=external --outfile=./dist/index.mjs",
+		"build:kotlin": "../../gradlew -p ../.. :bindings:syncNpmPackages",
+		"build:types": "tsc -p tsconfig.build.json",
+		"test": "bun test test/index.test.mjs"
+	},
+	"devDependencies": {
+		"@types/node": "26.6.6"
+	},
+	"engines": {
+		"bun": ">=1.4.2"
+	}
 }
