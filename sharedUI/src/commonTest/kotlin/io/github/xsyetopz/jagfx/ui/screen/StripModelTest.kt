@@ -7,6 +7,7 @@ import io.github.xsyetopz.jagfx.ui.editor.ViewIntent
 import io.github.xsyetopz.jagfx.ui.i18n.Strings
 import io.github.xsyetopz.jagfx.ui.i18n.UiLocale
 import io.github.xsyetopz.jagfx.ui.widgets.formatDecimal
+import kotlin.math.roundToInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -18,7 +19,11 @@ class StripModelTest {
     fun toRawInvertsFromRawInEveryUnit() {
         for (unit in ValueUnit.entries) {
             for (raw in raws) {
-                assertEquals(raw, unit.toRaw(unit.fromRaw(raw.toDouble())), "$unit $raw")
+                assertEquals(
+                    raw,
+                    unit.toRaw(unit.fromRaw(raw.toDouble())).roundToInt(),
+                    "$unit $raw",
+                )
             }
         }
     }

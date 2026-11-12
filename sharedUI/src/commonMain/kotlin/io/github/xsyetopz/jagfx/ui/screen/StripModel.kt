@@ -9,18 +9,6 @@ import io.github.xsyetopz.jagfx.ui.i18n.Strings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
 import kotlin.math.roundToInt
 
-private const val PERCENT_PER_RAW = 655.35
-private const val GATE_UNITS_PER_STEP = 256.0
-private const val SAMPLES_PER_MS = 22.05
-
-/** The raw value of [value] in this unit; the inverse of [fromRaw]. */
-internal fun ValueUnit.toRaw(value: Double): Int =
-    when (this) {
-        ValueUnit.Hz -> value
-        ValueUnit.Percent -> value * PERCENT_PER_RAW
-        ValueUnit.Ms -> value * GATE_UNITS_PER_STEP * SAMPLES_PER_MS
-    }.roundToInt()
-
 /** The mean of the raw values [min] and [max] in [unit]. */
 internal fun averageIn(
     unit: ValueUnit,

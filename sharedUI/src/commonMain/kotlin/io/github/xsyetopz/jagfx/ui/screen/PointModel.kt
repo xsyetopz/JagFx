@@ -12,9 +12,6 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-private const val PERCENT_PER_RAW = 655.35
-private const val GATE_UNITS_PER_STEP = 256.0
-private const val SAMPLES_PER_MS = 22.05
 private const val TEN = 10.0
 
 /** The title the original tool gives the cell of [slot]; it stays English in every language. */
@@ -49,14 +46,6 @@ internal fun descriptionOf(slot: SignalChainSlot): UiString =
         SignalChainSlot.PoleZero -> UiString.CellDescPoleZero
         SignalChainSlot.Output -> UiString.CellDescOutput
         SignalChainSlot.Bode -> UiString.CellDescBode
-    }
-
-/** The raw value of [value] in this unit; the inverse of [fromRaw]. */
-internal fun ValueUnit.toRaw(value: Double): Double =
-    when (this) {
-        ValueUnit.Hz -> value
-        ValueUnit.Percent -> value * PERCENT_PER_RAW
-        ValueUnit.Ms -> value * GATE_UNITS_PER_STEP * SAMPLES_PER_MS
     }
 
 /** The label after a number in this unit; empty for the filter curve, which has none. */

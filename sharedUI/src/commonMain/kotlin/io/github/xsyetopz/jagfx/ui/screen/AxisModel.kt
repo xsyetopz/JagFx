@@ -20,6 +20,14 @@ internal fun ValueUnit.fromRaw(raw: Double): Double =
         ValueUnit.Ms -> raw / GATE_UNITS_PER_STEP / SAMPLES_PER_MS
     }
 
+/** The raw value of [value] in this unit; the inverse of [fromRaw]. */
+internal fun ValueUnit.toRaw(value: Double): Double =
+    when (this) {
+        ValueUnit.Hz -> value
+        ValueUnit.Percent -> value * PERCENT_PER_RAW
+        ValueUnit.Ms -> value * GATE_UNITS_PER_STEP * SAMPLES_PER_MS
+    }
+
 /**
  * The raw value of an envelope point at [level] (of 65536): `startValue` at 0 and `endValue` at
  * 65536, linear between, as the voice setup scales the generator output.

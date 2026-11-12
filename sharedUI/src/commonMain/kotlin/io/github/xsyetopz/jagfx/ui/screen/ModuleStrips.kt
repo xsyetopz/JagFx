@@ -13,6 +13,7 @@ import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import io.github.xsyetopz.jagfx.ui.widgets.JagText
 import io.github.xsyetopz.jagfx.ui.widgets.JagToggleGroup
 import io.github.xsyetopz.jagfx.ui.widgets.WaveformSelector
+import kotlin.math.roundToInt
 
 private const val HZ_DECIMALS = 1
 private const val GAP_DECIMALS = 2
@@ -116,11 +117,7 @@ internal fun GateStrip(
             strings[UiString.LabelMinGap],
             "$title ${strings[UiString.LabelMinGap]} ms",
             ValueUnit.Ms.fromRaw(min.toDouble()),
-            {
-                actions.dispatch(
-                    EnvelopeIntent.SetStartValue(SignalChainSlot.GapOff, ValueUnit.Ms.toRaw(it)),
-                )
-            },
+            { actions.dispatch(EnvelopeIntent.SetStartValue(SignalChainSlot.GapOff, gapRaw(it))) },
             GapMsRange,
             envelope != null,
         )
@@ -128,11 +125,7 @@ internal fun GateStrip(
             strings[UiString.LabelMaxGap],
             "$title ${strings[UiString.LabelMaxGap]} ms",
             ValueUnit.Ms.fromRaw(max.toDouble()),
-            {
-                actions.dispatch(
-                    EnvelopeIntent.SetEndValue(SignalChainSlot.GapOff, ValueUnit.Ms.toRaw(it)),
-                )
-            },
+            { actions.dispatch(EnvelopeIntent.SetEndValue(SignalChainSlot.GapOff, gapRaw(it))) },
             GapMsRange,
             envelope != null,
         )
@@ -145,3 +138,5 @@ internal fun GateStrip(
         )
     }
 }
+
+private fun gapRaw(ms: Double): Int = ValueUnit.Ms.toRaw(ms).roundToInt()
