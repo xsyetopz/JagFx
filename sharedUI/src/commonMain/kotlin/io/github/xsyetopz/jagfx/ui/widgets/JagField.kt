@@ -2,9 +2,11 @@ package io.github.xsyetopz.jagfx.ui.widgets
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,6 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +36,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import io.github.xsyetopz.jagfx.ui.canvas.GestureCallbacks
 import io.github.xsyetopz.jagfx.ui.theme.DISABLED_ALPHA
@@ -124,6 +130,7 @@ internal fun formatDecimal(
 }
 
 /** The input box of the fields: shows [value], and [onCommit] maps the edited text to the text to show. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun JagTextField(
     value: String,
@@ -132,9 +139,8 @@ private fun JagTextField(
     enabled: Boolean,
     unit: String,
 ) {
-    val colors = JagFxTheme.colors
     val dimens = JagFxTheme.dimens
-    val shape = RoundedCornerShape(dimens.radius)
+    val interaction = remember { MutableInteractionSource() }
     var text by remember(value) { mutableStateOf(value) }
     var focused by remember { mutableStateOf(false) }
 
@@ -148,10 +154,6 @@ private fun JagTextField(
         modifier =
             modifier
                 .defaultMinSize(minWidth = dimens.minTarget, minHeight = dimens.controlHeight)
-                .alpha(if (enabled) 1f else DISABLED_ALPHA)
-                .background(colors.input, shape)
-                .border(dimens.border, colors.controlBorder, shape)
-                .focusRing(focused, colors.accent, dimens.focusRing, dimens.radius)
                 .onFocusChanged {
                     val lost = focused && !it.isFocused
                     focused = it.isFocused
@@ -167,20 +169,30 @@ private fun JagTextField(
                 },
         enabled = enabled,
         singleLine = true,
-        textStyle = JagFxTheme.typography.body.copy(color = colors.text, textAlign = TextAlign.End),
-        cursorBrush = SolidColor(colors.accent),
+        textStyle =
+            JagFxTheme.typography.body.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.End,
+            ),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        interactionSource = interaction,
         decorationBox = { inner ->
-            Row(
-                modifier = Modifier.padding(horizontal = dimens.spaceMd),
-                horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) { inner() }
-                if (unit.isNotEmpty()) {
-                    JagText(unit, color = colors.textDim, style = JagFxTheme.typography.label)
-                }
-            }
+            OutlinedTextFieldDefaults.DecorationBox(
+                value = text,
+                innerTextField = inner,
+                enabled = enabled,
+                singleLine = true,
+                visualTransformation = VisualTransformation.None,
+                interactionSource = interaction,
+                suffix =
+                    if (unit.isEmpty()) {
+                        null
+                    } else {
+                        { JagText(unit, style = JagFxTheme.typography.label) }
+                    },
+                contentPadding = PaddingValues(horizontal = dimens.spaceMd),
+            )
         },
     )
 }
