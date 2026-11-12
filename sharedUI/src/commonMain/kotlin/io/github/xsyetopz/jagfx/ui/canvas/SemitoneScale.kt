@@ -26,6 +26,20 @@ internal object SemitoneScale {
     val lastVisibleSemitone: Int =
         ceil(SEMITONES_PER_OCTAVE * log2(MAX_HZ / BASE_HZ)).toInt()
 
+    /** [rawPhase] snapped to a semitone, then moved [semitones] further, kept on the axis. */
+    fun stepRawPhase(
+        rawPhase: Int,
+        semitones: Int,
+    ): Int {
+        val octaves = log2(FilterFrequencyScale.rawPhaseToFrequency(rawPhase) / BASE_HZ)
+        val semitone = round(SEMITONES_PER_OCTAVE * octaves).toInt() + semitones
+        return FilterFrequencyScale.normalizedXToRawPhase(
+            FilterFrequencyScale.frequencyToNormalizedX(
+                semitoneToFrequency(semitone).coerceIn(MIN_HZ, MAX_HZ),
+            ),
+        )
+    }
+
     /** [rawPhase] moved to the nearest semitone. */
     fun snapRawPhaseToSemitone(rawPhase: Int): Int {
         val octaves = log2(FilterFrequencyScale.rawPhaseToFrequency(rawPhase) / BASE_HZ)

@@ -62,6 +62,7 @@ internal fun OutputWaveCanvas(
     val currentOnScroll = rememberUpdatedState(panZoom.onScrollOffsetChange)
     Spacer(
         modifier
+            .focusablePlot()
             .onSizeChanged { width = it.width }
             .zoomOnWheel(currentZoom, currentScroll, currentOnZoom, currentOnScroll)
             .panWhenZoomed(currentZoom, currentScroll, currentOnScroll)

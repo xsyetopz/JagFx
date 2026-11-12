@@ -6,12 +6,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import io.github.xsyetopz.jagfx.core.model.Coefficient
@@ -210,11 +217,13 @@ internal fun PoleZeroCanvas(
             callbacks = rememberUpdatedState(callbacks),
             viewport = viewport,
         )
+    val focusRequester = remember { FocusRequester() }
     Spacer(
         modifier
+            .focusablePlot(focusRequester) { handlePoleKey(it, input) }
             .zoomOnWheel(zoom, scroll, onZoom, onScroll)
             .panWhenZoomed(zoom, scroll, onScroll)
-            .pointerInput(Unit) { detectPoleDrags(input) }
+            .pointerInput(Unit) { detectPoleDrags(input, focusRequester) }
             .drawWithCache {
                 val stroke = Stroke(width = LINE_WIDTH * density)
                 val current = panZoom.viewport
@@ -235,9 +244,39 @@ private class PoleInputState(
     val viewport: State<Viewport>,
 )
 
-private suspend fun PointerInputScope.detectPoleDrags(input: PoleInputState) {
+private fun handlePoleKey(
+    event: KeyEvent,
+    input: PoleInputState,
+): Boolean {
+    val filter = input.filter.value
+    val callbacks = input.callbacks.value
+    val selected = input.view.value.selected
+    val edit =
+        filter?.takeIf { event.type == KeyEventType.KeyDown }?.let {
+            poleKeyEdit(
+                event.key,
+                event.isShiftPressed,
+                PoleZeroGeometry.refs(it, 0 until 2),
+                selected,
+                it::coefficient,
+            )
+        }
+    edit?.let { callbacks.onSelect(it.selection) }
+    edit?.coefficient?.let {
+        callbacks.gestures.onStart()
+        callbacks.onCoefficientChange(edit.selection, it.phase, it.magnitude)
+        callbacks.gestures.onEnd()
+    }
+    return edit != null
+}
+
+private suspend fun PointerInputScope.detectPoleDrags(
+    input: PoleInputState,
+    focusRequester: FocusRequester,
+) {
     awaitEachGesture {
         val down = awaitFirstDown(requireUnconsumed = false)
+        focusRequester.requestFocus()
         val filter = input.filter.value ?: return@awaitEachGesture
         val width = size.width / density.toDouble()
         val height = size.height / density.toDouble()

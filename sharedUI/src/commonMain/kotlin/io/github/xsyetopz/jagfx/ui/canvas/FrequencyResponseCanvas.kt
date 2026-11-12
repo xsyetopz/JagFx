@@ -48,6 +48,7 @@ internal fun FrequencyResponseCanvas(
     val viewport = panZoom.viewport
     Spacer(
         modifier
+            .focusablePlot()
             .zoomOnWheel(zoom, scroll, onZoom, onScroll)
             .panWhenZoomed(zoom, scroll, onScroll)
             .clipToBounds()
