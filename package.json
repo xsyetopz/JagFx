@@ -14,7 +14,7 @@
 			"oxlint": "1.93.0",
 			"oxlint-tsgolint": "7.0.2006",
 			"typescript": "7.0.2",
-			"typescript-bedrock": "0.1.11"
+			"typescript-bedrock": "0.1.12"
 		}
 	},
 	"type": "module",

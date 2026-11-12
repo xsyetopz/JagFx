@@ -15,8 +15,9 @@ format:
 format-check:
     bun fmt --check
 
-# Type-check without emitting anything.
+# Type-check without emitting anything, after a project-pre-typecheck recipe from project.just when there is one.
 typecheck:
+    case " $({{ just_executable() }} --summary) " in *" project-pre-typecheck "*) {{ just_executable() }} project-pre-typecheck ;; esac
     bun check
 
 # Run oxlint, one type-aware run at a time on the machine. The base justfile lints Markdown.
