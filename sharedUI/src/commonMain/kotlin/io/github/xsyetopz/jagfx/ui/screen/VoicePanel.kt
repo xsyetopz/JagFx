@@ -266,7 +266,7 @@ internal fun HarmonicBox(
             JagText("${i + 1}", color = JagFxTheme.colors.textDim)
         }
         BoxField(
-            strings[UiString.SemiLabel],
+            strings[UiString.PitchLabel],
             name,
             partial?.pitchOffset ?: 0,
             DetuneSpec,
@@ -276,7 +276,7 @@ internal fun HarmonicBox(
             PartialIntent.SetPitchOffset(i, it)
         }
         BoxField(
-            strings[UiString.VolLabel],
+            strings[UiString.LevelLabel],
             name,
             partial?.amplitude?.value ?: 0,
             LevelSpec,
@@ -286,7 +286,7 @@ internal fun HarmonicBox(
             PartialIntent.SetAmplitude(i, it)
         }
         BoxField(
-            strings[UiString.DelLabel],
+            strings[UiString.DelayLabel],
             name,
             partial?.delay?.value ?: 0,
             DelaySpec,
@@ -298,7 +298,7 @@ internal fun HarmonicBox(
     }
 }
 
-/** Reverb box of bottom bar: Vol is echo feedback and Del its delay. */
+/** Echo box of bottom bar: Feedback is echo feedback and Delay its delay. */
 @Composable
 internal fun ReverbBox(
     state: EditorState,
@@ -307,11 +307,11 @@ internal fun ReverbBox(
 ) {
     val strings = LocalStrings.current
     val voice = state.voice
-    val name = strings[UiString.ReverbTitle]
+    val name = strings[UiString.EchoTitle]
     BoxColumn(modifier) {
         JagLabel(name)
         BoxField(
-            strings[UiString.VolLabel],
+            strings[UiString.FeedbackLabel],
             name,
             voice?.echo?.feedback?.value ?: 0,
             FeedbackSpec,
@@ -321,7 +321,7 @@ internal fun ReverbBox(
             VoiceIntent.SetEchoFeedback(it)
         }
         BoxField(
-            strings[UiString.DelLabel],
+            strings[UiString.DelayLabel],
             name,
             voice?.echo?.delay?.value ?: 0,
             DelaySpec,

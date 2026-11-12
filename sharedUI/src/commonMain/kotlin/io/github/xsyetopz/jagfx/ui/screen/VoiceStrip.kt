@@ -65,15 +65,15 @@ internal fun VoiceStrip(
         )
         StripButtons(
             Button(
-                strings[UiString.TrueWave],
-                strings[UiString.TooltipTrueWave],
+                strings[UiString.LivePreview],
+                strings[UiString.TooltipLivePreview],
                 state.trueWave,
             ) { actions.dispatch(ViewIntent.SetTrueWave(!state.trueWave)) },
         )
     }
 }
 
-/** Len and Pos of selected tone, and loop start L1 and end L2 of patch. */
+/** Length and Start of selected voice, and loop start and end of patch. */
 @Composable
 private fun TimingFields(
     state: EditorState,
@@ -83,7 +83,7 @@ private fun TimingFields(
     val voice = state.voice
     val loop = state.patch.loop
     StripField(
-        strings[UiString.LabelLength],
+        strings[UiString.DurationLabel],
         strings[UiString.DurationLabel],
         voice?.duration?.value ?: 0,
         { actions.dispatch(VoiceIntent.SetDuration(it)) },
@@ -92,7 +92,7 @@ private fun TimingFields(
         U16Ms,
     )
     StripField(
-        strings[UiString.LabelPosition],
+        strings[UiString.OffsetLabel],
         strings[UiString.OffsetLabel],
         voice?.offset?.value ?: 0,
         { actions.dispatch(VoiceIntent.SetOffset(it)) },

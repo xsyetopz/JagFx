@@ -25,8 +25,8 @@ class PointModelTest {
     ) = editField(field, text, SignalChainSlot.Pitch, envelope, index, durationMs)
 
     @Test
-    fun everySlotHasAClassicTitleAndADescriptionOfItsOwn() {
-        val titles = SignalChainSlot.entries.map(::classicTitleOf)
+    fun everySlotHasATitleAndADescriptionOfItsOwn() {
+        val titles = SignalChainSlot.entries.map(::titleOf)
         val descriptions = SignalChainSlot.entries.map(::descriptionOf)
 
         assertEquals(SignalChainSlot.entries.size, titles.toSet().size)

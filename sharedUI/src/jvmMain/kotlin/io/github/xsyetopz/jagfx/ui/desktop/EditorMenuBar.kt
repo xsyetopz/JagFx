@@ -90,7 +90,7 @@ internal fun FrameWindowScope.EditorMenuBar(
                     }
                 }
             }
-            Menu(strings[UiString.ModeLabel]) {
+            Menu(strings[UiString.RackViewMenu]) {
                 for ((index, mode) in RackMode.entries.withIndex()) {
                     RadioButtonItem(
                         strings[mode.label],

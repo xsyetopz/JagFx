@@ -60,11 +60,11 @@ flowchart TD
 The editor follows the layout of the original JagFx tool:
 
 - Title bar: the file name, the File menu (Open, New, Save As, Import and Export tone, theme, text size, panel side), Undo, and Redo.
-- Rack: three rows (Freq, Amp, Output) across Base, Modulation rate, and Modulation range. A strip beside each Base cell holds the module's waveform, Min, Max, and average, or the gate's Off/On and gaps.
-- Cell headers: `1x 2x 4x` zoom presets, `S` fits the view, `M…` links the cell's time view to the other cells or gives it its own, and `▼` opens the cell's controls panel with the exact point table.
-- Voice strip: the oscillator, Len, Pos, L1, L2, Play, Play All, Loop, Loop All, Loops, Stop, Load, Save, and True Wave. The File menu moves it to the left or right edge.
-- Bottom bar: Tones 1 to 10 with Copy and Reset Active, the Mode switch, five harmonic boxes (Semi, Vol, Del), and Reverb.
-- Mode switch: Main shows the rack, Filter shows the filter column (Graph of poles and zeros, Transition Curve, Frequency Response), and Both shows the two side by side.
+- Rack: three rows (Pitch, Volume, Output) across the envelope, rate, and depth cells. A strip beside each envelope cell holds the module's waveform, Start, End, and Average, or the gate's Off/On and closed-time Start, End, and Average.
+- Cell headers: `1x 2x 4x` zoom presets, Values, Grid, and Points toggles, Fit fits the view, the time view menu (Linked or This cell) links the cell's time view to the other cells or gives it its own, and Controls opens the cell's controls panel with the exact point table.
+- Voice strip: the oscillator, Length, Start, Loop start, Loop end, Play, Play All, Loop, Loop All, Loop count, Stop, Load, Save, and Live preview. The File menu moves it to the left or right edge.
+- Bottom bar: Voices 1 to 10 with Copy voice and Reset voice, the View switch, five harmonic boxes (Pitch, Level, Delay), and Echo (Feedback, Delay).
+- View switch: Envelopes shows the rack, Filter shows the filter column (Poles and zeros, Filter envelope, Frequency response), and All shows the two side by side.
 
 ![The editor in Both mode at 1920 by 1080](docs/images/editor-both-1920x1080.png)
 
@@ -96,7 +96,7 @@ Ctrl means Cmd on macOS.
 | Ctrl+P, Ctrl+Shift+L | Play All, Loop All (desktop) |
 | Ctrl+L, Ctrl+. | Loop, Stop (desktop) |
 | Ctrl+1 to Ctrl+0 | Select tone 1 to 10 (desktop) |
-| Ctrl+Alt+1, 2, 3 | Mode Main, Filter, Both (desktop) |
+| Ctrl+Alt+1, 2, 3 | View Envelopes, Filter, All (desktop) |
 | Ctrl+O, Ctrl+S, Ctrl+Shift+S | Open, Save, Save As (desktop) |
 | Ctrl+Z, Ctrl+Shift+Z | Undo, Redo (desktop) |
 

@@ -55,7 +55,7 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagIconButton
 import io.github.xsyetopz.jagfx.ui.widgets.JagLabel
 import io.github.xsyetopz.jagfx.ui.widgets.JagText
 
-private val IndexWidth = 24.dp
+private val IndexWidth = 44.dp
 
 /**
  * Controls of cell of [slot], opened by its `▼`: time-view option, Snap for
@@ -82,7 +82,7 @@ internal fun ControlsPanel(
             .padding(dimens.spaceMd),
         verticalArrangement = Arrangement.spacedBy(dimens.spaceSm),
     ) {
-        JagLabel(strings.format(UiString.ControlsPanelTitle, classicTitleOf(slot)))
+        JagLabel(strings.format(UiString.ControlsPanelTitle, strings[titleOf(slot)]))
         if (slot.isTimeDomain) TimeViewOption(slot, view, actions)
         if (envelope != null) {
             SnapToggle(slot, view, actions)
@@ -167,7 +167,7 @@ private fun PointTable(
             strings[UiString.PointColumnLevel],
         )
     Row(horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)) {
-        JagLabel("#", Modifier.width(IndexWidth))
+        JagLabel(strings[UiString.PointColumnIndex], Modifier.width(IndexWidth))
         headers.forEach { JagLabel(it, Modifier.weight(1f)) }
         Row(Modifier.width(dimens.buttonMinWidth)) {}
     }

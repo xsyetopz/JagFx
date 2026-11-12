@@ -14,23 +14,6 @@ import kotlin.math.roundToLong
 
 private const val TEN = 10.0
 
-/** Title original tool gives cell of [slot]; it stays English in every language. */
-internal fun classicTitleOf(slot: SignalChainSlot): String =
-    when (slot) {
-        SignalChainSlot.Pitch -> "Freq Base"
-        SignalChainSlot.VibratoRate -> "Freq Modulation rate"
-        SignalChainSlot.VibratoDepth -> "Freq Modulation range"
-        SignalChainSlot.Volume -> "Amp Base"
-        SignalChainSlot.TremoloRate -> "Amp Modulation rate"
-        SignalChainSlot.TremoloDepth -> "Amp Modulation range"
-        SignalChainSlot.GapOff -> "Gap off"
-        SignalChainSlot.GapOn -> "Gap on"
-        SignalChainSlot.Filter -> "Transition Curve"
-        SignalChainSlot.PoleZero -> "Graph of poles and zeros"
-        SignalChainSlot.Output -> "Final Output"
-        SignalChainSlot.Bode -> "Frequency Response"
-    }
-
 /** One-line description of cell of [slot], shown in its tooltip. */
 internal fun descriptionOf(slot: SignalChainSlot): UiString =
     when (slot) {

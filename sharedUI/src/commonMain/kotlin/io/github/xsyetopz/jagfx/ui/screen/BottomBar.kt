@@ -46,15 +46,19 @@ internal fun BottomBar(
             Modifier.width(IntrinsicSize.Max),
             verticalArrangement = Arrangement.spacedBy(dimens.spaceMd),
         ) {
-            JagLabel(strings[UiString.TonesLabel])
+            JagLabel(strings[UiString.VoicesLabel])
             VoiceChips(state, actions)
             StripButtons(
                 Button(
-                    strings[UiString.CopyLabel],
+                    strings[UiString.CopyVoiceLabel],
                     strings[UiString.TooltipCopyVoice],
                     state.isCopyMode,
                 ) { actions.dispatch(SlotIntent.CopyVoice) },
-                Button(strings[UiString.ResetActive], strings[UiString.TooltipResetVoice], false) {
+                Button(
+                    strings[UiString.ResetVoiceLabel],
+                    strings[UiString.TooltipResetVoice],
+                    false,
+                ) {
                     actions.dispatch(SlotIntent.ResetVoice)
                 },
             )
@@ -71,9 +75,9 @@ internal fun BottomBar(
 internal val RackMode.label: UiString
     get() =
         when (this) {
-            RackMode.Main -> UiString.ModeMain
+            RackMode.Main -> UiString.ModeEnvelopes
             RackMode.Filter -> UiString.ModeFilter
-            RackMode.Both -> UiString.ModeBoth
+            RackMode.Both -> UiString.ModeAll
         }
 
 @Composable

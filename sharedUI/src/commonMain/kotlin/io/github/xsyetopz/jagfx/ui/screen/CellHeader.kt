@@ -37,7 +37,7 @@ import io.github.xsyetopz.jagfx.ui.widgets.Tip
 private val ZoomPresets = listOf(1, 2, 4)
 
 /**
- * Title row of cell of [slot]: its classic name with description tooltip. Enlarged
+ * Title row of cell of [slot]: its title with description tooltip. Enlarged
  * cell also has [HeaderControls] and way back.
  * Double click on row opens cell over whole rack, or closes it again.
  */
@@ -66,7 +66,7 @@ internal fun CellHeader(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Tip(strings[descriptionOf(slot)], Modifier.weight(1f)) {
-            JagLabel(classicTitleOf(slot), color = if (selected) colors.text else colors.textDim)
+            JagLabel(strings[titleOf(slot)], color = if (selected) colors.text else colors.textDim)
         }
         if (cellChromeOf(slot, view.openCell).headerControls) {
             HeaderControls(slot, zoom, view, actions)
@@ -79,7 +79,7 @@ internal fun CellHeader(
     }
 }
 
-/** View toggles, `1x 2x 4x S`, `M…` and `▼` of enlarged cell. */
+/** View toggles of enlarged cell: zoom, Fit, time view, and Controls. */
 @Composable
 private fun HeaderControls(
     slot: SignalChainSlot,
@@ -94,17 +94,23 @@ private fun HeaderControls(
         val tooltip = strings.format(UiString.TooltipZoomPreset, level)
         HeaderButton(label, tooltip, zoom == level) { actions.zoomTo(slot, level) }
     }
-    HeaderButton("S", strings[UiString.TooltipFitView], false) { actions.fit(slot) }
+    HeaderButton(strings[UiString.FitLabel], strings[UiString.TooltipFitView], false) {
+        actions.fit(slot)
+    }
     if (slot.isTimeDomain) {
         TimeViewButton(slot, view, actions)
         val panelOpen = view.canvas(slot).panelOpen
-        HeaderButton("▼", strings[UiString.TooltipControlsPanel], panelOpen) {
+        HeaderButton(
+            strings[UiString.ControlsLabel],
+            strings[UiString.TooltipControlsPanel],
+            panelOpen,
+        ) {
             actions.updateCanvas(slot) { it.copy(panelOpen = !panelOpen) }
         }
     }
 }
 
-/** `123 # Pt`: axis values, grid lines, and point readouts of envelope in [slot]. */
+/** Values, Grid, and Points: axis values, grid lines, and point readouts of envelope in [slot]. */
 @Composable
 private fun ViewToggles(
     slot: SignalChainSlot,
@@ -112,13 +118,25 @@ private fun ViewToggles(
     actions: EditorActions,
 ) {
     val strings = LocalStrings.current
-    HeaderButton("123", strings[UiString.TooltipAxisValues], canvas.axisValues) {
+    HeaderButton(
+        strings[UiString.ValuesLabel],
+        strings[UiString.TooltipAxisValues],
+        canvas.axisValues,
+    ) {
         actions.updateCanvas(slot) { it.copy(axisValues = !it.axisValues) }
     }
-    HeaderButton("#", strings[UiString.TooltipGridLines], canvas.gridLines) {
+    HeaderButton(
+        strings[UiString.GridLabel],
+        strings[UiString.TooltipGridLines],
+        canvas.gridLines,
+    ) {
         actions.updateCanvas(slot) { it.copy(gridLines = !it.gridLines) }
     }
-    HeaderButton("Pt", strings[UiString.TooltipPointReadouts], canvas.pointReadouts) {
+    HeaderButton(
+        strings[UiString.PointsLabel],
+        strings[UiString.TooltipPointReadouts],
+        canvas.pointReadouts,
+    ) {
         actions.updateCanvas(slot) { it.copy(pointReadouts = !it.pointReadouts) }
     }
 }
@@ -140,7 +158,7 @@ private fun HeaderButton(
     )
 }
 
-/** `M…`: menu that sets time view of [slot] to Linked or This cell. */
+/** Menu button, labelled with current choice, that sets time view of [slot] to Linked or This cell. */
 @Composable
 private fun TimeViewButton(
     slot: SignalChainSlot,
@@ -151,6 +169,11 @@ private fun TimeViewButton(
     var menuOpen by remember { mutableStateOf(false) }
     val below = with(LocalDensity.current) { JagFxTheme.dimens.controlHeight.roundToPx() }
     val linked = view.isLinked(slot)
+    val buttonLabel =
+        strings.format(
+            UiString.TimeViewButton,
+            strings[if (linked) UiString.TimeViewLinked else UiString.TimeViewThisCell],
+        )
 
     fun choose(link: Boolean) {
         actions.updateView {
@@ -160,7 +183,7 @@ private fun TimeViewButton(
         menuOpen = false
     }
     Box {
-        HeaderButton("M…", strings[UiString.TooltipTimeView], menuOpen) { menuOpen = true }
+        HeaderButton(buttonLabel, strings[UiString.TooltipTimeView], menuOpen) { menuOpen = true }
         if (menuOpen) {
             JagMenu({ menuOpen = false }, IntOffset(0, below)) {
                 JagMenuItem(strings[UiString.TimeViewLinked], { choose(true) }, active = linked)

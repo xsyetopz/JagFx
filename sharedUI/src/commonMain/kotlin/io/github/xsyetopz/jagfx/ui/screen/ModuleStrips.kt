@@ -44,16 +44,16 @@ internal fun WaveformAndHzFields(
     val min = envelope?.startValue ?: 0
     val max = envelope?.endValue ?: 0
     StripField(
-        strings[UiString.LabelMin],
-        "$title ${strings[UiString.LabelMin]} Hz",
+        strings[UiString.StartLabel],
+        "$title ${strings[UiString.StartLabel]} Hz",
         min,
         { actions.dispatch(EnvelopeIntent.SetStartValue(slot, it)) },
         "Hz",
         enabled = envelope != null,
     )
     StripField(
-        strings[UiString.LabelMax],
-        "$title ${strings[UiString.LabelMax]} Hz",
+        strings[UiString.EndLabel],
+        "$title ${strings[UiString.EndLabel]} Hz",
         max,
         { actions.dispatch(EnvelopeIntent.SetEndValue(slot, it)) },
         "Hz",
@@ -115,24 +115,24 @@ internal fun GateStrip(
         val min = envelope?.startValue ?: 0
         val max = envelope?.endValue ?: 0
         StripMsField(
-            strings[UiString.LabelMinGap],
-            "$title ${strings[UiString.LabelMinGap]} ms",
+            strings[UiString.StartLabel],
+            "$title ${strings[UiString.StartLabel]} ms",
             ValueUnit.Ms.fromRaw(min.toDouble()),
             { actions.dispatch(EnvelopeIntent.SetStartValue(SignalChainSlot.GapOff, gapRaw(it))) },
             GapMsRange,
             envelope != null,
         )
         StripMsField(
-            strings[UiString.LabelMaxGap],
-            "$title ${strings[UiString.LabelMaxGap]} ms",
+            strings[UiString.EndLabel],
+            "$title ${strings[UiString.EndLabel]} ms",
             ValueUnit.Ms.fromRaw(max.toDouble()),
             { actions.dispatch(EnvelopeIntent.SetEndValue(SignalChainSlot.GapOff, gapRaw(it))) },
             GapMsRange,
             envelope != null,
         )
         StripReadout(
-            strings[UiString.LabelAvGap],
-            "$title ${strings[UiString.LabelAvGap]}",
+            strings[UiString.LabelAverage],
+            "$title ${strings[UiString.LabelAverage]}",
             averageIn(ValueUnit.Ms, min, max),
             "ms",
             GAP_DECIMALS,
