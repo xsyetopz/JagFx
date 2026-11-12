@@ -1,7 +1,5 @@
 # AGENTS.md
 
-JagFx reads, writes, renders, and edits Old School RuneScape `.synth` sound effects. It is Kotlin Multiplatform (JDK 21 toolchain) with a Compose editor, a Clikt CLI, and npm packages under `packages/` built from `:bindings`.
-
 ## Commands
 
 Kotlin work runs through `./gradlew`; `just` covers the TypeScript, Markdown, and hook checks:
@@ -21,8 +19,8 @@ Compiler warnings are errors, and library modules use explicit API mode.
 - Commit your own work as you go, one finished slice per commit.
 - Keep binary round-trip fidelity for every file in `references/synths/` that round-trips today.
 - Compare JSON tests for files with a known binary asymmetry against `SynthCodec.encode(SynthCodec.decode(bytes).patch)`.
-- Build on existing APIs first. Add a Gradle or npm dependency with the user's approval, and after a Gradle dependency change run `./gradlew --write-verification-metadata sha256 help` to keep verification strict.
-- Edit `docs/synth-format-spec.md` in format-doc work, and with the user's approval elsewhere.
+- Build on existing APIs first. Add a Gradle or npm dependency, and after a Gradle dependency change run `./gradlew --write-verification-metadata sha256 help` to keep verification strict.
+- Edit `docs/synth-format-spec.md` in format-doc work.
 
 ## Code Map
 
