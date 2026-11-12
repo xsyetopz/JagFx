@@ -106,13 +106,16 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/cache@v6.1.0
+      # Release jobs build a dispatched tag in the default branch's cache scope, so they only
+      # restore caches; CI on main writes them.
+      - uses: actions/cache/restore@v6.1.0
         with:
           path: ~/.konan
           key: konan-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('gradle/libs.versions.toml') }}
 
       - uses: gradle/actions/setup-gradle@v6.4.1
         with:
+          cache-read-only: true
           gradle-home-cache-includes: |
             caches
             notifications
@@ -153,6 +156,8 @@ jobs:
           java-version: "21"
 
       - uses: gradle/actions/setup-gradle@v6.4.1
+        with:
+          cache-read-only: true
 
       - name: Validate notarization credentials
         id: validate-notary
@@ -243,6 +248,8 @@ jobs:
           java-version: "21"
 
       - uses: gradle/actions/setup-gradle@v6.4.1
+        with:
+          cache-read-only: true
 
       - run: ./gradlew :desktopApp:packageReleaseMsi
 
@@ -278,6 +285,8 @@ jobs:
           java-version: "21"
 
       - uses: gradle/actions/setup-gradle@v6.4.1
+        with:
+          cache-read-only: true
 
       # The CLI archive runs on any OS with Java 21 or later.
       - run: ./gradlew :desktopApp:packageReleaseDeb :cli:distZip
