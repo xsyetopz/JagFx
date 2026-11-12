@@ -13,6 +13,7 @@ import io.github.xsyetopz.jagfx.ui.editor.HistoryIntent
 import io.github.xsyetopz.jagfx.ui.editor.PanelSide
 import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
 import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
+import io.github.xsyetopz.jagfx.ui.editor.ThemePreference
 import io.github.xsyetopz.jagfx.ui.editor.ViewIntent
 import io.github.xsyetopz.jagfx.ui.i18n.Strings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
@@ -33,6 +34,20 @@ private val VoiceKeys =
         Key.Nine,
         Key.Zero,
     )
+
+private val TextScaleSteps =
+    EditorState.MIN_TEXT_SCALE_PERCENT..EditorState.MAX_TEXT_SCALE_PERCENT step TEXT_SCALE_STEP
+
+private const val TEXT_SCALE_STEP = 25
+
+private val ThemePreference.label: UiString
+    get() =
+        when (this) {
+            ThemePreference.System -> UiString.ThemeSystem
+            ThemePreference.Classic -> UiString.ThemeClassic
+            ThemePreference.Light -> UiString.ThemeLight
+            ThemePreference.HighContrast -> UiString.ThemeHighContrast
+        }
 
 /** A shortcut with Command on macOS and Ctrl elsewhere. */
 private fun command(
@@ -73,6 +88,21 @@ internal fun FrameWindowScope.EditorMenuBar(
             for (side in PanelSide.entries) {
                 RadioButtonItem(strings[side.label], state.panelSide == side) {
                     dispatch(ViewIntent.SetPanelSide(side))
+                }
+            }
+            Separator()
+            Menu(strings[UiString.MenuTheme]) {
+                for (theme in ThemePreference.entries) {
+                    RadioButtonItem(strings[theme.label], state.theme == theme) {
+                        dispatch(ViewIntent.SetTheme(theme))
+                    }
+                }
+            }
+            Menu(strings[UiString.MenuTextSize]) {
+                for (percent in TextScaleSteps) {
+                    RadioButtonItem("$percent%", state.textScalePercent == percent) {
+                        dispatch(ViewIntent.SetTextScale(percent))
+                    }
                 }
             }
         }

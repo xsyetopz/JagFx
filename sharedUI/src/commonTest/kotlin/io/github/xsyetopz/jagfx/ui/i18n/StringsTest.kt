@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 class StringsTest {
     @Test
     fun everyLocaleHasExactlyTheEnglishKeySet() {
-        assertEquals(114, stringsEn.size)
+        assertEquals(120, stringsEn.size)
         assertEquals(UiString.entries.toSet(), stringsEn.keys)
         for (locale in UiLocale.entries) {
             assertEquals(stringsEn.keys, locale.table.keys, locale.tag)
