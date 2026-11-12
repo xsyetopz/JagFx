@@ -214,4 +214,6 @@ internal val stringsFr: Map<UiString, String> =
         UiString.RangeError to "Plage autorisée : {0} à {1}",
         UiString.ControlsPanelTitle to "Commandes : {0}",
         UiString.PlotSummary to "{0} : {1}, {2} points, {3} % à {4} %",
+        UiString.FileDialogOpen to "Ouvrir un fichier de patch JagFx",
+        UiString.FileDialogSave to "Enregistrer un fichier de patch JagFx",
     )

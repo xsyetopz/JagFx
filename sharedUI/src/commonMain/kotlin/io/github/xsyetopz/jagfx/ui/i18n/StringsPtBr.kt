@@ -212,4 +212,6 @@ internal val stringsPtBr: Map<UiString, String> =
         UiString.RangeError to "Intervalo permitido: {0} a {1}",
         UiString.ControlsPanelTitle to "Controles: {0}",
         UiString.PlotSummary to "{0}: {1}, {2} pontos, {3}% a {4}%",
+        UiString.FileDialogOpen to "Abrir um arquivo de patch do JagFx",
+        UiString.FileDialogSave to "Salvar um arquivo de patch do JagFx",
     )

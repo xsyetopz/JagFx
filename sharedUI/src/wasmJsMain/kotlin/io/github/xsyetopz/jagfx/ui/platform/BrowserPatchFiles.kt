@@ -7,6 +7,9 @@ import io.github.xsyetopz.jagfx.ui.editor.PatchFileException
 import io.github.xsyetopz.jagfx.ui.editor.PatchFileKind
 import io.github.xsyetopz.jagfx.ui.editor.PatchFiles
 import io.github.xsyetopz.jagfx.ui.editor.SavedFile
+import io.github.xsyetopz.jagfx.ui.i18n.Strings
+import io.github.xsyetopz.jagfx.ui.i18n.UiString
+import io.github.xsyetopz.jagfx.ui.i18n.resolveLocale
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -15,6 +18,7 @@ import org.khronos.webgl.Int8Array
 import org.khronos.webgl.toByteArray
 import org.khronos.webgl.toInt8Array
 import org.w3c.dom.HTMLAnchorElement
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
@@ -34,8 +38,10 @@ private const val NO_PATHS = "The browser has no file paths"
  * never reached through the editor.
  */
 class BrowserPatchFiles : PatchFiles {
+    private val strings get() = Strings(resolveLocale(window.navigator.language))
+
     override suspend fun pickAndRead(kind: PatchFileKind): OpenedFile? {
-        val file = pickFile(".${kind.extension}") ?: return null
+        val file = pickFile(".${kind.extension}", strings[UiString.FileDialogOpen]) ?: return null
         return OpenedFile(file.name, null, readBytes(file))
     }
 
@@ -57,6 +63,7 @@ class BrowserPatchFiles : PatchFiles {
         val anchor = document.createElement("a") as HTMLAnchorElement
         anchor.href = url
         anchor.download = suggestedName
+        label(anchor, strings[UiString.FileDialogSave])
         anchor.click()
         // Some browsers drop a download whose URL is revoked during the click.
         window.setTimeout({
@@ -67,11 +74,23 @@ class BrowserPatchFiles : PatchFiles {
     }
 }
 
-private suspend fun pickFile(accept: String): File? =
+private fun label(
+    element: HTMLElement,
+    text: String,
+) {
+    element.title = text
+    element.setAttribute("aria-label", text)
+}
+
+private suspend fun pickFile(
+    accept: String,
+    title: String,
+): File? =
     suspendCancellableCoroutine { continuation ->
         val input = document.createElement("input") as HTMLInputElement
         input.type = "file"
         input.accept = accept
+        label(input, title)
         input.addEventListener("change", {
             if (continuation.isActive) continuation.resume(input.files?.get(0))
         })

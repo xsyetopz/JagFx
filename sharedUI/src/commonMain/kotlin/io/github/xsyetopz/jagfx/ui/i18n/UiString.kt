@@ -196,4 +196,6 @@ internal enum class UiString {
     RangeError,
     ControlsPanelTitle,
     PlotSummary,
+    FileDialogOpen,
+    FileDialogSave,
 }

@@ -35,7 +35,7 @@ The project has not been audited by a third party. This statement records the ma
 | The Graph of poles and zeros, the Transition Curve, the Frequency Response, and the Final Output have no keyboard focus of their own. | 2.1.1 Keyboard | Each plot's text summary is announced; edit the filter through the filter strip fields. |
 | The selected pole or zero has no state description for screen readers. | 4.1.2 Name, Role, Value | The filter strip fields show the selected pole's values. |
 | In the browser, Space does not stop playback. | 2.1.1 Keyboard | Press Escape. |
-| In the browser, the file dialogs have no titles, and screen reader support depends on the browser. | 2.4.2 Page Titled, 4.1.2 Name, Role, Value | Use the desktop app. |
+| In the browser, the title of the file open and save dialogs is set by the browser, and a page cannot change it. The editor labels the file input and the download link with `title` and `aria-label`, but how a screen reader announces the dialog depends on the browser. | 2.4.2 Page Titled, 4.1.2 Name, Role, Value | Use the desktop app. |
 | The desktop app does not read the platform text size on Windows and macOS, nor any setting on KDE or other non-GNOME Linux desktops, and it reads settings once at start-up. | EN 301 549 11.7 User preferences | Pick High Contrast and the text size in the File menu, or restart the app. |
 
 ## Testing

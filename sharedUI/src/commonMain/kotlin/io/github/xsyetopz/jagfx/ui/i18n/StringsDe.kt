@@ -214,4 +214,6 @@ internal val stringsDe: Map<UiString, String> =
         UiString.RangeError to "Erlaubter Bereich: {0} bis {1}",
         UiString.ControlsPanelTitle to "Steuerung: {0}",
         UiString.PlotSummary to "{0}: {1}, {2} Punkte, {3} % bis {4} %",
+        UiString.FileDialogOpen to "JagFx-Patch-Datei öffnen",
+        UiString.FileDialogSave to "JagFx-Patch-Datei speichern",
     )

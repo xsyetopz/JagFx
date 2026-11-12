@@ -213,4 +213,6 @@ internal val stringsIt: Map<UiString, String> =
         UiString.RangeError to "Intervallo consentito: da {0} a {1}",
         UiString.ControlsPanelTitle to "Controlli: {0}",
         UiString.PlotSummary to "{0}: {1}, {2} punti, {3}% a {4}%",
+        UiString.FileDialogOpen to "Apri un file patch di JagFx",
+        UiString.FileDialogSave to "Salva un file patch di JagFx",
     )

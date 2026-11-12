@@ -212,4 +212,6 @@ internal val stringsEs: Map<UiString, String> =
         UiString.RangeError to "Rango permitido: {0} a {1}",
         UiString.ControlsPanelTitle to "Controles: {0}",
         UiString.PlotSummary to "{0}: {1}, {2} puntos, {3} % a {4} %",
+        UiString.FileDialogOpen to "Abrir un archivo de parche de JagFx",
+        UiString.FileDialogSave to "Guardar un archivo de parche de JagFx",
     )
