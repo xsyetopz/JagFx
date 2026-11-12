@@ -13,10 +13,10 @@ Use this guide when cutting a JagFx release or testing release artifacts locally
    ```
 
 4. Build local artifacts supported by the host OS. See [Host Support](#host-support).
-5. Create and push a version tag:
+5. Create and push a version tag that matches `version` in `gradle.properties`:
 
    ```bash
-   git tag v<version>
+   git tag -a v<version> -m "JagFx <version>"
    git push origin v<version>
    ```
 
@@ -136,17 +136,17 @@ The script updates `version` in `gradle.properties` and `version` in `packages/*
 
 Workflow file: `.github/workflows/release.yml`.
 
-Tag push:
+A pushed `v*` tag builds every artifact and publishes a GitHub release for that tag. The `Check` job fails when the tag does not match `version` in `gradle.properties` or when `CHANGELOG.md` has no entry for that version. The release notes are the version's `CHANGELOG.md` entry.
 
 ```bash
-git tag v<version>
+git tag -a v<version> -m "JagFx <version>"
 git push origin v<version>
 ```
 
-Manual run:
+A manual run (`GitHub -> Actions -> Release -> Run workflow`) with a `release_tag` publishes that existing tag. Without a `release_tag` it builds the artifacts as workflow artifacts and publishes nothing, which tests the release build on a branch:
 
-```text
-GitHub -> Actions -> Release -> Run workflow
+```bash
+gh workflow run release.yml --ref <branch>
 ```
 
 ## Artifacts

@@ -18,6 +18,7 @@ jobs:
   resolve-release-ref:
     name: Resolve release ref
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
     outputs:
@@ -34,9 +35,11 @@ jobs:
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           if [[ "$GITHUB_REF_VALUE" == refs/tags/* ]]; then
-            echo "ref=$GITHUB_REF_VALUE" >> "$GITHUB_OUTPUT"
-            echo "tag=$GITHUB_REF_NAME_VALUE" >> "$GITHUB_OUTPUT"
-            echo "is_release=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "ref=$GITHUB_REF_VALUE"
+              echo "tag=$GITHUB_REF_NAME_VALUE"
+              echo "is_release=true"
+            } >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -55,19 +58,24 @@ jobs:
               exit 1
             fi
 
-            echo "ref=refs/tags/$RELEASE_TAG" >> "$GITHUB_OUTPUT"
-            echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
-            echo "is_release=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "ref=refs/tags/$RELEASE_TAG"
+              echo "tag=$RELEASE_TAG"
+              echo "is_release=true"
+            } >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          echo "ref=$GITHUB_REF_VALUE" >> "$GITHUB_OUTPUT"
-          echo "tag=" >> "$GITHUB_OUTPUT"
-          echo "is_release=false" >> "$GITHUB_OUTPUT"
+          {
+            echo "ref=$GITHUB_REF_VALUE"
+            echo "tag="
+            echo "is_release=false"
+          } >> "$GITHUB_OUTPUT"
 
   check:
     name: Check
     runs-on: macos-latest
+    timeout-minutes: 60
     needs: resolve-release-ref
     permissions:
       contents: read
@@ -76,19 +84,48 @@ jobs:
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
-      - uses: actions/setup-java@v6.0.1
+      - uses: actions/setup-java@v6.2.0
         with:
           distribution: temurin
           java-version: "21"
 
-      - uses: gradle/actions/setup-gradle@v6.4.0
+      - name: Check tag matches version
+        if: ${{ needs.resolve-release-ref.outputs.is_release == 'true' }}
+        env:
+          TAG_NAME: ${{ needs.resolve-release-ref.outputs.tag }}
+        run: |
+          VERSION="$(sed -n 's/^version=//p' gradle.properties)"
+          TAG_VERSION="${TAG_NAME#v}"
+          TAG_VERSION="${TAG_VERSION%%_*}"
+          if [[ "$TAG_VERSION" != "$VERSION" ]]; then
+            echo "::error::Tag $TAG_NAME does not match version=$VERSION in gradle.properties"
+            exit 1
+          fi
+          if ! grep -q "^## \[$VERSION\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no ## [$VERSION] entry"
+            exit 1
+          fi
+
+      - uses: actions/cache@v6.1.0
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('gradle/libs.versions.toml') }}
+
+      - uses: gradle/actions/setup-gradle@v6.4.1
+        with:
+          gradle-home-cache-includes: |
+            caches
+            notifications
+            nodejs
+            binaryen
 
       - run: ./gradlew check --continue
 
   macos:
     name: macOS ${{ matrix.arch }}
     runs-on: ${{ matrix.runner }}
-    needs: [resolve-release-ref, check]
+    timeout-minutes: 60
+    needs: resolve-release-ref
     permissions:
       contents: read
     env:
@@ -110,12 +147,12 @@ jobs:
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
-      - uses: actions/setup-java@v6.0.1
+      - uses: actions/setup-java@v6.2.0
         with:
           distribution: temurin
           java-version: "21"
 
-      - uses: gradle/actions/setup-gradle@v6.4.0
+      - uses: gradle/actions/setup-gradle@v6.4.1
 
       - name: Validate notarization credentials
         id: validate-notary
@@ -183,7 +220,7 @@ jobs:
             "publish/JagFx-${VERSION}-macos-${{ matrix.arch }}.dmg"
 
       - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: jagfx-macos-${{ matrix.arch }}
           path: publish/*.dmg
@@ -191,7 +228,8 @@ jobs:
   windows:
     name: Windows x64
     runs-on: windows-latest
-    needs: [resolve-release-ref, check]
+    timeout-minutes: 45
+    needs: resolve-release-ref
     permissions:
       contents: read
     steps:
@@ -199,12 +237,12 @@ jobs:
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
-      - uses: actions/setup-java@v6.0.1
+      - uses: actions/setup-java@v6.2.0
         with:
           distribution: temurin
           java-version: "21"
 
-      - uses: gradle/actions/setup-gradle@v6.4.0
+      - uses: gradle/actions/setup-gradle@v6.4.1
 
       - run: ./gradlew :desktopApp:packageReleaseMsi
 
@@ -217,7 +255,7 @@ jobs:
             "publish/JagFx-${VERSION}-windows-x64.msi"
 
       - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: jagfx-windows-x64
           path: publish/*.msi
@@ -225,7 +263,8 @@ jobs:
   linux:
     name: Linux x64 + CLI
     runs-on: ubuntu-latest
-    needs: [resolve-release-ref, check]
+    timeout-minutes: 45
+    needs: resolve-release-ref
     permissions:
       contents: read
     steps:
@@ -233,12 +272,12 @@ jobs:
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
-      - uses: actions/setup-java@v6.0.1
+      - uses: actions/setup-java@v6.2.0
         with:
           distribution: temurin
           java-version: "21"
 
-      - uses: gradle/actions/setup-gradle@v6.4.0
+      - uses: gradle/actions/setup-gradle@v6.4.1
 
       # The CLI archive runs on any OS with Java 21 or later.
       - run: ./gradlew :desktopApp:packageReleaseDeb :cli:distZip
@@ -252,7 +291,7 @@ jobs:
           cp "cli/build/distributions/jagfx-${VERSION}.zip" "publish/jagfx-cli-${VERSION}.zip"
 
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: jagfx-linux-x64
           path: |
@@ -262,7 +301,8 @@ jobs:
   publish-release:
     name: Publish GitHub release
     runs-on: ubuntu-latest
-    needs: [resolve-release-ref, macos, windows, linux]
+    timeout-minutes: 15
+    needs: [resolve-release-ref, check, macos, windows, linux]
     if: ${{ needs.resolve-release-ref.outputs.is_release == 'true' }}
     # A tag push and a manual dispatch for the same tag must not create/upload the same release at once.
     concurrency:
@@ -275,7 +315,7 @@ jobs:
         with:
           ref: ${{ needs.resolve-release-ref.outputs.ref }}
 
-      - uses: actions/download-artifact@v8.0.1
+      - uses: actions/download-artifact@v8.0.2
         with:
           path: release-artifacts
           merge-multiple: true
@@ -296,14 +336,20 @@ jobs:
           printf '  %s\n' "${ASSETS[@]}"
 
           TITLE="JagFx ${TAG_NAME#v}"
+          VERSION="$(sed -n 's/^version=//p' gradle.properties)"
+          awk -v heading="## [$VERSION]" '
+            index($0, heading) == 1 { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
 
           if gh release view "$TAG_NAME" >/dev/null 2>&1; then
             gh release upload "$TAG_NAME" "${ASSETS[@]}" --clobber
-            gh release edit "$TAG_NAME" --title "$TITLE" --latest
+            gh release edit "$TAG_NAME" --title "$TITLE" --notes-file release-notes.md --latest
           else
             gh release create "$TAG_NAME" "${ASSETS[@]}" \
               --title "$TITLE" \
-              --generate-notes \
+              --notes-file release-notes.md \
               --verify-tag \
               --latest
           fi
