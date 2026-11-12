@@ -6,13 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### Changed
-
-- **Accessibility** -- the editor uses stock Material 3 buttons, check boxes, menus, text fields, sliders, tooltips, and text, with only the colors and the sidebar position customized.
-  Tooltips stay open while hovered and close on Escape, rack cells select on pointer release, the plots take keyboard focus, the pole and zero map arrows move and nudge the selection and announce it, and Space toggles playback in the browser.
-  The desktop window no longer repeats its menu bar in the title bar.
-
-## [3.0.0]
+## [3.0.0] - 2026-11-12
 
 ### Added
 
@@ -26,15 +20,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - **Kotlin Multiplatform port** -- rewrote JagFx in Kotlin 2.4 with Compose Multiplatform, replacing the C# .NET 8 code base. The `:core:model`, `:core:format`, and `:core:engine` modules keep binary and JSON output byte-exact against every file in `references/`, and rendering matches the 2.x goldens.
 - **Editor** -- the Compose editor in `:sharedUI` runs on desktop (JVM) and in the browser (Kotlin/Wasm), replacing the Avalonia desktop app.
-- **Editor layout** -- the editor now follows the original JagFx layout: Freq, Amp, and Output rows across Base, Modulation rate, and Modulation range, a voice strip, a bottom bar, and a Main, Filter, and Both Mode switch. The 3.0.0 previews' inspector is gone, and its controls moved:
-  - Waveform, Start, and End of a module → the strip beside its Base cell, as the waveform buttons, Min, and Max in the slot's unit, with a read-only average.
-  - Oscillator waveform and range → the voice strip, with Len, Pos, L1, and L2.
-  - Point table → the `▼` controls panel of each time-domain cell, with time in ms, the value in its unit, and raw position and level.
+- **Editor layout** -- the editor now follows the original JagFx layout: Pitch, Volume, and Output rows across the envelope, rate, and depth cells, a voice strip, a bottom bar, and an Envelopes, Filter, and All View switch. The 3.0.0 previews' inspector is gone, and its controls moved:
+  - Waveform, Start, and End of a module → the strip beside its envelope cell, as the waveform buttons, Start, and End in the slot's unit, with a read-only Average.
+  - Oscillator waveform and range → the voice strip, with Length, Offset, Loop start, and Loop end.
+  - Point table → the Controls panel of each time-domain cell, with time in ms, the value in its unit, and raw position and level.
   - Filter pole counts, unity gains, the selected pole, and Snap → the filter strip beside the filter column, with Off/On, Import Filter, and Export Filter.
-  - Harmonics and echo → the bottom bar's five harmonic boxes (Semi, Vol, Del) and the Reverb box.
-  - Transport, voice chips, Copy, and Reset → Play, Play All, Loop, Loop All, Loops, and Stop in the voice strip; Tones 1 to 10, Copy, and Reset Active in the bottom bar. Play and Loop play the selected tone; Play All and Loop All play the patch.
-  - Import and Export tone, theme, text size, and panel side → the File menu in the title bar.
+  - Harmonics and echo → the bottom bar's five harmonic boxes (Pitch, Level, Delay) and the Echo box (Feedback, Delay).
+  - Transport, voice chips, Copy, and Reset → Play, Loop, Stop, Play All, Loop All, and Loop count in the voice strip; Voices 1 to 10, Copy Voice, and Reset Voice in the bottom bar. Play and Loop play the selected voice; Play All and Loop All play the patch.
+  - Import and Export Tone, Theme, Text Size, and panel side → the File menu in the title bar.
 - **Editor accessibility** -- the editor targets WCAG 2.2 AA: larger text and targets, focus rings, keyboard paths for every pointer action, screen reader names and plot summaries, a High Contrast theme, and an in-app text size up to 200%. See [`docs/accessibility.md`](docs/accessibility.md).
+  It uses stock Material 3 buttons, check boxes, menus, text fields, sliders, tooltips, and text, with only the colors and the sidebar position customized. Tooltips stay open while hovered and close on Escape, rack cells select on pointer release, the plots take keyboard focus, the pole and zero map arrows move and nudge the selection and announce it, and Space toggles playback in the browser.
+- **Start screen** -- the editor starts on an untitled patch with voice 1 on, ready to edit.
 - **CLI** -- the Clikt CLI ships as `jagfx-cli-<version>.zip` and needs Java 21 or later instead of being a self-contained native binary.
 - **Installers** -- desktop releases are Compose jpackage builds: signed and notarized macOS DMGs (arm64 and x64), a Windows MSI, and a Linux DEB. The Windows Inno Setup installer and the Linux AppImage are gone.
 - **npm packages** -- `@xsyetopz/jagfx*` packages are built from Kotlin/JS and Kotlin/Wasm. `jagfx-wasm` is ESM only with an async loader; `jagfx-node` no longer ships the N-API addon. Conversion failures use the `JAGFX_CONVERSION_FAILED` code, and invalid arguments use `JAGFX_INVALID_ARGUMENT`.
