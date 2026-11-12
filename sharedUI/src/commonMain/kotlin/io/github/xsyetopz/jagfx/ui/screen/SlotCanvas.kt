@@ -14,7 +14,6 @@ import io.github.xsyetopz.jagfx.ui.canvas.ENVELOPE_PADDING
 import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeCallbacks
 import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeCanvas
 import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeMenuLabels
-import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeStyle
 import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeView
 import io.github.xsyetopz.jagfx.ui.canvas.FrequencyResponseCanvas
 import io.github.xsyetopz.jagfx.ui.canvas.OutputWaveCanvas
@@ -166,9 +165,11 @@ private fun EnvelopeSlotCanvas(
                     selection?.let { stateDescription = it }
                 },
         style =
-            EnvelopeStyle(
-                slot = slot,
-                lineColor = slotColor(slot, JagFxTheme.palette),
+            envelopeStyleOf(
+                slot,
+                cellChromeOf(slot, view.openCell),
+                canvasView,
+                slotColor(slot, JagFxTheme.palette),
                 selected = slot == state.selectedTarget,
                 durationMs = durationMs,
             ),

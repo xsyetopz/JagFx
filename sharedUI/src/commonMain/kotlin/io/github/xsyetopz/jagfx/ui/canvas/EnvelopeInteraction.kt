@@ -60,6 +60,8 @@ internal class EnvelopeCallbacks(
  * How [EnvelopeCanvas] draws: [lineColor] defaults to the marker color.
  * A positive [durationMs] draws the time axis in ms; a [slot] with a value range draws the value
  * axis in its unit and gives the readout its unit.
+ * [axisLabels] draws the time and value labels, [gridLines] the grid (in the faint color when
+ * [faintGrid]), and [pointLabels] a time and value label at every point.
  */
 @Immutable
 internal data class EnvelopeStyle(
@@ -68,6 +70,10 @@ internal data class EnvelopeStyle(
     val interactive: Boolean = true,
     val durationMs: Int = 0,
     val slot: SignalChainSlot? = null,
+    val axisLabels: Boolean = true,
+    val gridLines: Boolean = true,
+    val faintGrid: Boolean = false,
+    val pointLabels: Boolean = false,
 )
 
 /** Context menu entries of the envelope canvas. */

@@ -29,6 +29,9 @@ internal val SignalChainSlot.isTimeDomain: Boolean
  *     it follows [timeView].
  * @property timeView The own time view of a time-domain cell that is not [linked].
  * @property panelOpen `true` while the controls panel of the cell is shown.
+ * @property axisValues `true` to draw the axis labels of the enlarged cell.
+ * @property gridLines `true` to draw the grid lines of the enlarged cell.
+ * @property pointReadouts `true` to label every point of the enlarged cell with its time and value.
  */
 @Immutable
 internal data class CanvasView(
@@ -39,6 +42,9 @@ internal data class CanvasView(
     val selectedIndex: Int = -1,
     val snap: Boolean = false,
     val panelOpen: Boolean = false,
+    val axisValues: Boolean = true,
+    val gridLines: Boolean = true,
+    val pointReadouts: Boolean = false,
 )
 
 /**

@@ -22,14 +22,18 @@ private const val LABEL_INSET = 2f
 private const val VALUE_DECIMALS = 1
 
 /** Least distance in pixels between two time ticks; room for a label such as `1200 ms`. */
-private const val MIN_TICK_SPACING = 64f
+internal const val MIN_TICK_SPACING = 120f
 
 /** Rows of the value grid: [VALUE_ROWS] + 1 lines, the middle one in the mid line color. */
-internal const val VALUE_ROWS = 4
+internal const val VALUE_ROWS = 2
+
+/** Heights of the value grid lines as fractions of the plot height from the bottom. */
+internal fun valueGridFractions(rows: Int = VALUE_ROWS): List<Float> =
+    List(rows + 1) { it.toFloat() / rows }
 
 /**
- * The time axis of a voice [durationMs] long at [viewport]: a grid line and a label in ms at each
- * tick of [timeTicks], along the bottom edge.
+ * The time axis of a voice [durationMs] long at [viewport]: a grid line when [lines] and a label
+ * in ms when [labels] at each tick of [timeTicks], along the bottom edge.
  */
 internal fun DrawScope.drawTimeAxis(
     measurer: TextMeasurer,
@@ -37,14 +41,17 @@ internal fun DrawScope.drawTimeAxis(
     durationMs: Int,
     labelStyle: TextStyle,
     gridColor: Color,
+    lines: Boolean = true,
+    labels: Boolean = true,
 ) {
     val plotWidth = size.width - 2 * ENVELOPE_PADDING
-    if (plotWidth <= 0f || durationMs <= 0) return
+    if (plotWidth <= 0f || durationMs <= 0 || !(lines || labels)) return
     val window = visibleWindow(viewport, plotWidth)
     val total = plotWidth * viewport.zoom
     for (ms in timeTicks(durationMs, window, plotWidth, MIN_TICK_SPACING)) {
         val x = ENVELOPE_PADDING + ms.toFloat() / durationMs * total - viewport.scrollOffset
-        drawLine(gridColor, Offset(x, 0f), Offset(x, size.height))
+        if (lines) drawLine(gridColor, Offset(x, 0f), Offset(x, size.height))
+        if (!labels) continue
         val layout = measurer.measure("$ms ms", labelStyle)
         if (x + LABEL_INSET + layout.size.width <= size.width) {
             drawText(
@@ -55,34 +62,33 @@ internal fun DrawScope.drawTimeAxis(
     }
 }
 
-/**
- * The value axis of [envelope] in [slot]: a grid line at each of [VALUE_ROWS] + 1 ticks of
- * [valueTicks], the middle one in [midColor], each labelled in the unit of the slot on the left.
- * The bottom label sits above the time labels.
- */
-internal fun DrawScope.drawValueAxis(
-    measurer: TextMeasurer,
-    slot: SignalChainSlot,
-    envelope: Envelope?,
-    labelStyle: TextStyle,
+/** The value grid: a line at each of [valueGridFractions], the middle one in [midColor]. */
+internal fun DrawScope.drawValueGrid(
     gridColor: Color,
     midColor: Color,
 ) {
     val plotHeight = size.height - 2 * ENVELOPE_PADDING
-    for (i in 0..VALUE_ROWS) {
-        val y = ENVELOPE_PADDING + plotHeight * (1f - i.toFloat() / VALUE_ROWS)
+    for (fraction in valueGridFractions()) {
+        val y = ENVELOPE_PADDING + plotHeight * (1f - fraction)
         drawLine(
-            if (i * 2 ==
-                VALUE_ROWS
-            ) {
-                midColor
-            } else {
-                gridColor
-            },
+            if (fraction == 0.5f) midColor else gridColor,
             Offset(0f, y),
             Offset(size.width, y),
         )
     }
+}
+
+/**
+ * The value labels of [envelope] in [slot]: one at each of [VALUE_ROWS] + 1 ticks of [valueTicks],
+ * in the unit of the slot on the left. The bottom label sits above the time labels.
+ */
+internal fun DrawScope.drawValueLabels(
+    measurer: TextMeasurer,
+    slot: SignalChainSlot,
+    envelope: Envelope?,
+    labelStyle: TextStyle,
+) {
+    val plotHeight = size.height - 2 * ENVELOPE_PADDING
     val ticks = envelope?.let { valueTicks(slot, it, VALUE_ROWS + 1) }.orEmpty()
     val unit = slot.range?.unit
     for (tick in ticks) {

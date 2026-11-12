@@ -37,9 +37,8 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagTooltip
 private val ZoomPresets = listOf(1, 2, 4)
 
 /**
- * The title row of the cell of [slot]: its classic name with a description tooltip, then the
- * buttons `1x 2x 4x S` of every plot, `M…` and `▼` on the time-domain cells, and a way back when
- * the cell is open on its own.
+ * The title row of the cell of [slot]: its classic name with a description tooltip. The enlarged
+ * cell also has the [HeaderControls] and a way back.
  * A double click on the row opens the cell over the whole rack, or closes it again.
  */
 @Composable
@@ -75,24 +74,58 @@ internal fun CellHeader(
         ) {
             JagLabel(classicTitleOf(slot), color = if (selected) colors.text else colors.textDim)
         }
-        for (level in ZoomPresets) {
-            val label = "${level}x"
-            val tooltip = strings.format(UiString.TooltipZoomPreset, level)
-            HeaderButton(label, tooltip, zoom == level) { actions.zoomTo(slot, level) }
-        }
-        HeaderButton("S", strings[UiString.TooltipFitView], false) { actions.fit(slot) }
-        if (slot.isTimeDomain) {
-            TimeViewButton(slot, view, actions)
-            val panelOpen = view.canvas(slot).panelOpen
-            HeaderButton("▼", strings[UiString.TooltipControlsPanel], panelOpen) {
-                actions.updateCanvas(slot) { it.copy(panelOpen = !panelOpen) }
-            }
+        if (cellChromeOf(slot, view.openCell).headerControls) {
+            HeaderControls(slot, zoom, view, actions)
         }
         if (open) {
             JagIconButton(Icons.Close, strings[UiString.Back], {
                 actions.updateView { it.copy(openCell = null) }
             })
         }
+    }
+}
+
+/** The view toggles, `1x 2x 4x S`, `M…` and `▼` of an enlarged cell. */
+@Composable
+private fun HeaderControls(
+    slot: SignalChainSlot,
+    zoom: Int,
+    view: ScreenViewState,
+    actions: EditorActions,
+) {
+    val strings = LocalStrings.current
+    if (slot.isEnvelope) ViewToggles(slot, view.canvas(slot), actions)
+    for (level in ZoomPresets) {
+        val label = "${level}x"
+        val tooltip = strings.format(UiString.TooltipZoomPreset, level)
+        HeaderButton(label, tooltip, zoom == level) { actions.zoomTo(slot, level) }
+    }
+    HeaderButton("S", strings[UiString.TooltipFitView], false) { actions.fit(slot) }
+    if (slot.isTimeDomain) {
+        TimeViewButton(slot, view, actions)
+        val panelOpen = view.canvas(slot).panelOpen
+        HeaderButton("▼", strings[UiString.TooltipControlsPanel], panelOpen) {
+            actions.updateCanvas(slot) { it.copy(panelOpen = !panelOpen) }
+        }
+    }
+}
+
+/** `123 # Pt`: the axis values, grid lines, and point readouts of the envelope in [slot]. */
+@Composable
+private fun ViewToggles(
+    slot: SignalChainSlot,
+    canvas: CanvasView,
+    actions: EditorActions,
+) {
+    val strings = LocalStrings.current
+    HeaderButton("123", strings[UiString.TooltipAxisValues], canvas.axisValues) {
+        actions.updateCanvas(slot) { it.copy(axisValues = !it.axisValues) }
+    }
+    HeaderButton("#", strings[UiString.TooltipGridLines], canvas.gridLines) {
+        actions.updateCanvas(slot) { it.copy(gridLines = !it.gridLines) }
+    }
+    HeaderButton("Pt", strings[UiString.TooltipPointReadouts], canvas.pointReadouts) {
+        actions.updateCanvas(slot) { it.copy(pointReadouts = !it.pointReadouts) }
     }
 }
 

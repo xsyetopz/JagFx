@@ -83,7 +83,10 @@ internal fun GridCell(
             actions,
             Modifier.weight(1f).fillMaxWidth().semantics { contentDescription = summary },
         )
-        if (slot.isTimeDomain && view.canvas(slot).panelOpen) {
+        if (cellChromeOf(slot, view.openCell).controlsPanel &&
+            slot.isTimeDomain &&
+            view.canvas(slot).panelOpen
+        ) {
             ControlsPanel(slot, state, view, actions, Modifier.weight(1f).fillMaxWidth())
         }
     }

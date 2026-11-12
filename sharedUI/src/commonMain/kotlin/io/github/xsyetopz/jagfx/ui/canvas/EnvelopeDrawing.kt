@@ -4,17 +4,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.drawText
+import io.github.xsyetopz.jagfx.ui.screen.pointLabels
 import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
 
 private const val HORIZONTAL_DIVISIONS = 4
 private const val MARKER_HALF_SIZE = 3f
 private const val SELECTION_RADIUS = 5f
 private const val BORDER_INSET = 0.5f
+private const val LABEL_GAP = 6f
 
 private val Hairline = Stroke(width = 1f)
 
@@ -43,6 +48,14 @@ internal fun Modifier.drawEnvelope(
                     scaleMode = view.scaleMode,
                 )
             }
+        val pointLabelLayouts =
+            if (style.pointLabels && envelope != null && style.slot != null) {
+                pointLabels(style.slot, envelope, style.durationMs).map {
+                    it.index to measurer.measure(it.text, labelStyle)
+                }
+            } else {
+                emptyList()
+            }
         val path = Path()
         if (geometry != null && geometry.pointCount > 0) {
             path.moveTo(geometry.pointX(0), geometry.pointY(0))
@@ -56,21 +69,35 @@ internal fun Modifier.drawEnvelope(
         onDrawBehind {
             drawRect(palette.scope)
             val slot = style.slot
-            if (slot?.range != null && view.scaleMode != EnvelopeScaleMode.AutoScale) {
-                drawValueAxis(measurer, slot, envelope, labelStyle, palette.grid, palette.midLine)
-            } else {
-                drawEnvelopeGrid(palette)
+            val gridColor = if (style.faintGrid) palette.gridFaint else palette.grid
+            val valueAxis = slot?.range != null && view.scaleMode != EnvelopeScaleMode.AutoScale
+            if (style.gridLines) {
+                if (valueAxis) {
+                    drawValueGrid(gridColor, palette.midLine)
+                } else {
+                    drawEnvelopeGrid(gridColor, palette.midLine)
+                }
+            }
+            if (style.axisLabels && valueAxis) {
+                drawValueLabels(measurer, slot, envelope, labelStyle)
             }
             drawTimeAxis(
                 measurer,
                 Viewport(view.zoom, view.scrollOffset),
                 style.durationMs,
                 labelStyle,
-                palette.grid,
+                gridColor,
+                lines = style.gridLines,
+                labels = style.axisLabels,
             )
             if (geometry != null) {
                 drawPath(path, lineColor, style = Hairline)
                 drawBreakpoints(geometry, view.selectedIndex, palette)
+                if (style.pointLabels) {
+                    for ((index, layout) in pointLabelLayouts) {
+                        drawPointLabel(layout, geometry.pointX(index), geometry.pointY(index))
+                    }
+                }
             }
             if (style.selected) {
                 drawRect(
@@ -83,12 +110,26 @@ internal fun Modifier.drawEnvelope(
         }
     }
 
-private fun DrawScope.drawEnvelopeGrid(palette: SynthPalette) {
+private fun DrawScope.drawEnvelopeGrid(
+    gridColor: Color,
+    midColor: Color,
+) {
     for (i in 1 until HORIZONTAL_DIVISIONS) {
         val y = size.height * i / HORIZONTAL_DIVISIONS
-        val color = if (i * 2 == HORIZONTAL_DIVISIONS) palette.midLine else palette.grid
+        val color = if (i * 2 == HORIZONTAL_DIVISIONS) midColor else gridColor
         drawLine(color, Offset(0f, y), Offset(size.width, y))
     }
+}
+
+/** Draws [layout] above and right of the point at ([x], [y]), kept inside the plot. */
+private fun DrawScope.drawPointLabel(
+    layout: TextLayoutResult,
+    x: Float,
+    y: Float,
+) {
+    val left = (x + LABEL_GAP).coerceAtMost(size.width - layout.size.width).coerceAtLeast(0f)
+    val top = (y - LABEL_GAP - layout.size.height).coerceAtLeast(0f)
+    drawText(layout, topLeft = Offset(left, top))
 }
 
 private fun DrawScope.drawBreakpoints(

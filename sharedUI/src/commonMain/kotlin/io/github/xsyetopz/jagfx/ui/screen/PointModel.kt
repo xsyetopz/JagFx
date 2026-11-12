@@ -79,6 +79,32 @@ internal fun readoutText(readout: PointReadout): String =
         readout.level.toString(),
     ).joinToString(" · ")
 
+/** The short label of a point on the plot: `12.5 ms · 300 Hz`. */
+internal fun pointLabelText(readout: PointReadout): String =
+    "${formatDecimal(readout.timeMs.toDouble(), 1)} ms · " +
+        formatDecimal(readout.value, 2) + readout.unit.suffix()
+
+/** The label [text] of breakpoint [index]. */
+internal data class PointLabel(
+    val index: Int,
+    val text: String,
+)
+
+/** The label of every breakpoint of [envelope] in [slot] for a voice [durationMs] long. */
+internal fun pointLabels(
+    slot: SignalChainSlot,
+    envelope: Envelope,
+    durationMs: Int,
+): List<PointLabel> =
+    envelope.segments.indices.mapNotNull { index ->
+        pointReadout(
+            slot,
+            envelope,
+            index,
+            durationMs,
+        )?.let { PointLabel(index, pointLabelText(it)) }
+    }
+
 /** The columns of the point table. */
 internal enum class PointField { Time, Value, Position, Level }
 
