@@ -3,10 +3,7 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-import * as dist from "../dist/index.mjs";
-
-/** @type {typeof import("../src/index.ts")} */
-const {
+import {
 	assertRealSynthData,
 	createEnvelope,
 	createPatch,
@@ -25,7 +22,7 @@ const {
 	synthToJson,
 	toneToJson,
 	writePatchJson,
-} = dist;
+} from "@xsyetopz/jagfx";
 
 const packageDir = resolve(import.meta.dirname, "..");
 const repoRoot = resolve(packageDir, "../..");
@@ -91,8 +88,8 @@ describe("patch builders", () => {
 		});
 
 		expect(patch.voices).toHaveLength(1);
-		expect(patch.voices[0].frequencyEnvelope.waveform).toBe("sine");
-		expect(patch.voices[0].durationMs).toBe(250);
+		expect(patch.voices[0]?.frequencyEnvelope.waveform).toBe("sine");
+		expect(patch.voices[0]?.durationMs).toBe(250);
 	});
 });
 
@@ -117,7 +114,7 @@ describe("cli-backed conversions", () => {
 		const patch = await synthToJson(cowDeathPath, { command: fakeCommand });
 
 		expect(patch.voices).toHaveLength(1);
-		expect(patch.voices[0].durationMs).toBe(500);
+		expect(patch.voices[0]?.durationMs).toBe(500);
 	});
 
 	test("writes json and converts it to synth through the CLI", async () => {
@@ -151,14 +148,26 @@ describe("cli-backed conversions", () => {
 	});
 });
 
+/**
+ * @param {import("@xsyetopz/jagfx").PatchJson} patch
+ * @returns {import("@xsyetopz/jagfx").VoiceJson}
+ */
+const firstVoice = (patch) => {
+	const voice = patch.voices.find((entry) => entry !== null);
+	if (voice === undefined || voice === null) {
+		throw new Error("the patch has no voice");
+	}
+	return voice;
+};
+
 describe("in-process conversions", () => {
-	const savedCli = process.env.JAGFX_CLI;
+	const savedCli = process.env["JAGFX_CLI"];
 	beforeAll(() => {
-		delete process.env.JAGFX_CLI;
+		delete process.env["JAGFX_CLI"];
 	});
 	afterAll(() => {
 		if (savedCli !== undefined) {
-			process.env.JAGFX_CLI = savedCli;
+			process.env["JAGFX_CLI"] = savedCli;
 		}
 	});
 
@@ -173,7 +182,7 @@ describe("in-process conversions", () => {
 			const expected = JSON.parse(reference);
 			/** @type {unknown} */
 			const written = JSON.parse(await readFile(jsonPath, "utf8"));
-			expect(patch).toEqual(expected);
+			expect(expected).toEqual(patch);
 			expect(written).toEqual(expected);
 		} finally {
 			await rm(dir, { recursive: true, force: true });
@@ -216,7 +225,7 @@ describe("in-process conversions", () => {
 		const tonePath = join(dir, "voice.tone");
 		const filterPath = join(dir, "voice.filter");
 		const referencePatch = await readPatchJson(cowDeathJsonPath);
-		const voice = referencePatch.voices.find(Boolean);
+		const voice = firstVoice(referencePatch);
 
 		try {
 			await jsonToTone(voice, tonePath);

@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import { createJagFxWasmBackend } from "../dist/index.mjs";
+import { createJagFxWasmBackend } from "@xsyetopz/jagfx-wasm";
 
 const packageDir = resolve(import.meta.dirname, "..");
 const repoRoot = resolve(packageDir, "../..");
@@ -83,6 +83,7 @@ describe("createJagFxWasmBackend", () => {
 	});
 
 	test("rejects a module without the sample exports", async () => {
+		// @ts-expect-error -- checks the runtime guard against a module that lacks exports.
 		const error = await createJagFxWasmBackend(() => ({
 			renderPcm16Le: () => new Int8Array(),
 		})).catch(rejectionOf);

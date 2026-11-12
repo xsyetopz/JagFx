@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
 import { readFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
 import {
@@ -13,8 +14,22 @@ const repoRoot = resolve(packageDir, "../..");
 const cowDeathPath = resolve(repoRoot, "references/synths/cow_death.synth");
 const samplePath = resolve(repoRoot, "references/vorbis/11102.jagvorbis");
 
-/** @returns {Promise<typeof import("@xsyetopz/jagfx-node")>} */
-const loadCjs = () => import("../dist/index.cjs");
+/**
+ * @param {unknown} value
+ * @returns {value is typeof import("@xsyetopz/jagfx-node")}
+ */
+const isBindings = (value) =>
+	typeof value === "object" &&
+	value !== null &&
+	"renderSynthToPcm" in value &&
+	typeof value.renderSynthToPcm === "function";
+
+/** @type {unknown} */
+const loaded = createRequire(import.meta.url)("../dist/index.cjs");
+if (!isBindings(loaded)) {
+	throw new TypeError("dist/index.cjs does not export the bindings");
+}
+const cjs = loaded;
 
 test("renders cow_death through Kotlin/JS", async () => {
 	const synth = await readFile(cowDeathPath);
@@ -27,7 +42,6 @@ test("renders cow_death through Kotlin/JS", async () => {
 
 test("the CommonJS build renders the same PCM", async () => {
 	const synth = await readFile(cowDeathPath);
-	const cjs = await loadCjs();
 
 	expect(cjs.renderSynthToPcm(synth)).toEqual(renderSynthToPcm(synth));
 });
@@ -43,6 +57,7 @@ test("renders a single voice", async () => {
 test("rejects invalid arguments", async () => {
 	const synth = await readFile(cowDeathPath);
 
+	// @ts-expect-error -- checks the runtime guard against a non-Buffer argument.
 	expect(() => renderSynthToPcm(new Uint8Array([1]))).toThrow(TypeError);
 	expect(() => renderSynthToPcm(synth, { loops: 0 })).toThrow(
 		expect.objectContaining({ code: "JAGFX_INVALID_ARGUMENT" }),
@@ -61,6 +76,7 @@ test("decodes a sample to PCM", async () => {
 	expect(info.loopEnd).toBeLessThanOrEqual(info.sampleCount);
 	expect(typeof info.pingPong).toBe("boolean");
 	expect(pcm.length).toBe(info.sampleCount * 2);
+	// @ts-expect-error -- checks the runtime guard against a non-Buffer argument.
 	expect(() => decodeSampleToPcm(new Uint8Array([1]))).toThrow(TypeError);
 	expect(() => readSampleInfo(sample.subarray(0, 3))).toThrow(
 		expect.objectContaining({ code: "JAGFX_DECODE_FAILED" }),
