@@ -1,7 +1,5 @@
 # Jagex Synth Editor
 
-![Cow Death](assets/relic_unlock_spinning_hover.png)
-
 JagFx is an editor for Jagex Audio Synthesis (`.synth`) files, the sound-effect format of Old School RuneScape (OSRS). It plays patches and exports them to WAV and JSON.
 
 ## Features
