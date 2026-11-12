@@ -52,3 +52,8 @@ end_of_line = lf
 
 [*.md]
 trim_trailing_whitespace = true
+
+# ktlint_official indents Kotlin with four spaces; the bedrock defaults above would make it tabs.
+[*.{kt,kts}]
+indent_style = space
+indent_size = 4

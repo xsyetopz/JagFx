@@ -31,12 +31,14 @@ fun sourceTree(pattern: String) =
 
 spotless {
     val ktlintVersion = libs.versions.ktlint.get()
+    // Naming the file makes it a task input, so an .editorconfig edit invalidates cached results.
+    val editorConfig = rootProject.file(".editorconfig")
     kotlin {
         target(sourceTree("**/*.kt"))
-        ktlint(ktlintVersion)
+        ktlint(ktlintVersion).setEditorConfigPath(editorConfig)
     }
     kotlinGradle {
         target(sourceTree("**/*.gradle.kts"))
-        ktlint(ktlintVersion)
+        ktlint(ktlintVersion).setEditorConfigPath(editorConfig)
     }
 }
