@@ -47,7 +47,17 @@ internal val ThemePreference.label: UiString
             ThemePreference.HighContrast -> UiString.ThemeHighContrast
         }
 
-/** The title bar: the file name, the file menu, Undo, and Redo. */
+/** What the title bar shows besides the file name. */
+internal data class TitleBarItems(
+    val fileMenu: Boolean,
+    val history: Boolean,
+)
+
+/** The File menu and Undo and Redo, which a [hasNativeMenu] platform already has in its menu bar. */
+internal fun titleBarItems(hasNativeMenu: Boolean): TitleBarItems =
+    TitleBarItems(fileMenu = !hasNativeMenu, history = !hasNativeMenu)
+
+/** The title bar: the file name, and unless the platform has a menu bar, the file menu, Undo, and Redo. */
 @Composable
 internal fun TitleBar(
     state: EditorState,
@@ -65,19 +75,22 @@ internal fun TitleBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         JagText(state.fileName, Modifier.weight(1f), color = JagFxTheme.colors.textDim)
-        FileMenu(state, actions)
-        JagIconButton(
-            Icons.Undo,
-            strings[UiString.ToolbarUndo],
-            { actions.dispatch(HistoryIntent.Undo) },
-            enabled = state.canUndo,
-        )
-        JagIconButton(
-            Icons.Redo,
-            strings[UiString.ToolbarRedo],
-            { actions.dispatch(HistoryIntent.Redo) },
-            enabled = state.canRedo,
-        )
+        val items = titleBarItems(LocalNativeMenu.current)
+        if (items.fileMenu) FileMenu(state, actions)
+        if (items.history) {
+            JagIconButton(
+                Icons.Undo,
+                strings[UiString.ToolbarUndo],
+                { actions.dispatch(HistoryIntent.Undo) },
+                enabled = state.canUndo,
+            )
+            JagIconButton(
+                Icons.Redo,
+                strings[UiString.ToolbarRedo],
+                { actions.dispatch(HistoryIntent.Redo) },
+                enabled = state.canRedo,
+            )
+        }
     }
 }
 

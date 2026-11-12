@@ -4,7 +4,7 @@ import androidx.compose.runtime.compositionLocalOf
 
 /**
  * `true` when the platform shows the editor's menus itself, as the desktop window's menu bar does.
- * Then the editor leaves out the Space shortcut, which the menu bar already binds. `false` in the
- * browser.
+ * Then the title bar leaves out its File menu, Undo, and Redo, and the editor leaves out the Space
+ * shortcut, which the menu bar already has. `false` in the browser.
  */
 internal val LocalNativeMenu = compositionLocalOf { false }
