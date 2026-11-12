@@ -14,6 +14,9 @@ const repoRoot = resolve(packageDir, "../..");
 const cowDeathPath = resolve(repoRoot, "references/synths/cow_death.synth");
 const samplePath = resolve(repoRoot, "references/vorbis/11102.jagvorbis");
 
+// Reflect.apply lets the test pass a plain Uint8Array, as a JavaScript caller can.
+const notABuffer = [new Uint8Array([1])];
+
 /**
  * @param {unknown} value
  * @returns {value is typeof import("@xsyetopz/jagfx-node")}
@@ -57,8 +60,9 @@ test("renders a single voice", async () => {
 test("rejects invalid arguments", async () => {
 	const synth = await readFile(cowDeathPath);
 
-	// @ts-expect-error -- checks the runtime guard against a non-Buffer argument.
-	expect(() => renderSynthToPcm(new Uint8Array([1]))).toThrow(TypeError);
+	expect(() => {
+		Reflect.apply(renderSynthToPcm, undefined, notABuffer);
+	}).toThrow(TypeError);
 	expect(() => renderSynthToPcm(synth, { loops: 0 })).toThrow(
 		expect.objectContaining({ code: "JAGFX_INVALID_ARGUMENT" }),
 	);
@@ -76,8 +80,9 @@ test("decodes a sample to PCM", async () => {
 	expect(info.loopEnd).toBeLessThanOrEqual(info.sampleCount);
 	expect(typeof info.pingPong).toBe("boolean");
 	expect(pcm.length).toBe(info.sampleCount * 2);
-	// @ts-expect-error -- checks the runtime guard against a non-Buffer argument.
-	expect(() => decodeSampleToPcm(new Uint8Array([1]))).toThrow(TypeError);
+	expect(() => {
+		Reflect.apply(decodeSampleToPcm, undefined, notABuffer);
+	}).toThrow(TypeError);
 	expect(() => readSampleInfo(sample.subarray(0, 3))).toThrow(
 		expect.objectContaining({ code: "JAGFX_DECODE_FAILED" }),
 	);

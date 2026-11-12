@@ -41,6 +41,9 @@ const readInfo = (backend, sample) => {
  */
 const rejectionOf = (error_) => error_;
 
+const incompleteLoader = () =>
+	Promise.resolve({ renderPcm16Le: () => new Int8Array() });
+
 describe("createJagFxWasmBackend", () => {
 	test("passes bytes and options to the loaded module", async () => {
 		const backend = await createJagFxWasmBackend(() =>
@@ -83,10 +86,12 @@ describe("createJagFxWasmBackend", () => {
 	});
 
 	test("rejects a module without the sample exports", async () => {
-		// @ts-expect-error -- checks the runtime guard against a module that lacks exports.
-		const error = await createJagFxWasmBackend(() => ({
-			renderPcm16Le: () => new Int8Array(),
-		})).catch(rejectionOf);
+		// Reflect.apply lets the test pass a loader the type forbids, as a JavaScript caller can.
+		/** @type {unknown} */
+		const pending = Reflect.apply(createJagFxWasmBackend, undefined, [
+			incompleteLoader,
+		]);
+		const error = await Promise.resolve(pending).catch(rejectionOf);
 		expect(error).toBeInstanceOf(Error);
 		expect(error).toHaveProperty(
 			"message",
