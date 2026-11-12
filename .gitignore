@@ -67,7 +67,7 @@ pnpm-lock.yaml
 # ===-----------------------------------------------------------------------===
 # Project-specific
 # ===-----------------------------------------------------------------------===
-.claude/claudetto/
+.claude/claudetto/*
 .cursorignore
 .cursorindexingignore
 
