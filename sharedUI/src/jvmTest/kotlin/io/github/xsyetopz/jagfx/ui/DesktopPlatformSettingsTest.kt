@@ -4,6 +4,7 @@ import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.use
 import io.github.xsyetopz.jagfx.ui.platform.DesktopPlatformSettings
+import io.github.xsyetopz.jagfx.ui.platform.WINDOWS_ACCESSIBILITY_KEY
 import io.github.xsyetopz.jagfx.ui.platform.runCommand
 import java.util.concurrent.CountDownLatch
 import kotlin.test.Test
@@ -102,16 +103,33 @@ class DesktopPlatformSettingsTest {
 
     @Test
     fun windowsUsesToolkitFlag() {
-        var called = false
-        val s =
-            DesktopPlatformSettings("Windows 11", { true }, { it() }) {
-                called = true
-                "1"
-            }
+        val s = DesktopPlatformSettings("Windows 11", { true }, { it() }) { null }
         assertTrue(s.highContrast)
         assertFalse(s.reducedMotion)
         assertEquals(100, s.textScalePercent)
-        assertFalse(called)
+    }
+
+    private val textScaleQuery =
+        listOf("reg", "query", WINDOWS_ACCESSIBILITY_KEY, "/v", "TextScaleFactor")
+
+    private fun windowsScale(output: String?) =
+        DesktopPlatformSettings("Windows 11", { false }, { it() }) { cmd ->
+            output.takeIf { cmd == textScaleQuery }
+        }.textScalePercent
+
+    @Test
+    fun windowsTextScaleReadsTheRegistryPercent() {
+        val output =
+            "\r\nHKEY_CURRENT_USER\\Software\\Microsoft\\Accessibility\r\n" +
+                "    TextScaleFactor    REG_DWORD    0x7d\r\n"
+        assertEquals(125, windowsScale(output))
+    }
+
+    @Test
+    fun windowsTextScaleClampsAndDefaults() {
+        assertEquals(200, windowsScale("    TextScaleFactor    REG_DWORD    0xe1"))
+        assertEquals(100, windowsScale(null))
+        assertEquals(100, windowsScale("    TextScaleFactor    REG_SZ    big"))
     }
 
     @Test

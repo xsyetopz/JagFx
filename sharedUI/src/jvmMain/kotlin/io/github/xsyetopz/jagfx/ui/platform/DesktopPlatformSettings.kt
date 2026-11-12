@@ -72,6 +72,20 @@ internal fun parseTextScale(output: String?): Int {
     return factor?.let { (it * PERCENT).roundToInt().coerceIn(MIN_SCALE, MAX_SCALE) } ?: MIN_SCALE
 }
 
+/** The registry key that holds the Windows "Make text bigger" percent as `TextScaleFactor`. */
+internal const val WINDOWS_ACCESSIBILITY_KEY = "HKCU\\Software\\Microsoft\\Accessibility"
+
+private val RegistryDword = Regex("""REG_DWORD\s+0x([0-9a-fA-F]+)""")
+
+/** Turns `reg query` output for a `REG_DWORD` percent into 100..200; anything else gives 100. */
+internal fun parseRegistryPercent(output: String?): Int =
+    output
+        ?.let { RegistryDword.find(it) }
+        ?.groupValues
+        ?.get(1)
+        ?.toIntOrNull(radix = 16)
+        ?.coerceIn(MIN_SCALE, MAX_SCALE) ?: MIN_SCALE
+
 private fun String?.isOn() = this?.trim().let { it == "1" || it == "true" }
 
 private fun CommandRunner.gsettings(
@@ -110,7 +124,20 @@ internal fun probePlatform(
         }
 
         osName.startsWith("Windows") -> {
-            PlatformValues()
+            PlatformValues(
+                textScalePercent =
+                    parseRegistryPercent(
+                        run(
+                            listOf(
+                                "reg",
+                                "query",
+                                WINDOWS_ACCESSIBILITY_KEY,
+                                "/v",
+                                "TextScaleFactor",
+                            ),
+                        ),
+                    ),
+            )
         }
 
         else -> {
@@ -133,9 +160,10 @@ internal fun probePlatform(
     }
 
 /**
- * Desktop platform settings. Windows high contrast comes from the AWT desktop property. On macOS and
- * GNOME the values come from `defaults` and `gsettings`, read once by [start] (a daemon thread by
- * default) and cached, so a change shows after a restart.
+ * Desktop platform settings. Windows high contrast comes from the AWT desktop property and Windows
+ * text size from `reg query`. On macOS and GNOME the values come from `defaults` and `gsettings`.
+ * The commands run once by [start] (a daemon thread by default) and are cached, so a change shows
+ * after a restart.
  * The values are Compose state: they hold the defaults until the read finishes, then a composable
  * that read them recomposes. No getter waits.
  */
