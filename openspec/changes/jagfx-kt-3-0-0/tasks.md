@@ -30,31 +30,31 @@
 
 ## 4. Guidance
 
-- [ ] 4.1 Add the empty-module prompts with inline waveform buttons and the filter-off prompt
-- [ ] 4.2 Add the disabled-tone prompt with Turn on
-- [ ] 4.3 Add the no-file screen with Open and New
-- [ ] 4.4 Make the status bar report each action and its undo, and label `.tone` and `.filter` files as JagFx files in tooltips and dialogs
+- [x] 4.1 Add the empty-module prompts with inline waveform buttons and the filter-off prompt
+- [x] 4.2 Add the disabled-tone prompt with Turn on
+- [x] 4.3 Add the no-file screen with Open and New
+- [x] 4.4 Make the status bar report each action and its undo, and label `.tone` and `.filter` files as JagFx files in tooltips and dialogs
 
 ## 5. Theme and accessibility
 
 - [x] 5.1 Add the Classic dark palette to `SynthPalette` and `JagFxColorSchemes`, tuned to at least 4.5:1 text contrast and 3:1 focus contrast
 - [x] 5.2 Raise `JagFxTheme` text to 12, 11, and 14 sp, and give every control a hit area of at least 24 dp
 - [x] 5.3 Add a 2 dp focus ring to every focusable control and a non-color mark to active toggles
-- [ ] 5.4 Set the Tab order and wire Alt and arrow keys to `SlotIntent.SelectTargetByOffset`
-- [ ] 5.5 Add Play All, Loop All, and Mode shortcuts to `EditorMenuBar.kt`
+- [x] 5.4 Set the Tab order and wire Alt and arrow keys to `SlotIntent.SelectTargetByOffset`
+- [x] 5.5 Add Play All, Loop All, and Mode shortcuts to `EditorMenuBar.kt`
 - [x] 5.6 Add `PanelSide`, `EditorState.panelSide`, and `ViewIntent.SetPanelSide`; place the properties panel by it; add the file menu item and the desktop View menu; test in `EditorReducerTest`
 - [x] 5.7 After task 2.7, place the voice strip by `panelSide` instead of the properties panel
 - [x] 5.8 Add a `Preferences` service to `EditorServices.kt` with desktop and web implementations, and keep the panel side, text size, and theme across restarts
-- [ ] 5.9 Read the platform's high-contrast, text scale, and reduced-motion settings where exposed; add the in-app text size (100% to 200%) and the high-contrast theme
+- [x] 5.9 Read the platform's high-contrast, text scale, and reduced-motion settings where exposed; add the in-app text size (100% to 200%) and the high-contrast theme
 - [x] 5.10 Give plot lines, markers, borders, and focus rings at least 3:1 contrast, and add a text summary to each plot
-- [ ] 5.11 Set accessible names, roles, values, and states on every control; announce status messages; show tooltips on focus and close them with Escape
-- [ ] 5.12 Make presses act on release, add key alternatives to wheel zoom and pan, and let Escape stop playback
+- [x] 5.11 Set accessible names, roles, values, and states on every control; announce status messages; show tooltips on focus and close them with Escape
+- [x] 5.12 Make presses act on release, add key alternatives to wheel zoom and pan, and let Escape stop playback
 - [ ] 5.13 Check with VoiceOver on macOS and NVDA on Windows, and write `docs/accessibility.md` with the standard versions, the gaps, and the contact
 
 ## 6. Strings
 
-- [ ] 6.1 Add every new `UiString` (descriptions, prompts, tooltips, accessible names, strip labels) to `StringsEn`, `StringsDe`, `StringsEs`, `StringsFr`, `StringsIt`, and `StringsPtBr`; remove unused keys
-- [ ] 6.2 Run `StringsTest` through `./gradlew :sharedUI:jvmTest`
+- [x] 6.1 Add every new `UiString` (descriptions, prompts, tooltips, accessible names, strip labels) to `StringsEn`, `StringsDe`, `StringsEs`, `StringsFr`, `StringsIt`, and `StringsPtBr`; remove unused keys
+- [x] 6.2 Run `StringsTest` through `./gradlew :sharedUI:jvmTest`
 
 ## 7. Docs and checks
 
