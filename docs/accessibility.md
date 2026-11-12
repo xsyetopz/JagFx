@@ -18,7 +18,7 @@ The project has not been audited by a third party. This statement records the ma
 - Keyboard: every pointer action has a key path. Alt and the arrows move between cells, the arrows select and move envelope points, Insert and Delete add and remove points, and Ctrl or Cmd with `+` and `-` zooms. The [README](../README.md#keyboard) lists every shortcut.
 - Screen readers: controls expose a name, a role, a value, and a state through the platform accessibility API. Each plot has a text summary, and status messages are announced.
 - Color: active toggles also change their mark, and the selected cell has a border, so color never carries meaning alone.
-- Platform settings: the editor follows the Windows high-contrast setting on desktop, and `prefers-contrast`, `forced-colors`, and `prefers-reduced-motion` in the browser. On macOS desktop it follows the Reduce motion setting, read once at startup. The editor has no animated transitions; opening or closing a cell is instant.
+- Platform settings: on desktop the editor follows the Windows high-contrast setting, the macOS Increase Contrast and Reduce Motion settings (`defaults read`), and the GNOME high-contrast, animations, and text-scaling-factor settings (`gsettings get`, text size clamped to 100% to 200%). Desktop values are read once at start-up, so a change shows after a restart. In the browser it follows `prefers-contrast`, `forced-colors`, and `prefers-reduced-motion`. The editor has no animated transitions; opening or closing a cell is instant.
 - Playhead rate: the playhead in the Final Output plot moves 4 times a second, or once a second when the platform asks for reduced motion. The final position is always sent before playback stops.
 - Calm cells: a cell in the rack shows only its title, a faint grid, and the curve. Double-click the title to enlarge it; the enlarged cell shows axis values, grid lines, and an optional time and value label at every point, each with a toggle in its header.
 - Tooltips: tooltips also show on keyboard focus, and Escape closes them.
@@ -36,7 +36,7 @@ The project has not been audited by a third party. This statement records the ma
 | The selected pole or zero has no state description for screen readers. | 4.1.2 Name, Role, Value | The filter strip fields show the selected pole's values. |
 | In the browser, Space does not stop playback. | 2.1.1 Keyboard | Press Escape. |
 | In the browser, the file dialogs have no titles, and screen reader support depends on the browser. | 2.4.2 Page Titled, 4.1.2 Name, Role, Value | Use the desktop app. |
-| The desktop app does not read the platform text size, nor the high-contrast setting on macOS and Linux. | EN 301 549 11.7 User preferences | Pick High Contrast and the text size in the File menu. |
+| The desktop app does not read the platform text size on Windows and macOS, nor any setting on KDE or other non-GNOME Linux desktops, and it reads settings once at start-up. | EN 301 549 11.7 User preferences | Pick High Contrast and the text size in the File menu, or restart the app. |
 
 ## Testing
 
