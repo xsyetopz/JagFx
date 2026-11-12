@@ -1,3 +1,0 @@
-{"agent":"claudetto:Heracles","model":"claude-sonnet-5-5","durationSeconds":66,"requests":8,"cacheHitRate":0.88,"maxGapSeconds":23,"files":[],"rootEditedWithin3Turns":false}
-{"agent":"claudetto:Heracles","model":"claude-sonnet-5-5","durationSeconds":320,"requests":38,"cacheHitRate":0.97,"maxGapSeconds":88,"files":["/tmp/claude-501/yt/package.json","/tmp/yt-Jk6Q2n/package.json","/tmp/yt-Jk6Q2n/y/lib/cli.js","/tmp/yt-Jk6Q2n/t.js","/tmp/yt-Jk6Q2n/f.js"],"rootEditedWithin3Turns":false}
-{"agent":"claudetto:Heracles","model":"claude-sonnet-5-5","durationSeconds":1161,"requests":29,"cacheHitRate":0.96,"maxGapSeconds":303,"files":[],"rootEditedWithin3Turns":false}
