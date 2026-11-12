@@ -1,7 +1,13 @@
 package io.github.xsyetopz.jagfx.ui.screen
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import io.github.xsyetopz.jagfx.ui.canvas.ENVELOPE_PADDING
 import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeCallbacks
 import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeCanvas
 import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeMenuLabels
@@ -43,11 +49,12 @@ internal fun SlotCanvas(
         }
 
         SignalChainSlot.Output -> {
+            var width by remember { mutableIntStateOf(0) }
             OutputWaveCanvas(
                 samples = state.preview.samples,
                 playbackPosition = state.playbackPosition,
-                modifier = modifier,
-                panZoom = actions.panZoom(slot, view.canvas(slot)),
+                modifier = modifier.onSizeChanged { width = it.width },
+                panZoom = actions.timePanZoom(slot, view, width.toFloat()),
             )
         }
 
@@ -96,7 +103,9 @@ private fun EnvelopeSlotCanvas(
     val strings = LocalStrings.current
     val envelope = envelopeOf(state.voice, slot)
     val canvasView = view.canvas(slot)
-    val panZoom = actions.panZoom(slot, canvasView)
+    var width by remember { mutableIntStateOf(0) }
+    val plotWidth = (width - 2 * ENVELOPE_PADDING).coerceAtLeast(0f)
+    val panZoom = actions.timePanZoom(slot, view, plotWidth)
     EnvelopeCanvas(
         view =
             EnvelopeView(
@@ -110,6 +119,7 @@ private fun EnvelopeSlotCanvas(
             EnvelopeCallbacks(
                 onZoomChange = panZoom.onZoomChange,
                 onScrollOffsetChange = panZoom.onScrollOffsetChange,
+                onTimeViewChange = { next -> actions.updateTimeView(slot) { next } },
                 onSelect = { index ->
                     actions.updateCanvas(slot) { it.copy(selectedIndex = index) }
                 },
@@ -126,9 +136,10 @@ private fun EnvelopeSlotCanvas(
                 addPointHere = strings[UiString.MenuAddPointHere],
                 addPointAtEnd = strings[UiString.MenuAddPointEnd],
             ),
-        modifier = modifier,
+        modifier = modifier.onSizeChanged { width = it.width },
         style =
             EnvelopeStyle(
+                slot = slot,
                 lineColor = slotColor(slot, JagFxTheme.palette),
                 selected = slot == state.selectedTarget,
                 durationMs = state.voice?.duration?.value ?: 0,

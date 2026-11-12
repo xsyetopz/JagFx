@@ -40,6 +40,7 @@ internal val SignalChainSlot.isTimeDomain: Boolean
  * @property linked `true` when a time-domain cell follows [ScreenViewState.timeView]; otherwise
  *     it follows [timeView].
  * @property timeView The own time view of a time-domain cell that is not [linked].
+ * @property panelOpen `true` while the controls panel of the cell is shown.
  */
 @Immutable
 internal data class CanvasView(
@@ -49,6 +50,7 @@ internal data class CanvasView(
     val timeView: TimeView = TimeView(),
     val selectedIndex: Int = -1,
     val snap: Boolean = false,
+    val panelOpen: Boolean = false,
 )
 
 /**

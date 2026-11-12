@@ -224,7 +224,7 @@ internal fun snapPosition(
 }
 
 /** Positions that breakpoint [index] can take without passing a neighbour. */
-private fun positionBounds(
+internal fun positionBounds(
     segments: List<Segment>,
     index: Int,
 ): IntRange {

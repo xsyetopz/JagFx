@@ -12,7 +12,6 @@ import androidx.compose.ui.text.TextMeasurer
 import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
 
 private const val HORIZONTAL_DIVISIONS = 4
-private const val VERTICAL_DIVISIONS = 8
 private const val MARKER_HALF_SIZE = 3f
 private const val SELECTION_RADIUS = 5f
 private const val BORDER_INSET = 0.5f
@@ -20,7 +19,7 @@ private const val BORDER_INSET = 0.5f
 private val Hairline = Stroke(width = 1f)
 
 /**
- * Draws the envelope plot of [view] in [style]: background, grid, time labels measured by
+ * Draws the envelope plot of [view] in [style]: background, grid, time and value axes measured by
  * [measurer], the line through the breakpoints, breakpoint markers, and a border in the line
  * color when [EnvelopeStyle.selected].
  */
@@ -56,8 +55,19 @@ internal fun Modifier.drawEnvelope(
         }
         onDrawBehind {
             drawRect(palette.scope)
-            drawEnvelopeGrid(view.zoom, view.scrollOffset, palette)
-            drawTimeLabels(measurer, view.zoom, view.scrollOffset, style.durationMs, labelStyle)
+            val slot = style.slot
+            if (slot?.range != null && view.scaleMode != EnvelopeScaleMode.AutoScale) {
+                drawValueAxis(measurer, slot, envelope, labelStyle, palette.grid, palette.midLine)
+            } else {
+                drawEnvelopeGrid(palette)
+            }
+            drawTimeAxis(
+                measurer,
+                Viewport(view.zoom, view.scrollOffset),
+                style.durationMs,
+                labelStyle,
+                palette.grid,
+            )
             if (geometry != null) {
                 drawPath(path, lineColor, style = Hairline)
                 drawBreakpoints(geometry, view.selectedIndex, palette)
@@ -73,28 +83,11 @@ internal fun Modifier.drawEnvelope(
         }
     }
 
-private fun DrawScope.drawEnvelopeGrid(
-    zoom: Int,
-    scrollOffset: Float,
-    palette: SynthPalette,
-) {
-    val width = size.width
-    val height = size.height
-    val rows = HORIZONTAL_DIVISIONS * zoom
-    for (i in 1 until rows) {
-        val y = height * i / rows
-        val color = if (i * 2 == rows) palette.midLine else palette.grid
-        drawLine(color, Offset(0f, y), Offset(width, y))
-    }
-    val columns = VERTICAL_DIVISIONS * zoom
-    val step = (width - 2 * ENVELOPE_PADDING) / columns
-    if (step <= 0f) return
-    val shift = scrollOffset % step
-    for (i in 0..columns) {
-        val x = ENVELOPE_PADDING + i * step - shift
-        if (x >= ENVELOPE_PADDING && x <= width - ENVELOPE_PADDING) {
-            drawLine(palette.grid, Offset(x, 0f), Offset(x, height))
-        }
+private fun DrawScope.drawEnvelopeGrid(palette: SynthPalette) {
+    for (i in 1 until HORIZONTAL_DIVISIONS) {
+        val y = size.height * i / HORIZONTAL_DIVISIONS
+        val color = if (i * 2 == HORIZONTAL_DIVISIONS) palette.midLine else palette.grid
+        drawLine(color, Offset(0f, y), Offset(size.width, y))
     }
 }
 

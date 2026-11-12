@@ -5,21 +5,27 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isAltPressed
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.isCtrlPressed
+import androidx.compose.ui.input.pointer.isMetaPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.input.pointer.isTertiaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntSize
 import io.github.xsyetopz.jagfx.core.model.Envelope
 import io.github.xsyetopz.jagfx.core.model.Segment
-import io.github.xsyetopz.jagfx.core.model.SynthLimits
+import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 
 /** Snap divisions of the time axis across the visible width at zoom 1. */
 private const val POSITION_SNAP_DIVISIONS = 8
@@ -48,11 +54,13 @@ internal class EnvelopeCallbacks(
     val onSegmentsChange: (List<Segment>) -> Unit = {},
     val onGestureStart: () -> Unit = {},
     val onGestureEnd: () -> Unit = {},
+    val onTimeViewChange: ((TimeView) -> Unit)? = null,
 )
 
 /**
  * How [EnvelopeCanvas] draws: [lineColor] defaults to the marker color.
- * A positive [durationMs] labels the vertical grid lines with their time in ms.
+ * A positive [durationMs] draws the time axis in ms; a [slot] with a value range draws the value
+ * axis in its unit and gives the readout its unit.
  */
 @Immutable
 internal data class EnvelopeStyle(
@@ -60,13 +68,7 @@ internal data class EnvelopeStyle(
     val selected: Boolean = false,
     val interactive: Boolean = true,
     val durationMs: Int = 0,
-)
-
-/** The u16 [position] and [level] under the pointer, or of the breakpoint being dragged. */
-@Immutable
-internal data class EnvelopeReadout(
-    val position: Int,
-    val level: Int,
+    val slot: SignalChainSlot? = null,
 )
 
 /** Context menu entries of the envelope canvas. */
@@ -96,21 +98,32 @@ internal fun EnvelopeCallbacks.applyMenu(menu: EnvelopeMenu) {
     onSelect(menu.selection)
 }
 
-/** Deletes the selected breakpoint on Delete or Backspace; true when [event] was handled. */
+/**
+ * Runs the key command of [event] (see [envelopeKeyCommand]): select, move, fine move, add, or
+ * delete. Each edit is one [EnvelopeCallbacks.onSegmentsChange], so one undo step. Shift moves a
+ * point by [KEY_STEP]; Ctrl, Alt, or Cmd by [KEY_FINE_STEP]. True when [event] was handled.
+ */
 internal fun handleEnvelopeKey(
     event: KeyEvent,
     view: EnvelopeView,
     callbacks: EnvelopeCallbacks,
 ): Boolean {
-    val isDelete = event.key == Key.Delete || event.key == Key.Backspace
-    val segments = view.envelope?.segments
-    if (event.type != KeyEventType.KeyDown || !isDelete || segments == null) return false
-    val remaining = removeSegment(segments, view.selectedIndex)
-    if (remaining != null) {
-        callbacks.onSegmentsChange(remaining)
-        callbacks.onSelect(minOf(view.selectedIndex, remaining.size - 1))
-    }
-    return remaining != null
+    val fine = event.isCtrlPressed || event.isAltPressed || event.isMetaPressed
+    val command = envelopeKeyCommand(event.key, event.isShiftPressed || fine)
+    val edit =
+        view.envelope?.segments?.takeIf { event.type == KeyEventType.KeyDown }?.let { segments ->
+            command?.let {
+                envelopeKeyEdit(
+                    it,
+                    segments,
+                    view.selectedIndex,
+                    if (fine) KEY_FINE_STEP else KEY_STEP,
+                )
+            }
+        }
+    edit?.segments?.let(callbacks.onSegmentsChange)
+    edit?.let { callbacks.onSelect(it.selection) }
+    return edit != null
 }
 
 /**
@@ -121,7 +134,7 @@ internal class EnvelopeCanvasHooks(
     val requestFocus: () -> Unit,
     val onMenu: (EnvelopeMenu) -> Unit,
     val onHoverIcon: (PointerIcon) -> Unit,
-    val onReadout: (EnvelopeReadout?) -> Unit,
+    val onReadout: (Int?) -> Unit,
 )
 
 /** Pointer handling of an interactive envelope canvas; see [EnvelopeGestures]. */
@@ -174,8 +187,11 @@ private class EnvelopeGestures(
         val change = event.changes.firstOrNull() ?: return
         when (event.type) {
             PointerEventType.Press -> {
+                requestFocus()
                 if (event.buttons.isSecondaryPressed) {
                     openMenu(change.position)
+                } else if (event.buttons.isTertiaryPressed) {
+                    startPan(change.position.x)
                 } else {
                     press(change, doubleTapTimeout)
                 }
@@ -195,10 +211,19 @@ private class EnvelopeGestures(
             }
 
             PointerEventType.Scroll -> {
-                zoomBy(-change.scrollDelta.y)
-                change.consume()
+                val modifiers = event.keyboardModifiers
+                if (modifiers.isCtrlPressed || modifiers.isMetaPressed) {
+                    zoomAt(-change.scrollDelta.y, change.position.x)
+                    change.consume()
+                }
             }
         }
+    }
+
+    private fun startPan(x: Float) {
+        panning = true
+        panStartX = x
+        panStartOffset = view.value.scrollOffset
     }
 
     private fun geometry(
@@ -275,11 +300,7 @@ private class EnvelopeGestures(
 
             else -> {
                 callbacks.value.onSelect(-1)
-                if (view.value.zoom > 1) {
-                    panning = true
-                    panStartX = position.x
-                    panStartOffset = view.value.scrollOffset
-                }
+                if (view.value.zoom > 1) startPan(position.x)
             }
         }
     }
@@ -319,7 +340,7 @@ private class EnvelopeGestures(
                 val envelope = view.value.envelope
                 val g = envelope?.let { geometry(it.segments, view.value.scrollOffset) }
                 onHoverIcon(hoverIcon(g, position))
-                onReadout(g?.readoutAt(position))
+                onReadout(g?.hitTest(position.x, position.y)?.takeIf { it >= 0 })
             }
         }
     }
@@ -342,8 +363,7 @@ private class EnvelopeGestures(
             dragSegments = segments
             callbacks.value.onSegmentsChange(segments)
         }
-        val dragged = segments[dragIndex]
-        onReadout(EnvelopeReadout(dragged.duration, dragged.targetLevel))
+        onReadout(dragIndex)
     }
 
     private fun autoScroll(
@@ -380,14 +400,26 @@ private class EnvelopeGestures(
         panning = false
     }
 
-    private fun zoomBy(delta: Float) {
+    /** Steps the zoom by [delta], keeping the time under canvas [x] where it is. */
+    private fun zoomAt(
+        delta: Float,
+        x: Float,
+    ) {
         val current = view.value
-        val zoom = stepZoom(current.zoom, delta)
-        if (zoom != current.zoom) {
-            callbacks.value.onZoomChange(zoom)
-            callbacks.value.onScrollOffsetChange(
-                scrollAfterZoom(current.scrollOffset, size.plotWidth(), zoom),
-            )
+        val plotWidth = size.plotWidth()
+        if (plotWidth <= 0f) return
+        val relative = ((x - ENVELOPE_PADDING) / plotWidth).coerceIn(0f, 1f)
+        val next =
+            Viewport(current.zoom, current.scrollOffset)
+                .toTimeView(plotWidth)
+                .zoomedStepAt(delta, relative)
+        if (next.zoom == current.zoom) return
+        val onTimeView = callbacks.value.onTimeViewChange
+        if (onTimeView != null) {
+            onTimeView(next)
+        } else {
+            callbacks.value.onZoomChange(next.zoom)
+            callbacks.value.onScrollOffsetChange(next.toViewport(plotWidth).scrollOffset)
         }
     }
 }
@@ -403,13 +435,6 @@ private fun hoverIcon(
         geometry.lineHitTest(position.x, position.y) >= 0 -> PointerIcon.Crosshair
         else -> PointerIcon.Default
     }
-
-/** The u16 time position and level at canvas [position]. */
-private fun EnvelopeGeometry.readoutAt(position: Offset): EnvelopeReadout =
-    EnvelopeReadout(
-        xToPosition(position.x).toInt().coerceIn(0, SynthLimits.U16_MAX),
-        yToPeakLevel(position.y),
-    )
 
 /** Width in pixels of the plot inside a canvas of this size at zoom 1. */
 private fun IntSize.plotWidth(): Float = (width - 2 * ENVELOPE_PADDING).coerceAtLeast(0f)
