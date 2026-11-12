@@ -1,56 +1,51 @@
-import assert from "node:assert/strict";
+import { expect, test } from "bun:test";
 import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
-import { dirname, resolve } from "node:path";
-import test from "node:test";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 
 import {
 	decodeSampleToPcm,
 	readSampleInfo,
 	renderSynthToPcm,
-} from "../dist/index.mjs";
+} from "@xsyetopz/jagfx-node";
 
-const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const packageDir = resolve(import.meta.dirname, "..");
 const repoRoot = resolve(packageDir, "../..");
 const cowDeathPath = resolve(repoRoot, "references/synths/cow_death.synth");
 const samplePath = resolve(repoRoot, "references/vorbis/11102.jagvorbis");
+
+/** @returns {Promise<typeof import("@xsyetopz/jagfx-node")>} */
+const loadCjs = () => import("../dist/index.cjs");
 
 test("renders cow_death through Kotlin/JS", async () => {
 	const synth = await readFile(cowDeathPath);
 	const pcm = renderSynthToPcm(synth);
 
-	assert.ok(Buffer.isBuffer(pcm));
-	assert.ok(pcm.length > 0);
-	assert.equal(pcm.length % 2, 0);
+	expect(Buffer.isBuffer(pcm)).toBe(true);
+	expect(pcm.length).toBeGreaterThan(0);
+	expect(pcm.length % 2).toBe(0);
 });
 
 test("the CommonJS build renders the same PCM", async () => {
 	const synth = await readFile(cowDeathPath);
-	const require = createRequire(import.meta.url);
-	const cjs = require("../dist/index.cjs");
+	const cjs = await loadCjs();
 
-	assert.deepEqual(cjs.renderSynthToPcm(synth), renderSynthToPcm(synth));
+	expect(cjs.renderSynthToPcm(synth)).toEqual(renderSynthToPcm(synth));
 });
 
 test("renders a single voice", async () => {
 	const synth = await readFile(cowDeathPath);
 	const pcm = renderSynthToPcm(synth, { loops: 2, voiceFilter: 0 });
 
-	assert.ok(pcm.length > 0);
-	assert.equal(pcm.length % 2, 0);
+	expect(pcm.length).toBeGreaterThan(0);
+	expect(pcm.length % 2).toBe(0);
 });
 
 test("rejects invalid arguments", async () => {
 	const synth = await readFile(cowDeathPath);
 
-	assert.throws(() => renderSynthToPcm(new Uint8Array([1])), TypeError);
-	assert.throws(() => renderSynthToPcm(synth, { loops: 0 }), {
-		code: "JAGFX_INVALID_ARGUMENT",
-	});
-	assert.throws(() => renderSynthToPcm(synth, { voiceFilter: 10 }), {
-		code: "JAGFX_INVALID_ARGUMENT",
-	});
+	expect(() => renderSynthToPcm(new Uint8Array([1]))).toThrow(TypeError);
+	expect(() => renderSynthToPcm(synth, { loops: 0 })).toThrow(expect.objectContaining({ code: "JAGFX_INVALID_ARGUMENT" }));
+	expect(() => renderSynthToPcm(synth, { voiceFilter: 10 })).toThrow(expect.objectContaining({ code: "JAGFX_INVALID_ARGUMENT" }));
 });
 
 test("decodes a sample to PCM", async () => {
@@ -58,12 +53,10 @@ test("decodes a sample to PCM", async () => {
 	const info = readSampleInfo(sample);
 	const pcm = decodeSampleToPcm(sample);
 
-	assert.ok(info.sampleRate > 0);
-	assert.ok(info.loopEnd <= info.sampleCount);
-	assert.equal(typeof info.pingPong, "boolean");
-	assert.equal(pcm.length, info.sampleCount * 2);
-	assert.throws(() => decodeSampleToPcm(new Uint8Array([1])), TypeError);
-	assert.throws(() => readSampleInfo(sample.subarray(0, 3)), {
-		code: "JAGFX_DECODE_FAILED",
-	});
+	expect(info.sampleRate).toBeGreaterThan(0);
+	expect(info.loopEnd).toBeLessThanOrEqual(info.sampleCount);
+	expect(typeof info.pingPong).toBe("boolean");
+	expect(pcm.length).toBe(info.sampleCount * 2);
+	expect(() => decodeSampleToPcm(new Uint8Array([1]))).toThrow(TypeError);
+	expect(() => readSampleInfo(sample.subarray(0, 3))).toThrow(expect.objectContaining({ code: "JAGFX_DECODE_FAILED" }));
 });

@@ -6,6 +6,7 @@ import {
 	samplePcm16Le,
 } from "../kotlin/jagfx-bindings.mjs";
 
+/** Options for {@link renderSynthToPcm}. */
 export interface RenderSynthToPcmOptions {
 	loops?: number;
 	voiceFilter?: number;
@@ -24,10 +25,42 @@ export interface SampleInfo {
 
 const voiceSlots = 10;
 
-export function renderSynthToPcm(
+const codedError = (message: string, code: string): Error =>
+	Object.assign(new Error(message), { code });
+
+const integerOption = (value: number | undefined, fallback: number): number =>
+	typeof value === "number" && Number.isInteger(value) ? value : fallback;
+
+const toInt8Array = (data: Buffer): Int8Array =>
+	new Int8Array(data.buffer, data.byteOffset, data.byteLength);
+
+const sampleBytes = (sampleData: Buffer): Int8Array => {
+	if (!Buffer.isBuffer(sampleData)) {
+		throw new TypeError("sampleData must be a Buffer.");
+	}
+	return toInt8Array(sampleData);
+};
+
+/** Runs a Kotlin/JS call and rethrows its failure with [code]. */
+const run = <T>(call: () => T, code: string): T => {
+	try {
+		return call();
+	} catch (error) {
+		throw codedError(
+			error instanceof Error ? error.message : String(error),
+			code,
+		);
+	}
+};
+
+const isSampleInfo = (value: unknown): value is SampleInfo =>
+	typeof value === "object" && value !== null;
+
+/** Renders `.synth` bytes to mono signed 16-bit little-endian PCM. */
+export const renderSynthToPcm = (
 	synthData: Buffer,
 	options: RenderSynthToPcmOptions = {},
-): Buffer {
+): Buffer => {
 	if (!Buffer.isBuffer(synthData)) {
 		throw new TypeError("synthData must be a Buffer.");
 	}
@@ -53,52 +86,23 @@ export function renderSynthToPcm(
 		"JAGFX_RENDER_FAILED",
 	);
 	return Buffer.from(pcm.buffer, pcm.byteOffset, pcm.byteLength);
-}
+};
 
 /** Decodes `.jagvorbis` sample bytes to mono signed 16-bit little-endian PCM, without looping. */
-export function decodeSampleToPcm(sampleData: Buffer): Buffer {
+export const decodeSampleToPcm = (sampleData: Buffer): Buffer => {
 	const sample = sampleBytes(sampleData);
 	const pcm = run(() => samplePcm16Le(sample), "JAGFX_DECODE_FAILED");
 	return Buffer.from(pcm.buffer, pcm.byteOffset, pcm.byteLength);
-}
+};
 
 /** Reads the header fields of `.jagvorbis` sample bytes. */
-export function readSampleInfo(sampleData: Buffer): SampleInfo {
+export const readSampleInfo = (sampleData: Buffer): SampleInfo => {
 	const sample = sampleBytes(sampleData);
-	return JSON.parse(
+	const parsed: unknown = JSON.parse(
 		run(() => sampleInfo(sample), "JAGFX_DECODE_FAILED"),
-	) as SampleInfo;
-}
-
-function sampleBytes(sampleData: Buffer): Int8Array {
-	if (!Buffer.isBuffer(sampleData)) {
-		throw new TypeError("sampleData must be a Buffer.");
+	);
+	if (!isSampleInfo(parsed)) {
+		throw codedError("Invalid sample info.", "JAGFX_DECODE_FAILED");
 	}
-	return toInt8Array(sampleData);
-}
-
-function toInt8Array(data: Buffer): Int8Array {
-	return new Int8Array(data.buffer, data.byteOffset, data.byteLength);
-}
-
-/** Runs a Kotlin/JS call and rethrows its failure with [code]. */
-function run<T>(call: () => T, code: string): T {
-	try {
-		return call();
-	} catch (error) {
-		throw codedError(
-			error instanceof Error ? error.message : String(error),
-			code,
-		);
-	}
-}
-
-function integerOption(value: number | undefined, fallback: number): number {
-	return typeof value === "number" && Number.isInteger(value)
-		? value
-		: fallback;
-}
-
-function codedError(message: string, code: string): Error {
-	return Object.assign(new Error(message), { code });
-}
+	return parsed;
+};
