@@ -20,13 +20,13 @@
 
 ## 3. Cells
 
-- [ ] 3.1 Rework `CellHeader.kt`: classic title with description tooltip, `1x 2x 4x S` on every plot, `M…` and `▼` on time-domain cells, each with a tooltip and an accessible name
-- [ ] 3.2 Wire `1x 2x 4x`, `S` (Fit), wheel zoom around the pointer, and middle-drag pan to the linked or per-cell viewport
-- [ ] 3.3 Draw the time axis in ms and the value axis in the unit in `EnvelopeDrawing.kt` and `PlotLabels.kt`, plus the light grid
-- [ ] 3.4 Show the readout on hover, drag, and selection in `EnvelopeCanvas.kt`
-- [ ] 3.5 Build the per-cell controls panel behind `▼`: the point table with ms, unit, raw position, and raw level fields, range errors, and the time-view option
-- [ ] 3.6 Extend `EnvelopeInteraction.kt` with keyboard select, move, fine move, add, and delete, each one undo step
-- [ ] 3.7 Run `./gradlew :sharedUI:jvmTest`
+- [x] 3.1 Rework `CellHeader.kt`: classic title with description tooltip, `1x 2x 4x S` on every plot, `M…` and `▼` on time-domain cells, each with a tooltip and an accessible name
+- [x] 3.2 Wire `1x 2x 4x`, `S` (Fit), wheel zoom around the pointer, and middle-drag pan to the linked or per-cell viewport
+- [x] 3.3 Draw the time axis in ms and the value axis in the unit in `EnvelopeDrawing.kt` and `PlotLabels.kt`, plus the light grid
+- [x] 3.4 Show the readout on hover, drag, and selection in `EnvelopeCanvas.kt`
+- [x] 3.5 Build the per-cell controls panel behind `▼`: the point table with ms, unit, raw position, and raw level fields, range errors, and the time-view option
+- [x] 3.6 Extend `EnvelopeInteraction.kt` with keyboard select, move, fine move, add, and delete, each one undo step
+- [x] 3.7 Run `./gradlew :sharedUI:jvmTest`
 
 ## 4. Guidance
 
