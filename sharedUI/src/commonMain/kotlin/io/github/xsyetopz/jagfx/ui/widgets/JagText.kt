@@ -1,6 +1,7 @@
 package io.github.xsyetopz.jagfx.ui.widgets
 
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -8,7 +9,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
-import io.github.xsyetopz.jagfx.ui.theme.LocalContentColor
 
 /**
  * [text] in [style], in the content color unless [color] is given: one line cut with an ellipsis,

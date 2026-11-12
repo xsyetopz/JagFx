@@ -3,6 +3,8 @@ package io.github.xsyetopz.jagfx.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
@@ -10,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
@@ -209,9 +210,6 @@ private val LocalPalette = staticCompositionLocalOf { SynthPalette.Classic }
 private val LocalTypography = staticCompositionLocalOf { JagFxTypography() }
 private val LocalDimens = staticCompositionLocalOf { JagFxDimens() }
 
-/** The color of text and icons at this point of the tree. */
-internal val LocalContentColor = compositionLocalOf { JagFxColors.Classic.text }
-
 /**
  * Provides the editor's colors, plot palette, type, and sizes to [content].
  * [appearance] follows the system dark setting by default; [textScale], from 1 to 2, multiplies
@@ -231,6 +229,7 @@ internal fun JagFxTheme(
         CompositionLocalProvider(
             LocalRippleConfiguration provides
                 RippleConfiguration(color = colors.accent),
+            LocalMinimumInteractiveComponentSize provides dimens.minTarget,
         ) {
             JagFxProviders(colors, appearance, typography, dimens, content)
         }

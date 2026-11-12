@@ -32,7 +32,7 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagIconButton
 import io.github.xsyetopz.jagfx.ui.widgets.JagLabel
 import io.github.xsyetopz.jagfx.ui.widgets.JagMenu
 import io.github.xsyetopz.jagfx.ui.widgets.JagMenuItem
-import io.github.xsyetopz.jagfx.ui.widgets.JagTooltip
+import io.github.xsyetopz.jagfx.ui.widgets.Tip
 
 private val ZoomPresets = listOf(1, 2, 4)
 
@@ -53,8 +53,6 @@ internal fun CellHeader(
     val colors = JagFxTheme.colors
     val open = view.openCell == slot
     val zoom = if (slot.isTimeDomain) view.timeViewOf(slot).zoom else view.canvas(slot).zoom
-    val hover = remember { MutableInteractionSource() }
-    val titleHovered by hover.collectIsHoveredAsState()
     Row(
         Modifier
             .fillMaxWidth()
@@ -67,11 +65,7 @@ internal fun CellHeader(
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        JagTooltip(
-            strings[descriptionOf(slot)],
-            titleHovered,
-            Modifier.weight(1f).hoverable(hover),
-        ) {
+        Tip(strings[descriptionOf(slot)], Modifier.weight(1f)) {
             JagLabel(classicTitleOf(slot), color = if (selected) colors.text else colors.textDim)
         }
         if (cellChromeOf(slot, view.openCell).headerControls) {

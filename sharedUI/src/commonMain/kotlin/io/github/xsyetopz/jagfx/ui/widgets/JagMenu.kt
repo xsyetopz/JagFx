@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -32,7 +33,6 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import io.github.xsyetopz.jagfx.ui.theme.DISABLED_ALPHA
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
-import io.github.xsyetopz.jagfx.ui.theme.LocalContentColor
 
 /**
  * A popup list at [offset] from the top left of its parent; a click outside or Escape calls
