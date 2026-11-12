@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Accessibility** -- the editor uses stock Material 3 buttons, check boxes, menus, text fields, sliders, tooltips, and text, with only the colors and the sidebar position customized.
+  Tooltips stay open while hovered and close on Escape, rack cells select on pointer release, the plots take keyboard focus, the pole and zero map arrows move and nudge the selection and announce it, and Space toggles playback in the browser.
+  The desktop window no longer repeats its menu bar in the title bar.
+
 ## [3.0.0]
 
 ### Added

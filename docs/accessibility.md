@@ -12,9 +12,9 @@ The project has not been audited by a third party. This statement records the ma
 ## What The Editor Does
 
 - Contrast: text reaches at least 4.5:1, and plot lines, point markers, control borders, and focus rings reach at least 3:1 in the Classic, Light, and High Contrast themes. `ContrastTest` checks each pair.
-- Text size: body text is 12 sp, labels 11 sp, and headings 14 sp. The File menu sets the text size from 100% to 200%.
-- Targets: every pointer target is at least 24 by 24 dp.
-- Focus: every focusable control shows a 2 dp focus ring. Tab moves through the title bar, the voice strip, the rack row by row, and the bottom bar.
+- Text size: the Material 3 small body (12 sp), small label (11 sp), and small title (14 sp) styles carry the text. The File menu sets the text size from 100% to 200%.
+- Targets: every pointer target is at least 24 by 24 dp. The editor sets the Material minimum interactive size to 24 dp instead of 48 dp, to keep the rack dense; the controls are stock Material 3 widgets with compact padding.
+- Focus: every focusable control shows a focus indicator: the stock Material one on buttons, fields, and menus, and a 2 dp ring on the plots, which take focus with Tab or a click. Tab moves through the title bar, the voice strip, the rack row by row, and the bottom bar.
 - Keyboard: every pointer action has a key path. Alt and the arrows move between cells, the arrows select and move envelope points, Insert and Delete add and remove points, and Ctrl or Cmd with `+` and `-` zooms. The [README](../README.md#keyboard) lists every shortcut.
 - Screen readers: controls expose a name, a role, a value, and a state through the platform accessibility API. Each plot has a text summary, and status messages are announced.
 - Color: active toggles also change their mark, and the selected cell has a border, so color never carries meaning alone.
@@ -23,18 +23,16 @@ The project has not been audited by a third party. This statement records the ma
 - Calm cells: a cell in the rack shows only its title, a faint grid, and the curve. Double-click the title to enlarge it; the enlarged cell shows axis values, grid lines, and an optional time and value label at every point, each with a toggle in its header.
 - Plot grid lines are faint on purpose, to keep the screen calm, and are decorative under 1.4.11 Non-text Contrast: the curve, the enlarged cell's axis labels, and the point readout carry the values.
 - Selection: a selected breakpoint or pole is marked by a ring in the `marker` color, which reaches 3:1 on both the scope and the selection fill in every theme (`ContrastTest`), so the fill itself carries no meaning.
-- Tooltips: tooltips also show on keyboard focus, and Escape closes them.
+- Tooltips: stock Material tooltips show on keyboard focus and when the pointer rests on a control. The pointer can move onto a tooltip and it stays open while hovered, and Escape closes it (1.4.13). `TipTest` checks both.
+- Plots: Tab focuses each plot. On the pole and zero map, the arrows move the selection between poles and zeros, and Shift with the arrows nudges the selected one. The map announces the selected marker as a state (for example "Pole 2 of 3, end: 440 Hz, 30.5 dB").
+- Pointer cancellation: a rack cell is selected when the pointer is released, and a press that ends outside the cell selects nothing (2.5.2).
+- Space: in the browser, Space starts and stops playback; on desktop the menu bar already has the shortcut.
 - Either hand: the File menu puts the voice strip on the left or the right edge.
 
 ## Known Gaps
 
 | Gap | WCAG criterion | Workaround |
 | --- | --- | --- |
-| A rack cell is selected when the pointer goes down, not when it comes up. Selecting is not destructive, and a point drag starts from the same press. | 2.5.2 Pointer Cancellation | Selecting another cell undoes the selection. |
-| The pointer cannot move into a tooltip to read it. | 1.4.13 Content on Hover or Focus | Focus the control with Tab to show its tooltip, and press Escape to close it. |
-| The Graph of poles and zeros, the Transition Curve, the Frequency Response, and the Final Output have no keyboard focus of their own. | 2.1.1 Keyboard | Each plot's text summary is announced; edit the filter through the filter strip fields. |
-| The selected pole or zero has no state description for screen readers. | 4.1.2 Name, Role, Value | The filter strip fields show the selected pole's values. |
-| In the browser, Space does not stop playback. | 2.1.1 Keyboard | Press Escape. |
 | In the browser, the title of the file open and save dialogs is set by the browser, and a page cannot change it. The editor labels the file input and the download link with `title` and `aria-label`, but how a screen reader announces the dialog depends on the browser. | 2.4.2 Page Titled, 4.1.2 Name, Role, Value | Use the desktop app. |
 | The desktop app does not read the platform text size on Windows and macOS, nor any setting on KDE or other non-GNOME Linux desktops, and it reads settings once at start-up. | EN 301 549 11.7 User preferences | Pick High Contrast and the text size in the File menu, or restart the app. |
 
