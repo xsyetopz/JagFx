@@ -19,6 +19,7 @@ import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.HistoryIntent
 import io.github.xsyetopz.jagfx.ui.editor.PanelSide
 import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
+import io.github.xsyetopz.jagfx.ui.editor.ThemePreference
 import io.github.xsyetopz.jagfx.ui.editor.ViewIntent
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
@@ -26,6 +27,7 @@ import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import io.github.xsyetopz.jagfx.ui.widgets.Icons
 import io.github.xsyetopz.jagfx.ui.widgets.JagButton
 import io.github.xsyetopz.jagfx.ui.widgets.JagIconButton
+import io.github.xsyetopz.jagfx.ui.widgets.JagLabel
 import io.github.xsyetopz.jagfx.ui.widgets.JagMenu
 import io.github.xsyetopz.jagfx.ui.widgets.JagMenuItem
 import io.github.xsyetopz.jagfx.ui.widgets.JagText
@@ -33,6 +35,16 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagText
 /** The menu label that puts the voice strip on this side. */
 internal val PanelSide.label: UiString
     get() = if (this == PanelSide.Left) UiString.PanelOnLeft else UiString.PanelOnRight
+
+/** The menu label of this theme choice. */
+internal val ThemePreference.label: UiString
+    get() =
+        when (this) {
+            ThemePreference.System -> UiString.ThemeSystem
+            ThemePreference.Classic -> UiString.ThemeClassic
+            ThemePreference.Light -> UiString.ThemeLight
+            ThemePreference.HighContrast -> UiString.ThemeHighContrast
+        }
 
 /** The title bar: the file name, the file menu, Undo, and Redo. */
 @Composable
@@ -100,6 +112,28 @@ private fun FileMenu(
                             actions.dispatch(intent)
                         },
                         enabled = enabled,
+                    )
+                }
+                JagLabel(
+                    strings[UiString.MenuTheme],
+                    Modifier.padding(horizontal = JagFxTheme.dimens.spaceLg),
+                )
+                for (theme in ThemePreference.entries) {
+                    JagMenuItem(
+                        strings[theme.label],
+                        { actions.dispatch(ViewIntent.SetTheme(theme)) },
+                        active = state.theme == theme,
+                    )
+                }
+                JagLabel(
+                    strings[UiString.MenuTextSize],
+                    Modifier.padding(horizontal = JagFxTheme.dimens.spaceLg),
+                )
+                for (percent in EditorState.TEXT_SCALE_STEPS) {
+                    JagMenuItem(
+                        "$percent%",
+                        { actions.dispatch(ViewIntent.SetTextScale(percent)) },
+                        active = state.textScalePercent == percent,
                     )
                 }
             }
