@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.xsyetopz.jagfx.ui.EditorApp
 import io.github.xsyetopz.jagfx.ui.editor.AudioOutput
 import io.github.xsyetopz.jagfx.ui.editor.EditorViewModel
+import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
 import io.github.xsyetopz.jagfx.ui.platform.DesktopPatchFiles
 import java.io.File
 
@@ -26,12 +27,16 @@ internal val isMacOs: Boolean = System.getProperty("os.name").orEmpty().startsWi
  * button and the proxy icon show unsaved changes and the open file, as in other document apps;
  * elsewhere the title also carries the path and a `*` for unsaved changes.
  * Paths under [home] show `~`.
+ * A [hidden] window never takes focus and opens behind other windows, so a script can capture it
+ * while the user keeps working. [openPath] names a `.synth` file to open at start.
  */
 @Composable
 fun ApplicationScope.JagFxWindow(
     audio: AudioOutput,
     home: String?,
     icon: Painter?,
+    hidden: Boolean = false,
+    openPath: String? = null,
 ) {
     var title by remember { mutableStateOf("JagFx") }
     Window(
@@ -39,10 +44,15 @@ fun ApplicationScope.JagFxWindow(
         state = rememberWindowState(width = 1280.dp, height = 800.dp),
         title = title,
         icon = icon,
+        focusable = !hidden,
     ) {
         val files = remember { DesktopPatchFiles(owner = { window }) }
         val viewModel = viewModel { EditorViewModel(files, audio) }
         val state by viewModel.state.collectAsStateWithLifecycle()
+        LaunchedEffect(Unit) {
+            if (hidden) window.toBack()
+            openPath?.let { viewModel.dispatch(RequestIntent.OpenPath(it)) }
+        }
         EditorMenuBar(state, viewModel::dispatch)
         if (isMacOs) {
             val dirty = state.sample?.isDirty ?: state.isDirty

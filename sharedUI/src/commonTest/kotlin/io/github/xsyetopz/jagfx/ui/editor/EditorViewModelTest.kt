@@ -148,6 +148,36 @@ class EditorViewModelTest {
         }
 
     @Test
+    fun openPathLoadsThatFile() =
+        runTest(dispatcher) {
+            val patch = samplePatch()
+            files.stored["/sfx/bell.synth"] = SynthCodec.encode(patch)
+            val vm = viewModel()
+
+            vm.dispatch(RequestIntent.OpenPath("/sfx/bell.synth"))
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val state = vm.state.value
+            assertEquals(patch, state.patch)
+            assertEquals("bell", state.fileName)
+            assertEquals("/sfx/bell.synth", state.filePath)
+            vm.close()
+        }
+
+    @Test
+    fun openPathOfMissingFileReportsFailure() =
+        runTest(dispatcher) {
+            val vm = viewModel()
+
+            vm.dispatch(RequestIntent.OpenPath("/sfx/gone.synth"))
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val hint = assertIs<StatusHint.OpenFailed>(vm.state.value.statusHint)
+            assertEquals("gone", hint.name)
+            vm.close()
+        }
+
+    @Test
     fun cancelledOpenKeepsState() =
         runTest(dispatcher) {
             val vm = viewModel()

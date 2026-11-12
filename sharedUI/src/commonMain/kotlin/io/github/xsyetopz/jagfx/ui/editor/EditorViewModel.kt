@@ -57,6 +57,8 @@ internal class EditorViewModel(
         when (intent) {
             RequestIntent.Open -> launchFileTask { patchFiles.open() }
 
+            is RequestIntent.OpenPath -> launchFileTask { patchFiles.open(intent.path) }
+
             RequestIntent.Save -> launchFileTask { patchFiles.save(pick = false) }
 
             RequestIntent.SaveAs -> launchFileTask { patchFiles.save(pick = true) }

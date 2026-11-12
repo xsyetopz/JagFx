@@ -314,6 +314,11 @@ internal sealed interface ResultIntent : EditorIntent {
 internal sealed interface RequestIntent : EditorIntent {
     data object Open : RequestIntent
 
+    /** Opens the `.synth` file at [path] without a picker. */
+    data class OpenPath(
+        val path: String,
+    ) : RequestIntent
+
     data object Save : RequestIntent
 
     data object SaveAs : RequestIntent

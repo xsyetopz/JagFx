@@ -23,6 +23,17 @@ internal class PatchFileTasks(
         load(fileNameOf(file.name), file.path, file.bytes)
     }
 
+    suspend fun open(path: String) {
+        val bytes =
+            try {
+                files.read(path)
+            } catch (e: PatchFileException) {
+                dispatch(ResultIntent.LoadFailed(fileNameOf(path), e.message.orEmpty()))
+                return
+            }
+        load(fileNameOf(path), path, bytes)
+    }
+
     private fun load(
         name: String,
         path: String?,
