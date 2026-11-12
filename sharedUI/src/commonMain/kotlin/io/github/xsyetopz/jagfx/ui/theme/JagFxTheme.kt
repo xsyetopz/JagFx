@@ -3,6 +3,9 @@ package io.github.xsyetopz.jagfx.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -224,6 +227,24 @@ internal fun JagFxTheme(
     val colors = JagFxColors.of(appearance)
     val typography = remember(textScale) { JagFxTypography().scaled(textScale) }
     val dimens = remember(textScale) { JagFxDimens().scaled(textScale) }
+    MaterialTheme(colorScheme = jagFxColorScheme(appearance)) {
+        CompositionLocalProvider(
+            LocalRippleConfiguration provides
+                RippleConfiguration(color = colors.accent),
+        ) {
+            JagFxProviders(colors, appearance, typography, dimens, content)
+        }
+    }
+}
+
+@Composable
+private fun JagFxProviders(
+    colors: JagFxColors,
+    appearance: JagFxAppearance,
+    typography: JagFxTypography,
+    dimens: JagFxDimens,
+    content: @Composable () -> Unit,
+) {
     CompositionLocalProvider(
         LocalColors provides colors,
         LocalPalette provides SynthPalette.of(appearance),
