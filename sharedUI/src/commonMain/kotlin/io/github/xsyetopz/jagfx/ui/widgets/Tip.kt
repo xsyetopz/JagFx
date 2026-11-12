@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TooltipState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,22 +68,48 @@ internal fun Tip(
             if (!wanted) escaped = false
         }
     }
+    // TooltipBox applies its modifier below its own root, so a weight in [modifier] would never
+    // reach the parent Row; this Box carries it and hands the size it gets down to the anchor.
+    Box(modifier, propagateMinConstraints = true) {
+        Anchor(
+            text,
+            state,
+            anchorSource,
+            tooltipSource,
+            { escaped = true },
+            { focused = it },
+            content,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Anchor(
+    text: String,
+    state: TooltipState,
+    anchorSource: MutableInteractionSource,
+    tooltipSource: MutableInteractionSource,
+    onEscape: () -> Unit,
+    onFocus: (Boolean) -> Unit,
+    content: @Composable () -> Unit,
+) {
     TooltipBox(
         positionProvider =
             TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
         tooltip = { PlainTooltip(Modifier.hoverable(tooltipSource)) { Text(text) } },
         state = state,
         modifier =
-            modifier
+            Modifier
                 .onPreviewKeyEvent {
                     val close =
                         state.isVisible && it.key == Key.Escape && it.type == KeyEventType.KeyDown
                     if (close) {
-                        escaped = true
+                        onEscape()
                         state.dismiss()
                     }
                     close
-                }.onFocusChanged { focused = it.hasFocus }
+                }.onFocusChanged { onFocus(it.hasFocus) }
                 .hoverable(anchorSource),
         enableUserInput = false,
         content = content,

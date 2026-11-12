@@ -8,6 +8,7 @@ import io.github.xsyetopz.jagfx.core.format.SynthCodec
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.RackMode
 import io.github.xsyetopz.jagfx.ui.editor.ResultIntent
+import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
 import io.github.xsyetopz.jagfx.ui.editor.ViewIntent
 import io.github.xsyetopz.jagfx.ui.editor.reduce
@@ -18,9 +19,9 @@ import java.io.File
 import kotlin.test.Test
 
 /**
- * Renders editor offscreen to PNG files for README, in Main and Both modes at 1280x800
- * and 1920x1080. Runs only when `JAGFX_SCREENSHOT_DIR` names output folder, so normal
- * test run writes nothing.
+ * Renders editor offscreen to PNG files for README, in Main and Both modes at 960x600,
+ * 1280x800 and 1920x1080, each with and without Pitch cell enlarged. Runs only when
+ * `JAGFX_SCREENSHOT_DIR` names output folder, so normal test run writes nothing.
  */
 class ScreenshotTest {
     @Test
@@ -36,17 +37,24 @@ class ScreenshotTest {
                 SlotIntent.SelectVoice(voice),
                 ResultIntent.PreviewRendered(Renderer.render(patch)),
             ).fold(EditorState(), ::reduce)
+        val views =
+            listOf(
+                "" to ScreenViewState(),
+                "-open" to ScreenViewState(openCell = SignalChainSlot.Pitch),
+            )
         for (mode in listOf(RackMode.Main, RackMode.Both)) {
             val state = reduce(loaded, ViewIntent.SetMode(mode))
             for ((width, height) in Sizes) {
-                val name = "editor-${mode.name.lowercase()}-${width}x$height.png"
-                ImageComposeScene(width, height, Density(1f)) {
-                    JagFxTheme(JagFxAppearance.Classic) {
-                        EditorContent(state, ScreenViewState(), EditorActions({}) {})
+                for ((suffix, view) in views) {
+                    val name = "editor-${mode.name.lowercase()}$suffix-${width}x$height.png"
+                    ImageComposeScene(width, height, Density(1f)) {
+                        JagFxTheme(JagFxAppearance.Classic) {
+                            EditorContent(state, view, EditorActions({}) {})
+                        }
+                    }.use { scene ->
+                        val png = scene.render().encodeToData(EncodedImageFormat.PNG)!!.bytes
+                        File(outDir, name).writeBytes(png)
                     }
-                }.use { scene ->
-                    val png = scene.render().encodeToData(EncodedImageFormat.PNG)!!.bytes
-                    File(outDir, name).writeBytes(png)
                 }
             }
         }
@@ -54,6 +62,6 @@ class ScreenshotTest {
 
     private companion object {
         const val REFERENCE_SYNTH = "../references/synths/cow_death.synth"
-        val Sizes = listOf(1280 to 800, 1920 to 1080)
+        val Sizes = listOf(960 to 600, 1280 to 800, 1920 to 1080)
     }
 }

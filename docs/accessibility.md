@@ -39,7 +39,7 @@ The project has not been audited by a third party. This statement records the ma
 ## Testing
 
 - Unit tests cover contrast ratios, key handling, plot summaries, and status messages (`./gradlew :sharedUI:jvmTest`).
-- Screenshots at 1280 by 800 and 1920 by 1080 in Main and Both modes check that nothing clips (`JAGFX_SCREENSHOT_DIR=<dir> ./gradlew :sharedUI:jvmTest --tests '*ScreenshotTest'`).
+- Screenshots at 960 by 600, 1280 by 800, and 1920 by 1080, in the Envelopes and All views, each with and without an enlarged cell, check that nothing clips (`JAGFX_SCREENSHOT_DIR=<dir> ./gradlew :sharedUI:jvmTest --tests '*ScreenshotTest'`).
 - A manual pass with VoiceOver on macOS and NVDA on Windows has not been recorded yet.
 
 ## Contact
