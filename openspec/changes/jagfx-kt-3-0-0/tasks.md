@@ -8,15 +8,15 @@
 
 ## 2. Layout
 
-- [ ] 2.1 Rebuild `Rack.kt` as the 3 by 3 grid with a module strip after each Base cell, and the filter column and filter strip for Filter and Both modes
-- [ ] 2.2 Build the Freq and Amp module strips (waveform, Min, Max, Av with units) and the gate strip (Off, On, Min Gap, Max Gap, Av Gap)
-- [ ] 2.3 Build the left voice strip: oscillator, Len, Pos, L1, L2, Play, Play All, Loop, Loop All, Loops, Stop, Load, Save, and True Wave wired to `ViewIntent.SetTrueWave`
-- [ ] 2.4 Build the bottom bar: Tones 1 to 10 with timeline bars, Copy, Reset Active, five harmonic boxes, Reverb, and the Mode switch
-- [ ] 2.5 Build the filter strip: Off and On, Import Filter, Export Filter, pole counts, unity gains, selected pole Hz and dB, and Snap
-- [ ] 2.6 Slim `Toolbar.kt` to the title bar: file name, file menu, Undo, Redo
-- [ ] 2.7 Remove `Inspector.kt` and the panel toggle; move its remaining fields into the strips and the controls panel
+- [x] 2.1 Rebuild `Rack.kt` as the 3 by 3 grid with a module strip after each Base cell, and the filter column and filter strip for Filter and Both modes
+- [x] 2.2 Build the Freq and Amp module strips (waveform, Min, Max, Av with units) and the gate strip (Off, On, Min Gap, Max Gap, Av Gap)
+- [x] 2.3 Build the left voice strip: oscillator, Len, Pos, L1, L2, Play, Play All, Loop, Loop All, Loops, Stop, Load, Save, and True Wave wired to `ViewIntent.SetTrueWave`
+- [x] 2.4 Build the bottom bar: Tones 1 to 10 with timeline bars, Copy, Reset Active, five harmonic boxes, Reverb, and the Mode switch
+- [x] 2.5 Build the filter strip: Off and On, Import Filter, Export Filter, pole counts, unity gains, selected pole Hz and dB, and Snap
+- [x] 2.6 Slim `Toolbar.kt` to the title bar: file name, file menu, Undo, Redo
+- [x] 2.7 Remove `Inspector.kt` and the panel toggle; move its remaining fields into the strips and the controls panel
 - [x] 2.8 Delete `widgets/Knob.kt`
-- [ ] 2.9 Run `./gradlew :sharedUI:jvmTest`
+- [x] 2.9 Run `./gradlew :sharedUI:jvmTest`
 
 ## 3. Cells
 
@@ -43,7 +43,7 @@
 - [ ] 5.4 Set the Tab order and wire Alt and arrow keys to `SlotIntent.SelectTargetByOffset`
 - [ ] 5.5 Add Play All, Loop All, and Mode shortcuts to `EditorMenuBar.kt`
 - [x] 5.6 Add `PanelSide`, `EditorState.panelSide`, and `ViewIntent.SetPanelSide`; place the properties panel by it; add the file menu item and the desktop View menu; test in `EditorReducerTest`
-- [ ] 5.7 After task 2.7, place the voice strip by `panelSide` instead of the properties panel
+- [x] 5.7 After task 2.7, place the voice strip by `panelSide` instead of the properties panel
 - [x] 5.8 Add a `Preferences` service to `EditorServices.kt` with desktop and web implementations, and keep the panel side, text size, and theme across restarts
 - [ ] 5.9 Read the platform's high-contrast, text scale, and reduced-motion settings where exposed; add the in-app text size (100% to 200%) and the high-contrast theme
 - [ ] 5.10 Give plot lines, markers, borders, and focus rings at least 3:1 contrast, and add a text summary to each plot
