@@ -53,7 +53,7 @@ internal fun EmptyModulePrompt(
 ) {
     val strings = LocalStrings.current
     PromptBox(modifier.fillMaxSize()) {
-        JagText(strings[key], textAlign = TextAlign.Center)
+        JagText(strings[key], textAlign = TextAlign.Center, wrap = true)
         WaveformSelector(
             Waveform.Off,
             { actions.dispatch(EnvelopeIntent.SetWaveform(pairFirst, it)) },
@@ -70,7 +70,7 @@ internal fun FilterOffPrompt(
 ) {
     val strings = LocalStrings.current
     PromptBox(modifier.fillMaxSize()) {
-        JagText(strings[UiString.EmptyFilter], textAlign = TextAlign.Center)
+        JagText(strings[UiString.EmptyFilter], textAlign = TextAlign.Center, wrap = true)
         JagButton(strings[UiString.OnLabel], { actions.dispatch(FilterIntent.SetEnabled(true)) })
     }
 }
@@ -106,7 +106,7 @@ internal fun ToneOffOverlay(
                     strings.format(UiString.ToneOffTitle, state.selectedVoice + 1),
                     style = JagFxTheme.typography.heading,
                 )
-                JagText(strings[UiString.ToneOffHint], textAlign = TextAlign.Center)
+                JagText(strings[UiString.ToneOffHint], textAlign = TextAlign.Center, wrap = true)
                 JagButton(
                     strings[UiString.TurnOn],
                     { actions.dispatch(SlotIntent.SetVoiceEnabled(state.selectedVoice, true)) },
@@ -128,7 +128,7 @@ internal fun NoFileScreen(
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             PromptBox {
                 JagText(strings[UiString.NoFileTitle], style = JagFxTheme.typography.heading)
-                JagText(strings[UiString.NoFileHint], textAlign = TextAlign.Center)
+                JagText(strings[UiString.NoFileHint], textAlign = TextAlign.Center, wrap = true)
                 Column(
                     verticalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceMd),
                     horizontalAlignment = Alignment.CenterHorizontally,

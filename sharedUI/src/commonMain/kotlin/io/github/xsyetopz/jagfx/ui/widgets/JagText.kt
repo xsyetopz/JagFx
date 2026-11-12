@@ -10,7 +10,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import io.github.xsyetopz.jagfx.ui.theme.LocalContentColor
 
-/** One line of [text] in [style], in the content color unless [color] is given. */
+/**
+ * [text] in [style], in the content color unless [color] is given: one line cut with an ellipsis,
+ * or wrapped over as many lines as it needs when [wrap] is set.
+ */
 @Composable
 internal fun JagText(
     text: String,
@@ -18,6 +21,7 @@ internal fun JagText(
     color: Color = Color.Unspecified,
     style: TextStyle = JagFxTheme.typography.body,
     textAlign: TextAlign = TextAlign.Unspecified,
+    wrap: Boolean = false,
 ) {
     val resolved = if (color != Color.Unspecified) color else LocalContentColor.current
     BasicText(
@@ -25,8 +29,8 @@ internal fun JagText(
         modifier = modifier,
         style = style.merge(color = resolved, textAlign = textAlign),
         overflow = TextOverflow.Ellipsis,
-        maxLines = 1,
-        softWrap = false,
+        maxLines = if (wrap) Int.MAX_VALUE else 1,
+        softWrap = wrap,
     )
 }
 

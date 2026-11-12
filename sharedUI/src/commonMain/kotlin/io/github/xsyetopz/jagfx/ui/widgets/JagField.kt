@@ -172,11 +172,11 @@ private fun JagTextField(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         decorationBox = { inner ->
             Row(
-                modifier = Modifier.fillMaxHeight().padding(horizontal = dimens.spaceMd),
+                modifier = Modifier.padding(horizontal = dimens.spaceMd),
                 horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(Modifier.weight(1f)) { inner() }
+                Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) { inner() }
                 if (unit.isNotEmpty()) {
                     JagText(unit, color = colors.textDim, style = JagFxTheme.typography.label)
                 }

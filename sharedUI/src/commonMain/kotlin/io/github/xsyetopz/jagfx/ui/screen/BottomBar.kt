@@ -3,13 +3,13 @@ package io.github.xsyetopz.jagfx.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.RackMode
 import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
@@ -21,11 +21,9 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagLabel
 import io.github.xsyetopz.jagfx.ui.widgets.JagText
 import io.github.xsyetopz.jagfx.ui.widgets.JagToggleGroup
 
-private val HarmonicBoxWidth = 120.dp
-
 /**
- * The bottom bar: the Tones with Copy and Reset Active, the five harmonic boxes, the Reverb box,
- * and the Mode switch.
+ * The bottom bar: the Tones with Copy, Reset Active, and the Mode switch under them, then the five
+ * harmonic boxes and the Reverb box sharing the rest of the width.
  */
 @Composable
 internal fun BottomBar(
@@ -40,7 +38,13 @@ internal fun BottomBar(
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceXl),
         verticalAlignment = Alignment.Top,
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(dimens.spaceMd)) {
+        // The buttons and the Mode switch fill their rows, so the column takes the width of the
+        // tone chips. The Mode switch sits here, in the room the taller boxes leave, so the boxes
+        // get the width their fields need at 1280 dp.
+        Column(
+            Modifier.width(IntrinsicSize.Max),
+            verticalArrangement = Arrangement.spacedBy(dimens.spaceMd),
+        ) {
             JagLabel(strings[UiString.TonesLabel])
             VoiceChips(state, actions)
             StripButtons(
@@ -53,12 +57,12 @@ internal fun BottomBar(
                     actions.dispatch(SlotIntent.ResetVoice)
                 },
             )
+            ModeSwitch(state, actions)
         }
         for (row in partialRows(state.voice)) {
-            HarmonicBox(row, actions, Modifier.width(HarmonicBoxWidth))
+            HarmonicBox(row, actions, Modifier.weight(1f))
         }
-        ReverbBox(state, actions, Modifier.width(HarmonicBoxWidth))
-        ModeSwitch(state, actions)
+        ReverbBox(state, actions, Modifier.weight(1f))
     }
 }
 
