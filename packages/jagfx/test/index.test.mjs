@@ -152,7 +152,9 @@ describe("in-process conversions", () => {
 		try {
 			const patch = await synthToJson(cowDeathPath, { outputPath: jsonPath });
 			expect(patch).toEqual(JSON.parse(reference));
-			expect(await readFile(jsonPath, "utf8")).toBe(reference);
+			expect(JSON.parse(await readFile(jsonPath, "utf8"))).toEqual(
+				JSON.parse(reference),
+			);
 		} finally {
 			await rm(dir, { recursive: true, force: true });
 		}

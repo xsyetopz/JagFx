@@ -9,6 +9,7 @@ import io.github.xsyetopz.jagfx.core.model.Patch
 import io.github.xsyetopz.jagfx.core.model.Percent
 import io.github.xsyetopz.jagfx.core.model.Segment
 import io.github.xsyetopz.jagfx.core.model.Waveform
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -21,7 +22,11 @@ class SynthJsonTest {
         assertEquals(ReferenceSynths.hex.keys, ReferenceJson.hex.keys)
         for (name in ReferenceSynths.hex.keys) {
             val patch = SynthCodec.decode(referenceSynth(name)).patch
-            assertEquals(referenceJson(name).removeSuffix("\n"), SynthJson.encode(patch), name)
+            assertEquals(
+                Json.parseToJsonElement(referenceJson(name)),
+                Json.parseToJsonElement(SynthJson.encode(patch)),
+                name,
+            )
         }
     }
 

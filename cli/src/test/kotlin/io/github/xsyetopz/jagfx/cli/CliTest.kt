@@ -2,6 +2,7 @@ package io.github.xsyetopz.jagfx.cli
 
 import com.github.ajalt.clikt.testing.CliktCommandTestResult
 import com.github.ajalt.clikt.testing.test
+import io.github.xsyetopz.jagfx.core.format.SynthJson
 import io.github.xsyetopz.jagfx.core.vorbis.JagVorbisCodec
 import java.io.File
 import java.nio.ByteBuffer
@@ -33,13 +34,17 @@ class CliTest {
     private fun referenceJson(synth: File): File =
         references.resolve("json/${synth.nameWithoutExtension}.json")
 
+    // The reference files follow the repo's formatter, so compare against the CLI's own layout of their content.
+    private fun expectedJson(synth: File): String =
+        SynthJson.encode(SynthJson.decode(referenceJson(synth).readText()))
+
     @Test
     fun toJsonPrintsTheReferenceJson() {
         assertEquals(REFERENCE_SYNTHS, synths.size)
         for (synth in synths) {
             val result = run("to-json", synth.path)
             assertEquals(0, result.statusCode, synth.name)
-            assertEquals(referenceJson(synth).readText(), result.stdout, synth.name)
+            assertEquals(expectedJson(synth) + "\n", result.stdout, synth.name)
         }
     }
 
@@ -49,7 +54,7 @@ class CliTest {
         val out = temp.resolve("out.json")
         val result = run("to-json", synth.path, out.path)
         assertEquals("Wrote ${out.path}\n", result.stdout)
-        assertEquals(referenceJson(synth).readText().removeSuffix("\n"), out.readText())
+        assertEquals(expectedJson(synth), out.readText())
     }
 
     @Test
