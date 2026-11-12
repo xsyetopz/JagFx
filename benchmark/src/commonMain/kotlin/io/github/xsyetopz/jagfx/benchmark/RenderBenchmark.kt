@@ -14,7 +14,7 @@ import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
 import kotlinx.benchmark.Warmup
 
-/** Render throughput over every reference synth (plan: DSP performance). */
+/** Render throughput over every reference synth. */
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(BenchmarkTimeUnit.SECONDS)

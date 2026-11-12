@@ -9,26 +9,20 @@ class JagVorbisTest {
     @Test
     fun decodeThenEncodeGivesTheSameBytes() {
         for ((name, hex) in ReferenceSamples.hex) {
-            // Arrange
             val bytes = hexToBytes(hex)
 
-            // Act
             val encoded = JagVorbisCodec.encode(JagVorbisCodec.decode(bytes))
 
-            // Assert
             assertContentEquals(bytes, encoded, name)
         }
     }
 
     @Test
     fun decodeReadsTheHeader() {
-        // Arrange
         val bytes = sample("12015")
 
-        // Act
         val sample = JagVorbisCodec.decode(bytes)
 
-        // Assert
         assertEquals(44_100, sample.sampleRate)
         assertEquals(17_664, sample.sampleCount)
         assertEquals(0, sample.loopBegin)
@@ -40,41 +34,32 @@ class JagVorbisTest {
 
     @Test
     fun pingPongLoopEndIsStoredInverted() {
-        // Arrange
         val sample =
             JagVorbisCodec
                 .decode(
                     sample("12015"),
                 ).copy(loopBegin = 100, loopEnd = 900, pingPong = true)
 
-        // Act
         val decoded = JagVorbisCodec.decode(JagVorbisCodec.encode(sample))
 
-        // Assert
         assertEquals(sample, decoded)
     }
 
     @Test
     fun decodeRejectsTrailingBytes() {
-        // Arrange
         val bytes = sample("12015") + byteArrayOf(0)
 
-        // Act
         val error = assertFailsWith<JagVorbisFormatException> { JagVorbisCodec.decode(bytes) }
 
-        // Assert
         assertEquals(bytes.size - 1, error.offset)
     }
 
     @Test
     fun decodeRejectsTruncatedFiles() {
-        // Arrange
         val bytes = sample("12015").copyOf(10_000)
 
-        // Act
         val error = assertFailsWith<JagVorbisFormatException> { JagVorbisCodec.decode(bytes) }
 
-        // Assert
         assertEquals(true, error.offset <= 10_000)
     }
 
@@ -83,13 +68,10 @@ class JagVorbisTest {
     fun decodePcmMatchesTheGameClient() {
         val expected = mapOf("11102" to 0x20f98fc5303c7cabUL, "12015" to 0xea1064f064dc8d7bUL)
         for ((name, hash) in expected) {
-            // Arrange
             val sample = JagVorbisCodec.decode(sample(name))
 
-            // Act
             val pcm = sample.decodePcm()
 
-            // Assert
             assertEquals(sample.sampleCount, pcm.size, name)
             assertEquals(hash, fnv1a(pcm), name)
         }
@@ -97,14 +79,11 @@ class JagVorbisTest {
 
     @Test
     fun decodePcmStopsAtTheSampleCount() {
-        // Arrange
         val full = JagVorbisCodec.decode(sample("12015"))
         val trimmed = full.copy(sampleCount = 1000)
 
-        // Act
         val pcm = trimmed.decodePcm()
 
-        // Assert
         assertContentEquals(full.decodePcm().copyOf(1000), pcm)
     }
 

@@ -50,7 +50,7 @@ internal fun Filter.coefficient(ref: PoleRef): Coefficient {
 
 /**
  * Geometry of the pole-zero map, in density-independent units.
- * x is the phase on the C1–C9 frequency axis, stretched by the zoom level and shifted left by the
+ * x is the phase on the C1 to C9 frequency axis, stretched by the zoom level and shifted left by the
  * scroll offset; y is the resonance, 0 dB at the bottom.
  */
 internal object PoleZeroGeometry {
@@ -178,7 +178,7 @@ internal class PoleCallbacks(
 )
 
 /**
- * Pole-zero map of [filter] over frequency (C1–C9) and resonance (0–100 dB): unity-gain rails,
+ * Pole-zero map of [filter] over frequency (C1 to C9) and resonance (0 to 100 dB): unity-gain rails,
  * a line from the start to the end of each coefficient pair, zeros as circles, and poles as
  * crosses.
  * The scroll offset of [panZoom] is in pixels; the wheel zooms, and dragging empty space pans when

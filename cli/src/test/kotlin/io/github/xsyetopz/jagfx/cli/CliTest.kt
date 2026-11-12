@@ -97,15 +97,12 @@ class CliTest {
 
     @Test
     fun convertWritesASampleAtItsSampleRate() {
-        // Arrange
         val sample = references.resolve("vorbis/12015.jagvorbis")
         val out = temp.resolve("12015.wav")
         val pcm = JagVorbisCodec.decode(sample.readBytes()).decodePcm()
 
-        // Act
         val result = run(sample.path, out.path)
 
-        // Assert
         assertEquals(0, result.statusCode, result.stderr)
         val wav = ByteBuffer.wrap(out.readBytes()).order(ByteOrder.LITTLE_ENDIAN)
         assertEquals(44_100, wav.getInt(SAMPLE_RATE_OFFSET))
@@ -116,26 +113,20 @@ class CliTest {
 
     @Test
     fun convertRejectsALoopCountForASample() {
-        // Arrange
         val sample = references.resolve("vorbis/12015.jagvorbis")
 
-        // Act
         val result = run(sample.path, temp.resolve("a.wav").path, "2")
 
-        // Assert
         assertEquals(1, result.statusCode)
         assertEquals("Error: Loop count applies to .synth input only\n", result.stderr)
     }
 
     @Test
     fun inspectPrintsTheSampleHeader() {
-        // Arrange
         val sample = references.resolve("vorbis/12015.jagvorbis")
 
-        // Act
         val result = run("inspect", sample.path)
 
-        // Assert
         assertEquals(
             "; File: ${sample.path}\n; Size: 10760 bytes\n\n" +
                 "; Sample rate: 44100 Hz\n; Samples: 17664 (0.401 s)\n" +
@@ -147,13 +138,10 @@ class CliTest {
 
     @Test
     fun inspectReportsASampleError() {
-        // Arrange
         val bad = temp.resolve("bad.jagvorbis").apply { writeBytes(ByteArray(3)) }
 
-        // Act
         val result = run("inspect", bad.path)
 
-        // Assert
         assertEquals(1, result.statusCode)
         assertEquals(
             "; ERROR at 0x0000: file ends 1 bytes early (at byte offset 0)",
