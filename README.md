@@ -2,9 +2,7 @@
 
 ![Cow Death](assets/relic_unlock_spinning_hover.png)
 
-JagFx edits Jagex Audio Synthesis (`.synth`) files, the sound-effect format used by OldSchool RuneScape. It opens, edits, images, and exports OSRS synth patches.
-
----
+JagFx is an editor for Jagex Audio Synthesis (`.synth`) files, the sound-effect format of Old School RuneScape (OSRS). It plays patches and exports them to WAV and JSON.
 
 ## Features
 
@@ -18,8 +16,6 @@ JagFx edits Jagex Audio Synthesis (`.synth`) files, the sound-effect format used
 | Export | Saves `.synth`, exports `.wav`, and converts `.synth` to JSON. |
 | JSON | Uses a schema-backed JSON format for patch generation, inspection, and diffs. |
 
----
-
 ## Getting Started
 
 Requires JDK 21 and Bun.
@@ -29,8 +25,6 @@ git clone https://github.com/xsyetopz/JagFx.git && cd JagFx
 bun install           # installs the husky + commitlint commit-msg hook
 ./gradlew check       # tests, spotless, and detekt
 ```
-
----
 
 ## Project Structure
 
@@ -55,8 +49,6 @@ flowchart TD
     Format --> Model
 ```
 
----
-
 ## Desktop GUI
 
 ```bash
@@ -67,12 +59,12 @@ flowchart TD
 
 The editor follows the layout of the original JagFx tool:
 
-- **Title bar**: the file name, the File menu (Open, New, Save As, Import and Export tone, theme, text size, panel side), Undo, and Redo.
-- **Rack**: three rows (Freq, Amp, Output) across Base, Modulation rate, and Modulation range. A strip beside each Base cell holds the module's waveform, Min, Max, and average, or the gate's Off/On and gaps.
-- **Cell headers**: `1x 2x 4x` zoom presets, `S` fits the view, `M…` links the cell's time view to the other cells or gives it its own, and `▼` opens the cell's controls panel with the exact point table.
-- **Voice strip**: the oscillator, Len, Pos, L1, L2, Play, Play All, Loop, Loop All, Loops, Stop, Load, Save, and True Wave. The File menu moves it to the left or right edge.
-- **Bottom bar**: Tones 1 to 10 with Copy and Reset Active, the Mode switch, five harmonic boxes (Semi, Vol, Del), and Reverb.
-- **Mode switch**: Main shows the rack, Filter shows the filter column (Graph of poles and zeros, Transition Curve, Frequency Response), and Both shows the two side by side.
+- Title bar: the file name, the File menu (Open, New, Save As, Import and Export tone, theme, text size, panel side), Undo, and Redo.
+- Rack: three rows (Freq, Amp, Output) across Base, Modulation rate, and Modulation range. A strip beside each Base cell holds the module's waveform, Min, Max, and average, or the gate's Off/On and gaps.
+- Cell headers: `1x 2x 4x` zoom presets, `S` fits the view, `M…` links the cell's time view to the other cells or gives it its own, and `▼` opens the cell's controls panel with the exact point table.
+- Voice strip: the oscillator, Len, Pos, L1, L2, Play, Play All, Loop, Loop All, Loops, Stop, Load, Save, and True Wave. The File menu moves it to the left or right edge.
+- Bottom bar: Tones 1 to 10 with Copy and Reset Active, the Mode switch, five harmonic boxes (Semi, Vol, Del), and Reverb.
+- Mode switch: Main shows the rack, Filter shows the filter column (Graph of poles and zeros, Transition Curve, Frequency Response), and Both shows the two side by side.
 
 ![The editor in Both mode at 1920 by 1080](docs/images/editor-both-1920x1080.png)
 
@@ -112,8 +104,6 @@ See [`docs/accessibility.md`](docs/accessibility.md) for the accessibility state
 
 The same UI runs in the browser (`./gradlew :webApp:wasmJsBrowserDevelopmentRun`).
 
----
-
 ## CLI
 
 ```bash
@@ -137,8 +127,6 @@ Without installing: `./gradlew :cli:run --args='inspect input.synth'`.
 
 See `docs/synth-format-spec.md` for the binary format, `schemas/synth.schema.json` for the JSON schema, and `references/json/` for JSON generated from the reference `.synth` files.
 
----
-
 ## Building for Distribution
 
 | Target | Output |
@@ -151,25 +139,17 @@ jpackage builds only for the host OS and architecture. The desktop installers bu
 
 For host-specific release steps on macOS, Windows, or Linux, see [PUBLISHING.md](PUBLISHING.md).
 
----
-
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow, coding guidelines, and pull request checklist.
-
----
 
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/chart?repos=xsyetopz/JagFx&type=date&legend=top-left)](https://www.star-history.com/?repos=xsyetopz%2FJagFx&type=date&legend=top-left)
 
----
-
 ## License
 
 [MIT](LICENSE)
-
----
 
 ## Acknowledgments
 

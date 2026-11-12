@@ -11,16 +11,16 @@ The project has not been audited by a third party. This statement records the ma
 
 ## What The Editor Does
 
-- **Contrast**: text reaches at least 4.5:1, and plot lines, point markers, control borders, and focus rings reach at least 3:1 in the Classic, Light, and High Contrast themes. `ContrastTest` checks each pair.
-- **Text size**: body text is 12 sp, labels 11 sp, and headings 14 sp. The File menu sets the text size from 100% to 200%.
-- **Targets**: every pointer target is at least 24 by 24 dp.
-- **Focus**: every focusable control shows a 2 dp focus ring. Tab moves through the title bar, the voice strip, the rack row by row, and the bottom bar.
-- **Keyboard**: every pointer action has a key path. Alt and the arrows move between cells, the arrows select and move envelope points, Insert and Delete add and remove points, and Ctrl or Cmd with `+` and `-` zooms. The [README](../README.md#keyboard) lists every shortcut.
-- **Screen readers**: controls expose a name, a role, a value, and a state through the platform accessibility API. Each plot has a text summary, and status messages are announced.
-- **Color**: active toggles also change their mark, and the selected cell has a border, so color never carries meaning alone.
-- **Platform settings**: the editor follows the Windows high-contrast setting on desktop, and `prefers-contrast`, `forced-colors`, and `prefers-reduced-motion` in the browser. The editor has no animated transitions.
-- **Tooltips**: tooltips also show on keyboard focus, and Escape closes them.
-- **Either hand**: the File menu puts the voice strip on the left or the right edge.
+- Contrast: text reaches at least 4.5:1, and plot lines, point markers, control borders, and focus rings reach at least 3:1 in the Classic, Light, and High Contrast themes. `ContrastTest` checks each pair.
+- Text size: body text is 12 sp, labels 11 sp, and headings 14 sp. The File menu sets the text size from 100% to 200%.
+- Targets: every pointer target is at least 24 by 24 dp.
+- Focus: every focusable control shows a 2 dp focus ring. Tab moves through the title bar, the voice strip, the rack row by row, and the bottom bar.
+- Keyboard: every pointer action has a key path. Alt and the arrows move between cells, the arrows select and move envelope points, Insert and Delete add and remove points, and Ctrl or Cmd with `+` and `-` zooms. The [README](../README.md#keyboard) lists every shortcut.
+- Screen readers: controls expose a name, a role, a value, and a state through the platform accessibility API. Each plot has a text summary, and status messages are announced.
+- Color: active toggles also change their mark, and the selected cell has a border, so color never carries meaning alone.
+- Platform settings: the editor follows the Windows high-contrast setting on desktop, and `prefers-contrast`, `forced-colors`, and `prefers-reduced-motion` in the browser. The editor has no animated transitions.
+- Tooltips: tooltips also show on keyboard focus, and Escape closes them.
+- Either hand: the File menu puts the voice strip on the left or the right edge.
 
 ## Known Gaps
 

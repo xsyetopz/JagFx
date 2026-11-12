@@ -1,7 +1,5 @@
 # Contributing
 
-This guide defines the contribution workflow and review expectations.
-
 ## Before Starting
 
 - Check open issues before starting work.
@@ -14,7 +12,7 @@ This guide defines the contribution workflow and review expectations.
 4. Create a topic branch: `git checkout -b feat/<short-description>`.
 5. Make focused changes.
 6. Run `./gradlew spotlessApply check`. For JS package changes, also run `./gradlew :bindings:syncNpmPackages`, `bun run build:js`, `bun run typecheck`, and `bun run test:js`.
-7. Commit using [Conventional Commits](#commit-style). The commit-msg hook validates automatically.
+7. Commit using [Conventional Commits](#commit-style). The commit-msg hook checks the message.
 8. Push and open a pull request that describes behaviour changes and test coverage.
 
 ## Coding Guidelines

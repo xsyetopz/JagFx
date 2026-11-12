@@ -190,10 +190,10 @@ In `Filter`, `d` is the direction, `φ` is the filter phase, and `p` is the pole
 
 A patch is valid if each of these invariants is true.
 
-1. **I1.** For each voice, `FrequencyEnvelope.Waveform ≠ Off`.
-1. **I2.** For each pair, `first.Waveform ≠ Off`.
-1. **I3.** For each filter, `PoleCount[0] + PoleCount[1] ≥ 1`.
-1. **I4.** For each filter, `ModulationEnvelope` is present if and only if `Mask(F) ≠ 0` or `UnityGain0 ≠ UnityGain1`.
+1. I1: For each voice, `FrequencyEnvelope.Waveform ≠ Off`.
+1. I2: For each pair, `first.Waveform ≠ Off`.
+1. I3: For each filter, `PoleCount[0] + PoleCount[1] ≥ 1`.
+1. I4: For each filter, `ModulationEnvelope` is present if and only if `Mask(F) ≠ 0` or `UnityGain0 ≠ UnityGain1`.
 This definition applies to I4:
 
 ```text
@@ -683,11 +683,11 @@ The update uses the values that earlier iterations wrote. Thus the echo is recur
 
 The filter applies if `V.Filter` is present and `PoleCount[0] + PoleCount[1] ≥ 1`. Let `P0 = PoleCount[0]`, `P1 = PoleCount[1]`, `Kf = 2 × P0`, and `Kb = 2 × P1`. If `L < Kf + Kb`, the filter does not apply.
 
-**Modulation value.** The filter uses a new generator for `ModulationEnvelope`. For sample `n`, `v_n` is the value of call number `n` (from `0`) of `eval(L)`. If the envelope is absent, `v_n = 65536`. Let `x_n = fl32(f32(v_n) / 65536)`.
+Modulation value: the filter uses a new generator for `ModulationEnvelope`. For sample `n`, `v_n` is the value of call number `n` (from `0`) of `eval(L)`. If the envelope is absent, `v_n = 65536`. Let `x_n = fl32(f32(v_n) / 65536)`.
 
-**Interpolation.** `lerp(a, b, x) = fl32(f32(a) + x × (f32(b) - f32(a)))`.
+Interpolation: `lerp(a, b, x) = fl32(f32(a) + x × (f32(b) - f32(a)))`.
 
-**Pole values.** For direction `d`, pole `p`, and modulation value `x`:
+Pole values: for direction `d`, pole `p`, and modulation value `x`:
 
 ```text
 M     = lerp(Magnitude[d][0][p], Magnitude[d][1][p], x)
@@ -700,14 +700,14 @@ t2    = fl32(r × r)
 
 The constants `0.0015258789` and `1.2207031e-4` are `f32` values. The other constants are `f64` values. `ln(10)` is the `f64` result of the natural logarithm of `10`.
 
-**Gain.**
+Gain:
 
 ```text
 G        = lerp(UnityGain0, UnityGain1, x)
 invA0Q16 = toI32(fl32(f32(pow(0.1, f64(fl32(G × 0.0030517578)) / 20)) × 65536))
 ```
 
-**Polynomial.** For direction `d` with `P = P(d) ≥ 1`, compute `f32` values `c[0..2P)`:
+Polynomial: for direction `d` with `P = P(d) ≥ 1`, compute `f32` values `c[0..2P)`:
 
 ```text
 c[0] = t1(pole 0)
@@ -722,7 +722,7 @@ for s from 1 to P - 1, with t1 and t2 of pole s:
 
 All operations in the polynomial are `f32` operations.
 
-**Fixed-point coefficients.**
+Fixed-point coefficients:
 
 ```text
 ff[k] = toI32(fl32(c_0[k] × fl32(f32(invA0Q16) / 65536) × 65536))   for k in 0..Kf-1
@@ -731,7 +731,7 @@ fb[k] = toI32(fl32(c_1[k] × 65536))                                  for k in 0
 
 `c_0` is the polynomial of direction `0`. `c_1` is the polynomial of direction `1`. In `ff[k]`, the first multiplication occurs first.
 
-**Difference equation.** Let `x` be a copy of `buf` before the filter. For each `n` from `0` to `L - 1`, compute the coefficients from `x_n`. Then compute an `i64` sum `y`:
+Difference equation: let `x` be a copy of `buf` before the filter. For each `n` from `0` to `L - 1`, compute the coefficients from `x_n`. Then compute an `i64` sum `y`:
 
 ```text
 if n < L - Kf:

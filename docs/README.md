@@ -1,7 +1,5 @@
 # Docs
 
-Project documentation is split by purpose:
-
 | File | Purpose |
 | --- | --- |
 | [`synth-format-spec.md`](synth-format-spec.md) | Binary `.synth` layout, reader/writer behavior, and synthesis notes. |
