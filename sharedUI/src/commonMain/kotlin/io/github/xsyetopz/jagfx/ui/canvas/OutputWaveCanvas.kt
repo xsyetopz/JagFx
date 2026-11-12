@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.onSizeChanged
-import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
+import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.floor
@@ -42,6 +42,7 @@ internal fun OutputWaveCanvas(
     panZoom: PanZoom = PanZoom(),
     loopMarkers: List<Float> = emptyList(),
 ) {
+    val palette = JagFxTheme.palette
     val zoom = panZoom.viewport.zoom
     val scrollOffset = panZoom.viewport.scrollOffset
     var width by remember { mutableIntStateOf(0) }
@@ -70,22 +71,22 @@ internal fun OutputWaveCanvas(
                 val path = minMax?.let { columnPath(it, mid, size.height * WAVE_SCALE) }
                 val hasSamples = samples != null && samples.isNotEmpty()
                 onDrawBehind {
-                    drawRect(SynthPalette.Scope)
-                    drawLine(SynthPalette.MidLine, Offset(0f, mid), Offset(size.width, mid), 1f)
+                    drawRect(palette.scope)
+                    drawLine(palette.midLine, Offset(0f, mid), Offset(size.width, mid), 1f)
                     if (path !=
                         null
                     ) {
-                        drawPath(path, SynthPalette.Output, style = Stroke(width = 1f))
+                        drawPath(path, palette.output, style = Stroke(width = 1f))
                     }
                     if (hasSamples) {
                         for (position in loopMarkers) {
-                            drawMarker(position, zoom, scrollOffset, SynthPalette.Loop)
+                            drawMarker(position, zoom, scrollOffset, palette.loop)
                         }
                         drawPlaybackMarker(
                             playbackPosition,
                             zoom,
                             scrollOffset,
-                            SynthPalette.Playhead,
+                            palette.playhead,
                         )
                     }
                 }

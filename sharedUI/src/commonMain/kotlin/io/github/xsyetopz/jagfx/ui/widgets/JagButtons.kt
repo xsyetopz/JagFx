@@ -6,13 +6,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
@@ -51,9 +52,10 @@ internal fun PainterIcon(
 }
 
 /**
- * A flat 18 dp button.
- * An [active] button has accent text and an accent border instead of a fill, as in the Scala JagFX.
- * [tooltip] shows while the pointer rests on it.
+ * A flat button at least 24 dp square.
+ * An [active] button has accent text, an accent border, and a bar along its bottom edge, so color
+ * is not the only sign.
+ * A focused button shows a 2 dp accent ring. [tooltip] shows while the pointer rests on it.
  */
 @Composable
 internal fun JagButton(
@@ -68,6 +70,7 @@ internal fun JagButton(
     val dimens = JagFxTheme.dimens
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
+    val focused by interaction.collectIsFocusedAsState()
     val shape = RoundedCornerShape(dimens.radius)
     val background =
         when {
@@ -79,11 +82,17 @@ internal fun JagButton(
         Row(
             modifier =
                 Modifier
-                    .height(dimens.controlHeight)
-                    .defaultMinSize(minWidth = dimens.buttonMinWidth)
-                    .alpha(if (enabled) 1f else DISABLED_ALPHA)
+                    .defaultMinSize(
+                        minWidth = dimens.buttonMinWidth,
+                        minHeight = dimens.controlHeight,
+                    ).alpha(if (enabled) 1f else DISABLED_ALPHA)
                     .background(background, shape)
-                    .border(dimens.border, if (active) colors.accent else colors.border, shape)
+                    .border(
+                        dimens.border,
+                        if (active) colors.accent else colors.controlBorder,
+                        shape,
+                    ).activeMark(active, colors.accent, dimens.focusRing)
+                    .focusRing(focused, colors.accent, dimens.focusRing, dimens.radius)
                     .hoverable(interaction)
                     .clickable(
                         interactionSource = interaction,
@@ -119,7 +128,11 @@ internal fun JagButton(
     tooltip: String? = null,
 ) {
     JagButton(onClick, modifier, enabled, active, tooltip) {
-        JagText(text, style = JagFxTheme.typography.label)
+        val label = JagFxTheme.typography.label
+        JagText(
+            text,
+            style = if (active) label.copy(fontWeight = FontWeight.ExtraBold) else label,
+        )
     }
 }
 
@@ -160,7 +173,10 @@ internal fun <T> JagToggleGroup(
     }
 }
 
-/** A 12 dp check box: an input-colored box with an accent border and mark when [checked]. */
+/**
+ * A check box with a 24 dp hit area around a 12 dp box: an input-colored box with an accent border
+ * and mark when [checked], and a 2 dp accent ring while focused.
+ */
 @Composable
 internal fun JagCheck(
     checked: Boolean,
@@ -173,15 +189,14 @@ internal fun JagCheck(
     val dimens = JagFxTheme.dimens
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
+    val focused by interaction.collectIsFocusedAsState()
     val shape = RoundedCornerShape(dimens.radius)
     JagTooltip(tooltip, hovered, modifier) {
         Box(
             modifier =
                 Modifier
-                    .size(dimens.iconSize)
+                    .size(dimens.minTarget)
                     .alpha(if (enabled) 1f else DISABLED_ALPHA)
-                    .background(colors.input, shape)
-                    .border(dimens.border, if (checked) colors.accent else colors.border, shape)
                     .hoverable(interaction)
                     .clickable(
                         interactionSource = interaction,
@@ -191,7 +206,19 @@ internal fun JagCheck(
                     ) { onCheckedChange(!checked) },
             contentAlignment = Alignment.Center,
         ) {
-            if (checked) Box(Modifier.size(CheckMarkSize).background(colors.accent))
+            Box(
+                Modifier
+                    .size(dimens.iconSize)
+                    .background(colors.input, shape)
+                    .border(
+                        dimens.border,
+                        if (checked) colors.accent else colors.controlBorder,
+                        shape,
+                    ).focusRing(focused, colors.accent, dimens.focusRing, dimens.radius),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (checked) Box(Modifier.size(CheckMarkSize).background(colors.accent))
+            }
         }
     }
 }
@@ -220,8 +247,11 @@ internal fun JagTooltip(
                     modifier =
                         Modifier
                             .background(colors.header, RoundedCornerShape(dimens.radius))
-                            .border(dimens.border, colors.border, RoundedCornerShape(dimens.radius))
-                            .padding(horizontal = dimens.spaceMd, vertical = dimens.spaceSm),
+                            .border(
+                                dimens.border,
+                                colors.controlBorder,
+                                RoundedCornerShape(dimens.radius),
+                            ).padding(horizontal = dimens.spaceMd, vertical = dimens.spaceSm),
                     color = colors.text,
                 )
             }

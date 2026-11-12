@@ -41,11 +41,14 @@ internal fun pairFirstOf(slot: SignalChainSlot): SignalChainSlot? =
     }
 
 /** The plot color of [slot]: envelopes orange, the output green, and the filter plots blue. */
-internal fun slotColor(slot: SignalChainSlot): Color =
+internal fun slotColor(
+    slot: SignalChainSlot,
+    palette: SynthPalette,
+): Color =
     when (slot) {
-        SignalChainSlot.Output -> SynthPalette.Output
-        SignalChainSlot.PoleZero, SignalChainSlot.Bode -> SynthPalette.Filter
-        else -> SynthPalette.Envelope
+        SignalChainSlot.Output -> palette.output
+        SignalChainSlot.PoleZero, SignalChainSlot.Bode -> palette.filter
+        else -> palette.envelope
     }
 
 /** Resonance in dB of a raw pole magnitude, as the filter computes it. */

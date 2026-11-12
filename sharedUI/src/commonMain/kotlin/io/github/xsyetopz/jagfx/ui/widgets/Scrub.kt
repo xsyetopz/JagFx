@@ -2,6 +2,7 @@ package io.github.xsyetopz.jagfx.ui.widgets
 
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
@@ -9,7 +10,11 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
 import io.github.xsyetopz.jagfx.ui.canvas.GestureCallbacks
+
+/** Least hit area of a scrubbed control, whatever it draws. */
+private val MinScrubTarget = 24.dp
 
 /**
  * The [range] that one scrub covers, the [step] of one wheel notch, and the [defaultValue] that a
@@ -39,7 +44,8 @@ internal fun Modifier.scrub(state: State<ScrubState>): Modifier {
         val next = value.toInt()
         if (next != state.value.value) state.value.onValueChange(next)
     }
-    return pointerHoverIcon(PointerIcon.Hand)
+    return sizeIn(minWidth = MinScrubTarget, minHeight = MinScrubTarget)
+        .pointerHoverIcon(PointerIcon.Hand)
         .pointerInput(Unit) {
             detectTapGestures(
                 onDoubleTap = {

@@ -18,6 +18,7 @@ import io.github.xsyetopz.jagfx.core.model.Coefficient
 import io.github.xsyetopz.jagfx.core.model.Filter
 import io.github.xsyetopz.jagfx.core.model.Pole
 import io.github.xsyetopz.jagfx.core.model.SynthLimits
+import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
 import kotlin.math.floor
 import kotlin.math.hypot
@@ -196,6 +197,7 @@ internal fun PoleZeroCanvas(
     callbacks: PoleCallbacks = PoleCallbacks(),
     panZoom: PanZoom = PanZoom(),
 ) {
+    val palette = JagFxTheme.palette
     val viewport = rememberUpdatedState(panZoom.viewport)
     val zoom = rememberUpdatedState(panZoom.viewport.zoom)
     val scroll = rememberUpdatedState(panZoom.viewport.scrollOffset)
@@ -217,9 +219,9 @@ internal fun PoleZeroCanvas(
                 val stroke = Stroke(width = LINE_WIDTH * density)
                 val current = panZoom.viewport
                 onDrawBehind {
-                    drawRect(SynthPalette.Scope)
+                    drawRect(palette.scope)
                     drawAnalysisGrid(current.zoom, current.scrollOffset)
-                    if (filter != null) drawPoles(filter, current, view.selected, stroke)
+                    if (filter != null) drawPoles(filter, current, view.selected, stroke, palette)
                 }
             },
     )
@@ -285,6 +287,7 @@ private fun DrawScope.drawPoles(
     viewport: Viewport,
     selected: PoleRef?,
     stroke: Stroke,
+    palette: SynthPalette,
 ) {
     val width = size.width / density.toDouble()
     val height = size.height / density.toDouble()
@@ -297,20 +300,20 @@ private fun DrawScope.drawPoles(
     val y0 = (PoleZeroGeometry.rawToY(filter.unityGain0, gainScale, height) * density).toFloat()
     val y1 = (PoleZeroGeometry.rawToY(filter.unityGain1, gainScale, height) * density).toFloat()
     drawLine(
-        SynthPalette.Zero.copy(alpha = RAIL_ALPHA),
+        palette.zero.copy(alpha = RAIL_ALPHA),
         Offset(0f, y0),
         Offset(size.width, y0),
         stroke.width,
     )
     drawLine(
-        SynthPalette.Pole.copy(alpha = RAIL_ALPHA),
+        palette.pole.copy(alpha = RAIL_ALPHA),
         Offset(0f, y1),
         Offset(size.width, y1),
         stroke.width,
     )
 
     for (channel in 0..1) {
-        val color = markerColor(channel).copy(alpha = RAIL_ALPHA)
+        val color = markerColor(palette, channel).copy(alpha = RAIL_ALPHA)
         for (pole in filter.poles(channel)) {
             val start = toPx(PoleZeroGeometry.point(pole.start, width, height, zoom, scroll))
             val end = toPx(PoleZeroGeometry.point(pole.end, width, height, zoom, scroll))
@@ -323,24 +326,28 @@ private fun DrawScope.drawPoles(
         val point = PoleZeroGeometry.point(filter.coefficient(ref), width, height, zoom, scroll)
         val centre = toPx(point)
         if (selected == ref) {
-            drawCircle(SynthPalette.Selection, SELECTION_RADIUS * density, centre)
-            drawCircle(SynthPalette.Marker, SELECTION_RADIUS * density, centre, style = stroke)
+            drawCircle(palette.selection, SELECTION_RADIUS * density, centre)
+            drawCircle(palette.marker, SELECTION_RADIUS * density, centre, style = stroke)
         }
-        drawMarker(ref.channel, centre, half, stroke)
+        drawMarker(palette, ref.channel, centre, half, stroke)
     }
 }
 
 /** The zero color for channel 0 (feedforward), the pole color for channel 1 (feedback). */
-private fun markerColor(channel: Int) = if (channel == 0) SynthPalette.Zero else SynthPalette.Pole
+private fun markerColor(
+    palette: SynthPalette,
+    channel: Int,
+) = if (channel == 0) palette.zero else palette.pole
 
 /** A circle for a zero (channel 0), a cross for a pole (channel 1). */
 private fun DrawScope.drawMarker(
+    palette: SynthPalette,
     channel: Int,
     centre: Offset,
     half: Float,
     stroke: Stroke,
 ) {
-    val color = markerColor(channel)
+    val color = markerColor(palette, channel)
     if (channel == 0) {
         drawCircle(color, half, centre, style = stroke)
     } else {

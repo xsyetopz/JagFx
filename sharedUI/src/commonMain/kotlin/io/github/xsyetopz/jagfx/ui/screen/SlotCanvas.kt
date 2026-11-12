@@ -18,6 +18,7 @@ import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
+import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
 /** The canvas of [slot] for the selected voice: an envelope, the pole-zero plot, the response, or the output wave. */
 @Composable
@@ -128,7 +129,7 @@ private fun EnvelopeSlotCanvas(
         modifier = modifier,
         style =
             EnvelopeStyle(
-                lineColor = slotColor(slot),
+                lineColor = slotColor(slot, JagFxTheme.palette),
                 selected = slot == state.selectedTarget,
                 durationMs = state.voice?.duration?.value ?: 0,
             ),

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -45,8 +46,8 @@ internal fun parseClampedInt(
 }
 
 /**
- * An 18 dp input box for an integer in [range], right-aligned on a near-black field with an
- * accent border while focused.
+ * An input box at least 24 dp high for an integer in [range], right-aligned on a near-black field with an
+ * a 2 dp accent ring while focused.
  * Enter or focus loss commits through [onValueCommit]; out-of-range input is clamped, and text
  * that is not a number reverts to [value].
  * A non-empty [unit] shows dim after the number.
@@ -77,10 +78,11 @@ internal fun JagField(
         onValueChange = { text = it },
         modifier =
             modifier
-                .height(dimens.controlHeight)
+                .defaultMinSize(minWidth = dimens.minTarget, minHeight = dimens.controlHeight)
                 .alpha(if (enabled) 1f else DISABLED_ALPHA)
                 .background(colors.input, shape)
-                .border(dimens.border, if (focused) colors.accent else colors.border, shape)
+                .border(dimens.border, colors.controlBorder, shape)
+                .focusRing(focused, colors.accent, dimens.focusRing, dimens.radius)
                 .onFocusChanged {
                     val lost = focused && !it.isFocused
                     focused = it.isFocused
@@ -107,7 +109,7 @@ internal fun JagField(
             ) {
                 Box(Modifier.weight(1f)) { inner() }
                 if (unit.isNotEmpty()) {
-                    JagText(unit, color = colors.textSubtle, style = JagFxTheme.typography.label)
+                    JagText(unit, color = colors.textDim, style = JagFxTheme.typography.label)
                 }
             }
         },
@@ -115,7 +117,7 @@ internal fun JagField(
 }
 
 /**
- * A [JagField] with a 4 dp bar under it, the Scala JagFX value control.
+ * A [JagField] with a 4 dp bar under it in a 24 dp hit area, the Scala JagFX value control.
  * The bar fills to the position of [value] in the [scale] range; dragging it, the wheel over it,
  * and a double click set the value through [onValueChange], each one undo step bracketed by
  * [gestures].
@@ -141,13 +143,20 @@ internal fun JagBarField(
         Box(
             Modifier
                 .fillMaxWidth()
-                .height(dimens.barHeight)
+                .height(dimens.minTarget)
                 .alpha(if (enabled) 1f else DISABLED_ALPHA)
-                .background(colors.root)
-                .border(dimens.border, colors.border)
                 .then(if (enabled) Modifier.scrub(scrub) else Modifier),
+            contentAlignment = Alignment.Center,
         ) {
-            Box(Modifier.fillMaxHeight().fillMaxWidth(fraction).background(colors.accent))
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(dimens.barHeight)
+                    .background(colors.root)
+                    .border(dimens.border, colors.controlBorder),
+            ) {
+                Box(Modifier.fillMaxHeight().fillMaxWidth(fraction).background(colors.accent))
+            }
         }
     }
 }

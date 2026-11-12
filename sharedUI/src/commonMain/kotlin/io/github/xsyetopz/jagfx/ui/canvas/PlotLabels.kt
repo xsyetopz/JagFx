@@ -1,17 +1,17 @@
 package io.github.xsyetopz.jagfx.ui.canvas
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.sp
-import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
 import kotlin.math.ceil
 import kotlin.math.floor
 
-/** Axis labels drawn on a plot: small, in the scope text color. */
-internal val PlotLabelStyle: TextStyle = TextStyle(color = SynthPalette.ScopeText, fontSize = 9.sp)
+/** Axis labels drawn on a plot: label size, in the scope text [color]. */
+internal fun plotLabelStyle(color: Color): TextStyle = TextStyle(color = color, fontSize = 11.sp)
 
 private const val LABEL_INSET = 2f
 private const val ENVELOPE_COLUMNS = 8
@@ -31,6 +31,7 @@ internal fun DrawScope.drawTimeLabels(
     zoom: Int,
     scroll: Float,
     durationMs: Int,
+    labelStyle: TextStyle,
 ) {
     val columns = ENVELOPE_COLUMNS * zoom.coerceAtLeast(1)
     val step = (size.width - 2 * ENVELOPE_PADDING) / columns
@@ -43,7 +44,7 @@ internal fun DrawScope.drawTimeLabels(
     for (k in first..last step every) {
         val x = ENVELOPE_PADDING + k * step - scroll
         val ms = (k.toLong() * durationMs / total).toInt()
-        val layout = measurer.measure(ms.toString(), PlotLabelStyle)
+        val layout = measurer.measure(ms.toString(), labelStyle)
         if (x + LABEL_INSET + layout.size.width <= size.width) {
             val y = size.height - layout.size.height - LABEL_INSET
             drawText(layout, topLeft = Offset(x + LABEL_INSET, y))

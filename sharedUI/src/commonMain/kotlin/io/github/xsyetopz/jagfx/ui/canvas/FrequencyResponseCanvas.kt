@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import io.github.xsyetopz.jagfx.core.model.Filter
-import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
+import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import kotlin.math.max
 
 private const val MIN_RESPONSE_POINTS = 50
@@ -25,7 +25,6 @@ private val SectionFactors = DoubleArray(SECTIONS - 1) { (it + 1).toDouble() / S
 private const val END_FACTOR = 1.0
 private const val START_FACTOR = 0.0
 private const val SECTION_TRACE_ALPHA = 0.45f
-private val SectionTrace = SynthPalette.Filter.copy(alpha = SECTION_TRACE_ALPHA)
 
 /**
  * Magnitude response of [filter] from -80 dB to 80 dB over the C1–C9 frequency axis.
@@ -41,6 +40,7 @@ internal fun FrequencyResponseCanvas(
     modifier: Modifier = Modifier,
     panZoom: PanZoom = PanZoom(),
 ) {
+    val palette = JagFxTheme.palette
     val zoom = rememberUpdatedState(panZoom.viewport.zoom)
     val scroll = rememberUpdatedState(panZoom.viewport.scrollOffset)
     val onZoom = rememberUpdatedState(panZoom.onZoomChange)
@@ -64,13 +64,15 @@ internal fun FrequencyResponseCanvas(
                     traces += responsePath(response, widthDp, size.height / density) to color
                 }
                 if (filter != null && filter.needsModulationEnvelope) {
-                    for (factor in SectionFactors) trace(factor, SectionTrace)
-                    trace(END_FACTOR, SynthPalette.Filter)
+                    for (factor in SectionFactors) {
+                        trace(factor, palette.filter.copy(alpha = SECTION_TRACE_ALPHA))
+                    }
+                    trace(END_FACTOR, palette.filter)
                 }
-                trace(START_FACTOR, SynthPalette.Marker)
+                trace(START_FACTOR, palette.marker)
                 val stroke = Stroke(width = TRACE_WIDTH * density)
                 onDrawBehind {
-                    drawRect(SynthPalette.Scope)
+                    drawRect(palette.scope)
                     drawAnalysisGrid(viewport.zoom, viewport.scrollOffset)
                     translate(left = -viewport.scrollOffset) {
                         for ((path, color) in traces) drawPath(path, color, style = stroke)

@@ -73,7 +73,7 @@ internal fun EnvelopeCanvas(
         modifier
             .clipToBounds()
             .then(input)
-            .drawEnvelope(view, style, measurer),
+            .drawEnvelope(view, style, measurer, JagFxTheme.palette),
     ) {
         readout?.let { (position, level) ->
             JagText(

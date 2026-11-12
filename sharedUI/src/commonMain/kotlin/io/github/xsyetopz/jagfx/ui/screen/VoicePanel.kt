@@ -37,7 +37,6 @@ import io.github.xsyetopz.jagfx.ui.editor.VoiceIntent
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
-import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
 import io.github.xsyetopz.jagfx.ui.widgets.Icons
 import io.github.xsyetopz.jagfx.ui.widgets.JagBarField
 import io.github.xsyetopz.jagfx.ui.widgets.JagCheck
@@ -152,11 +151,12 @@ private fun VoiceTile(
     modifier: Modifier,
 ) {
     val colors = JagFxTheme.colors
+    val palette = JagFxTheme.palette
     val dimens = JagFxTheme.dimens
     val voice = state.patch.voices[index]
     val selected = index == state.selectedVoice
     val shape = RoundedCornerShape(dimens.radius)
-    val barColor = if (selected) SynthPalette.Output else colors.textDim
+    val barColor = if (selected) palette.output else colors.textDim
     Column(
         modifier
             .clip(shape)

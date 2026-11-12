@@ -22,7 +22,6 @@ import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
-import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
 import io.github.xsyetopz.jagfx.ui.widgets.Icons
 import io.github.xsyetopz.jagfx.ui.widgets.JagIconButton
 
@@ -107,7 +106,7 @@ private fun AddButton(
     modifier: Modifier,
     onClick: () -> Unit,
 ) {
-    Box(modifier.background(SynthPalette.Scope), contentAlignment = Alignment.Center) {
+    Box(modifier.background(JagFxTheme.palette.scope), contentAlignment = Alignment.Center) {
         JagIconButton(Icons.Add, tooltip, onClick)
     }
 }

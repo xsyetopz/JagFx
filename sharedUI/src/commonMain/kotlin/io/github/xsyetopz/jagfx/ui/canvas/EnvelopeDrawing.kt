@@ -28,9 +28,11 @@ internal fun Modifier.drawEnvelope(
     view: EnvelopeView,
     style: EnvelopeStyle,
     measurer: TextMeasurer,
+    palette: SynthPalette,
 ): Modifier =
     drawWithCache {
-        val lineColor = if (style.lineColor.isSpecified) style.lineColor else SynthPalette.Marker
+        val lineColor = if (style.lineColor.isSpecified) style.lineColor else palette.marker
+        val labelStyle = plotLabelStyle(palette.scopeText)
         val envelope = view.envelope
         val geometry =
             envelope?.let {
@@ -53,12 +55,12 @@ internal fun Modifier.drawEnvelope(
             }
         }
         onDrawBehind {
-            drawRect(SynthPalette.Scope)
-            drawEnvelopeGrid(view.zoom, view.scrollOffset)
-            drawTimeLabels(measurer, view.zoom, view.scrollOffset, style.durationMs)
+            drawRect(palette.scope)
+            drawEnvelopeGrid(view.zoom, view.scrollOffset, palette)
+            drawTimeLabels(measurer, view.zoom, view.scrollOffset, style.durationMs, labelStyle)
             if (geometry != null) {
                 drawPath(path, lineColor, style = Hairline)
-                drawBreakpoints(geometry, view.selectedIndex)
+                drawBreakpoints(geometry, view.selectedIndex, palette)
             }
             if (style.selected) {
                 drawRect(
@@ -74,13 +76,14 @@ internal fun Modifier.drawEnvelope(
 private fun DrawScope.drawEnvelopeGrid(
     zoom: Int,
     scrollOffset: Float,
+    palette: SynthPalette,
 ) {
     val width = size.width
     val height = size.height
     val rows = HORIZONTAL_DIVISIONS * zoom
     for (i in 1 until rows) {
         val y = height * i / rows
-        val color = if (i * 2 == rows) SynthPalette.MidLine else SynthPalette.Grid
+        val color = if (i * 2 == rows) palette.midLine else palette.grid
         drawLine(color, Offset(0f, y), Offset(width, y))
     }
     val columns = VERTICAL_DIVISIONS * zoom
@@ -90,7 +93,7 @@ private fun DrawScope.drawEnvelopeGrid(
     for (i in 0..columns) {
         val x = ENVELOPE_PADDING + i * step - shift
         if (x >= ENVELOPE_PADDING && x <= width - ENVELOPE_PADDING) {
-            drawLine(SynthPalette.Grid, Offset(x, 0f), Offset(x, height))
+            drawLine(palette.grid, Offset(x, 0f), Offset(x, height))
         }
     }
 }
@@ -98,16 +101,17 @@ private fun DrawScope.drawEnvelopeGrid(
 private fun DrawScope.drawBreakpoints(
     geometry: EnvelopeGeometry,
     selectedIndex: Int,
+    palette: SynthPalette,
 ) {
     for (i in 0 until geometry.pointCount) {
         val x = geometry.pointX(i)
         val y = geometry.pointY(i)
         if (i == selectedIndex) {
-            drawCircle(SynthPalette.Selection, SELECTION_RADIUS, Offset(x, y))
-            drawCircle(SynthPalette.Marker, SELECTION_RADIUS, Offset(x, y), style = Hairline)
+            drawCircle(palette.selection, SELECTION_RADIUS, Offset(x, y))
+            drawCircle(palette.marker, SELECTION_RADIUS, Offset(x, y), style = Hairline)
         }
         val h = MARKER_HALF_SIZE
-        drawLine(SynthPalette.Marker, Offset(x - h, y - h), Offset(x + h, y + h))
-        drawLine(SynthPalette.Marker, Offset(x - h, y + h), Offset(x + h, y - h))
+        drawLine(palette.marker, Offset(x - h, y - h), Offset(x + h, y + h))
+        drawLine(palette.marker, Offset(x - h, y + h), Offset(x + h, y - h))
     }
 }

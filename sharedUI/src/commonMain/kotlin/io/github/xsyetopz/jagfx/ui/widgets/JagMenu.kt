@@ -5,14 +5,15 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,7 +55,7 @@ internal fun JagMenu(
                 Modifier
                     .width(IntrinsicSize.Max)
                     .background(colors.panel, shape)
-                    .border(dimens.border, colors.border, shape)
+                    .border(dimens.border, colors.controlBorder, shape)
                     .padding(dimens.spaceXs),
             content = content,
         )
@@ -74,13 +75,15 @@ internal fun JagMenuItem(
     val dimens = JagFxTheme.dimens
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
+    val focused by interaction.collectIsFocusedAsState()
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(dimens.controlHeight + dimens.spaceMd)
+                .defaultMinSize(minHeight = dimens.controlHeight + dimens.spaceMd)
                 .alpha(if (enabled) 1f else DISABLED_ALPHA)
                 .background(if (hovered && enabled) colors.buttonHover else colors.panel)
+                .focusRing(focused, colors.accent, dimens.focusRing, dimens.radius)
                 .hoverable(interaction)
                 .clickable(interaction, indication = null, enabled = enabled, onClick = onClick)
                 .padding(horizontal = dimens.spaceLg),
