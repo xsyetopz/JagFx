@@ -15,7 +15,7 @@ detekt {
     source.setFrom(
         fileTree(rootDir) {
             include("**/src/**/*.kt")
-            exclude("**/build/**")
+            exclude("**/build/**", ".claude/**")
         },
     )
     buildUponDefaultConfig = true
@@ -26,7 +26,7 @@ detekt {
 fun sourceTree(pattern: String) =
     fileTree(rootDir) {
         include(pattern)
-        exclude("**/build/**", "**/.gradle/**", ".kotlin/**")
+        exclude("**/build/**", "**/.gradle/**", ".kotlin/**", ".claude/**")
     }
 
 spotless {
