@@ -62,6 +62,9 @@ internal fun GridCell(
     ) {
         CellHeader(slot, selected, view, actions)
         CellScope(slot, state, view, actions, Modifier.weight(1f).fillMaxWidth())
+        if (slot.isTimeDomain && view.canvas(slot).panelOpen) {
+            ControlsPanel(slot, state, view, actions, Modifier.weight(1f).fillMaxWidth())
+        }
     }
 }
 
