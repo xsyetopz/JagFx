@@ -17,8 +17,8 @@ import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import io.github.xsyetopz.jagfx.ui.widgets.focusRing
 
 /**
- * Makes a plot reachable with Tab and shows the focus ring while it has focus. [onKey] sees the key
- * events of the focused plot; a plot with no keys of its own leaves it as it is.
+ * Makes plot reachable with Tab and shows focus ring while it has focus. [onKey] sees key
+ * events of focused plot; plot with no keys of its own leaves it as it is.
  */
 @Composable
 internal fun Modifier.focusablePlot(

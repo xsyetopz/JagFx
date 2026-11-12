@@ -13,7 +13,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-// The response axis runs from C1 to C9, the frequencies a pole phase can reach.
+// Response axis runs from C1 to C9, frequencies pole phase can reach.
 private const val C1 = 32.703197
 private const val C9 = C1 * 256
 
@@ -97,7 +97,7 @@ class FilterResponseTest {
 
     @Test
     fun interpolationTruncatesRawValues() {
-        // 10000 + 1 * 0.5 = 10000.5 truncates to 10000, the start value.
+        // 10000 + 1 * 0.5 = 10000.5 truncates to 10000, start value.
         val moving = filter(feedback = listOf(pole(30000, 10000, 30001, 10001)))
         val start = filter(feedback = listOf(pole(30000, 10000)))
         assertTrue(

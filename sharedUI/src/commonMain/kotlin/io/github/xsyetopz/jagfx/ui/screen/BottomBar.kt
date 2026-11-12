@@ -23,8 +23,8 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagText
 import io.github.xsyetopz.jagfx.ui.widgets.JagToggleGroup
 
 /**
- * The bottom bar: the Tones with Copy, Reset Active, and the Mode switch under them, then the five
- * harmonic boxes and the Reverb box sharing the rest of the width.
+ * Bottom bar: Tones with Copy, Reset Active, and Mode switch under them, then five
+ * harmonic boxes and Reverb box sharing rest of width.
  */
 @Composable
 internal fun BottomBar(
@@ -39,9 +39,9 @@ internal fun BottomBar(
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceXl),
         verticalAlignment = Alignment.Top,
     ) {
-        // The buttons and the Mode switch fill their rows, so the column takes the width of the
-        // tone chips. The Mode switch sits here, in the room the taller boxes leave, so the boxes
-        // get the width their fields need at 1280 dp.
+        // Buttons and Mode switch fill their rows, so column takes width of
+        // tone chips. Mode switch sits here, in room taller boxes leave, so boxes
+        // get width their fields need at 1280 dp.
         Column(
             Modifier.width(IntrinsicSize.Max),
             verticalArrangement = Arrangement.spacedBy(dimens.spaceMd),
@@ -67,7 +67,7 @@ internal fun BottomBar(
     }
 }
 
-/** The menu and button label of this rack mode. */
+/** Menu and button label of this rack mode. */
 internal val RackMode.label: UiString
     get() =
         when (this) {

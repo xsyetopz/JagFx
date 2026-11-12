@@ -17,7 +17,7 @@ private val json =
         encodeDefaults = true
     }
 
-/** Keeps the preferences as JSON in `localStorage`. Unreadable or blocked storage gives the defaults. */
+/** Keeps preferences as JSON in `localStorage`. Unreadable or blocked storage gives defaults. */
 class BrowserPreferences : Preferences {
     @Suppress("TooGenericExceptionCaught")
     override fun load(): EditorPreferences =
@@ -25,7 +25,7 @@ class BrowserPreferences : Preferences {
             localStorage.getItem(STORAGE_KEY)?.let { json.decodeFromString<EditorPreferences>(it) }
                 ?: EditorPreferences()
         } catch (_: Throwable) {
-            // Corrupt JSON, or a JS SecurityError when the browser blocks storage.
+            // Corrupt JSON, or JS SecurityError when browser blocks storage.
             EditorPreferences()
         }
 
@@ -34,7 +34,7 @@ class BrowserPreferences : Preferences {
         try {
             localStorage.setItem(STORAGE_KEY, json.encodeToString(preferences))
         } catch (_: Throwable) {
-            // Full or blocked storage loses the setting, not the session.
+            // Full or blocked storage loses setting, not session.
         }
     }
 }
@@ -50,6 +50,6 @@ class BrowserPlatformSettings : PlatformSettings {
     override val reducedMotion: Boolean
         get() = mediaMatches("(prefers-reduced-motion: reduce)")
 
-    /** Browsers scale the page themselves, so no extra text scale is reported. */
+    /** Browsers scale page themselves, so no extra text scale is reported. */
     override val textScalePercent: Int = 100
 }

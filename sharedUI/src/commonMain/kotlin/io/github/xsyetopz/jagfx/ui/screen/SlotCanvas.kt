@@ -27,7 +27,7 @@ import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
-/** The canvas of [slot] for the selected voice: an envelope, the pole-zero plot, the response, or the output wave. */
+/** Canvas of [slot] for selected voice: envelope, pole-zero plot, response, or output wave. */
 @Composable
 internal fun SlotCanvas(
     slot: SignalChainSlot,

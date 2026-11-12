@@ -12,7 +12,7 @@ private const val GATE_UNITS_PER_STEP = 256.0
 private const val SAMPLES_PER_MS = 22.05
 private const val DEFAULT_VALUE_TICKS = 5
 
-/** [raw] in this unit: percent is `raw / 655.35`, a gate ms is `raw / 256 / 22.05`, Hz is `raw`. */
+/** [raw] in this unit: percent is `raw / 655.35`, gate ms is `raw / 256 / 22.05`, Hz is `raw`. */
 internal fun ValueUnit.fromRaw(raw: Double): Double =
     when (this) {
         ValueUnit.Hz -> raw
@@ -20,7 +20,7 @@ internal fun ValueUnit.fromRaw(raw: Double): Double =
         ValueUnit.Ms -> raw / GATE_UNITS_PER_STEP / SAMPLES_PER_MS
     }
 
-/** The raw value of [value] in this unit; the inverse of [fromRaw]. */
+/** Raw value of [value] in this unit; inverse of [fromRaw]. */
 internal fun ValueUnit.toRaw(value: Double): Double =
     when (this) {
         ValueUnit.Hz -> value
@@ -29,15 +29,15 @@ internal fun ValueUnit.toRaw(value: Double): Double =
     }
 
 /**
- * The raw value of an envelope point at [level] (of 65536): `startValue` at 0 and `endValue` at
- * 65536, linear between, as the voice setup scales the generator output.
+ * Raw value of envelope point at [level] (of 65536): `startValue` at 0 and `endValue` at
+ * 65536, linear between, as voice setup scales generator output.
  */
 internal fun Envelope.rawValueAt(level: Int): Double =
     startValue + (endValue - startValue).toDouble() * level / ENVELOPE_POSITION_SPAN
 
 /**
- * Times in ms, in ascending order, of the ruler ticks of a voice [durationMs] long when the plot
- * [plotWidth] px wide shows [window] (fractions of the voice) with at least [minGapPx] px between
+ * Times in ms, in ascending order, of ruler ticks of voice [durationMs] long when plot
+ * [plotWidth] px wide shows [window] (fractions of voice) with at least [minGapPx] px between
  * ticks.
  */
 internal fun timeTicks(
@@ -54,8 +54,8 @@ internal fun timeTicks(
 }
 
 /**
- * A value-axis tick: [fraction] of the plot height from the bottom (0 is `startValue`, 1 is
- * `endValue`) and the [value] there in the unit of the slot.
+ * Value-axis tick: [fraction] of plot height from bottom (0 is `startValue`, 1 is
+ * `endValue`) and [value] there in unit of slot.
  */
 internal data class ValueTick(
     val fraction: Float,
@@ -63,8 +63,8 @@ internal data class ValueTick(
 )
 
 /**
- * [count] evenly spaced ticks from the start to the end value of [envelope], in the unit of
- * [slot] (at least 2); empty when the slot has no start and end values.
+ * [count] evenly spaced ticks from start to end value of [envelope], in unit of
+ * [slot] (at least 2); empty when slot has no start and end values.
  */
 internal fun valueTicks(
     slot: SignalChainSlot,
@@ -80,12 +80,12 @@ internal fun valueTicks(
 }
 
 /**
- * What the cell shows for one point.
+ * What cell shows for one point.
  *
- * @property timeMs Time of the point in ms of the voice.
- * @property value The value in [unit]; the raw level when the slot has no unit.
- * @property unit The unit of [value], or `null` for the filter curve.
- * @property position Raw position in 1/65536 of the voice; 0 for breakpoint 0, which the game does
+ * @property timeMs Time of point in ms of voice.
+ * @property value Value in [unit]; raw level when slot has no unit.
+ * @property unit Unit of [value], or `null` for filter curve.
+ * @property position Raw position in 1/65536 of voice; 0 for breakpoint 0, which game does
  *     not read.
  * @property level Raw target level.
  */
@@ -97,7 +97,7 @@ internal data class PointReadout(
     val level: Int,
 )
 
-/** The readout of breakpoint [index] of [envelope] in [slot] for a voice [durationMs] long. */
+/** Readout of breakpoint [index] of [envelope] in [slot] for voice [durationMs] long. */
 internal fun pointReadout(
     slot: SignalChainSlot,
     envelope: Envelope,

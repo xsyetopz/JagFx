@@ -25,8 +25,8 @@ private const val LABEL_GAP = 6f
 private val Hairline = Stroke(width = 1f)
 
 /**
- * Draws the envelope plot of [view] in [style]: background, grid, time and value axes measured by
- * [measurer], the line through the breakpoints, breakpoint markers, and a border in the line
+ * Draws envelope plot of [view] in [style]: background, grid, time and value axes measured by
+ * [measurer], line through breakpoints, breakpoint markers, and border in line
  * color when [EnvelopeStyle.selected].
  */
 internal fun Modifier.drawEnvelope(
@@ -90,7 +90,7 @@ private fun envelopePath(geometry: EnvelopeGeometry): Path {
     return path
 }
 
-/** The grid and the value and time labels that [style] switches on. */
+/** Grid and value and time labels that [style] switches on. */
 private fun DrawScope.drawEnvelopeAxes(
     view: EnvelopeView,
     style: EnvelopeStyle,
@@ -133,7 +133,7 @@ private fun DrawScope.drawEnvelopeGrid(
     }
 }
 
-/** Draws [layout] above and right of the point at ([x], [y]), kept inside the plot. */
+/** Draws [layout] above and right of point at ([x], [y]), kept inside plot. */
 private fun DrawScope.drawPointLabel(
     layout: TextLayoutResult,
     x: Float,

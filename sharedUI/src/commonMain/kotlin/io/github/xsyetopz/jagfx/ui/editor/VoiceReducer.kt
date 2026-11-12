@@ -12,7 +12,7 @@ import io.github.xsyetopz.jagfx.core.model.Waveform
 private const val DEFAULT_VOICE_MS = 1000
 private const val FULL_AMPLITUDE = 100
 
-/** The voice that enabling an empty slot creates: a silent 1 s sine voice. */
+/** Voice that enabling empty slot creates: silent 1 s sine voice. */
 internal val DefaultVoice: Voice =
     Voice(
         frequencyEnvelope = Envelope(Waveform.Sine, 0, 0, emptyList()),
@@ -53,7 +53,7 @@ internal fun reduceVoice(
         }
     }
 
-/** Applies a partial edit. */
+/** Applies partial edit. */
 internal fun reducePartial(
     voice: Voice,
     intent: PartialIntent,

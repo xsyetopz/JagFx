@@ -10,11 +10,11 @@ import io.github.xsyetopz.jagfx.ui.canvas.zoomedAroundCenter
 import io.github.xsyetopz.jagfx.ui.editor.FilterIntent
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 
-/** The gesture callbacks that record a drag as one undo step. */
+/** Gesture callbacks that record drag as one undo step. */
 internal fun EditorActions.gestureCallbacks(): GestureCallbacks =
     GestureCallbacks(::beginGesture, ::endGesture)
 
-/** The viewport of [view], reporting zoom and scroll changes of the canvas of [slot]. */
+/** Viewport of [view], reporting zoom and scroll changes of canvas of [slot]. */
 internal fun EditorActions.panZoom(
     slot: SignalChainSlot,
     view: CanvasView,
@@ -25,13 +25,13 @@ internal fun EditorActions.panZoom(
         onScrollOffsetChange = { scroll -> updateCanvas(slot) { it.copy(scroll = scroll) } },
     )
 
-/** Changes the view of the canvas of [slot]. */
+/** Changes view of canvas of [slot]. */
 internal fun EditorActions.updateCanvas(
     slot: SignalChainSlot,
     change: (CanvasView) -> CanvasView,
 ) = updateView { it.withCanvas(slot, change(it.canvas(slot))) }
 
-/** Sets the zoom of [slot]; returning to 1x also resets the scroll. */
+/** Sets zoom of [slot]; returning to 1x also resets scroll. */
 internal fun EditorActions.setZoom(
     slot: SignalChainSlot,
     zoom: Int,
@@ -45,22 +45,22 @@ internal fun EditorActions.setZoom(
     }
 }
 
-/** Sets the coefficient that [ref] points at. */
+/** Sets coefficient that [ref] points at. */
 internal fun EditorActions.setCoefficient(
     ref: PoleRef,
     phase: Int,
     magnitude: Int,
 ) = dispatch(FilterIntent.SetCoefficient(ref.channel, ref.pole, ref.phaseIndex, phase, magnitude))
 
-/** Changes the time view that [slot] shows: the shared one when linked, else its own. */
+/** Changes time view that [slot] shows: shared one when linked, else its own. */
 internal fun EditorActions.updateTimeView(
     slot: SignalChainSlot,
     change: (TimeView) -> TimeView,
 ) = updateView { it.withTimeView(slot, change(it.timeViewOf(slot))) }
 
 /**
- * The viewport of the time view of [slot] on a plot [plotWidth] px wide. Zoom and scroll changes
- * of the canvas go to the time view, shared by every linked cell.
+ * Viewport of time view of [slot] on plot [plotWidth] px wide. Zoom and scroll changes
+ * of canvas go to time view, shared by every linked cell.
  */
 internal fun EditorActions.timePanZoom(
     slot: SignalChainSlot,
@@ -75,7 +75,7 @@ internal fun EditorActions.timePanZoom(
         },
     )
 
-/** Sets the zoom of [slot] to [zoom], around the middle of what it shows. */
+/** Sets zoom of [slot] to [zoom], around middle of what it shows. */
 internal fun EditorActions.zoomTo(
     slot: SignalChainSlot,
     zoom: Int,
@@ -85,7 +85,7 @@ internal fun EditorActions.zoomTo(
     setZoom(slot, zoom)
 }
 
-/** Fits [slot] to the whole voice or the whole plane: zoom 1, scroll 0. */
+/** Fits [slot] to whole voice or whole plane: zoom 1, scroll 0. */
 internal fun EditorActions.fit(slot: SignalChainSlot) =
     if (slot.isTimeDomain) {
         updateTimeView(slot) { TimeView.Fit }

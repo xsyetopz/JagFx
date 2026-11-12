@@ -2,7 +2,7 @@ package io.github.xsyetopz.jagfx.ui.editor
 
 import io.github.xsyetopz.jagfx.core.model.SynthLimits
 
-/** Applies the outcome of a side effect to the state. */
+/** Applies outcome of side effect to state. */
 internal fun reduceResult(
     state: EditorState,
     intent: ResultIntent,

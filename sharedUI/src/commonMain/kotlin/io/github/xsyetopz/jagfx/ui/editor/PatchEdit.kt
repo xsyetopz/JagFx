@@ -34,7 +34,7 @@ internal fun reject(
     reason: RejectReason,
 ): EditorState = state.copy(statusHint = StatusHint.EditRejected(reason))
 
-/** Accepts [patch] if it changed and encodes, recording the old patch in the history. */
+/** Accepts [patch] if it changed and encodes, recording old patch in history. */
 internal fun commit(
     state: EditorState,
     patch: Patch,

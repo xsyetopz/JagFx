@@ -35,7 +35,7 @@ class DownsamplerTest {
 
     @Test
     fun zoomAndScrollSelectTheVisibleSamples() {
-        // Zoom 2 spreads 8 samples over 8 virtual columns; scroll 4 shows the second half.
+        // Zoom 2 spreads 8 samples over 8 virtual columns; scroll 4 shows second half.
         val result = Downsampler.minMax(ramp, columns = 4, zoom = 2, scroll = 4f)
         assertContentEquals(floatArrayOf(-4f, -4f, 5f, 5f, -6f, -6f, 7f, 7f), result)
         val fractional = Downsampler.minMax(ramp, columns = 2, zoom = 2, scroll = 0.5f)

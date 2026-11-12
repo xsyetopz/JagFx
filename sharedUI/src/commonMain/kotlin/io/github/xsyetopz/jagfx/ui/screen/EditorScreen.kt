@@ -27,7 +27,7 @@ import io.github.xsyetopz.jagfx.ui.editor.PanelSide
 import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
-/** The editor: collects [viewModel] state and shows the sample view or the synth editor. */
+/** Editor: collects [viewModel] state and shows sample view or synth editor. */
 @Composable
 internal fun EditorScreen(
     viewModel: EditorViewModel,
@@ -47,8 +47,8 @@ internal fun EditorScreen(
 }
 
 /**
- * Stateless editor content for [state] and [view]: the title bar, the voice strip on the side of
- * [EditorState.panelSide] with the rack, the bottom bar, and the status line.
+ * Stateless editor content for [state] and [view]: title bar, voice strip on side of
+ * [EditorState.panelSide] with rack, bottom bar, and status line.
  */
 @Composable
 internal fun EditorContent(
@@ -81,8 +81,8 @@ internal fun EditorContent(
             },
     ) {
         TitleBar(state, actions, Modifier.fillMaxWidth())
-        // The strip is composed first so Tab reaches it before the rack; a right-to-left row
-        // still draws it on the right, and each child restores left-to-right layout.
+        // Strip is composed first so Tab reaches it before rack; right-to-left row
+        // still draws it on right, and each child restores left-to-right layout.
         CompositionLocalProvider(LocalLayoutDirection provides rowDirection) {
             Row(Modifier.weight(1f).fillMaxWidth()) {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {

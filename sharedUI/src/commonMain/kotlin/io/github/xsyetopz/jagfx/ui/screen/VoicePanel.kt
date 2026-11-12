@@ -58,7 +58,7 @@ private val EdgeGrab = 6.dp
 private val BoxLabelWidth = 32.dp
 private val USmart16 = 0..SynthLimits.USMART16_MAX
 
-/** The stored [range] of a footer bar field, the [scale] of its bar, and the [unit] of a value. */
+/** Stored [range] of footer bar field, [scale] of its bar, and [unit] of value. */
 private class FieldSpec(
     val range: IntRange,
     val scale: ScrubScale,
@@ -84,7 +84,7 @@ private val FeedbackSpec =
     FieldSpec(USmart16, ScrubScale(0f..PERCENT_MAX, defaultValue = 0f)) { "%" }
 
 /**
- * The time span that the voice bars share, and [onFreeze], which holds a span during a drag and
+ * Time span that voice bars share, and [onFreeze], which holds span during drag and
  * releases it with `null`.
  */
 private class VoiceTimeline(
@@ -93,10 +93,10 @@ private class VoiceTimeline(
 )
 
 /**
- * The ten voices as chips, each with a bar of its start and length on a shared time axis, and the
- * on switch of the selected voice.
- * A click selects a voice, or pastes into it in copy mode; dragging a bar moves the voice, and
- * dragging its end changes the length.
+ * Ten voices as chips, each with bar of its start and length on shared time axis, and
+ * on switch of selected voice.
+ * Click selects voice, or pastes into it in copy mode; dragging bar moves voice, and
+ * dragging its end changes length.
  */
 @Composable
 internal fun VoiceChips(
@@ -130,7 +130,7 @@ internal fun VoiceChips(
     }
 }
 
-/** The chip of voice [index]: its number over its bar; dimmed when the slot is empty. */
+/** Chip of voice [index]: its number over its bar; dimmed when slot is empty. */
 @Composable
 private fun VoiceTile(
     index: Int,
@@ -176,9 +176,9 @@ private fun VoiceTile(
 }
 
 /**
- * Drags the bar of voice [index]: from within [EdgeGrab] of its end the length changes, elsewhere
- * the start.
- * The span stays frozen during the drag, so the bar follows the pointer.
+ * Drags bar of voice [index]: from within [EdgeGrab] of its end length changes, elsewhere
+ * start.
+ * Span stays frozen during drag, so bar follows pointer.
  */
 @Composable
 private fun Modifier.voiceDrag(
@@ -238,8 +238,8 @@ private fun Modifier.voiceDrag(
 }
 
 /**
- * The harmonic box of [row] in the bottom bar: its on switch and number, and Semi, Vol, and Del.
- * Its fields are disabled while the harmonic is off.
+ * Harmonic box of [row] in bottom bar: its on switch and number, and Semi, Vol, and Del.
+ * Its fields are disabled while harmonic is off.
  */
 @Composable
 internal fun HarmonicBox(
@@ -298,7 +298,7 @@ internal fun HarmonicBox(
     }
 }
 
-/** The reverb box of the bottom bar: Vol is the echo feedback and Del its delay. */
+/** Reverb box of bottom bar: Vol is echo feedback and Del its delay. */
 @Composable
 internal fun ReverbBox(
     state: EditorState,
@@ -348,7 +348,7 @@ private fun BoxColumn(
     ) { content() }
 }
 
-/** A [label] and a bar field in a box; [box] is the box name that completes its accessible name. */
+/** [label] and bar field in box; [box] is box name that completes its accessible name. */
 @Composable
 private fun BoxField(
     label: String,
@@ -375,7 +375,7 @@ private fun BoxField(
     }
 }
 
-/** A bar field that dispatches the intent that [intent] makes of each new value. */
+/** Bar field that dispatches intent that [intent] makes of each new value. */
 @Composable
 private fun PartialField(
     value: Int,

@@ -24,7 +24,7 @@ import kotlin.io.path.name
 
 /**
  * Desktop file access: native AWT file dialogs owned by [owner], and `java.nio` reads and
- * writes on [io]. Dialogs open on the Swing event thread through [Dispatchers.Main].
+ * writes on [io]. Dialogs open on Swing event thread through [Dispatchers.Main].
  */
 class DesktopPatchFiles(
     private val owner: () -> Frame? = { null },
@@ -44,7 +44,7 @@ class DesktopPatchFiles(
 
     override suspend fun read(path: String): ByteArray = io { Files.readAllBytes(toPath(path)) }
 
-    /** Writes to a temporary sibling and moves it over [path], so a failed write keeps the old file. */
+    /** Writes to temporary sibling and moves it over [path], so failed write keeps old file. */
     override suspend fun write(
         path: String,
         bytes: ByteArray,
@@ -110,7 +110,7 @@ class DesktopPatchFiles(
                 ->
                 name.endsWith(extension, ignoreCase = true)
             }
-            // Windows ignores the filter; a wildcard file name filters there instead.
+            // Windows ignores filter; wildcard file name filters there instead.
             dialog.file = suggestedName ?: "*$extension"
             dialog.isVisible = true
             val name = dialog.file

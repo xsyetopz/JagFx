@@ -19,8 +19,8 @@ private val json =
     }
 
 /**
- * Keeps the preferences as JSON in `preferences.json` under [directory]. A missing, unreadable,
- * or corrupt file gives the defaults; a failed write is dropped.
+ * Keeps preferences as JSON in `preferences.json` under [directory]. Missing, unreadable,
+ * or corrupt file gives defaults; failed write is dropped.
  */
 class DesktopPreferences(
     private val directory: File = defaultConfigDirectory(),
@@ -33,7 +33,7 @@ class DesktopPreferences(
         } catch (_: IOException) {
             EditorPreferences()
         } catch (_: IllegalArgumentException) {
-            // A SerializationException is an IllegalArgumentException.
+            // SerializationException is IllegalArgumentException.
             EditorPreferences()
         }
 
@@ -44,7 +44,7 @@ class DesktopPreferences(
             Files.writeString(temporary, json.encodeToString(preferences))
             Files.move(temporary, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
         } catch (_: IOException) {
-            // Losing a setting must not end the session.
+            // Losing setting must not end session.
         } catch (_: SecurityException) {
             // Same.
         }
@@ -52,7 +52,7 @@ class DesktopPreferences(
 }
 
 /**
- * The user's config folder for JagFx: `%APPDATA%\JagFx` on Windows,
+ * User's config folder for JagFx: `%APPDATA%\JagFx` on Windows,
  * `~/Library/Application Support/JagFx` on macOS, and `$XDG_CONFIG_HOME/jagfx` or
  * `~/.config/jagfx` elsewhere.
  */

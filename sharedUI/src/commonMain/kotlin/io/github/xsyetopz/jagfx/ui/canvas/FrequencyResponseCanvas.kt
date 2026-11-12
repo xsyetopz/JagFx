@@ -27,12 +27,12 @@ private const val START_FACTOR = 0.0
 internal const val SECTION_TRACE_ALPHA = 0.6f
 
 /**
- * Magnitude response of [filter] from -80 dB to 80 dB over the C1 to C9 frequency axis.
- * The scroll offset of [panZoom] is in pixels; the wheel zooms, and dragging pans when zoomed.
+ * Magnitude response of [filter] from -80 dB to 80 dB over C1 to C9 frequency axis.
+ * Scroll offset of [panZoom] is in pixels; wheel zooms, and dragging pans when zoomed.
  *
- * A filter that changes over the voice also shows the response at factors 0.25, 0.5 and 0.75
- * in fainter tints and at 1 in the filter's hue. The response at factor 0 is always drawn last,
- * in the brightest tint.
+ * Filter that changes over voice also shows response at factors 0.25, 0.5 and 0.75
+ * in fainter tints and at 1 in filter's hue. Response at factor 0 is always drawn last,
+ * in brightest tint.
  */
 @Composable
 internal fun FrequencyResponseCanvas(
@@ -83,7 +83,7 @@ internal fun FrequencyResponseCanvas(
     )
 }
 
-/** Polyline of [response] in pixels; the geometry is in density-independent units. */
+/** Polyline of [response] in pixels; geometry is in density-independent units. */
 private fun CacheDrawScope.responsePath(
     response: DoubleArray,
     width: Float,

@@ -29,7 +29,7 @@ import io.github.xsyetopz.jagfx.ui.widgets.formatDecimal
 private val LabelWidth = 64.dp
 private val AnyInt = Int.MIN_VALUE..Int.MAX_VALUE
 
-/** A scrolling side strip of the editor, as wide as [JagFxTheme] says. */
+/** Scrolling side strip of editor, as wide as [JagFxTheme] says. */
 @Composable
 internal fun StripColumn(
     modifier: Modifier = Modifier,
@@ -47,7 +47,7 @@ internal fun StripColumn(
     )
 }
 
-/** A [label] left of a control; [field] gets the modifier that fills the row and names the control. */
+/** [label] left of control; [field] gets modifier that fills row and names control. */
 @Composable
 internal fun StripRow(
     label: String,
@@ -64,7 +64,7 @@ internal fun StripRow(
     }
 }
 
-/** An integer field with a [label] and a [unit]; [description] is its accessible name. */
+/** Integer field with [label] and [unit]; [description] is its accessible name. */
 @Composable
 internal fun StripField(
     label: String,
@@ -78,7 +78,7 @@ internal fun StripField(
     StripRow(label, description) { JagField(value, onCommit, range, it, enabled, unit) }
 }
 
-/** A field in ms with two decimals, for gate gaps that last a few ms. */
+/** Field in ms with two decimals, for gate gaps that last few ms. */
 @Composable
 internal fun StripMsField(
     label: String,
@@ -93,7 +93,7 @@ internal fun StripMsField(
     }
 }
 
-/** A read-only [value] with a [label] and a [unit], such as the average of Min and Max. */
+/** Read-only [value] with [label] and [unit], such as average of Min and Max. */
 @Composable
 internal fun StripReadout(
     label: String,

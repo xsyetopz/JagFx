@@ -37,9 +37,9 @@ import io.github.xsyetopz.jagfx.ui.widgets.Tip
 private val ZoomPresets = listOf(1, 2, 4)
 
 /**
- * The title row of the cell of [slot]: its classic name with a description tooltip. The enlarged
- * cell also has the [HeaderControls] and a way back.
- * A double click on the row opens the cell over the whole rack, or closes it again.
+ * Title row of cell of [slot]: its classic name with description tooltip. Enlarged
+ * cell also has [HeaderControls] and way back.
+ * Double click on row opens cell over whole rack, or closes it again.
  */
 @Composable
 internal fun CellHeader(
@@ -79,7 +79,7 @@ internal fun CellHeader(
     }
 }
 
-/** The view toggles, `1x 2x 4x S`, `M…` and `▼` of an enlarged cell. */
+/** View toggles, `1x 2x 4x S`, `M…` and `▼` of enlarged cell. */
 @Composable
 private fun HeaderControls(
     slot: SignalChainSlot,
@@ -104,7 +104,7 @@ private fun HeaderControls(
     }
 }
 
-/** `123 # Pt`: the axis values, grid lines, and point readouts of the envelope in [slot]. */
+/** `123 # Pt`: axis values, grid lines, and point readouts of envelope in [slot]. */
 @Composable
 private fun ViewToggles(
     slot: SignalChainSlot,
@@ -123,7 +123,7 @@ private fun ViewToggles(
     }
 }
 
-/** A header button labelled [label] whose tooltip and accessible name is [description]. */
+/** Header button labelled [label] whose tooltip and accessible name is [description]. */
 @Composable
 private fun HeaderButton(
     label: String,
@@ -140,7 +140,7 @@ private fun HeaderButton(
     )
 }
 
-/** `M…`: a menu that sets the time view of [slot] to Linked or This cell. */
+/** `M…`: menu that sets time view of [slot] to Linked or This cell. */
 @Composable
 private fun TimeViewButton(
     slot: SignalChainSlot,

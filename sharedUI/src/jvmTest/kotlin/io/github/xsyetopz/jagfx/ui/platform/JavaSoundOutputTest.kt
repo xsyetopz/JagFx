@@ -67,7 +67,7 @@ private fun littleEndian(pcm: ShortArray): ByteArray =
         (if (i % 2 == 0) sample else sample shr 8).toByte()
     }
 
-/** A line that plays each write at once, so its frame position is the frames written. */
+/** Line that plays each write at once, so its frame position is frames written. */
 private class FakeLine {
     val written = ByteArrayOutputStream()
     var stopped = false

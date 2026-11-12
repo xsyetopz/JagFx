@@ -33,9 +33,9 @@ private const val REVOKE_DELAY_MS = 1000
 private const val NO_PATHS = "The browser has no file paths"
 
 /**
- * Browser file access. Opening uses a file `<input>`; saving downloads a Blob, so a saved file
- * has no path and the next save asks again. Files have no paths, so [read] and [write] are
- * never reached through the editor.
+ * Browser file access. Opening uses file `<input>`; saving downloads Blob, so saved file
+ * has no path and next save asks again. Files have no paths, so [read] and [write] are
+ * never reached through editor.
  */
 class BrowserPatchFiles : PatchFiles {
     private val strings get() = Strings(resolveLocale(window.navigator.language))
@@ -65,7 +65,7 @@ class BrowserPatchFiles : PatchFiles {
         anchor.download = suggestedName
         label(anchor, strings[UiString.FileDialogSave])
         anchor.click()
-        // Some browsers drop a download whose URL is revoked during the click.
+        // Some browsers drop download whose URL is revoked during click.
         window.setTimeout({
             URL.revokeObjectURL(url)
             null

@@ -8,20 +8,20 @@ import io.github.xsyetopz.jagfx.core.model.Waveform
 import io.github.xsyetopz.jagfx.core.vorbis.JagVorbis
 
 /**
- * Everything that can change an [EditorState]. [reduce] applies an intent.
+ * Everything that can change [EditorState]. [reduce] applies intent.
  *
- * Edit intents address the selected voice. Integer arguments outside their model range are
- * clamped; list indices outside the list leave the state unchanged.
+ * Edit intents address selected voice. Integer arguments outside their model range are
+ * clamped; list indices outside list leave state unchanged.
  */
 internal sealed interface EditorIntent
 
-/** Edits of the envelope shown for [target] in the selected voice. */
+/** Edits of envelope shown for [target] in selected voice. */
 internal sealed interface EnvelopeIntent : EditorIntent {
     val target: SignalChainSlot
 
     /**
-     * Sets the waveform. For the first envelope of an LFO or gate, [Waveform.Off] removes the
-     * pair and another waveform creates a missing pair.
+     * Sets waveform. For first envelope of LFO or gate, [Waveform.Off] removes
+     * pair and another waveform creates missing pair.
      */
     data class SetWaveform(
         override val target: SignalChainSlot,
@@ -38,7 +38,7 @@ internal sealed interface EnvelopeIntent : EditorIntent {
         val value: Int,
     ) : EnvelopeIntent
 
-    /** Inserts [segment] before [index]; an index past the end appends. */
+    /** Inserts [segment] before [index]; index past end appends. */
     data class InsertSegment(
         override val target: SignalChainSlot,
         val index: Int,
@@ -56,14 +56,14 @@ internal sealed interface EnvelopeIntent : EditorIntent {
         val index: Int,
     ) : EnvelopeIntent
 
-    /** Replaces all segments, as delivered by a canvas. Extra segments past the limit are dropped. */
+    /** Replaces all segments, as delivered by canvas. Extra segments past limit are dropped. */
     data class SetSegments(
         override val target: SignalChainSlot,
         val segments: List<Segment>,
     ) : EnvelopeIntent
 }
 
-/** Scalar fields of the selected voice, in milliseconds or percent. */
+/** Scalar fields of selected voice, in milliseconds or percent. */
 internal sealed interface VoiceIntent : EditorIntent {
     data class SetDuration(
         val ms: Int,
@@ -82,9 +82,9 @@ internal sealed interface VoiceIntent : EditorIntent {
     ) : VoiceIntent
 }
 
-/** Partials of the selected voice. [index] is the position in the partial list. */
+/** Partials of selected voice. [index] is position in partial list. */
 internal sealed interface PartialIntent : EditorIntent {
-    /** Removes partial [index] when it exists, else appends a 100 % partial. */
+    /** Removes partial [index] when it exists, else appends 100 % partial. */
     data class TogglePartial(
         val index: Int,
     ) : PartialIntent
@@ -105,22 +105,22 @@ internal sealed interface PartialIntent : EditorIntent {
     ) : PartialIntent
 }
 
-/** Filter of the selected voice. Channel `0` is feedforward, `1` is feedback. */
+/** Filter of selected voice. Channel `0` is feedforward, `1` is feedback. */
 internal sealed interface FilterIntent : EditorIntent {
-    /** Replaces the filter, for example with an imported one; `null` removes it. */
+    /** Replaces filter, for example with imported one; `null` removes it. */
     data class SetFilter(
         val filter: Filter?,
     ) : FilterIntent
 
     /**
-     * Turns the filter on or off. Off keeps the filter so that on brings it back; on without a
-     * kept filter creates one with a single zero feedforward pole.
+     * Turns filter on or off. Off keeps filter so that on brings it back; on without
+     * kept filter creates one with single zero feedforward pole.
      */
     data class SetEnabled(
         val enabled: Boolean,
     ) : FilterIntent
 
-    /** Adds zero poles or truncates. Creates a filter when needed; no poles removes it. */
+    /** Adds zero poles or truncates. Creates filter when needed; no poles removes it. */
     data class SetPoleCount(
         val channel: Int,
         val count: Int,
@@ -144,40 +144,40 @@ internal sealed interface FilterIntent : EditorIntent {
 
 /** Voice slot selection, enabling, copy and paste. */
 internal sealed interface SlotIntent : EditorIntent {
-    /** Selects [slot]. In copy mode with a copied voice, pastes it into another slot first. */
+    /** Selects [slot]. In copy mode with copied voice, pastes it into another slot first. */
     data class SelectVoice(
         val slot: Int,
     ) : SlotIntent
 
-    /** Puts [voice] into [slot], for example an imported tone. */
+    /** Puts [voice] into [slot], for example imported tone. */
     data class SetVoice(
         val slot: Int,
         val voice: Voice,
     ) : SlotIntent
 
-    /** Enables [slot] with a default voice, or empties it. */
+    /** Enables [slot] with default voice, or empties it. */
     data class SetVoiceEnabled(
         val slot: Int,
         val enabled: Boolean,
     ) : SlotIntent
 
-    /** Copies the selected voice and enters copy mode. */
+    /** Copies selected voice and enters copy mode. */
     data object CopyVoice : SlotIntent
 
-    /** Empties the selected slot. */
+    /** Empties selected slot. */
     data object ResetVoice : SlotIntent
 
     data class SelectTarget(
         val target: SignalChainSlot,
     ) : SlotIntent
 
-    /** Moves the selected target by [offset] in [SignalChainSlot.envelopeChain], wrapping. */
+    /** Moves selected target by [offset] in [SignalChainSlot.envelopeChain], wrapping. */
     data class SelectTargetByOffset(
         val offset: Int,
     ) : SlotIntent
 }
 
-/** Loop region of the patch. */
+/** Loop region of patch. */
 internal sealed interface LoopIntent : EditorIntent {
     data class SetLoopBegin(
         val ms: Int,
@@ -189,11 +189,11 @@ internal sealed interface LoopIntent : EditorIntent {
 }
 
 /**
- * Header-only edits of the open sample; without an open sample they leave the state unchanged.
+ * Header-only edits of open sample; without open sample they leave state unchanged.
  * Arguments outside their range are clamped; see [reduce].
  */
 internal sealed interface SampleIntent : EditorIntent {
-    /** Trims the end of the sample to [count] samples, at most the count at load time. */
+    /** Trims end of sample to [count] samples, at most count at load time. */
     data class SetSampleCount(
         val count: Int,
     ) : SampleIntent
@@ -211,7 +211,7 @@ internal sealed interface SampleIntent : EditorIntent {
     ) : SampleIntent
 }
 
-/** View and playback options. They never change the patch. */
+/** View and playback options. They never change patch. */
 internal sealed interface ViewIntent : EditorIntent {
     data class SetTrueWave(
         val enabled: Boolean,
@@ -233,7 +233,7 @@ internal sealed interface ViewIntent : EditorIntent {
         val side: PanelSide,
     ) : ViewIntent
 
-    /** Sets the in-app text size; the reducer clamps [percent] to `100..200`. */
+    /** Sets in-app text size; reducer clamps [percent] to `100..200`. */
     data class SetTextScale(
         val percent: Int,
     ) : ViewIntent
@@ -242,7 +242,7 @@ internal sealed interface ViewIntent : EditorIntent {
         val theme: ThemePreference,
     ) : ViewIntent
 
-    /** Shows the Main rack, the Filter column, or Both; the patch and history stay as they are. */
+    /** Shows Main rack, Filter column, or Both; patch and history stay as they are. */
     data class SetMode(
         val mode: RackMode,
     ) : ViewIntent
@@ -254,15 +254,15 @@ internal sealed interface HistoryIntent : EditorIntent {
 
     data object Redo : HistoryIntent
 
-    /** Starts a gesture: edits until the matching [EndGesture] form one undo step. */
+    /** Starts gesture: edits until matching [EndGesture] form one undo step. */
     data object BeginGesture : HistoryIntent
 
     data object EndGesture : HistoryIntent
 }
 
-/** Outcomes of file I/O and playback, reported by the ViewModel. */
+/** Outcomes of file I/O and playback, reported by ViewModel. */
 internal sealed interface ResultIntent : EditorIntent {
-    /** A file opened. [path] is `null` for a patch without a file. */
+    /** File opened. [path] is `null` for patch without file. */
     data class Loaded(
         val name: String,
         val path: String?,
@@ -286,12 +286,12 @@ internal sealed interface ResultIntent : EditorIntent {
         val message: String,
     ) : ResultIntent
 
-    /** A tone or filter was written to a file named [name]. */
+    /** Tone or filter was written to file named [name]. */
     data class Exported(
         val name: String,
     ) : ResultIntent
 
-    /** A sample opened; [pcm] is its decoded audio. [path] is `null` for a sample without a file. */
+    /** Sample opened; [pcm] is its decoded audio. [path] is `null` for sample without file. */
     class SampleLoaded(
         val name: String,
         val path: String?,
@@ -319,7 +319,7 @@ internal sealed interface ResultIntent : EditorIntent {
         val fraction: Float,
     ) : ResultIntent
 
-    /** A preview render finished with 16-bit [pcm] samples. */
+    /** Preview render finished with 16-bit [pcm] samples. */
     class PreviewRendered(
         val pcm: ShortArray,
     ) : ResultIntent
@@ -327,18 +327,18 @@ internal sealed interface ResultIntent : EditorIntent {
 
 /** Whole-document changes that need no side effect. */
 internal sealed interface DocumentIntent : EditorIntent {
-    /** Replaces the patch with a new one that has tone 1 on, and opens the editor. */
+    /** Replaces patch with new one that has tone 1 on, and opens editor. */
     data object NewPatch : DocumentIntent
 }
 
 /**
- * Requests with side effects. The ViewModel performs them and reports a [ResultIntent];
- * [reduce] leaves the state unchanged.
+ * Requests with side effects. ViewModel performs them and reports [ResultIntent];
+ * [reduce] leaves state unchanged.
  */
 internal sealed interface RequestIntent : EditorIntent {
     data object Open : RequestIntent
 
-    /** Opens the `.synth` file at [path] without a picker. */
+    /** Opens `.synth` file at [path] without picker. */
     data class OpenPath(
         val path: String,
     ) : RequestIntent
@@ -347,29 +347,29 @@ internal sealed interface RequestIntent : EditorIntent {
 
     data object SaveAs : RequestIntent
 
-    /** Reads a `.tone` file into the selected slot. */
+    /** Reads `.tone` file into selected slot. */
     data object ImportTone : RequestIntent
 
-    /** Writes the selected voice to a `.tone` file. */
+    /** Writes selected voice to `.tone` file. */
     data object ExportTone : RequestIntent
 
-    /** Reads a `.filter` file into the filter of the selected voice. */
+    /** Reads `.filter` file into filter of selected voice. */
     data object ImportFilter : RequestIntent
 
-    /** Writes the filter of the selected voice to a `.filter` file. */
+    /** Writes filter of selected voice to `.filter` file. */
     data object ExportFilter : RequestIntent
 
-    /** Reads a `.jagvorbis` file into the sample document. */
+    /** Reads `.jagvorbis` file into sample document. */
     data object OpenSample : RequestIntent
 
     data object SaveSample : RequestIntent
 
     data object SaveSampleAs : RequestIntent
 
-    /** Stops playback and closes the sample; the patch is shown again. */
+    /** Stops playback and closes sample; patch is shown again. */
     data object CloseSample : RequestIntent
 
-    /** Stops playback if playing, then starts it again. Plays the sample while one is open. */
+    /** Stops playback if playing, then starts it again. Plays sample while one is open. */
     data object TogglePlay : RequestIntent
 
     data object Stop : RequestIntent

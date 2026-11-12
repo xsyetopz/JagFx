@@ -26,16 +26,16 @@ import io.github.xsyetopz.jagfx.core.model.Envelope
 import io.github.xsyetopz.jagfx.core.model.Segment
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 
-/** Snap divisions of the time axis across the visible width at zoom 1. */
+/** Snap divisions of time axis across visible width at zoom 1. */
 private const val POSITION_SNAP_DIVISIONS = 8
 
-/** Depth in pixels of the edge zones that scroll a zoomed plot while a breakpoint is dragged. */
+/** Depth in pixels of edge zones that scroll zoomed plot while breakpoint is dragged. */
 private const val AUTO_SCROLL_EDGE = 28f
 
-/** Scroll step in pixels at the outer edge of an auto-scroll zone. */
+/** Scroll step in pixels at outer edge of auto-scroll zone. */
 private const val AUTO_SCROLL_MAX_STEP = 18f
 
-/** Hoisted view state that the envelope input handlers read. */
+/** Hoisted view state that envelope input handlers read. */
 internal class EnvelopeView(
     val envelope: Envelope?,
     val zoom: Int,
@@ -45,7 +45,7 @@ internal class EnvelopeView(
     val snapEnabled: Boolean = false,
 )
 
-/** Callbacks through which the envelope canvas reports edits. */
+/** Callbacks through which envelope canvas reports edits. */
 internal class EnvelopeCallbacks(
     val onZoomChange: (Int) -> Unit = {},
     val onScrollOffsetChange: (Float) -> Unit = {},
@@ -57,11 +57,11 @@ internal class EnvelopeCallbacks(
 )
 
 /**
- * How [EnvelopeCanvas] draws: [lineColor] defaults to the marker color.
- * A positive [durationMs] draws the time axis in ms; a [slot] with a value range draws the value
- * axis in its unit and gives the readout its unit.
- * [axisLabels] draws the time and value labels, [gridLines] the grid (in the faint color when
- * [faintGrid]), and [pointLabels] a time and value label at every point.
+ * How [EnvelopeCanvas] draws: [lineColor] defaults to marker color.
+ * Positive [durationMs] draws time axis in ms; [slot] with value range draws value
+ * axis in its unit and gives readout its unit.
+ * [axisLabels] draws time and value labels, [gridLines] grid (in faint color when
+ * [faintGrid]), and [pointLabels] time and value label at every point.
  */
 @Immutable
 internal data class EnvelopeStyle(
@@ -76,10 +76,10 @@ internal data class EnvelopeStyle(
     val pointLabels: Boolean = false,
 )
 
-/** Context menu entries of the envelope canvas. */
+/** Context menu entries of envelope canvas. */
 internal enum class EnvelopeMenuKind { DeletePoint, AddPointHere, AddPointAtEnd }
 
-/** Localized labels of the envelope context menu (`MenuDeletePoint`, `MenuAddPointHere`, ...). */
+/** Localized labels of envelope context menu (`MenuDeletePoint`, `MenuAddPointHere`, ...). */
 internal data class EnvelopeMenuLabels(
     val deletePoint: String,
     val addPointHere: String,
@@ -87,7 +87,7 @@ internal data class EnvelopeMenuLabels(
 )
 
 /**
- * An open context menu at [position] with one [kind] entry; choosing it applies [segments] and
+ * Open context menu at [position] with one [kind] entry; choosing it applies [segments] and
  * selects [selection].
  */
 internal class EnvelopeMenu(
@@ -97,16 +97,16 @@ internal class EnvelopeMenu(
     val selection: Int,
 )
 
-/** Applies [menu]: the new segments, then the new selection. */
+/** Applies [menu]: new segments, then new selection. */
 internal fun EnvelopeCallbacks.applyMenu(menu: EnvelopeMenu) {
     onSegmentsChange(menu.segments)
     onSelect(menu.selection)
 }
 
 /**
- * Runs the key command of [event] (see [envelopeKeyCommand]): select, move, fine move, add, or
- * delete. Each edit is one [EnvelopeCallbacks.onSegmentsChange], so one undo step. Shift moves a
- * point by [KEY_STEP]; Ctrl or Cmd by [KEY_FINE_STEP]. Alt is left to the cell navigation. True
+ * Runs key command of [event] (see [envelopeKeyCommand]): select, move, fine move, add, or
+ * delete. Each edit is one [EnvelopeCallbacks.onSegmentsChange], so one undo step. Shift moves
+ * point by [KEY_STEP]; Ctrl or Cmd by [KEY_FINE_STEP]. Alt is left to cell navigation. True
  * when [event] was handled.
  */
 internal fun handleEnvelopeKey(
@@ -133,8 +133,8 @@ internal fun handleEnvelopeKey(
 }
 
 /**
- * Callbacks to the canvas itself: focus it, open a menu, set the hover cursor, and show or hide
- * the readout.
+ * Callbacks to canvas itself: focus it, open menu, set hover cursor, and show or hide
+ * readout.
  */
 internal class EnvelopeCanvasHooks(
     val requestFocus: () -> Unit,
@@ -143,7 +143,7 @@ internal class EnvelopeCanvasHooks(
     val onReadout: (Int?) -> Unit,
 )
 
-/** Pointer handling of an interactive envelope canvas; see [EnvelopeGestures]. */
+/** Pointer handling of interactive envelope canvas; see [EnvelopeGestures]. */
 internal fun Modifier.envelopePointerInput(
     view: State<EnvelopeView>,
     callbacks: State<EnvelopeCallbacks>,
@@ -406,7 +406,7 @@ private class EnvelopeGestures(
         panning = false
     }
 
-    /** Steps the zoom by [delta], keeping the time under canvas [x] where it is. */
+    /** Steps zoom by [delta], keeping time under canvas [x] where it is. */
     private fun zoomAt(
         delta: Float,
         x: Float,
@@ -430,7 +430,7 @@ private class EnvelopeGestures(
     }
 }
 
-/** The cursor at [position] on a plot with [geometry]: hand on a breakpoint, crosshair on a line. */
+/** Cursor at [position] on plot with [geometry]: hand on breakpoint, crosshair on line. */
 private fun hoverIcon(
     geometry: EnvelopeGeometry?,
     position: Offset,
@@ -442,5 +442,5 @@ private fun hoverIcon(
         else -> PointerIcon.Default
     }
 
-/** Width in pixels of the plot inside a canvas of this size at zoom 1. */
+/** Width in pixels of plot inside canvas of this size at zoom 1. */
 private fun IntSize.plotWidth(): Float = (width - 2 * ENVELOPE_PADDING).coerceAtLeast(0f)

@@ -19,15 +19,15 @@ import kotlinx.coroutines.withContext
 import kotlin.time.TimeSource
 
 /**
- * Holds the [EditorState] and performs the side effects of [RequestIntent]s.
+ * Holds [EditorState] and performs side effects of [RequestIntent]s.
  *
- * Every patch or playback-slot change renders a one-pass preview on [renderDispatcher]; a newer
- * render discards an older one. With true-wave off, renders wait until no gesture is open.
- * Opening a sample decodes it on [renderDispatcher] with [sampleDecoder].
- * The panel side, text size, and theme start from [preferences] and are saved whenever they change.
- * Every playback position the audio reports reaches the state, or one a second when
- * [PlatformSettings.reducedMotion] of [settings] is on; the last position always arrives.
- * Call [dispatch] from the main thread.
+ * Every patch or playback-slot change renders one-pass preview on [renderDispatcher]; newer
+ * render discards older one. With true-wave off, renders wait until no gesture is open.
+ * Opening sample decodes it on [renderDispatcher] with [sampleDecoder].
+ * Panel side, text size, and theme start from [preferences] and are saved whenever they change.
+ * Every playback position audio reports reaches state, or one per second when
+ * [PlatformSettings.reducedMotion] of [settings] is on; last position always arrives.
+ * Call [dispatch] from main thread.
  */
 internal class EditorViewModel(
     private val files: PatchFiles,
@@ -115,7 +115,7 @@ internal class EditorViewModel(
             }
     }
 
-    /** Stops playback, then plays the patch. An endless loop replays until stopped. */
+    /** Stops playback, then plays patch. Endless loop replays until stopped. */
     private fun play() {
         val previous = playbackJob
         playbackJob =
@@ -174,7 +174,7 @@ internal class EditorViewModel(
         viewModelScope.launch { task() }
     }
 
-    /** Asks for a `.jagvorbis` file and opens it as the sample document. */
+    /** Asks for `.jagvorbis` file and opens it as sample document. */
     private suspend fun openSample() {
         val name = "${state.value.fileName}.${PatchFileKind.Sample.extension}"
         val file =

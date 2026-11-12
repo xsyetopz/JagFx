@@ -25,15 +25,15 @@ import kotlin.math.roundToInt
 private val U16 = 0..SynthLimits.U16_MAX
 private val GainScale = ScrubScale(0f..SynthLimits.U16_MAX.toFloat())
 
-/** Unity gain in dB per raw unit, as the engine applies it. */
+/** Unity gain in dB per raw unit, as engine applies it. */
 private const val GAIN_DB_PER_UNIT = 0.00305f
 
 /** Channel `0` feeds forward (zeros); channel `1` feeds back (poles). */
 private val ChannelNames = listOf("A", "B")
 
 /**
- * The strip left of the filter column: Off and On, Import Filter, Export Filter, the zero and
- * pole counts, the unity gains, Snap for the pole and zero graph, and the selected pole.
+ * Strip left of filter column: Off and On, Import Filter, Export Filter, zero and
+ * pole counts, unity gains, Snap for pole and zero graph, and selected pole.
  */
 @Composable
 internal fun FilterStrip(
@@ -118,7 +118,7 @@ private fun FilterFields(
     if (ref != null) PoleFields(ref, filter, actions)
 }
 
-/** The frequency in Hz and resonance in dB of the coefficient at [ref], and the raw fields that edit it. */
+/** Frequency in Hz and resonance in dB of coefficient at [ref], and raw fields that edit it. */
 @Composable
 private fun PoleFields(
     ref: PoleRef,

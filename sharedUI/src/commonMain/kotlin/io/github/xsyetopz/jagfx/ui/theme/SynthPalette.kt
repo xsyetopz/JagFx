@@ -4,8 +4,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
 /**
- * Colors of the plots, one set per [JagFxAppearance]; read them as [JagFxTheme.palette].
- * Plots keep a dark scope in every appearance.
+ * Colors of plots, one set per [JagFxAppearance]; read them as [JagFxTheme.palette].
+ * Plots keep dark scope in every appearance.
  * Every line, marker, and trace has at least 3:1 contrast against [scope], and 7:1 in
  * [HighContrast]; `ContrastTest` checks it.
  */
@@ -17,13 +17,13 @@ internal data class SynthPalette(
     val grid: Color,
     /** Grid lines between labelled steps. */
     val gridFaint: Color,
-    /** The centre or zero line. */
+    /** Centre or zero line. */
     val midLine: Color,
-    /** Axis labels and readouts drawn on the plot. */
+    /** Axis labels and readouts drawn on plot. */
     val scopeText: Color,
-    /** Hover crosshair, breakpoint markers, and the selected breakpoint ring. */
+    /** Hover crosshair, breakpoint markers, and selected breakpoint ring. */
     val marker: Color,
-    /** Fill behind a selected breakpoint or pole. */
+    /** Fill behind selected breakpoint or pole. */
     val selection: Color,
     /** Loop start and end markers. */
     val loop: Color,
@@ -35,16 +35,16 @@ internal data class SynthPalette(
     val output: Color,
     /** Frequency response. */
     val filter: Color,
-    /** Filter zeros, the feed-forward channel. */
+    /** Filter zeros, feed-forward channel. */
     val zero: Color,
-    /** Filter poles, the feedback channel. */
+    /** Filter poles, feedback channel. */
     val pole: Color,
-    /** Disabled or missing data on a plot. */
+    /** Disabled or missing data on plot. */
     val inactive: Color,
 ) {
     companion object {
         /**
-         * The 2025 look: black plots, dark grey-green grid, grey midline, pale yellow-green
+         * 2025 look: black plots, dark grey-green grid, grey midline, pale yellow-green
          * envelopes and response, pale green output, and poles and zeros in pink and cyan.
          */
         val Classic: SynthPalette =
@@ -66,7 +66,7 @@ internal data class SynthPalette(
                 inactive = Color(0xFF6A6A6A),
             )
 
-        /** The Scala JagFX hues on a near-black scope, for the light chrome. */
+        /** Scala JagFX hues on near-black scope, for light chrome. */
         val Light: SynthPalette =
             SynthPalette(
                 scope = Color(0xFF050505),

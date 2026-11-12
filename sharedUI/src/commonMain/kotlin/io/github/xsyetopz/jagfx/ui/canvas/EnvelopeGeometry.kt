@@ -4,37 +4,37 @@ import io.github.xsyetopz.jagfx.core.model.Segment
 import io.github.xsyetopz.jagfx.core.model.SynthLimits
 import kotlin.math.round
 
-/** Inset of the envelope plot from each canvas edge, in pixels. */
+/** Inset of envelope plot from each canvas edge, in pixels. */
 internal const val ENVELOPE_PADDING: Float = 4f
 
-/** Distance in pixels within which a press hits a breakpoint. */
+/** Distance in pixels within which press hits breakpoint. */
 internal const val ENVELOPE_POINT_HIT_RADIUS: Float = 8f
 
-/** Distance in pixels within which a press hits a line between two breakpoints. */
+/** Distance in pixels within which press hits line between two breakpoints. */
 internal const val ENVELOPE_LINE_HIT_RADIUS: Float = 6f
 
 private const val DEGENERATE_LENGTH_SQUARED = 0.001f
 private const val LEVEL_SNAP_DIVISIONS = 4
 
-/** Span of the time axis: a segment position of 65536 would be the end of the voice. */
+/** Span of time axis: segment position of 65536 would be end of voice. */
 internal const val ENVELOPE_POSITION_SPAN: Float = 65536f
 
-/** Vertical scale of an envelope plot. */
+/** Vertical scale of envelope plot. */
 internal enum class EnvelopeScaleMode {
-    /** Levels 0..65535 fill the plot height. */
+    /** Levels 0..65535 fill plot height. */
     FullScale,
 
     /** Same vertical mapping as [FullScale]. */
     Normalized,
 
-    /** The range between the lowest and highest level of the envelope fills the plot height. */
+    /** Range between lowest and highest level of envelope fills plot height. */
     AutoScale,
 }
 
 /**
- * Maps the breakpoints of an envelope to canvas pixels and back.
- * Breakpoint `i` is the target level of segment `i` at its stored position, a fraction of the
- * voice in 1/65536; breakpoint 0 is at time 0, because the game client does not read its position.
+ * Maps breakpoints of envelope to canvas pixels and back.
+ * Breakpoint `i` is target level of segment `i` at its stored position, fraction of
+ * voice in 1/65536; breakpoint 0 is at time 0, because game client does not read its position.
  */
 internal class EnvelopeGeometry(
     val segments: List<Segment>,
@@ -43,22 +43,22 @@ internal class EnvelopeGeometry(
     viewport: Viewport = Viewport(),
     val scaleMode: EnvelopeScaleMode = EnvelopeScaleMode.FullScale,
 ) {
-    /** Zoom level of the plot. */
+    /** Zoom level of plot. */
     val zoom: Int = viewport.zoom
 
-    /** Horizontal scroll offset of the plot, in pixels. */
+    /** Horizontal scroll offset of plot, in pixels. */
     val scrollOffset: Float = viewport.scrollOffset
 
-    /** Width of the whole plot at [zoom], in pixels. */
+    /** Width of whole plot at [zoom], in pixels. */
     val plotWidth: Float = ((width - 2 * ENVELOPE_PADDING) * zoom).coerceAtLeast(0f)
 
-    /** Height of the plot, in pixels. */
+    /** Height of plot, in pixels. */
     val plotHeight: Float = (height - 2 * ENVELOPE_PADDING).coerceAtLeast(0f)
 
-    /** Level at the bottom of the plot. */
+    /** Level at bottom of plot. */
     val minValue: Int
 
-    /** Level span between the bottom and the top of the plot; at least 1. */
+    /** Level span between bottom and top of plot; at least 1. */
     val range: Int
 
     /** Number of breakpoints: one per segment. */
@@ -86,16 +86,16 @@ internal class EnvelopeGeometry(
     /** X of breakpoint [index]. */
     fun pointX(index: Int): Float = xs[index]
 
-    /** Y of breakpoint [index], clamped to the plot. */
+    /** Y of breakpoint [index], clamped to plot. */
     fun pointY(index: Int): Float = ys[index]
 
-    /** Unclamped y of the level [value]. */
+    /** Unclamped y of level [value]. */
     fun valueToY(value: Int): Float {
         val norm = (value - minValue).toFloat() / range
         return ENVELOPE_PADDING + plotHeight - norm * plotHeight
     }
 
-    /** The index of the first breakpoint within [ENVELOPE_POINT_HIT_RADIUS] of ([x], [y]), or -1. */
+    /** Index of first breakpoint within [ENVELOPE_POINT_HIT_RADIUS] of ([x], [y]), or -1. */
     fun hitTest(
         x: Float,
         y: Float,
@@ -110,7 +110,7 @@ internal class EnvelopeGeometry(
     }
 
     /**
-     * The index of the breakpoint that ends the line passing within [ENVELOPE_LINE_HIT_RADIUS] of
+     * Index of breakpoint that ends line passing within [ENVELOPE_LINE_HIT_RADIUS] of
      * ([x], [y]), or -1.
      */
     fun lineHitTest(
@@ -137,7 +137,7 @@ internal class EnvelopeGeometry(
         return -1
     }
 
-    /** The segment position at canvas [x], in 1/65536 of the voice; 0 when the plot has no width. */
+    /** Segment position at canvas [x], in 1/65536 of voice; 0 when plot has no width. */
     fun xToPosition(x: Float): Float =
         if (plotWidth <= 0f) {
             0f
@@ -145,7 +145,7 @@ internal class EnvelopeGeometry(
             (x + scrollOffset - ENVELOPE_PADDING) / plotWidth * ENVELOPE_POSITION_SPAN
         }
 
-    /** The level at canvas [y] for a scale of [min] and [range], clamped to 0..65535. */
+    /** Level at canvas [y] for scale of [min] and [range], clamped to 0..65535. */
     fun yToPeakLevel(
         y: Float,
         min: Int = minValue,
@@ -156,8 +156,8 @@ internal class EnvelopeGeometry(
     }
 
     /**
-     * [segments] with breakpoint [index] moved to canvas [x], kept between the positions of its
-     * neighbours (the last one up to 65535). Breakpoint 0 stays at time 0.
+     * [segments] with breakpoint [index] moved to canvas [x], kept between positions of its
+     * neighbours (last one up to 65535). Breakpoint 0 stays at time 0.
      */
     fun movePoint(
         segments: List<Segment>,
@@ -170,9 +170,9 @@ internal class EnvelopeGeometry(
     }
 
     /**
-     * [segments] with a breakpoint inserted before breakpoint [endIndex] at canvas ([x], [y]),
-     * kept between the positions of the line's two breakpoints. Returns `null` when the envelope
-     * already has [SynthLimits.MAX_SEGMENTS] segments or [endIndex] does not end a line.
+     * [segments] with breakpoint inserted before breakpoint [endIndex] at canvas ([x], [y]),
+     * kept between positions of line's two breakpoints. Returns `null` when envelope
+     * already has [SynthLimits.MAX_SEGMENTS] segments or [endIndex] does not end line.
      */
     fun insertPointOnLine(
         segments: List<Segment>,
@@ -195,7 +195,7 @@ internal class EnvelopeGeometry(
         y.coerceIn(ENVELOPE_PADDING, ENVELOPE_PADDING + plotHeight)
 }
 
-/** [level] rounded to the nearest of `4 * zoom` steps across [range] above [min]. */
+/** [level] rounded to nearest of `4 * zoom` steps across [range] above [min]. */
 internal fun snapLevel(
     level: Int,
     min: Int,
@@ -208,8 +208,8 @@ internal fun snapLevel(
 }
 
 /**
- * [segments] with the position of breakpoint [index] rounded to the nearest multiple of [step],
- * kept between the positions of its neighbours. Breakpoint 0 is left as it is.
+ * [segments] with position of breakpoint [index] rounded to nearest multiple of [step],
+ * kept between positions of its neighbours. Breakpoint 0 is left as it is.
  */
 internal fun snapPosition(
     segments: List<Segment>,
@@ -223,7 +223,7 @@ internal fun snapPosition(
     return segments.replace(index, current.copy(duration = snapped))
 }
 
-/** Positions that breakpoint [index] can take without passing a neighbour. */
+/** Positions that breakpoint [index] can take without passing neighbour. */
 internal fun positionBounds(
     segments: List<Segment>,
     index: Int,
@@ -233,7 +233,7 @@ internal fun positionBounds(
     return low..high.coerceAtLeast(low)
 }
 
-/** [segments] with the target level of segment [index] set to [level]. */
+/** [segments] with target level of segment [index] set to [level]. */
 internal fun withTargetLevel(
     segments: List<Segment>,
     index: Int,
@@ -256,7 +256,7 @@ internal fun removeSegment(
     }
 
 /**
- * [segments] with a breakpoint appended at the end of the voice at the last level, so the sound
+ * [segments] with breakpoint appended at end of voice at last level, so sound
  * does not change; `null` at [SynthLimits.MAX_SEGMENTS] segments.
  */
 internal fun appendSegment(segments: List<Segment>): List<Segment>? =

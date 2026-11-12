@@ -5,9 +5,9 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 
 /**
- * The Material 3 [ColorScheme] of [appearance], derived from [JagFxColors]: surface is the panel,
- * background the root, primary the accent, outline the control border, and onSurface the text.
- * [JagFxAppearance.HighContrast] gets its own scheme, built from the high-contrast colors.
+ * Material 3 [ColorScheme] of [appearance], derived from [JagFxColors]: surface is panel,
+ * background root, primary accent, outline control border, and onSurface text.
+ * [JagFxAppearance.HighContrast] gets its own scheme, built from high-contrast colors.
  */
 internal fun jagFxColorScheme(appearance: JagFxAppearance): ColorScheme {
     val c = JagFxColors.of(appearance)

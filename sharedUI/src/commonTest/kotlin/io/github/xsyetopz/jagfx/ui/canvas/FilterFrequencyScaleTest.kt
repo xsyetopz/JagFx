@@ -35,7 +35,7 @@ class FilterFrequencyScaleTest {
                 )
             assertEquals(expected, FilterFrequencyScale.normalizedXToRawPhase(x))
         }
-        // Every raw phase lies on the axis, so it round trips.
+        // Every raw phase lies on axis, so it round trips.
         assertEquals(
             32768,
             FilterFrequencyScale.normalizedXToRawPhase(

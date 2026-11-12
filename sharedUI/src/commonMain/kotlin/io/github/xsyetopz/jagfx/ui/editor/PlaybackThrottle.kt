@@ -11,8 +11,8 @@ internal fun playbackIntervalMs(reducedMotion: Boolean): Long =
     if (reducedMotion) REDUCED_MOTION_INTERVAL_MS else 0L
 
 /**
- * Thins a stream of playback positions to one per [intervalMs]. It reads the timestamps given to
- * [offer], never a clock, so the result depends on the stream alone.
+ * Thins stream of playback positions to one per [intervalMs]. It reads timestamps given to
+ * [offer], never clock, so result depends on stream alone.
  */
 internal class PlaybackThrottle(
     private val intervalMs: Long,
@@ -20,7 +20,7 @@ internal class PlaybackThrottle(
     private var lastPassedAtMs: Long? = null
     private var held: Float? = null
 
-    /** [position] when it is the first or [intervalMs] has passed since the last one passed, else `null`. */
+    /** [position] when it is first or [intervalMs] has passed since last one passed, else `null`. */
     fun offer(
         position: Float,
         nowMs: Long,
@@ -35,6 +35,6 @@ internal class PlaybackThrottle(
         return null
     }
 
-    /** The newest position that [offer] held back, once; `null` when the last one passed. */
+    /** Newest position that [offer] held back, once; `null` when last one passed. */
     fun flush(): Float? = held.also { held = null }
 }

@@ -7,30 +7,30 @@ import kotlin.math.log10
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-/** Ruler steps in ms are 1, 2, and [HALF_DECADE] times a power of ten. */
+/** Ruler steps in ms are 1, 2, and [HALF_DECADE] times power of ten. */
 private const val HALF_DECADE = 5
 private val RulerMantissas = listOf(1, 2, HALF_DECADE)
 private const val DECIMAL = 10.0
 
-/** The time span in ms the tone bars share: the latest voice end or loop end, at least 1. */
+/** Time span in ms tone bars share: latest voice end or loop end, at least 1. */
 internal fun timelineSpan(patch: Patch): Int {
     val voiceEnd = patch.voices.maxOf { (it?.offset?.value ?: 0) + (it?.duration?.value ?: 0) }
     return maxOf(voiceEnd, patch.loop.end.value, 1)
 }
 
-/** What a drag on a voice bar changes. */
+/** What drag on voice bar changes. */
 internal enum class LaneDrag {
-    /** The offset: the bar moves and keeps its length. */
+    /** Offset: bar moves and keeps its length. */
     Move,
 
-    /** The duration: the end of the bar moves. */
+    /** Duration: end of bar moves. */
     Resize,
 }
 
 /**
- * The drag that a press at [x] starts on a bar from [barStart] to [barEnd], all in px.
- * A press within [edge] px of the end resizes; a press on a bar too short to have a middle
- * also resizes, so that a voice of length zero can still grow.
+ * Drag that press at [x] starts on bar from [barStart] to [barEnd], all in px.
+ * Press within [edge] px of end resizes; press on bar too short to have middle
+ * also resizes, so that voice of length zero can still grow.
  */
 internal fun laneDragAt(
     x: Float,
@@ -47,8 +47,8 @@ internal fun laneDragAt(
     }
 
 /**
- * The offset and duration in ms after a [drag] of [deltaMs] on a voice that started at [offset]
- * and lasted [duration]. Both stay in the 16-bit range of the format.
+ * Offset and duration in ms after [drag] of [deltaMs] on voice that started at [offset]
+ * and lasted [duration]. Both stay in 16-bit range of format.
  */
 internal fun draggedTimes(
     drag: LaneDrag,
@@ -65,7 +65,7 @@ internal fun draggedTimes(
 }
 
 /**
- * The ruler step in ms for [spanMs] over [widthPx] px: the smallest step of 1, 2, or 5 times a
+ * Ruler step in ms for [spanMs] over [widthPx] px: smallest step of 1, 2, or 5 times
  * power of ten whose ticks are at least [minGapPx] px apart.
  */
 internal fun rulerStep(

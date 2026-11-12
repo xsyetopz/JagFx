@@ -22,7 +22,7 @@ import io.github.xsyetopz.jagfx.ui.i18n.rememberStrings
 import io.github.xsyetopz.jagfx.ui.screen.PlayAction
 import io.github.xsyetopz.jagfx.ui.screen.label
 
-/** Number keys for voices 1 to 10, as on the number row: 1 to 9, then 0. */
+/** Number keys for voices 1 to 10, as on number row: 1 to 9, then 0. */
 private val VoiceKeys =
     listOf(
         Key.One,
@@ -37,10 +37,10 @@ private val VoiceKeys =
         Key.Zero,
     )
 
-/** Number keys for the rack modes Main, Filter and Both, used with the command key and Alt. */
+/** Number keys for rack modes Main, Filter and Both, used with command key and Alt. */
 private val ModeKeys = listOf(Key.One, Key.Two, Key.Three)
 
-/** A shortcut with Command on macOS and Ctrl elsewhere. */
+/** Shortcut with Command on macOS and Ctrl elsewhere. */
 private fun command(
     key: Key,
     shift: Boolean = false,
@@ -48,8 +48,8 @@ private fun command(
 ): KeyShortcut = KeyShortcut(key, ctrl = !isMacOs, meta = isMacOs, shift = shift, alt = alt)
 
 /**
- * The menu bar of the editor window: on macOS the screen menu bar, elsewhere a bar in the window.
- * Every toolbar command is here, with the platform shortcuts.
+ * Menu bar of editor window: on macOS screen menu bar, elsewhere bar in window.
+ * Every toolbar command is here, with platform shortcuts.
  */
 @Composable
 internal fun FrameWindowScope.EditorMenuBar(

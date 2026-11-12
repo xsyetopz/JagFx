@@ -1,14 +1,14 @@
 package io.github.xsyetopz.jagfx.ui.canvas
 
-/** Column reduction of the output waveform: the min and max sample of each pixel column. */
+/** Column reduction of output waveform: min and max sample of each pixel column. */
 internal object Downsampler {
     /**
      * Minimum and maximum of [samples] per pixel column, interleaved as `[min0, max0, min1, ...]`.
      *
-     * The samples are spread over `columns * zoom` columns and the view starts [scroll] columns
-     * in. Column `px` covers the samples from `(int)((px + scroll) * step)` until
-     * `(int)((px + 1 + scroll) * step)`, with `step = samples.size / (columns * zoom)`. A column
-     * without samples, before the start, or past the end holds `NaN` twice.
+     * Samples are spread over `columns * zoom` columns and view starts [scroll] columns
+     * in. Column `px` covers samples from `(int)((px + scroll) * step)` until
+     * `(int)((px + 1 + scroll) * step)`, with `step = samples.size / (columns * zoom)`. Column
+     * without samples, before start, or past end holds `NaN` twice.
      */
     fun minMax(
         samples: FloatArray,

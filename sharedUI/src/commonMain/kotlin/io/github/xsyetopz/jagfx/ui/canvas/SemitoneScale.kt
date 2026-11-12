@@ -6,7 +6,7 @@ import kotlin.math.log2
 import kotlin.math.pow
 import kotlin.math.round
 
-/** Equal-tempered semitone grid over the [FilterFrequencyScale] axis, with C1 as semitone 0. */
+/** Equal-tempered semitone grid over [FilterFrequencyScale] axis, with C1 as semitone 0. */
 internal object SemitoneScale {
     const val SEMITONES_PER_OCTAVE: Int = 12
 
@@ -18,15 +18,15 @@ internal object SemitoneScale {
     fun semitoneToFrequency(semitone: Int): Double =
         BASE_HZ * 2.0.pow(semitone / SEMITONES_PER_OCTAVE.toDouble())
 
-    /** Lowest semitone that can fall on the axis. */
+    /** Lowest semitone that can fall on axis. */
     val firstVisibleSemitone: Int =
         floor(SEMITONES_PER_OCTAVE * log2(MIN_HZ / BASE_HZ)).toInt()
 
-    /** Highest semitone that can fall on the axis. */
+    /** Highest semitone that can fall on axis. */
     val lastVisibleSemitone: Int =
         ceil(SEMITONES_PER_OCTAVE * log2(MAX_HZ / BASE_HZ)).toInt()
 
-    /** [rawPhase] snapped to a semitone, then moved [semitones] further, kept on the axis. */
+    /** [rawPhase] snapped to semitone, then moved [semitones] further, kept on axis. */
     fun stepRawPhase(
         rawPhase: Int,
         semitones: Int,
@@ -40,7 +40,7 @@ internal object SemitoneScale {
         )
     }
 
-    /** [rawPhase] moved to the nearest semitone. */
+    /** [rawPhase] moved to nearest semitone. */
     fun snapRawPhaseToSemitone(rawPhase: Int): Int {
         val octaves = log2(FilterFrequencyScale.rawPhaseToFrequency(rawPhase) / BASE_HZ)
         val semitone = round(SEMITONES_PER_OCTAVE * octaves).toInt()

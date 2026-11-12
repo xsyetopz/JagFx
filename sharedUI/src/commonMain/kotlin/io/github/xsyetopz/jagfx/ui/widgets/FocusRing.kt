@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 
-/** Draws a [width] ring in [color] just inside the bounds, over the border, while [focused]. */
+/** Draws [width] ring in [color] just inside bounds, over border, while [focused]. */
 internal fun Modifier.focusRing(
     focused: Boolean,
     color: Color,

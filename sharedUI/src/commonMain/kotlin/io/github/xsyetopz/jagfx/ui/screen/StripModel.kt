@@ -9,14 +9,14 @@ import io.github.xsyetopz.jagfx.ui.i18n.Strings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
 import kotlin.math.roundToInt
 
-/** The mean of the raw values [min] and [max] in [unit]. */
+/** Mean of raw values [min] and [max] in [unit]. */
 internal fun averageIn(
     unit: ValueUnit,
     min: Int,
     max: Int,
 ): Double = unit.fromRaw((min.toDouble() + max) / 2)
 
-/** The waveform names, in [Waveform.selectable] order. */
+/** Waveform names, in [Waveform.selectable] order. */
 private val WaveformNames =
     listOf(
         UiString.WaveOff,
@@ -26,13 +26,13 @@ private val WaveformNames =
         UiString.WaveNoise,
     )
 
-/** The name of [waveform] in [strings]. */
+/** Name of [waveform] in [strings]. */
 internal fun waveformName(
     strings: Strings,
     waveform: Waveform,
 ): String = strings[WaveformNames[Waveform.selectable.indexOf(waveform)]]
 
-/** The playback buttons of the voice strip. */
+/** Playback buttons of voice strip. */
 internal enum class PlayAction(
     val singleTone: Boolean,
     val looping: Boolean,
@@ -43,7 +43,7 @@ internal enum class PlayAction(
     LoopAll(singleTone = false, looping = true),
     ;
 
-    /** The intents that set the playback options and then start playing. */
+    /** Intents that set playback options and then start playing. */
     fun intents(): List<EditorIntent> =
         listOf(
             ViewIntent.SetPlaySingleVoice(singleTone),

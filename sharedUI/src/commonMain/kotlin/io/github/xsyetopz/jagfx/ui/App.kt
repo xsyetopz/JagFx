@@ -26,10 +26,10 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 /**
- * The JagFx editor. [files] and [audio] are the platform's file access and audio output.
- * [preferences] keeps the panel side, text size, and theme between runs; [settings] reports the
+ * JagFx editor. [files] and [audio] are platform's file access and audio output.
+ * [preferences] keeps panel side, text size, and theme between runs; [settings] reports
  * platform's high-contrast, reduced-motion, and text size settings.
- * [onTitleChange] receives the window title each time it changes; paths under [home] show `~`.
+ * [onTitleChange] receives window title each time it changes; paths under [home] show `~`.
  */
 @Composable
 fun App(
@@ -45,7 +45,7 @@ fun App(
     EditorApp(viewModel, home, settings, onTitleChange)
 }
 
-/** The editor for [viewModel], for platforms that create the view model themselves. */
+/** Editor for [viewModel], for platforms that create view model themselves. */
 @Composable
 internal fun EditorApp(
     viewModel: EditorViewModel,

@@ -19,10 +19,10 @@ private const val MIN_SCALE = 100
 private const val MAX_SCALE = 200
 private const val PERCENT = 100
 
-/** Runs a command and returns its trimmed standard output, or `null` when it fails or times out. */
+/** Runs command and returns its trimmed standard output, or `null` when it fails or times out. */
 internal typealias CommandRunner = (List<String>) -> String?
 
-/** Runs [command] with a [timeoutMs] limit. A non-zero exit, a timeout, or an I/O error gives `null`. */
+/** Runs [command] with [timeoutMs] limit. Non-zero exit, timeout, or I/O error gives `null`. */
 internal fun runCommand(
     command: List<String>,
     timeoutMs: Long = PROBE_TIMEOUT_MS,
@@ -54,14 +54,14 @@ internal fun runCommand(
     }
 }
 
-/** The platform's accessibility values, as read from the system's own settings tools. */
+/** Platform's accessibility values, as read from system's own settings tools. */
 internal data class PlatformValues(
     val highContrast: Boolean = false,
     val reducedMotion: Boolean = false,
     val textScalePercent: Int = PERCENT,
 )
 
-/** Turns the output of `gsettings get ... text-scaling-factor` into a percent in 100..200; garbage gives 100. */
+/** Turns output of `gsettings get ... text-scaling-factor` into percent in 100..200; garbage gives 100. */
 internal fun parseTextScale(output: String?): Int {
     val factor =
         output
@@ -72,12 +72,12 @@ internal fun parseTextScale(output: String?): Int {
     return factor?.let { (it * PERCENT).roundToInt().coerceIn(MIN_SCALE, MAX_SCALE) } ?: MIN_SCALE
 }
 
-/** The registry key that holds the Windows "Make text bigger" percent as `TextScaleFactor`. */
+/** Registry key that holds Windows "Make text bigger" percent as `TextScaleFactor`. */
 internal const val WINDOWS_ACCESSIBILITY_KEY = "HKCU\\Software\\Microsoft\\Accessibility"
 
 private val RegistryDword = Regex("""REG_DWORD\s+0x([0-9a-fA-F]+)""")
 
-/** Turns `reg query` output for a `REG_DWORD` percent into 100..200; anything else gives 100. */
+/** Turns `reg query` output for `REG_DWORD` percent into 100..200; anything else gives 100. */
 internal fun parseRegistryPercent(output: String?): Int =
     output
         ?.let { RegistryDword.find(it) }
@@ -89,7 +89,7 @@ internal fun parseRegistryPercent(output: String?): Int =
 /** Plasma's default UI font size, `Noto Sans,10` in `kcms/fonts/fontssettings.kcfg`. */
 private const val KDE_DEFAULT_POINTS = 10.0
 
-/** Turns a Plasma `QFont` string (`Noto Sans,12,-1,...`) into a percent of 10 pt in 100..200. */
+/** Turns Plasma `QFont` string (`Noto Sans,12,-1,...`) into percent of 10 pt in 100..200. */
 internal fun parseKdeFontScale(output: String?): Int =
     output
         ?.split(',')
@@ -115,8 +115,8 @@ private fun CommandRunner.defaults(
 ) = this(listOf("defaults", "read", domain, key)).isOn()
 
 /**
- * Reads the macOS, Windows, GNOME, and KDE Plasma accessibility settings with [run]. A missing
- * key, a failed command, and a timeout all read as the default.
+ * Reads macOS, Windows, GNOME, and KDE Plasma accessibility settings with [run]. Missing
+ * key, failed command, and timeout all read as default.
  */
 internal fun probePlatform(
     osName: String,
@@ -124,8 +124,8 @@ internal fun probePlatform(
 ): PlatformValues =
     when {
         osName.startsWith("Mac") -> {
-            // `universalaccess` holds the keys on older macOS; newer releases keep them in
-            // `com.apple.Accessibility`. A missing key exits non-zero and reads as off.
+            // `universalaccess` holds keys on older macOS; newer releases keep them in
+            // `com.apple.Accessibility`. Missing key exits non-zero and reads as off.
             PlatformValues(
                 highContrast =
                     run.defaults("com.apple.universalaccess", "increaseContrast") ||
@@ -164,8 +164,8 @@ internal fun probePlatform(
                             "org.gnome.desktop.a11y.interface",
                             "high-contrast",
                         ).isOn(),
-                // GNOME answers through `gsettings`, Plasma through `kreadconfig6`; the
-                // missing tool reads as the default, so neither needs a desktop check.
+                // GNOME answers through `gsettings`, Plasma through `kreadconfig6`;
+                // missing tool reads as default, so neither needs desktop check.
                 reducedMotion =
                     run.gsettings("org.gnome.desktop.interface", "enable-animations")?.trim() ==
                         "false" ||
@@ -188,12 +188,12 @@ internal fun probePlatform(
     }
 
 /**
- * Desktop platform settings. Windows high contrast comes from the AWT desktop property and Windows
- * text size from `reg query`. On macOS, GNOME, and KDE Plasma the values come from `defaults`,
+ * Desktop platform settings. Windows high contrast comes from AWT desktop property and Windows
+ * text size from `reg query`. On macOS, GNOME, and KDE Plasma values come from `defaults`,
  * `gsettings`, and `kreadconfig6`.
- * The commands run once by [start] (a daemon thread by default) and are cached, so a change shows
- * after a restart.
- * The values are Compose state: they hold the defaults until the read finishes, then a composable
+ * Commands run once by [start] (daemon thread by default) and are cached, so change shows
+ * after restart.
+ * Values are Compose state: they hold defaults until read finishes, then composable
  * that read them recomposes. No getter waits.
  */
 class DesktopPlatformSettings internal constructor(
@@ -202,7 +202,7 @@ class DesktopPlatformSettings internal constructor(
     start: (() -> Unit) -> Unit = ::startDaemon,
     run: CommandRunner,
 ) : PlatformSettings {
-    /** Reads the settings of the OS this JVM runs on. */
+    /** Reads settings of OS this JVM runs on. */
     constructor() : this(
         System.getProperty("os.name").orEmpty(),
         ::awtHighContrast,

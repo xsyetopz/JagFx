@@ -18,8 +18,8 @@ import java.io.File
 import kotlin.test.Test
 
 /**
- * Renders the editor offscreen to PNG files for the README, in Main and Both modes at 1280x800
- * and 1920x1080. Runs only when `JAGFX_SCREENSHOT_DIR` names the output folder, so the normal
+ * Renders editor offscreen to PNG files for README, in Main and Both modes at 1280x800
+ * and 1920x1080. Runs only when `JAGFX_SCREENSHOT_DIR` names output folder, so normal
  * test run writes nothing.
  */
 class ScreenshotTest {

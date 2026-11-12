@@ -14,7 +14,7 @@ import kotlin.math.roundToLong
 
 private const val TEN = 10.0
 
-/** The title the original tool gives the cell of [slot]; it stays English in every language. */
+/** Title original tool gives cell of [slot]; it stays English in every language. */
 internal fun classicTitleOf(slot: SignalChainSlot): String =
     when (slot) {
         SignalChainSlot.Pitch -> "Freq Base"
@@ -31,7 +31,7 @@ internal fun classicTitleOf(slot: SignalChainSlot): String =
         SignalChainSlot.Bode -> "Frequency Response"
     }
 
-/** The one-line description of the cell of [slot], shown in its tooltip. */
+/** One-line description of cell of [slot], shown in its tooltip. */
 internal fun descriptionOf(slot: SignalChainSlot): UiString =
     when (slot) {
         SignalChainSlot.Pitch -> UiString.CellDescPitch
@@ -48,7 +48,7 @@ internal fun descriptionOf(slot: SignalChainSlot): UiString =
         SignalChainSlot.Bode -> UiString.CellDescBode
     }
 
-/** The label after a number in this unit; empty for the filter curve, which has none. */
+/** Label after number in this unit; empty for filter curve, which has none. */
 internal fun ValueUnit?.suffix(): String =
     when (this) {
         ValueUnit.Hz -> " Hz"
@@ -70,7 +70,7 @@ internal fun formatDecimal(
     return if (fraction.isEmpty()) "$sign$whole" else "$sign$whole.$fraction"
 }
 
-/** One line for a point: `500 ms · 220 Hz · 32768/65536 · 40000`. */
+/** One line for point: `500 ms · 220 Hz · 32768/65536 · 40000`. */
 internal fun readoutText(readout: PointReadout): String =
     listOf(
         "${formatDecimal(readout.timeMs.toDouble(), 1)} ms",
@@ -79,18 +79,18 @@ internal fun readoutText(readout: PointReadout): String =
         readout.level.toString(),
     ).joinToString(" · ")
 
-/** The short label of a point on the plot: `12.5 ms · 300 Hz`. */
+/** Short label of point on plot: `12.5 ms · 300 Hz`. */
 internal fun pointLabelText(readout: PointReadout): String =
     "${formatDecimal(readout.timeMs.toDouble(), 1)} ms · " +
         formatDecimal(readout.value, 2) + readout.unit.suffix()
 
-/** The label [text] of breakpoint [index]. */
+/** Label [text] of breakpoint [index]. */
 internal data class PointLabel(
     val index: Int,
     val text: String,
 )
 
-/** The label of every breakpoint of [envelope] in [slot] for a voice [durationMs] long. */
+/** Label of every breakpoint of [envelope] in [slot] for voice [durationMs] long. */
 internal fun pointLabels(
     slot: SignalChainSlot,
     envelope: Envelope,
@@ -105,29 +105,29 @@ internal fun pointLabels(
         )?.let { PointLabel(index, pointLabelText(it)) }
     }
 
-/** The columns of the point table. */
+/** Columns of point table. */
 internal enum class PointField { Time, Value, Position, Level }
 
-/** What a typed entry in the point table does. */
+/** What typed entry in point table does. */
 internal sealed interface FieldEdit {
-    /** The entry is valid; [segment] replaces the point. */
+    /** Entry is valid; [segment] replaces point. */
     data class Applied(
         val segment: Segment,
     ) : FieldEdit
 
-    /** The entry is a number outside [min] to [max], which are shown in the field's unit. */
+    /** Entry is number outside [min] to [max], which are shown in field's unit. */
     data class OutOfRange(
         val min: String,
         val max: String,
     ) : FieldEdit
 
-    /** The entry is not a number. */
+    /** Entry is not number. */
     data object NotANumber : FieldEdit
 }
 
 private val RawRange = 0..SynthLimits.U16_MAX
 
-/** The text of [field] for breakpoint [index], as the table shows it. */
+/** Text of [field] for breakpoint [index], as table shows it. */
 internal fun fieldText(
     field: PointField,
     slot: SignalChainSlot,
@@ -161,8 +161,8 @@ internal fun fieldText(
 }
 
 /**
- * The effect of [text] typed into [field] of breakpoint [index]. A time or value entry converts
- * to the raw position or level, rounded to the nearest; the point only changes when that raw
+ * Effect of [text] typed into [field] of breakpoint [index]. Time or value entry converts
+ * to raw position or level, rounded to nearest; point only changes when that raw
  * number is in 0 to 65535.
  */
 internal fun editField(

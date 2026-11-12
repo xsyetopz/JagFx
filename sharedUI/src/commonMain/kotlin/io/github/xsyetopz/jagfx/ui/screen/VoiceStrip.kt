@@ -22,8 +22,8 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagButton
 private val U16Ms = 0..SynthLimits.U16_MAX
 
 /**
- * The voice strip, as the original's left strip: the oscillator, the timing and loop fields of the
- * selected tone, the transport, Load and Save, and True Wave.
+ * Voice strip, as original's left strip: oscillator, timing and loop fields of
+ * selected tone, transport, Load and Save, and True Wave.
  */
 @Composable
 internal fun VoiceStrip(
@@ -73,7 +73,7 @@ internal fun VoiceStrip(
     }
 }
 
-/** Len and Pos of the selected tone, and the loop start L1 and end L2 of the patch. */
+/** Len and Pos of selected tone, and loop start L1 and end L2 of patch. */
 @Composable
 private fun TimingFields(
     state: EditorState,
@@ -118,7 +118,7 @@ private fun TimingFields(
     )
 }
 
-/** Play, Play All, Loop, and Loop All; the button of the running playback is active. */
+/** Play, Play All, Loop, and Loop All; button of running playback is active. */
 @Composable
 private fun Transport(
     state: EditorState,
@@ -146,7 +146,7 @@ private fun Transport(
     for (pair in buttons.chunked(2)) StripButtons(*pair.toTypedArray())
 }
 
-/** A text button of a strip: [label], an optional [tooltip], [active] state, and [onClick]. */
+/** Text button of strip: [label], optional [tooltip], [active] state, and [onClick]. */
 internal class Button(
     val label: String,
     val tooltip: String?,
@@ -154,7 +154,7 @@ internal class Button(
     val onClick: () -> Unit,
 )
 
-/** A row of equally wide text [buttons]; each is named by its label for assistive technology. */
+/** Row of equally wide text [buttons]; each is named by its label for assistive technology. */
 @Composable
 internal fun StripButtons(vararg buttons: Button) {
     Row(

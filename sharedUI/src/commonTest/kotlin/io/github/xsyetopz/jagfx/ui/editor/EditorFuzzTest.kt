@@ -148,7 +148,7 @@ class EditorFuzzTest {
         var state = EditorState()
         var accepted = 0
         repeat(6000) {
-            // An empty slot turns every edit into a no-op, so refill it most of the time.
+            // Empty slot turns every edit into no-op, so refill it most of time.
             val intent =
                 if (state.voice == null && random.nextInt(4) != 0) {
                     SlotIntent.SetVoiceEnabled(state.selectedVoice, true)

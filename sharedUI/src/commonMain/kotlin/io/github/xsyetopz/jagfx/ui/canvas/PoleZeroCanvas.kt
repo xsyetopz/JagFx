@@ -33,11 +33,11 @@ import kotlin.math.max
 import kotlin.math.round
 
 /**
- * One marker of the pole-zero plot.
+ * One marker of pole-zero plot.
  *
- * @property channel 0 for a feedforward coefficient (a zero, circle marker), 1 for a feedback
- *   coefficient (a pole, cross marker).
- * @property pole Index of the pole in its direction.
+ * @property channel 0 for feedforward coefficient (zero, circle marker), 1 for feedback
+ *   coefficient (pole, cross marker).
+ * @property pole Index of pole in its direction.
  * @property phaseIndex 0 for [io.github.xsyetopz.jagfx.core.model.Pole.start], 1 for `end`.
  */
 internal data class PoleRef(
@@ -46,19 +46,19 @@ internal data class PoleRef(
     val phaseIndex: Int,
 )
 
-/** The feedforward poles for channel 0, the feedback poles otherwise. */
+/** Feedforward poles for channel 0, feedback poles otherwise. */
 internal fun Filter.poles(channel: Int): List<Pole> = if (channel == 0) feedforward else feedback
 
-/** The coefficient that [ref] points at. */
+/** Coefficient that [ref] points at. */
 internal fun Filter.coefficient(ref: PoleRef): Coefficient {
     val pole = poles(ref.channel)[ref.pole]
     return if (ref.phaseIndex == 0) pole.start else pole.end
 }
 
 /**
- * Geometry of the pole-zero map, in density-independent units.
- * x is the phase on the C1 to C9 frequency axis, stretched by the zoom level and shifted left by the
- * scroll offset; y is the resonance, 0 dB at the bottom.
+ * Geometry of pole-zero map, in density-independent units.
+ * x is phase on C1 to C9 frequency axis, stretched by zoom level and shifted left by
+ * scroll offset; y is resonance, 0 dB at bottom.
  */
 internal object PoleZeroGeometry {
     const val HIT_RADIUS: Double = 10.0
@@ -86,7 +86,7 @@ internal object PoleZeroGeometry {
         return FilterFrequencyScale.normalizedXToRawPhase(normalized)
     }
 
-    /** y of a raw magnitude or gain, snapped and kept one unit inside the plot. */
+    /** y of raw magnitude or gain, snapped and kept one unit inside plot. */
     fun rawToY(
         raw: Int,
         scale: Double,
@@ -106,7 +106,7 @@ internal object PoleZeroGeometry {
         return round(normalized * maxDb / FilterResponse.MAGNITUDE_DB_SCALE).toInt()
     }
 
-    /** [rawMagnitude] rounded to a multiple of `65535 / 32`. */
+    /** [rawMagnitude] rounded to multiple of `65535 / 32`. */
     fun snapRawMagnitude(rawMagnitude: Int): Int {
         val step = MAX_RAW / MAGNITUDE_SNAP_DIVISIONS.toDouble()
         return round(round(rawMagnitude / step) * step).toInt().coerceIn(0, MAX_RAW)
@@ -126,7 +126,7 @@ internal object PoleZeroGeometry {
         )
 
     /**
-     * Every marker of [filter] for the phase indexes in [phases], channel 0 before channel 1,
+     * Every marker of [filter] for phase indexes in [phases], channel 0 before channel 1,
      * poles in order.
      */
     fun refs(
@@ -141,7 +141,7 @@ internal object PoleZeroGeometry {
 
     /**
      * Nearest marker strictly closer than [HIT_RADIUS] to ([x], [y]); earlier markers win ties.
-     * [position] maps a coefficient to its marker centre.
+     * [position] maps coefficient to its marker centre.
      */
     fun hitTest(
         filter: Filter,
@@ -170,7 +170,7 @@ private const val SELECTION_RADIUS = 5f
 private const val LINE_WIDTH = 1f
 internal const val RAIL_ALPHA = 0.7f
 
-/** Drag snapping and the [selected] marker of [PoleZeroCanvas]. */
+/** Drag snapping and [selected] marker of [PoleZeroCanvas]. */
 @Immutable
 internal data class PoleView(
     val snapEnabled: Boolean = false,
@@ -186,14 +186,14 @@ internal class PoleCallbacks(
 
 /**
  * Pole-zero map of [filter] over frequency (C1 to C9) and resonance (0 to 100 dB): unity-gain rails,
- * a line from the start to the end of each coefficient pair, zeros as circles, and poles as
+ * line from start to end of each coefficient pair, zeros as circles, and poles as
  * crosses.
- * The scroll offset of [panZoom] is in pixels; the wheel zooms, and dragging empty space pans when
+ * Scroll offset of [panZoom] is in pixels; wheel zooms, and dragging empty space pans when
  * zoomed.
  *
- * Pressing within 10 units of a marker selects it and drags it; [PoleCallbacks.onCoefficientChange]
- * of [callbacks] receives the new raw phase and magnitude, snapped to semitones and 1/32 magnitude
- * steps when [PoleView.snapEnabled] of [view]. Pressing elsewhere clears the selection. The canvas
+ * Pressing within 10 units of marker selects it and drags it; [PoleCallbacks.onCoefficientChange]
+ * of [callbacks] receives new raw phase and magnitude, snapped to semitones and 1/32 magnitude
+ * steps when [PoleView.snapEnabled] of [view]. Pressing elsewhere clears selection. Canvas
  * keeps no state.
  */
 @Composable
@@ -236,7 +236,7 @@ internal fun PoleZeroCanvas(
     )
 }
 
-/** Latest parameters of [PoleZeroCanvas], read by the long-lived pointer input. */
+/** Latest parameters of [PoleZeroCanvas], read by long-lived pointer input. */
 private class PoleInputState(
     val filter: State<Filter?>,
     val view: State<PoleView>,
@@ -372,13 +372,13 @@ private fun DrawScope.drawPoles(
     }
 }
 
-/** The zero color for channel 0 (feedforward), the pole color for channel 1 (feedback). */
+/** Zero color for channel 0 (feedforward), pole color for channel 1 (feedback). */
 private fun markerColor(
     palette: SynthPalette,
     channel: Int,
 ) = if (channel == 0) palette.zero else palette.pole
 
-/** A circle for a zero (channel 0), a cross for a pole (channel 1). */
+/** Circle for zero (channel 0), cross for pole (channel 1). */
 private fun DrawScope.drawMarker(
     palette: SynthPalette,
     channel: Int,

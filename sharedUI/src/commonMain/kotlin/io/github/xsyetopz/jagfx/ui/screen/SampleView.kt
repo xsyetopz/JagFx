@@ -41,7 +41,7 @@ private const val MAX_SAMPLE_VALUE = Int.MAX_VALUE
 private const val MS_PER_SECOND = 1000L
 private const val MS_PER_TENTH = 100L
 
-/** Milliseconds of [count] samples at [sampleRate], rounded down; `0` without a rate. */
+/** Milliseconds of [count] samples at [sampleRate], rounded down; `0` without rate. */
 internal fun sampleDurationMs(
     count: Int,
     sampleRate: Int,
@@ -51,7 +51,7 @@ internal fun sampleDurationMs(
 internal fun formatSeconds(ms: Long): String =
     "${ms / MS_PER_SECOND}.${ms % MS_PER_SECOND / MS_PER_TENTH} s"
 
-/** The sample view: file and transport controls, the waveform with loop markers, and the fields. */
+/** Sample view: file and transport controls, waveform with loop markers, and fields. */
 @Composable
 internal fun SampleContent(
     state: EditorState,

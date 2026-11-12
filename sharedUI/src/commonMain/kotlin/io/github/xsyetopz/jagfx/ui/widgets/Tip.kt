@@ -26,17 +26,17 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import kotlinx.coroutines.delay
 
-/** How long the pointer rests on a control before its tooltip shows. */
+/** How long pointer rests on control before its tooltip shows. */
 internal const val TOOLTIP_HOVER_DELAY_MS = 500L
 
-/** How long the tooltip stays after the pointer leaves, so the pointer can cross onto it. */
+/** How long tooltip stays after pointer leaves, so pointer can cross onto it. */
 internal const val TOOLTIP_GRACE_MS = 300L
 
 /**
- * Shows [text] in a stock Material tooltip above [content] while the pointer rests on it, while the
- * pointer is over the tooltip itself, and while [content] has keyboard focus (WCAG 1.4.13: the
- * tooltip is hoverable, persistent, and dismissible). Escape closes it until the pointer and focus
- * have left and come back. A null [text] shows no tooltip.
+ * Shows [text] in stock Material tooltip above [content] while pointer rests on it, while
+ * pointer is over tooltip itself, and while [content] has keyboard focus (WCAG 1.4.13:
+ * tooltip is hoverable, persistent, and dismissible). Escape closes it until pointer and focus
+ * have left and come back. Null [text] shows no tooltip.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

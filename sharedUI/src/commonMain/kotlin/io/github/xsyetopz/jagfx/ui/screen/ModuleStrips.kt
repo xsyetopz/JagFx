@@ -22,8 +22,8 @@ private val GapMsRange =
     ValueUnit.Ms.fromRaw(Int.MIN_VALUE.toDouble())..ValueUnit.Ms.fromRaw(Int.MAX_VALUE.toDouble())
 
 /**
- * The waveform buttons, Min, Max, and the read-only average of the envelope in [slot], in Hz.
- * Without an envelope the fields are disabled.
+ * Waveform buttons, Min, Max, and read-only average of envelope in [slot], in Hz.
+ * Without envelope fields are disabled.
  */
 @Composable
 internal fun WaveformAndHzFields(
@@ -69,7 +69,7 @@ internal fun WaveformAndHzFields(
 }
 
 /**
- * The module strip of the Freq or Amp row: the waveform, Min, Max, and Av of the rate envelope
+ * Module strip of Freq or Amp row: waveform, Min, Max, and Av of rate envelope
  * [rate] ([SignalChainSlot.VibratoRate] or [SignalChainSlot.TremoloRate]) of that row's LFO.
  */
 @Composable
@@ -83,7 +83,7 @@ internal fun LfoStrip(
 }
 
 /**
- * The gate strip of the Output row: Off and On, and Min Gap, Max Gap, and Av Gap in ms of the
+ * Gate strip of Output row: Off and On, and Min Gap, Max Gap, and Av Gap in ms of
  * Gap off envelope.
  */
 @Composable

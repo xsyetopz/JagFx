@@ -4,20 +4,20 @@ import io.github.xsyetopz.jagfx.core.format.InvalidPatchException
 import io.github.xsyetopz.jagfx.core.format.SynthCodec
 import io.github.xsyetopz.jagfx.core.format.SynthFormatException
 
-/** Imports and exports `.tone` and `.filter` files for the selected voice, reporting with [dispatch]. */
+/** Imports and exports `.tone` and `.filter` files for selected voice, reporting with [dispatch]. */
 internal class ToneFilterTransfer(
     private val files: PatchFiles,
     private val state: () -> EditorState,
     private val dispatch: (EditorIntent) -> Unit,
 ) {
-    /** Reads a `.tone` file into the selected slot. */
+    /** Reads `.tone` file into selected slot. */
     suspend fun importTone() {
         val slot = state().selectedVoice
         val decoded = pickAndDecode(PatchFileKind.Tone) { SynthCodec.decodeTone(it).voice }
         decoded?.let { dispatch(SlotIntent.SetVoice(slot, it.value)) }
     }
 
-    /** Reads a `.filter` file into the filter of the selected voice. */
+    /** Reads `.filter` file into filter of selected voice. */
     suspend fun importFilter() {
         val decoded = pickAndDecode(PatchFileKind.Filter) { SynthCodec.decodeFilter(it).filter }
         decoded?.let { dispatch(FilterIntent.SetFilter(it.value)) }
@@ -38,8 +38,8 @@ internal class ToneFilterTransfer(
     }
 
     /**
-     * Asks for a file of [kind] and decodes it, or reports the failure and returns `null`. A
-     * cancelled picker also returns `null`. The result wraps the value because a decoded filter
+     * Asks for file of [kind] and decodes it, or reports failure and returns `null`.
+     * cancelled picker also returns `null`. Result wraps value because decoded filter
      * can be `null`.
      */
     private suspend fun <T> pickAndDecode(

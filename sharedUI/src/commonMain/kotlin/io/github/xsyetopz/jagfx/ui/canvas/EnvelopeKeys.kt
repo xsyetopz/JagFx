@@ -4,13 +4,13 @@ import androidx.compose.ui.input.key.Key
 import io.github.xsyetopz.jagfx.core.model.Segment
 import io.github.xsyetopz.jagfx.core.model.SynthLimits
 
-/** Raw units a Shift arrow moves a point: 1/64 of the voice or of the level range. */
+/** Raw units Shift arrow moves point: 1/64 of voice or of level range. */
 internal const val KEY_STEP: Int = 1024
 
-/** Raw units a Ctrl or Cmd arrow moves a point. */
+/** Raw units Ctrl or Cmd arrow moves point. */
 internal const val KEY_FINE_STEP: Int = 64
 
-/** What a key does in a focused envelope cell. */
+/** What key does in focused envelope cell. */
 internal enum class EnvelopeKeyCommand {
     SelectPrevious,
     SelectNext,
@@ -24,16 +24,16 @@ internal enum class EnvelopeKeyCommand {
     MoveDown,
 }
 
-/** The result of a key: [segments] is `null` when only the selection changes. */
+/** Result of key: [segments] is `null` when only selection changes. */
 internal data class KeyEdit(
     val segments: List<Segment>?,
     val selection: Int,
 )
 
 /**
- * The command of [key]: an arrow selects the previous or next point (Left, Right) and with
- * [move] (Shift, Ctrl, or Cmd held) moves it; Home and End select the ends; Insert, `+`
- * add a point after the selected one; Delete and Backspace remove it.
+ * Command of [key]: arrow selects previous or next point (Left, Right) and with
+ * [move] (Shift, Ctrl, or Cmd held) moves it; Home and End select ends; Insert, `+`
+ * add point after selected one; Delete and Backspace remove it.
  */
 internal fun envelopeKeyCommand(
     key: Key,
@@ -79,8 +79,8 @@ internal fun envelopeKeyCommand(
 
 /**
  * What [command] does to [segments] with breakpoint [selected] selected (-1 for none), moving by
- * [step] raw units; `null` when it does nothing, so the key stays free for the cell navigation.
- * A move keeps the point between its neighbours in time, and breakpoint 0 stays at time 0.
+ * [step] raw units; `null` when it does nothing, so key stays free for cell navigation.
+ * Move keeps point between its neighbours in time, and breakpoint 0 stays at time 0.
  */
 internal fun envelopeKeyEdit(
     command: EnvelopeKeyCommand,
@@ -160,7 +160,7 @@ private fun moveBy(
     }
 }
 
-/** A point halfway between breakpoint [index] and the next one (or the end of the voice). */
+/** Point halfway between breakpoint [index] and next one (or end of voice). */
 private fun insertAfter(
     segments: List<Segment>,
     index: Int,

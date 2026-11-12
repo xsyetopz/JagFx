@@ -5,7 +5,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-// A 108x108 canvas has a 100x100 plot at zoom 1; a quarter of the voice (16384) is 25 pixels.
+// 108x108 canvas has 100x100 plot at zoom 1; quarter of voice (16384) is 25 pixels.
 private const val SIZE = 108f
 private const val QUARTER = 16384
 
@@ -34,7 +34,7 @@ class EnvelopeGeometryTest {
 
     @Test
     fun firstBreakpointIsAtTimeZeroWhateverItsStoredPosition() {
-        // The game client does not read the position of the first segment.
+        // Game client does not read position of first segment.
         val g = geometry(listOf(Segment(QUARTER, 0), Segment(2 * QUARTER, 0)))
 
         assertEquals(listOf(4f, 54f), List(2) { g.pointX(it) })

@@ -12,16 +12,16 @@ import io.github.xsyetopz.jagfx.core.model.Waveform
 import kotlin.math.PI
 import kotlin.math.sin
 
-/** Draws an icon filling the current draw scope in the given color. */
+/** Draws icon filling current draw scope in given color. */
 internal typealias IconPainter = DrawScope.(Color) -> Unit
 
-/** A polyline or polygon in unit coordinates (0..1 across the icon box). */
+/** Polyline or polygon in unit coordinates (0..1 across icon box). */
 private class Shape(
     val points: List<Pair<Float, Float>>,
     val closed: Boolean = false,
     val filled: Boolean = false,
 ) {
-    /** The shapes of each icon. */
+    /** Shapes of each icon. */
     companion object {
         val Play =
             Shape(listOf(0.3f to 0.2f, 0.8f to 0.5f, 0.3f to 0.8f), closed = true, filled = true)
@@ -292,7 +292,7 @@ private fun shapesIcon(shapes: List<Shape>): IconPainter = { color -> drawShapes
 private fun DrawScope.stroke(): Stroke =
     Stroke(size.minDimension * STROKE_RATIO, cap = StrokeCap.Round)
 
-/** Icon painters of the editor toolbar and waveform buttons. */
+/** Icon painters of editor toolbar and waveform buttons. */
 internal object Icons {
     val Play: IconPainter = shapesIcon(listOf(Shape.Play))
     val Stop: IconPainter = shapesIcon(listOf(Shape.Stop))
@@ -309,7 +309,7 @@ internal object Icons {
     val Import: IconPainter = shapesIcon(Shape.Import)
     val Export: IconPainter = shapesIcon(Shape.Export)
 
-    /** A power symbol: an open ring with a stem through the gap. */
+    /** Power symbol: open ring with stem through gap. */
     val Power: IconPainter = { color ->
         drawArc(
             color = color,
@@ -329,7 +329,7 @@ internal object Icons {
         )
     }
 
-    /** Headphones, for playing the selected voice alone. */
+    /** Headphones, for playing selected voice alone. */
     val Solo: IconPainter = { color ->
         drawArc(
             color = color,
@@ -358,7 +358,7 @@ internal object Icons {
         drawShapes(listOf(Shape.ResetArrow), color)
     }
 
-    /** Three dots in a row, for an overflow menu. */
+    /** Three dots in row, for overflow menu. */
     val More: IconPainter = { color ->
         for (x in DotCenters) {
             drawCircle(
@@ -383,6 +383,6 @@ internal object Icons {
 
     private val Undefined: IconPainter = shapesIcon(Shape.Undefined)
 
-    /** Shape icon of [waveform]; a dashed line for an undefined id ([Waveform.isUndefined]). */
+    /** Shape icon of [waveform]; dashed line for undefined id ([Waveform.isUndefined]). */
     fun waveform(waveform: Waveform): IconPainter = Waveforms[waveform] ?: Undefined
 }

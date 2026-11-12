@@ -478,7 +478,7 @@ private class RenderCall(
     val marker: Float,
 )
 
-/** Returns one sample per call whose value identifies the call. */
+/** Returns one sample per call whose value identifies call. */
 private class CountingRenderer : PatchRenderer {
     val calls = mutableListOf<RenderCall>()
 

@@ -5,8 +5,8 @@ import io.github.xsyetopz.jagfx.core.model.Coefficient
 import io.github.xsyetopz.jagfx.core.model.SynthLimits
 
 /**
- * The result of a key in the pole-zero plot: [selection] is the marker to select, and
- * [coefficient] its new value when the key moved it, `null` when it only changed the selection.
+ * Result of key in pole-zero plot: [selection] is marker to select, and
+ * [coefficient] its new value when key moved it, `null` when it only changed selection.
  */
 internal data class PoleKeyEdit(
     val selection: PoleRef,
@@ -14,11 +14,11 @@ internal data class PoleKeyEdit(
 )
 
 /**
- * What [key] does with [selected] among [refs]. An arrow without [nudge] (Shift held) selects the
+ * What [key] does with [selected] among [refs]. Arrow without [nudge] (Shift held) selects
  * previous (Left, Up) or next (Right, Down) marker and wraps around; with nothing selected, next
- * picks the first and previous the last. With [nudge] it moves the selected marker one snap step:
- * a semitone for Left and Right, 1/32 of the magnitude range for Down and Up. [coefficientOf]
- * reads a marker's current value. Returns `null` for any other key, when [refs] is empty, or when
+ * picks first and previous last. With [nudge] it moves selected marker one snap step:
+ * semitone for Left and Right, 1/32 of magnitude range for Down and Up. [coefficientOf]
+ * reads marker's current value. Returns `null` for any other key, when [refs] is empty, or when
  * there is nothing selected to nudge.
  */
 internal fun poleKeyEdit(

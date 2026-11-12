@@ -5,9 +5,9 @@ import androidx.compose.ui.Modifier
 import io.github.xsyetopz.jagfx.core.model.Waveform
 
 /**
- * Joined icon buttons, one per [Waveform.selectable] entry, each with its [name] as the tooltip;
- * the [selected] one is active.
- * An undefined waveform ([Waveform.isUndefined]) has no button, so none is active for it.
+ * Joined icon buttons, one per [Waveform.selectable] entry, each with its [name] as tooltip;
+ * [selected] one is active.
+ * Undefined waveform ([Waveform.isUndefined]) has no button, so none is active for it.
  */
 @Composable
 internal fun WaveformSelector(

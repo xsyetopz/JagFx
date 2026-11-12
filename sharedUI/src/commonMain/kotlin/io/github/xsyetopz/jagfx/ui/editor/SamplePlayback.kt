@@ -3,16 +3,16 @@ package io.github.xsyetopz.jagfx.ui.editor
 import io.github.xsyetopz.jagfx.core.vorbis.JagVorbis
 
 /**
- * The PCM to play for [sample], from its decoded audio [pcm], with [passes] passes of the loop
- * region (`1` plays without looping), in the game client's loop order.
+ * PCM to play for [sample], from its decoded audio [pcm], with [passes] passes of loop
+ * region (`1` plays without looping), in game client's loop order.
  *
- * Without a loop, or when the loop region is empty: samples `0 until sampleCount`. With [passes]
- * above `1`: `0 until loopEnd`, then the loop region `loopBegin until loopEnd` repeated
- * `passes - 1` more times, then `loopEnd until sampleCount`. A ping-pong sample plays every other
- * repetition reversed, starting with a reversed one; when the last repetition is reversed, it runs
+ * Without loop, or when loop region is empty: samples `0 until sampleCount`. With [passes]
+ * above `1`: `0 until loopEnd`, then loop region `loopBegin until loopEnd` repeated
+ * `passes - 1` more times, then `loopEnd until sampleCount`. Ping-pong sample plays every other
+ * repetition reversed, starting with reversed one; when last repetition is reversed, it runs
  * on backward to sample `0` and playback stops there, with no tail.
  *
- * A loop end past the sample count is cut to the count.
+ * Loop end past sample count is cut to count.
  */
 internal fun samplePlaybackPcm(
     pcm: ShortArray,

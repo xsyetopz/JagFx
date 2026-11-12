@@ -58,7 +58,7 @@ import androidx.compose.ui.window.PopupPositionProvider
 import io.github.xsyetopz.jagfx.ui.theme.DISABLED_ALPHA
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
-/** Draws [icon] in the current content color. */
+/** Draws [icon] in current content color. */
 @Composable
 internal fun PainterIcon(
     icon: IconPainter,
@@ -70,10 +70,10 @@ internal fun PainterIcon(
 }
 
 /**
- * A stock Material button at least 24 dp tall. An [active] button is tonal-filled and bold, and
- * the rest are outlined, so color is not the only sign. [tooltip] shows in a stock tooltip.
- * [description] is the accessible name when the content is a symbol; [role] is the accessible
- * role, and a [Role.Switch], [Role.Checkbox], or [Role.RadioButton] reports [active] as its state.
+ * Stock Material button at least 24 dp tall. [active] button is tonal-filled and bold, and
+ * rest are outlined, so color is not only sign. [tooltip] shows in stock tooltip.
+ * [description] is accessible name when content is symbol; [role] is accessible
+ * role, and [Role.Switch], [Role.Checkbox], or [Role.RadioButton] reports [active] as its state.
  */
 @Composable
 internal fun JagButton(
@@ -111,7 +111,7 @@ internal fun JagButton(
     }
 }
 
-/** A [JagButton] with a [text] label. */
+/** [JagButton] with [text] label. */
 @Composable
 internal fun JagButton(
     text: String,
@@ -131,7 +131,7 @@ internal fun JagButton(
     }
 }
 
-/** A stock Material icon button that draws [icon]; [tooltip] names it. */
+/** Stock Material icon button that draws [icon]; [tooltip] names it. */
 @Composable
 internal fun JagIconButton(
     icon: IconPainter,
@@ -152,7 +152,7 @@ internal fun JagIconButton(
     }
 }
 
-/** A row of joined buttons; the one equal to [selected] is active. */
+/** Row of joined buttons; one equal to [selected] is active. */
 @Composable
 internal fun <T> JagToggleGroup(
     options: List<T>,
@@ -178,7 +178,7 @@ internal fun <T> JagToggleGroup(
     }
 }
 
-/** A stock Material check box; [tooltip] shows in a stock tooltip and is its accessible name. */
+/** Stock Material check box; [tooltip] shows in stock tooltip and is its accessible name. */
 @Composable
 internal fun JagCheck(
     checked: Boolean,
@@ -197,7 +197,7 @@ internal fun JagCheck(
     }
 }
 
-/** The state a control with [role] reports: on or off for toggles, chosen for radio buttons. */
+/** State control with [role] reports: on or off for toggles, chosen for radio buttons. */
 private fun androidx.compose.ui.semantics.SemanticsPropertyReceiver.stateOf(
     role: Role,
     active: Boolean,

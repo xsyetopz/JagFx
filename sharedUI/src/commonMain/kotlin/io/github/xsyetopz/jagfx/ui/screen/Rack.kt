@@ -13,15 +13,15 @@ import io.github.xsyetopz.jagfx.ui.editor.RackMode
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
-/** The envelope rows take this share of the rack width in [RackMode.Both]; the filter column takes one share. */
+/** Envelope rows take this share of rack width in [RackMode.Both]; filter column takes one share. */
 private const val ENVELOPE_COLUMNS = 3f
 
 /**
- * The cells of the selected voice as in the original rack, by [EditorState.mode]: the three
- * [RackRows], each with its module strip after the base cell; the [FilterColumn] with the filter
+ * Cells of selected voice as in original rack, by [EditorState.mode]: three
+ * [RackRows], each with its module strip after base cell; [FilterColumn] with filter
  * strip; or both side by side.
- * When [ScreenViewState.openCell] is set, that cell fills the rack on its own.
- * While the selected tone is off, the rack is dimmed under the [ToneOffOverlay] prompt.
+ * When [ScreenViewState.openCell] is set, that cell fills rack on its own.
+ * While selected tone is off, rack is dimmed under [ToneOffOverlay] prompt.
  */
 @Composable
 internal fun Rack(
@@ -65,7 +65,7 @@ private fun RackBody(
     }
 }
 
-/** One rack row: the base cell, its module strip, and the two cells of the module. */
+/** One rack row: base cell, its module strip, and two cells of module. */
 @Composable
 private fun ModuleRow(
     row: List<SignalChainSlot>,

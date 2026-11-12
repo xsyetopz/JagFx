@@ -58,8 +58,8 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagText
 private val IndexWidth = 24.dp
 
 /**
- * The controls of the cell of [slot], opened by its `▼`: the time-view option, Snap for an
- * envelope, and a table of its points with editable ms, unit value, raw position, and raw level.
+ * Controls of cell of [slot], opened by its `▼`: time-view option, Snap for
+ * envelope, and table of its points with editable ms, unit value, raw position, and raw level.
  */
 @Composable
 internal fun ControlsPanel(
@@ -91,7 +91,7 @@ internal fun ControlsPanel(
     }
 }
 
-/** The Linked / This cell choice of the time view of [slot]. */
+/** Linked / This cell choice of time view of [slot]. */
 @Composable
 private fun TimeViewOption(
     slot: SignalChainSlot,
@@ -119,7 +119,7 @@ private fun TimeViewOption(
     }
 }
 
-/** The Snap switch of the envelope canvas of [slot]; also placed by the filter cells. */
+/** Snap switch of envelope canvas of [slot]; also placed by filter cells. */
 @Composable
 internal fun SnapToggle(
     slot: SignalChainSlot,
@@ -140,7 +140,7 @@ internal fun SnapToggle(
     }
 }
 
-/** The points of [envelope] in [slot], one row each, with a way to add one at the end. */
+/** Points of [envelope] in [slot], one row each, with way to add one at end. */
 @Composable
 private fun PointTable(
     slot: SignalChainSlot,
@@ -185,7 +185,7 @@ private fun PointTable(
     )
 }
 
-/** One row of the point table: the number, the four fields, and delete. */
+/** One row of point table: number, four fields, and delete. */
 @Composable
 private fun PointRow(
     slot: SignalChainSlot,
@@ -226,8 +226,8 @@ private fun PointRow(
 }
 
 /**
- * A text box showing [value]. Enter or focus loss runs [check]: a valid entry goes to [onApply], an
- * out-of-range one shows the allowed range under the box and stays, and anything else reverts.
+ * Text box showing [value]. Enter or focus loss runs [check]: valid entry goes to [onApply],
+ * out-of-range one shows allowed range under box and stays, and anything else reverts.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

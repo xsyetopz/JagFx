@@ -16,8 +16,8 @@ private const val FRAME_MS = 16L
 private const val SAMPLE_SCALE = 32768f
 
 /**
- * Plays through one shared Web Audio `AudioContext`, created on the first play so it starts
- * inside a user gesture. Emits progress from the context clock about once per frame.
+ * Plays through one shared Web Audio `AudioContext`, created on first play so it starts
+ * inside user gesture. Emits progress from context clock about once per frame.
  */
 class WebAudioOutput : AudioOutput {
     private var context: AudioContext? = null

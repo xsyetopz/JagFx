@@ -29,10 +29,10 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagButton
 import io.github.xsyetopz.jagfx.ui.widgets.JagText
 import io.github.xsyetopz.jagfx.ui.widgets.WaveformSelector
 
-/** The share of full strength at which the rack shows while the selected tone is off. */
+/** Share of full strength at which rack shows while selected tone is off. */
 private const val DIMMED_ALPHA = 0.35f
 
-/** What turning on the module that starts at [pairFirst] does, or `null` for a slot that starts no module. */
+/** What turning on module that starts at [pairFirst] does, or `null` for slot that starts no module. */
 internal fun emptyPromptKey(pairFirst: SignalChainSlot): UiString? =
     when (pairFirst) {
         SignalChainSlot.VibratoRate -> UiString.EmptyVibrato
@@ -42,8 +42,8 @@ internal fun emptyPromptKey(pairFirst: SignalChainSlot): UiString? =
     }
 
 /**
- * An empty scope for a module that is off: what turning it on does, and the waveform buttons that
- * create the module starting at [pairFirst].
+ * Empty scope for module that is off: what turning it on does, and waveform buttons that
+ * create module starting at [pairFirst].
  */
 @Composable
 internal fun EmptyModulePrompt(
@@ -63,7 +63,7 @@ internal fun EmptyModulePrompt(
     }
 }
 
-/** An empty filter scope: says that the filter is off and offers On. */
+/** Empty filter scope: says that filter is off and offers On. */
 @Composable
 internal fun FilterOffPrompt(
     actions: EditorActions,
@@ -77,8 +77,8 @@ internal fun FilterOffPrompt(
 }
 
 /**
- * The rack dimmed while the selected tone is off, with a prompt that names the tone and offers
- * Turn on. [content] is the rack.
+ * Rack dimmed while selected tone is off, with prompt that names tone and offers
+ * Turn on. [content] is rack.
  */
 @Composable
 internal fun ToneOffOverlay(
@@ -117,7 +117,7 @@ internal fun ToneOffOverlay(
     }
 }
 
-/** The screen with no file open: Open and New in place of the rack. */
+/** Screen with no file open: Open and New in place of rack. */
 @Composable
 internal fun NoFileScreen(
     state: EditorState,
@@ -151,7 +151,7 @@ private fun PromptBox(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    // The caller sizes the box: the empty scopes fill their cell, the tone-off card wraps its text.
+    // Caller sizes box: empty scopes fill their cell, tone-off card wraps its text.
     val dimens = JagFxTheme.dimens
     Box(modifier.background(JagFxTheme.palette.scope), Alignment.Center) {
         Column(

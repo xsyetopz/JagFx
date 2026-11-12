@@ -25,13 +25,13 @@ private const val WAVE_SCALE = 0.45f
 private const val PIXEL_CENTER = 0.5f
 
 /**
- * Rendered output of a patch: one vertical line from the
- * minimum to the maximum sample of each pixel column, a mid line, and a playback marker when
- * [playbackPosition] is in (0, 1]. Each of [loopMarkers], fractions of the waveform width, adds a
+ * Rendered output of patch: one vertical line from
+ * minimum to maximum sample of each pixel column, mid line, and playback marker when
+ * [playbackPosition] is in (0, 1]. Each of [loopMarkers], fractions of waveform width, adds
  * loop line when it is in `0.0..1.0`.
  *
- * The column reduction runs on [Dispatchers.Default]. The scroll offset of [panZoom] is in pixels.
- * Dragging pans at zoom above 1; the mouse wheel or a pinch steps the zoom through [ZoomLevels],
+ * Column reduction runs on [Dispatchers.Default]. Scroll offset of [panZoom] is in pixels.
+ * Dragging pans at zoom above 1; mouse wheel or pinch steps zoom through [ZoomLevels],
  * which double up to 64.
  */
 @Composable
@@ -113,7 +113,7 @@ private fun columnPath(
     return path
 }
 
-/** Playback marker at [position] in (0, 1] of the zoomed width, when it is in view. */
+/** Playback marker at [position] in (0, 1] of zoomed width, when it is in view. */
 private fun DrawScope.drawPlaybackMarker(
     position: Float,
     zoom: Int,
@@ -124,7 +124,7 @@ private fun DrawScope.drawPlaybackMarker(
     drawMarker(position, zoom, scrollOffset, color)
 }
 
-/** Vertical line at [position] in `0.0..1.0` of the zoomed width, when it is in view. */
+/** Vertical line at [position] in `0.0..1.0` of zoomed width, when it is in view. */
 private fun DrawScope.drawMarker(
     position: Float,
     zoom: Int,

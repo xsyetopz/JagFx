@@ -7,12 +7,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 
-/** A pinch that changes the finger distance by this factor steps the zoom once. */
+/** Pinch that changes finger distance by this factor steps zoom once. */
 private const val PINCH_STEP = 1.25f
 
 /**
- * Steps the zoom on a wheel event or a two-finger pinch, and keeps the scroll offset in range.
- * A pinch steps once each time the finger distance grows or shrinks by [PINCH_STEP].
+ * Steps zoom on wheel event or two-finger pinch, and keeps scroll offset in range.
+ * Pinch steps once each time finger distance grows or shrinks by [PINCH_STEP].
  */
 internal fun Modifier.zoomOnWheel(
     zoom: State<Int>,
@@ -60,7 +60,7 @@ internal fun Modifier.zoomOnWheel(
         }
     }
 
-/** Horizontal drag pans the view at zoom above 1: `offset = start offset - drag distance`. */
+/** Horizontal drag pans view at zoom above 1: `offset = start offset - drag distance`. */
 internal fun Modifier.panWhenZoomed(
     zoom: State<Int>,
     scroll: State<Float>,

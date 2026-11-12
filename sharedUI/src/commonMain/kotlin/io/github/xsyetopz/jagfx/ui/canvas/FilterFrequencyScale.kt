@@ -10,11 +10,11 @@ import kotlin.math.pow
 import kotlin.math.round
 
 /**
- * Log-frequency axis of the filter canvases: the eight octaves from C1 to C9 that a pole phase
+ * Log-frequency axis of filter canvases: eight octaves from C1 to C9 that pole phase
  * can reach.
  *
- * A normalized x of 0 is [MIN_FREQUENCY_HZ] and 1 is [MAX_FREQUENCY_HZ].
- * A raw pole phase `p` is the frequency `BASE_FREQUENCY_HZ * 2^(p * RAW_PHASE_TO_OCTAVES)`, so x is
+ * Normalized x of 0 is [MIN_FREQUENCY_HZ] and 1 is [MAX_FREQUENCY_HZ].
+ * Raw pole phase `p` is frequency `BASE_FREQUENCY_HZ * 2^(p * RAW_PHASE_TO_OCTAVES)`, so x is
  * `p / 65536`.
  */
 internal object FilterFrequencyScale {
@@ -26,7 +26,7 @@ internal object FilterFrequencyScale {
     const val RAW_PHASE_TO_OCTAVES: Double = 1.2207031e-4
     private val logFrequencyRange = ln(MAX_FREQUENCY_HZ / MIN_FREQUENCY_HZ)
 
-    /** Position of [frequencyHz] on the axis, clamped to 0..1. */
+    /** Position of [frequencyHz] on axis, clamped to 0..1. */
     fun frequencyToNormalizedX(frequencyHz: Double): Double {
         val clamped = frequencyHz.coerceIn(MIN_FREQUENCY_HZ, MAX_FREQUENCY_HZ)
         return (ln(clamped / MIN_FREQUENCY_HZ) / logFrequencyRange).coerceIn(0.0, 1.0)
@@ -36,12 +36,12 @@ internal object FilterFrequencyScale {
     fun normalizedXToFrequency(normalizedX: Double): Double =
         MIN_FREQUENCY_HZ * exp(normalizedX.coerceIn(0.0, 1.0) * logFrequencyRange)
 
-    /** Frequency of a raw pole phase, clamped to the u16 range. */
+    /** Frequency of raw pole phase, clamped to u16 range. */
     fun rawPhaseToFrequency(rawPhase: Int): Double =
         BASE_FREQUENCY_HZ *
             2.0.pow(rawPhase.coerceIn(0, SynthLimits.U16_MAX) * RAW_PHASE_TO_OCTAVES)
 
-    /** Position of a raw pole phase on the axis. */
+    /** Position of raw pole phase on axis. */
     fun rawPhaseToNormalizedX(rawPhase: Int): Double =
         frequencyToNormalizedX(rawPhaseToFrequency(rawPhase))
 

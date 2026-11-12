@@ -98,7 +98,7 @@ class ContrastTest {
         assertTrue(contrastRatio(subtle, Color(0xFF1E1E1E)) >= TEXT_MIN)
     }
 
-    /** Every palette color drawn as a line, marker, or trace; [SynthPalette.grid] and the fills are checked apart. */
+    /** Every palette color drawn as line, marker, or trace; [SynthPalette.grid] and fills are checked apart. */
     private fun SynthPalette.graphics() =
         mapOf(
             "envelope" to envelope,

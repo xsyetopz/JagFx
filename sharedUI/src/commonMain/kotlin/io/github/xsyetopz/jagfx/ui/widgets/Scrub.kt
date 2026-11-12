@@ -12,12 +12,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import io.github.xsyetopz.jagfx.ui.canvas.GestureCallbacks
 
-/** Least hit area of a scrubbed control, whatever it draws. */
+/** Least hit area of scrubbed control, whatever it draws. */
 private val MinScrubTarget = 24.dp
 
 /**
- * The [range] that one scrub covers, the [step] of one wheel notch, and the [defaultValue] that a
- * double click restores; without a default the double click restores the minimum.
+ * [range] that one scrub covers, [step] of one wheel notch, and [defaultValue] that
+ * double click restores; without default double click restores minimum.
  */
 @Immutable
 internal data class ScrubScale(
@@ -26,7 +26,7 @@ internal data class ScrubScale(
     val defaultValue: Float? = null,
 )
 
-/** The [value] and [scale] that a [scrub] reads, [onValueChange], and the [gestures] around each drag. */
+/** [value] and [scale] that [scrub] reads, [onValueChange], and [gestures] around each drag. */
 internal class ScrubState(
     val value: Int,
     val scale: ScrubScale,
@@ -35,8 +35,8 @@ internal class ScrubState(
 )
 
 /**
- * Sets the value of [state] by wheel and double click (the default), each change one undo step; the
- * cursor is a hand. Dragging belongs to the stock slider that this sits on.
+ * Sets value of [state] by wheel and double click (default), each change one undo step;
+ * cursor is hand. Dragging belongs to stock slider that this sits on.
  */
 internal fun Modifier.scrub(state: State<ScrubState>): Modifier {
     fun emit(value: Float) {
@@ -61,7 +61,7 @@ internal fun Modifier.scrub(state: State<ScrubState>): Modifier {
                     if (event.type == PointerEventType.Scroll) {
                         val change = event.changes.first()
                         val current = state.value
-                        // Wheel up reports a negative y delta.
+                        // Wheel up reports negative y delta.
                         emit(
                             ScrubMath.wheelValue(
                                 current.value.toFloat(),

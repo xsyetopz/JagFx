@@ -20,7 +20,7 @@ private fun linear(channel: Float): Float =
         ((channel + GAMMA_OFFSET) / GAMMA_SCALE).toDouble().pow(GAMMA).toFloat()
     }
 
-/** WCAG relative luminance of an opaque [color]. */
+/** WCAG relative luminance of opaque [color]. */
 internal fun relativeLuminance(color: Color): Float =
     RED_WEIGHT * linear(color.red) + GREEN_WEIGHT * linear(color.green) +
         BLUE_WEIGHT * linear(color.blue)

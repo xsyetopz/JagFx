@@ -5,8 +5,8 @@ import io.github.xsyetopz.jagfx.ui.canvas.EnvelopeStyle
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 
 /**
- * What a cell shows around its plot. A small cell keeps only the title; the enlarged cell, which
- * is the [ScreenViewState.openCell], shows every control.
+ * What cell shows around its plot. Small cell keeps only title; enlarged cell, which
+ * is [ScreenViewState.openCell], shows every control.
  */
 internal data class CellChrome(
     val enlarged: Boolean,
@@ -16,15 +16,15 @@ internal data class CellChrome(
     val controlsPanel: Boolean get() = enlarged
 }
 
-/** The chrome of [slot] while [openCell] fills the rack, or `null` when the whole rack shows. */
+/** Chrome of [slot] while [openCell] fills rack, or `null` when whole rack shows. */
 internal fun cellChromeOf(
     slot: SignalChainSlot,
     openCell: SignalChainSlot?,
 ): CellChrome = CellChrome(enlarged = slot == openCell)
 
 /**
- * The envelope style of [slot] under [chrome]. A small cell draws faint grid lines only; the
- * enlarged cell draws what the toggles of [canvas] ask for.
+ * Envelope style of [slot] under [chrome]. Small cell draws faint grid lines only;
+ * enlarged cell draws what toggles of [canvas] ask for.
  */
 internal fun envelopeStyleOf(
     slot: SignalChainSlot,

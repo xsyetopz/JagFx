@@ -14,11 +14,11 @@ import io.github.xsyetopz.jagfx.ui.canvas.stepZoom
 import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
 
-/** Cells in one rack row: Alt and Up or Down moves this many cells along the chain. */
+/** Cells in one rack row: Alt and Up or Down moves this many cells along chain. */
 private const val CELLS_PER_ROW = 3
 
 /**
- * The offset along [SignalChainSlot.envelopeChain] that Alt with [key] moves the selected cell
+ * Offset along [SignalChainSlot.envelopeChain] that Alt with [key] moves selected cell
  * by: Left and Right by one cell, Up and Down by one rack row; `null` for any other key.
  */
 internal fun cellKeyOffset(key: Key): Int? =
@@ -30,16 +30,16 @@ internal fun cellKeyOffset(key: Key): Int? =
         else -> null
     }
 
-/** The keyboard alternatives to wheel zoom and pan on a plot. */
+/** Keyboard alternatives to wheel zoom and pan on plot. */
 internal enum class ViewKeyCommand { ZoomIn, ZoomOut, PanLeft, PanRight }
 
 private val ZoomInKeys = setOf(Key.Plus, Key.Equals, Key.NumPadAdd)
 private val ZoomOutKeys = setOf(Key.Minus, Key.NumPadSubtract)
 
 /**
- * The zoom or pan that [key] asks for. Ctrl or Cmd ([command]) with `+` or `-` zooms one step;
+ * Zoom or pan that [key] asks for. Ctrl or Cmd ([command]) with `+` or `-` zooms one step;
  * Shift with Page Up or Page Down pans one screen left or right. `null` for any other key or
- * modifier mix, so the key stays free for the cell.
+ * modifier mix, so key stays free for cell.
  */
 internal fun viewKeyCommand(
     key: Key,
@@ -61,8 +61,8 @@ internal fun stopsPlayback(
 ): Boolean = playing && key == Key.Escape
 
 /**
- * `true` when Space, with no Ctrl, Alt, Cmd, or Shift held, asks to toggle playback. Only without a
- * [nativeMenu], which binds Space itself, so the key never fires twice.
+ * `true` when Space, with no Ctrl, Alt, Cmd, or Shift held, asks to toggle playback. Only without
+ * [nativeMenu], which binds Space itself, so key never fires twice.
  */
 internal fun togglesPlayback(
     key: Key,
@@ -70,11 +70,11 @@ internal fun togglesPlayback(
     nativeMenu: Boolean,
 ): Boolean = key == Key.Spacebar && !modified && !nativeMenu
 
-/** This view moved one screen ([TimeView.span]) left for a negative [direction], right for a positive one. */
+/** This view moved one screen ([TimeView.span]) left for negative [direction], right for positive one. */
 internal fun TimeView.pannedByScreen(direction: Int): TimeView =
     copy(scroll = (scroll + direction * span).coerceIn(0f, 1f - span))
 
-/** The [ViewKeyCommand] of [event] on a key down, or `null`. */
+/** [ViewKeyCommand] of [event] on key down, or `null`. */
 internal fun viewKeyCommandOf(event: KeyEvent): ViewKeyCommand? =
     if (event.type == KeyEventType.KeyDown) {
         viewKeyCommand(event.key, event.isShiftPressed, event.isCtrlPressed || event.isMetaPressed)
@@ -83,8 +83,8 @@ internal fun viewKeyCommandOf(event: KeyEvent): ViewKeyCommand? =
     }
 
 /**
- * Selects the neighbor of the cell when [event] is Alt with an arrow, and asks the next selected
- * cell to take the keyboard focus. `true` when handled.
+ * Selects neighbor of cell when [event] is Alt with arrow, and asks next selected
+ * cell to take keyboard focus. `true` when handled.
  */
 internal fun EditorActions.handleCellNavigationKey(event: KeyEvent): Boolean {
     val offset =
@@ -100,7 +100,7 @@ internal fun EditorActions.handleCellNavigationKey(event: KeyEvent): Boolean {
     return true
 }
 
-/** Applies [command] to the plot of [slot]; only time-domain plots pan, as the others scroll in pixels. */
+/** Applies [command] to plot of [slot]; only time-domain plots pan, as others scroll in pixels. */
 internal fun EditorActions.applyViewKey(
     command: ViewKeyCommand,
     slot: SignalChainSlot,
@@ -134,7 +134,7 @@ internal fun EditorActions.applyViewKey(
     }
 }
 
-/** [togglesPlayback] for a key down [event]. */
+/** [togglesPlayback] for key down [event]. */
 internal fun togglesPlaybackOn(
     event: KeyEvent,
     nativeMenu: Boolean,

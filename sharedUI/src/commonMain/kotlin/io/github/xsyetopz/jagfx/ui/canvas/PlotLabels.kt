@@ -15,27 +15,27 @@ import io.github.xsyetopz.jagfx.ui.screen.timeTicks
 import io.github.xsyetopz.jagfx.ui.screen.valueTicks
 import io.github.xsyetopz.jagfx.ui.screen.visibleWindow
 
-/** Axis labels drawn on a plot: label size, in the scope text [color]. */
+/** Axis labels drawn on plot: label size, in scope text [color]. */
 internal fun plotLabelStyle(color: Color): TextStyle = TextStyle(color = color, fontSize = 11.sp)
 
 private const val LABEL_INSET = 2f
 private const val VALUE_DECIMALS = 1
 
-/** Least distance in pixels between two time ticks; room for a label such as `1200 ms`. */
+/** Least distance in pixels between two time ticks; room for label such as `1200 ms`. */
 internal const val MIN_TICK_SPACING = 120f
 
-/** Rows of the value grid: [VALUE_ROWS] + 1 lines, the middle one in the mid line color. */
+/** Rows of value grid: [VALUE_ROWS] + 1 lines, middle one in mid line color. */
 internal const val VALUE_ROWS = 2
 
 private const val MID_FRACTION = 0.5f
 
-/** Heights of the value grid lines as fractions of the plot height from the bottom. */
+/** Heights of value grid lines as fractions of plot height from bottom. */
 internal fun valueGridFractions(rows: Int = VALUE_ROWS): List<Float> =
     List(rows + 1) { it.toFloat() / rows }
 
 /**
- * The time axis of a voice [durationMs] long at [viewport]: a grid line when [lines] and a label
- * in ms when [labels] at each tick of [timeTicks], along the bottom edge.
+ * Time axis of voice [durationMs] long at [viewport]: grid line when [lines] and label
+ * in ms when [labels] at each tick of [timeTicks], along bottom edge.
  */
 internal fun DrawScope.drawTimeAxis(
     measurer: TextMeasurer,
@@ -64,7 +64,7 @@ internal fun DrawScope.drawTimeAxis(
     }
 }
 
-/** The value grid: a line at each of [valueGridFractions], the middle one in [midColor]. */
+/** Value grid: line at each of [valueGridFractions], middle one in [midColor]. */
 internal fun DrawScope.drawValueGrid(
     gridColor: Color,
     midColor: Color,
@@ -81,8 +81,8 @@ internal fun DrawScope.drawValueGrid(
 }
 
 /**
- * The value labels of [envelope] in [slot]: one at each of [VALUE_ROWS] + 1 ticks of [valueTicks],
- * in the unit of the slot on the left. The bottom label sits above the time labels.
+ * Value labels of [envelope] in [slot]: one at each of [VALUE_ROWS] + 1 ticks of [valueTicks],
+ * in unit of slot on left. Bottom label sits above time labels.
  */
 internal fun DrawScope.drawValueLabels(
     measurer: TextMeasurer,
@@ -103,8 +103,8 @@ internal fun DrawScope.drawValueLabels(
 }
 
 /**
- * The top of a value label of [labelHeight] centred on [y], kept above the time labels of a plot
- * [height] tall and below its top edge; a plot too short for both keeps the label at the top.
+ * Top of value label of [labelHeight] centred on [y], kept above time labels of plot
+ * [height] tall and below its top edge; plot too short for both keeps label at top.
  */
 internal fun valueLabelTop(
     y: Float,

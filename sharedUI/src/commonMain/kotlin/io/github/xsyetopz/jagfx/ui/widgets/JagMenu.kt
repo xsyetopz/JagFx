@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.IntOffset
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
 /**
- * A stock Material dropdown menu at [offset] from the top left of its parent; a click outside or
+ * Stock Material dropdown menu at [offset] from top left of its parent; click outside or
  * Escape calls [onDismiss].
  * Fill it with [JagMenuItem]s.
  */
@@ -30,7 +30,7 @@ internal fun JagMenu(
     DropdownMenu(expanded = true, onDismissRequest = onDismiss, offset = at, content = content)
 }
 
-/** One row of a [JagMenu]; an [active] row is bold and reports itself selected. */
+/** One row of [JagMenu]; [active] row is bold and reports itself selected. */
 @Composable
 internal fun JagMenuItem(
     text: String,

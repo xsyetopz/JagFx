@@ -8,10 +8,10 @@ import io.github.xsyetopz.jagfx.core.model.Voice
 
 private val ZeroPole = Pole(Coefficient(0, 0), Coefficient(0, 0))
 
-/** The filter that turning a filter on creates when none was kept: one zero feedforward pole. */
+/** Filter that turning filter on creates when none was kept: one zero feedforward pole. */
 internal val DefaultFilter: Filter = Filter(0, 0, listOf(ZeroPole), emptyList(), null)
 
-/** Applies a filter edit; edits other than adding poles need an existing filter. */
+/** Applies filter edit; edits other than adding poles need existing filter. */
 internal fun reduceFilter(
     voice: Voice,
     intent: FilterIntent,
@@ -104,8 +104,8 @@ private fun setCoefficient(
 }
 
 /**
- * Removes a filter without poles (invariant I3) and keeps the modulation envelope present
- * exactly when the filter is modulated (invariant I4), creating an empty one when needed.
+ * Removes filter without poles (invariant I3) and keeps modulation envelope present
+ * exactly when filter is modulated (invariant I4), creating empty one when needed.
  */
 private fun normalize(filter: Filter): Filter? =
     when {

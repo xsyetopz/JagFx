@@ -37,9 +37,9 @@ class AudioOutputException(
 /** Plays mono 16-bit PCM. Each platform supplies one. */
 fun interface AudioOutput {
     /**
-     * Plays [pcm] when collected and emits progress in `0.0..1.0`. The flow completes when
-     * playback ends. Cancelling the collector stops playback. The flow throws
-     * [AudioOutputException] when the platform cannot play.
+     * Plays [pcm] when collected and emits progress in `0.0..1.0`. Flow completes when
+     * playback ends. Cancelling collector stops playback. Flow throws
+     * [AudioOutputException] when platform cannot play.
      */
     fun play(
         pcm: ShortArray,
@@ -47,7 +47,7 @@ fun interface AudioOutput {
     ): Flow<Float>
 }
 
-/** A file the user picked to open. [path] is `null` where the platform has no file paths. */
+/** File user picked to open. [path] is `null` where platform has no file paths. */
 class OpenedFile(
     val name: String,
     val path: String?,
@@ -55,48 +55,48 @@ class OpenedFile(
 )
 
 /**
- * A file the user picked to save to. [name] is shown to the user. [path] is `null` where a save
- * cannot be written to again, such as a browser download; the next save asks again.
+ * File user picked to save to. [name] is shown to user. [path] is `null` where save
+ * cannot be written to again, such as browser download; next save asks again.
  */
 class SavedFile(
     val name: String,
     val path: String?,
 )
 
-/** A file operation failed. [message] is shown to the user. */
+/** File operation failed. [message] is shown to user. */
 class PatchFileException(
     message: String,
     cause: Throwable? = null,
 ) : Exception(message, cause)
 
 /**
- * The file types of the editor: a whole patch, one voice, one filter, or a sample. [extension] has
- * no leading dot. [description] names the type in dialogs; `.tone` and `.filter` are JagFx's own
- * layouts, not confirmed against the original tool.
+ * File types of editor: whole patch, one voice, one filter, or sample. [extension] has
+ * no leading dot. [description] names type in dialogs; `.tone` and `.filter` are JagFx's own
+ * layouts, not confirmed against original tool.
  */
 enum class PatchFileKind(
     val extension: String,
     val description: String,
 ) {
-    /** A patch of ten voice slots and a loop. */
+    /** Patch of ten voice slots and loop. */
     Synth("synth", "synth file"),
 
-    /** One voice, encoded as a voice slot of a `.synth` file. */
+    /** One voice, encoded as voice slot of `.synth` file. */
     Tone("tone", "JagFx tone file"),
 
-    /** One filter, encoded as the filter block of a voice. */
+    /** One filter, encoded as filter block of voice. */
     Filter("filter", "JagFx filter file"),
 
-    /** A recorded sample, a document apart from the patch. */
+    /** Recorded sample, document apart from patch. */
     Sample("jagvorbis", "jagvorbis sample"),
 }
 
 /**
- * File access for the editor. Each platform supplies one. Methods throw [PatchFileException]
- * when an operation fails, and return `null` when the user cancels a picker.
+ * File access for editor. Each platform supplies one. Methods throw [PatchFileException]
+ * when operation fails, and return `null` when user cancels picker.
  */
 interface PatchFiles {
-    /** Asks the user for a file of [kind] and reads it. */
+    /** Asks user for file of [kind] and reads it. */
     suspend fun pickAndRead(kind: PatchFileKind): OpenedFile?
 
     suspend fun read(path: String): ByteArray
@@ -106,7 +106,7 @@ interface PatchFiles {
         bytes: ByteArray,
     )
 
-    /** Asks the user where to save a file of [kind], suggesting [suggestedName], and writes. */
+    /** Asks user where to save file of [kind], suggesting [suggestedName], and writes. */
     suspend fun pickAndWrite(
         suggestedName: String,
         bytes: ByteArray,
@@ -114,7 +114,7 @@ interface PatchFiles {
     ): SavedFile?
 }
 
-/** What the editor keeps across restarts: the side panel edge, the text size, and the theme. */
+/** What editor keeps across restarts: side panel edge, text size, and theme. */
 @Serializable
 data class EditorPreferences(
     val panelSide: PanelSide = PanelSide.Right,
@@ -123,9 +123,9 @@ data class EditorPreferences(
 )
 
 /**
- * Keeps [EditorPreferences] between runs. Each platform supplies one. [load] returns the defaults
- * when nothing is stored or the stored data is unreadable. [save] never throws; a failed write
- * loses the setting but not the session.
+ * Keeps [EditorPreferences] between runs. Each platform supplies one. [load] returns defaults
+ * when nothing is stored or stored data is unreadable. [save] never throws; failed write
+ * loses setting but not session.
  */
 interface Preferences {
     fun load(): EditorPreferences
@@ -144,12 +144,12 @@ interface Preferences {
 }
 
 /**
- * Read-only settings of the platform (EN 301 549 clause 11.7). Each platform reports what it
- * exposes and leaves the rest at the defaults.
+ * Read-only settings of platform (EN 301 549 clause 11.7). Each platform reports what it
+ * exposes and leaves rest at defaults.
  *
- * @property highContrast The user asked the platform for high contrast.
- * @property reducedMotion The user asked the platform for less motion.
- * @property textScalePercent The platform text size in percent, `100` when it is not exposed.
+ * @property highContrast User asked platform for high contrast.
+ * @property reducedMotion User asked platform for less motion.
+ * @property textScalePercent Platform text size in percent, `100` when it is not exposed.
  */
 interface PlatformSettings {
     val highContrast: Boolean
@@ -167,7 +167,7 @@ interface PlatformSettings {
     }
 }
 
-/** The theme to draw: a stored [System] becomes [ThemePreference.HighContrast] on a high-contrast platform. */
+/** Theme to draw: stored [System] becomes [ThemePreference.HighContrast] on high-contrast platform. */
 fun resolveTheme(
     stored: ThemePreference,
     platformHighContrast: Boolean,
@@ -178,7 +178,7 @@ fun resolveTheme(
         stored
     }
 
-/** The text size to draw: the in-app size times the platform size, within `100..200`. */
+/** Text size to draw: in-app size times platform size, within `100..200`. */
 fun resolveTextScale(
     storedPercent: Int,
     platformPercent: Int,

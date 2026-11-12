@@ -33,11 +33,11 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagMenu
 import io.github.xsyetopz.jagfx.ui.widgets.JagMenuItem
 import io.github.xsyetopz.jagfx.ui.widgets.JagText
 
-/** The menu label that puts the voice strip on this side. */
+/** Menu label that puts voice strip on this side. */
 internal val PanelSide.label: UiString
     get() = if (this == PanelSide.Left) UiString.PanelOnLeft else UiString.PanelOnRight
 
-/** The menu label of this theme choice. */
+/** Menu label of this theme choice. */
 internal val ThemePreference.label: UiString
     get() =
         when (this) {
@@ -47,17 +47,17 @@ internal val ThemePreference.label: UiString
             ThemePreference.HighContrast -> UiString.ThemeHighContrast
         }
 
-/** What the title bar shows besides the file name. */
+/** What title bar shows besides file name. */
 internal data class TitleBarItems(
     val fileMenu: Boolean,
     val history: Boolean,
 )
 
-/** The File menu and Undo and Redo, which a [hasNativeMenu] platform already has in its menu bar. */
+/** File menu and Undo and Redo, which [hasNativeMenu] platform already has in its menu bar. */
 internal fun titleBarItems(hasNativeMenu: Boolean): TitleBarItems =
     TitleBarItems(fileMenu = !hasNativeMenu, history = !hasNativeMenu)
 
-/** The title bar: the file name, and unless the platform has a menu bar, the file menu, Undo, and Redo. */
+/** Title bar: file name, and unless platform has menu bar, file menu, Undo, and Redo. */
 @Composable
 internal fun TitleBar(
     state: EditorState,

@@ -35,12 +35,12 @@ import io.github.xsyetopz.jagfx.ui.widgets.focusRing
 import kotlin.math.roundToInt
 
 /**
- * An envelope editor plot.
- * Zoom, scroll, and selection are hoisted: the canvas draws [view] and reports changes through
+ * Envelope editor plot.
+ * Zoom, scroll, and selection are hoisted: canvas draws [view] and reports changes through
  * [callbacks].
  *
- * When [EnvelopeStyle.interactive] of [style] is false (thumbnails), the canvas only draws. The
- * selected index of [view] is a segment index or -1.
+ * When [EnvelopeStyle.interactive] of [style] is false (thumbnails), canvas only draws.
+ * selected index of [view] is segment index or -1.
  */
 @Composable
 internal fun EnvelopeCanvas(
@@ -130,7 +130,7 @@ private fun EnvelopeContextMenu(
     }
 }
 
-/** The readout of breakpoint [index], placed beside the point and kept inside the canvas. */
+/** Readout of breakpoint [index], placed beside point and kept inside canvas. */
 @Composable
 private fun PointReadoutLabel(
     readout: PointReadout,

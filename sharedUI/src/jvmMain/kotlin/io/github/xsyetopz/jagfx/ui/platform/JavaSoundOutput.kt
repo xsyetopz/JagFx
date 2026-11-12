@@ -20,10 +20,10 @@ private const val DRAIN_POLL_MS = 10L
 private const val DRAIN_LIMIT_MS = 1000L * BUFFER_CHUNKS / CHUNKS_PER_SECOND + 500L
 
 /**
- * Plays through a Java Sound [SourceDataLine] from [openLine], on [dispatcher].
+ * Plays through Java Sound [SourceDataLine] from [openLine], on [dispatcher].
  *
- * Writes 10 ms chunks into a 100 ms line buffer, so a cancelled collector stops within about
- * 100 ms. Emits progress after each chunk and while the line drains.
+ * Writes 10 ms chunks into 100 ms line buffer, so cancelled collector stops within about
+ * 100 ms. Emits progress after each chunk and while line drains.
  */
 class JavaSoundOutput(
     private val openLine: (AudioFormat) -> SourceDataLine = AudioSystem::getSourceDataLine,
@@ -53,7 +53,7 @@ class JavaSoundOutput(
                     frame += count
                     emit(progress(line, pcm.size))
                 }
-                // drain() can hang on some Linux mixers; poll for the buffered time plus a margin.
+                // drain() can hang on some Linux mixers; poll for buffered time plus margin.
                 var waitedMs = 0L
                 while (line.longFramePosition < pcm.size && waitedMs < DRAIN_LIMIT_MS) {
                     delay(DRAIN_POLL_MS)

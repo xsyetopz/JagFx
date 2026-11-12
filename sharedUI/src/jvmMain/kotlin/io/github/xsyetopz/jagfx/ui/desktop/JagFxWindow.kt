@@ -27,12 +27,12 @@ import java.io.File
 internal val isMacOs: Boolean = System.getProperty("os.name").orEmpty().startsWith("Mac")
 
 /**
- * The editor window with its menu bar. On macOS the title is the document name, and the close
- * button and the proxy icon show unsaved changes and the open file, as in other document apps;
- * elsewhere the title also carries the path and a `*` for unsaved changes.
+ * Editor window with its menu bar. On macOS title is document name, and close
+ * button and proxy icon show unsaved changes and open file, as in other document apps;
+ * elsewhere title also carries path and `*` for unsaved changes.
  * Paths under [home] show `~`.
- * A [hidden] window never takes focus and opens behind other windows, so a script can capture it
- * while the user keeps working. [openPath] names a `.synth` file to open at start.
+ * [hidden] window never takes focus and opens behind other windows, so script can capture it
+ * while user keeps working. [openPath] names `.synth` file to open at start.
  */
 @Composable
 fun ApplicationScope.JagFxWindow(

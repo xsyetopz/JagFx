@@ -19,9 +19,9 @@ private const val ONE = 1
 private const val MAX_RAW = 65535.0
 
 /**
- * The text summary of the envelope plot of [slot], for screen readers:
+ * Text summary of envelope plot of [slot], for screen readers:
  * `Pitch envelope, 4 points, 200 Hz to 880 Hz over 1200 ms`.
- * The range runs from the lowest to the highest value of the points.
+ * Range runs from lowest to highest value of points.
  */
 internal fun envelopeSummary(
     strings: Strings,
@@ -47,7 +47,7 @@ internal fun envelopeSummary(
 }
 
 /**
- * The state of the envelope plot: the selected point and its readout, or `null` when no point of
+ * State of envelope plot: selected point and its readout, or `null` when no point of
  * [envelope] is selected.
  */
 internal fun envelopeState(
@@ -67,7 +67,7 @@ internal fun envelopeState(
     )
 }
 
-/** Summary of the output wave: its length and peak level, or a note that nothing is rendered. */
+/** Summary of output wave: its length and peak level, or note that nothing is rendered. */
 internal fun outputSummary(
     strings: Strings,
     samples: FloatArray?,
@@ -84,7 +84,7 @@ internal fun outputSummary(
     )
 }
 
-/** Summary of the pole-zero plot: `Pole-zero plot, 2 poles, 1 zero`. */
+/** Summary of pole-zero plot: `Pole-zero plot, 2 poles, 1 zero`. */
 internal fun poleZeroSummary(
     strings: Strings,
     filter: Filter?,
@@ -106,8 +106,8 @@ internal fun poleZeroSummary(
 }
 
 /**
- * The state of the pole-zero plot: the selected marker as `Pole 2 of 3, end: 440 Hz, 50 dB`, or
- * `null` when nothing is selected or [selected] is not a marker of [filter].
+ * State of pole-zero plot: selected marker as `Pole 2 of 3, end: 440 Hz, 50 dB`, or
+ * `null` when nothing is selected or [selected] is not marker of [filter].
  */
 internal fun poleState(
     strings: Strings,
@@ -128,7 +128,7 @@ internal fun poleState(
     )
 }
 
-/** Summary of the frequency response: the strongest peak, in dB and Hz, at the start of the voice. */
+/** Summary of frequency response: strongest peak, in dB and Hz, at start of voice. */
 internal fun responseSummary(
     strings: Strings,
     filter: Filter?,

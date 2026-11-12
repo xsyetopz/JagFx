@@ -8,10 +8,10 @@ import io.github.xsyetopz.jagfx.core.model.SynthLimits
 import io.github.xsyetopz.jagfx.core.model.Voice
 
 /**
- * Returns the state after [intent]. Pure: side effects belong to the caller, which reports
- * their outcome with a [ResultIntent].
+ * Returns state after [intent]. Pure: side effects belong to caller, which reports
+ * their outcome with [ResultIntent].
  *
- * A patch edit that the binary format cannot encode keeps the old patch and sets
+ * Patch edit that binary format cannot encode keeps old patch and sets
  * [StatusHint.EditRejected]. Accepted patch edits enter [History].
  */
 internal fun reduce(
@@ -75,8 +75,8 @@ internal fun reduce(
     }
 
 /**
- * Turns the filter of the selected voice off, keeping it in [EditorState.bypassedFilters], or
- * on, bringing back the kept filter or [DefaultFilter].
+ * Turns filter of selected voice off, keeping it in [EditorState.bypassedFilters], or
+ * on, bringing back kept filter or [DefaultFilter].
  */
 private fun setFilterEnabled(
     state: EditorState,
@@ -156,7 +156,7 @@ private fun reduceSlot(
         }
     }
 
-/** Selects [slot]; in copy mode, pastes the copied voice into another slot and leaves copy mode. */
+/** Selects [slot]; in copy mode, pastes copied voice into another slot and leaves copy mode. */
 private fun selectVoice(
     state: EditorState,
     slot: Int,

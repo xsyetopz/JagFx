@@ -23,13 +23,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/** The look of the editor: dark [Classic], [Light], or [HighContrast] black, white, and yellow. */
+/** Look of editor: dark [Classic], [Light], or [HighContrast] black, white, and yellow. */
 internal enum class JagFxAppearance { Classic, Light, HighContrast }
 
 /**
- * The editor's colors: flat graphite panels, 1 px borders, and one accent that marks what is
+ * Editor's colors: flat graphite panels, 1 px borders, and one accent that marks what is
  * active, selected, or focused.
- * The plots draw their own colors from [SynthPalette]. [border] separates panels; [controlBorder]
+ * Plots draw their own colors from [SynthPalette]. [border] separates panels; [controlBorder]
  * outlines controls at 3:1 contrast or more.
  */
 @Immutable
@@ -54,7 +54,7 @@ internal data class JagFxColors(
     val warning: Color,
 ) {
     companion object {
-        /** The Classic appearance: dark grey chrome, green for what is active. */
+        /** Classic appearance: dark grey chrome, green for what is active. */
         val Classic: JagFxColors =
             JagFxColors(
                 root = Color(0xFF121212),
@@ -77,7 +77,7 @@ internal data class JagFxColors(
                 warning = Color(0xFFE08FBB),
             )
 
-        /** The light appearance: the same structure with the lightness inverted. */
+        /** Light appearance: same structure with lightness inverted. */
         val Light: JagFxColors =
             JagFxColors(
                 root = Color(0xFFE6E6E6),
@@ -123,7 +123,7 @@ internal data class JagFxColors(
                 warning = Color(0xFFFF9FD0),
             )
 
-        /** The colors of [appearance]. */
+        /** Colors of [appearance]. */
         fun of(appearance: JagFxAppearance): JagFxColors =
             when (appearance) {
                 JagFxAppearance.Classic -> Classic
@@ -133,7 +133,7 @@ internal data class JagFxColors(
     }
 }
 
-/** The plot colors of [appearance]. */
+/** Plot colors of [appearance]. */
 internal fun SynthPalette.Companion.of(appearance: JagFxAppearance): SynthPalette =
     when (appearance) {
         JagFxAppearance.Classic -> Classic
@@ -141,7 +141,7 @@ internal fun SynthPalette.Companion.of(appearance: JagFxAppearance): SynthPalett
         JagFxAppearance.HighContrast -> HighContrast
     }
 
-/** The Material 3 type scale with every size multiplied by [scale], so scaled text still fits. */
+/** Material 3 type scale with every size multiplied by [scale], so scaled text still fits. */
 internal fun scaledTypography(scale: Float): Typography {
     fun TextStyle.scaled() = copy(fontSize = fontSize * scale, lineHeight = lineHeight * scale)
     val base = Typography()
@@ -164,7 +164,7 @@ internal fun scaledTypography(scale: Float): Typography {
     )
 }
 
-/** Sizes and spacing for a desktop with a pointer; every control is at least [minTarget] square. */
+/** Sizes and spacing for desktop with pointer; every control is at least [minTarget] square. */
 @Immutable
 internal data class JagFxDimens(
     val minTarget: Dp = 24.dp,
@@ -185,7 +185,7 @@ internal data class JagFxDimens(
     val spaceLg: Dp = 6.dp,
     val spaceXl: Dp = 8.dp,
 ) {
-    /** These sizes with the text-sized ones multiplied by [scale], so scaled text still fits. */
+    /** These sizes with text-sized ones multiplied by [scale], so scaled text still fits. */
     fun scaled(scale: Float): JagFxDimens =
         copy(
             headerHeight = headerHeight * scale,
@@ -197,7 +197,7 @@ internal data class JagFxDimens(
         )
 }
 
-/** Opacity of a disabled control. */
+/** Opacity of disabled control. */
 internal const val DISABLED_ALPHA = 0.4f
 
 private val LocalColors = staticCompositionLocalOf { JagFxColors.Classic }
@@ -205,9 +205,9 @@ private val LocalPalette = staticCompositionLocalOf { SynthPalette.Classic }
 private val LocalDimens = staticCompositionLocalOf { JagFxDimens() }
 
 /**
- * Provides the editor's colors, plot palette, type, and sizes to [content].
- * [appearance] follows the system dark setting by default; [textScale], from 1 to 2, multiplies
- * type and the text-sized dimensions.
+ * Provides editor's colors, plot palette, type, and sizes to [content].
+ * [appearance] follows system dark setting by default; [textScale], from 1 to 2, multiplies
+ * type and text-sized dimensions.
  */
 @Composable
 internal fun JagFxTheme(
@@ -251,7 +251,7 @@ private fun JagFxProviders(
     )
 }
 
-/** Reads the current theme values. */
+/** Reads current theme values. */
 internal object JagFxTheme {
     val colors: JagFxColors
         @Composable @ReadOnlyComposable

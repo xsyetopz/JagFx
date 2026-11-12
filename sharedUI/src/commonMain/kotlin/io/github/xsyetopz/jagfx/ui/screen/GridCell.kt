@@ -28,15 +28,15 @@ import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
-/** The cells that draw the filter, and show an add button while the voice has none. */
+/** Cells that draw filter, and show add button while voice has none. */
 private val FilterCells =
     setOf(SignalChainSlot.Filter, SignalChainSlot.PoleZero, SignalChainSlot.Bode)
 
 /**
- * One cell of the rack: the [CellHeader] of [slot] over its scope.
- * A press that comes up inside the cell makes [slot] the selected cell (WCAG 2.5.2); leaving the
- * cell before the release cancels it, which the inspector shows; the selected
- * cell has an accent border.
+ * One cell of rack: [CellHeader] of [slot] over its scope.
+ * Press that comes up inside cell makes [slot] selected cell (WCAG 2.5.2); leaving
+ * cell before release cancels it, which inspector shows; selected
+ * cell has accent border.
  */
 @Composable
 internal fun GridCell(
@@ -87,8 +87,8 @@ internal fun GridCell(
 }
 
 /**
- * The canvas of [slot], or an add button on the scope when the voice lacks what the cell draws:
- * the filter for the filter cells, and the LFO or gate pair for those envelopes.
+ * Canvas of [slot], or add button on scope when voice lacks what cell draws:
+ * filter for filter cells, and LFO or gate pair for those envelopes.
  */
 @Composable
 private fun CellScope(
@@ -121,7 +121,7 @@ private fun CellScope(
 
 private fun Offset.isInside(size: IntSize) = x >= 0f && y >= 0f && x < size.width && y < size.height
 
-/** Selects [slot] when a press in the cell comes up inside it; see [PressTracker]. */
+/** Selects [slot] when press in cell comes up inside it; see [PressTracker]. */
 private fun Modifier.selectOnRelease(
     slot: SignalChainSlot,
     actions: EditorActions,

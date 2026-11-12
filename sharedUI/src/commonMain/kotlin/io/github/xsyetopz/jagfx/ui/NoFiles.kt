@@ -8,7 +8,7 @@ import io.github.xsyetopz.jagfx.ui.editor.PatchFiles
 import io.github.xsyetopz.jagfx.ui.editor.SavedFile
 import kotlinx.coroutines.flow.emptyFlow
 
-/** File access of a platform that has none: pickers cancel and reads and writes fail. */
+/** File access of platform that has none: pickers cancel and reads and writes fail. */
 internal object NoFiles : PatchFiles {
     private const val UNAVAILABLE = "File access is not available on this platform"
 
@@ -28,5 +28,5 @@ internal object NoFiles : PatchFiles {
     ): SavedFile? = null
 }
 
-/** Audio output of a platform that has none: playback ends at once. */
+/** Audio output of platform that has none: playback ends at once. */
 internal val SilentAudio: AudioOutput = AudioOutput { _, _ -> emptyFlow() }

@@ -12,7 +12,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
 /**
- * [text] in [style], in the content color unless [color] is given: one line cut with an ellipsis,
+ * [text] in [style], in content color unless [color] is given: one line cut with ellipsis,
  * or wrapped over as many lines as it needs when [wrap] is set.
  */
 @Composable
@@ -37,7 +37,7 @@ internal fun JagText(
     )
 }
 
-/** A dim bold uppercase label, the Scala JagFX caption above a field or a section. */
+/** Dim bold uppercase label, Scala JagFX caption above field or section. */
 @Composable
 internal fun JagLabel(
     text: String,

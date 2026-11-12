@@ -5,8 +5,8 @@ import io.github.xsyetopz.jagfx.ui.editor.EditorIntent
 import io.github.xsyetopz.jagfx.ui.editor.HistoryIntent
 
 /**
- * Callbacks of the editor screen.
- * [dispatch] sends an intent to the ViewModel; [updateView] changes the [ScreenViewState].
+ * Callbacks of editor screen.
+ * [dispatch] sends intent to ViewModel; [updateView] changes [ScreenViewState].
  */
 @Stable
 internal class EditorActions(
@@ -14,8 +14,8 @@ internal class EditorActions(
     val updateView: ((ScreenViewState) -> ScreenViewState) -> Unit,
 ) {
     /**
-     * Set by the Alt and arrow keys: the cell that becomes selected next takes the keyboard
-     * focus, so the focus follows the selection. Not state; the cell clears it.
+     * Set by Alt and arrow keys: cell that becomes selected next takes keyboard
+     * focus, so focus follows selection. Not state; cell clears it.
      */
     var focusSelectedCell: Boolean = false
 

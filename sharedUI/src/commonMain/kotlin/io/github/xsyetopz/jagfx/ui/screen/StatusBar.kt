@@ -13,7 +13,7 @@ import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import io.github.xsyetopz.jagfx.ui.widgets.JagText
 
-/** One-line message of the last file or edit outcome. */
+/** One-line message of last file or edit outcome. */
 @Composable
 internal fun StatusBar(
     hint: StatusHint?,

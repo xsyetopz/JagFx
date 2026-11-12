@@ -18,20 +18,20 @@ import kotlin.math.abs
 /** `PitchOffset` units per semitone. */
 private const val DETUNE_UNITS_PER_SEMITONE = 10
 
-/** `true` for the slots that draw the voice timeline: the envelope slots and the output. */
+/** `true` for slots that draw voice timeline: envelope slots and output. */
 internal val SignalChainSlot.isTimeDomain: Boolean
     get() = isEnvelope || this == SignalChainSlot.Output
 
 /**
- * Zoom, scroll, selection, and snap toggle of one canvas. These never change the patch.
+ * Zoom, scroll, selection, and snap toggle of one canvas. These never change patch.
  *
- * @property linked `true` when a time-domain cell follows [ScreenViewState.timeView]; otherwise
+ * @property linked `true` when time-domain cell follows [ScreenViewState.timeView]; otherwise
  *     it follows [timeView].
- * @property timeView The own time view of a time-domain cell that is not [linked].
- * @property panelOpen `true` while the controls panel of the cell is shown.
- * @property axisValues `true` to draw the axis labels of the enlarged cell.
- * @property gridLines `true` to draw the grid lines of the enlarged cell.
- * @property pointReadouts `true` to label every point of the enlarged cell with its time and value.
+ * @property timeView Own time view of time-domain cell that is not [linked].
+ * @property panelOpen `true` while controls panel of cell is shown.
+ * @property axisValues `true` to draw axis labels of enlarged cell.
+ * @property gridLines `true` to draw grid lines of enlarged cell.
+ * @property pointReadouts `true` to label every point of enlarged cell with its time and value.
  */
 @Immutable
 internal data class CanvasView(
@@ -48,10 +48,10 @@ internal data class CanvasView(
 )
 
 /**
- * View state of the screen that [EditorState] does not hold.
+ * View state of screen that [EditorState] does not hold.
  *
- * @property openCell The cell that fills the rack on its own, or `null` for the whole rack.
- * @property timeView The time view that every linked time-domain cell shares.
+ * @property openCell Cell that fills rack on its own, or `null` for whole rack.
+ * @property timeView Time view that every linked time-domain cell shares.
  */
 @Immutable
 internal data class ScreenViewState(
@@ -67,14 +67,14 @@ internal data class ScreenViewState(
         view: CanvasView,
     ): ScreenViewState = copy(canvases = canvases + (slot to view))
 
-    /** `true` when [slot] follows the shared [timeView]; only time-domain slots link. */
+    /** `true` when [slot] follows shared [timeView]; only time-domain slots link. */
     fun isLinked(slot: SignalChainSlot): Boolean = slot.isTimeDomain && canvas(slot).linked
 
-    /** The time view [slot] shows: the shared one when linked, otherwise its own. */
+    /** Time view [slot] shows: shared one when linked, otherwise its own. */
     fun timeViewOf(slot: SignalChainSlot): TimeView =
         if (isLinked(slot)) timeView else canvas(slot).timeView
 
-    /** This state with [view] written to the shared time view or to the own one of [slot]. */
+    /** This state with [view] written to shared time view or to own one of [slot]. */
     fun withTimeView(
         slot: SignalChainSlot,
         view: TimeView,
@@ -87,8 +87,8 @@ internal data class ScreenViewState(
 }
 
 /**
- * The envelope that the canvas of [slot] shows for [voice], or `null` when it does not exist.
- * The filter modulation segments are shown as an envelope with waveform [Waveform.Off].
+ * Envelope that canvas of [slot] shows for [voice], or `null` when it does not exist.
+ * Filter modulation segments are shown as envelope with waveform [Waveform.Off].
  */
 internal fun envelopeOf(
     voice: Voice?,
@@ -139,7 +139,7 @@ internal fun envelopeOf(
     }
 
 /**
- * One harmonic row. [index] is the position in the partial list; [partial] is `null` for an
+ * One harmonic row. [index] is position in partial list; [partial] is `null` for
  * inactive row.
  */
 internal data class PartialRow(
@@ -147,7 +147,7 @@ internal data class PartialRow(
     val partial: Partial?,
 )
 
-/** The [SynthLimits.MAX_PARTIALS] harmonic rows of [voice]. */
+/** [SynthLimits.MAX_PARTIALS] harmonic rows of [voice]. */
 internal fun partialRows(voice: Voice?): List<PartialRow> =
     List(SynthLimits.MAX_PARTIALS) { index -> PartialRow(index, voice?.partials?.getOrNull(index)) }
 
@@ -185,7 +185,7 @@ private fun rejectKey(reason: RejectReason): UiString =
         RejectReason.NoBinaryEncoding -> UiString.StatusRejectedNoBinaryEncoding
     }
 
-/** Status bar text of [hint], or an empty string without a hint. */
+/** Status bar text of [hint], or empty string without hint. */
 internal fun statusText(
     hint: StatusHint?,
     strings: Strings,
@@ -244,9 +244,9 @@ internal fun statusText(
     }
 
 /**
- * The text a screen reader reads for the plot of [slot]: its title, waveform, point count, and
- * the lowest and highest target level in percent of the full range. Only the title for a plot
- * without an [envelope].
+ * Text screen reader reads for plot of [slot]: its title, waveform, point count, and
+ * lowest and highest target level in percent of full range. Only title for plot
+ * without [envelope].
  */
 internal fun plotSummary(
     slot: SignalChainSlot,

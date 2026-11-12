@@ -8,7 +8,7 @@ import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
 
 /**
- * The rows of the rack, as in the original: Freq, Amp, and Output, each with its base cell and
+ * Rows of rack, as in original: Freq, Amp, and Output, each with its base cell and
  * its modulation or gate pair.
  */
 internal val RackRows: List<List<SignalChainSlot>> =
@@ -19,18 +19,18 @@ internal val RackRows: List<List<SignalChainSlot>> =
     )
 
 /**
- * The filter column right of the rack: the graph of poles and zeros, the transition curve, and
- * the frequency response.
+ * Filter column right of rack: graph of poles and zeros, transition curve, and
+ * frequency response.
  */
 internal val FilterColumn: List<SignalChainSlot> =
     listOf(SignalChainSlot.PoleZero, SignalChainSlot.Filter, SignalChainSlot.Bode)
 
-/** Every cell of the rack in reading order, each slot once: the rows, then the filter column. */
+/** Every cell of rack in reading order, each slot once: rows, then filter column. */
 internal val RackCells: List<SignalChainSlot> = RackRows.flatten() + FilterColumn
 
 /**
- * The first envelope of the LFO or gate pair that [slot] belongs to, whose waveform creates and
- * removes the pair; `null` for a slot outside a pair.
+ * First envelope of LFO or gate pair that [slot] belongs to, whose waveform creates and
+ * removes pair; `null` for slot outside pair.
  */
 internal fun pairFirstOf(slot: SignalChainSlot): SignalChainSlot? =
     when (slot) {
@@ -40,7 +40,7 @@ internal fun pairFirstOf(slot: SignalChainSlot): SignalChainSlot? =
         else -> null
     }
 
-/** The plot color of [slot]: envelopes orange, the output green, and the filter plots blue. */
+/** Plot color of [slot]: envelopes orange, output green, and filter plots blue. */
 internal fun slotColor(
     slot: SignalChainSlot,
     palette: SynthPalette,
@@ -51,17 +51,17 @@ internal fun slotColor(
         else -> palette.envelope
     }
 
-/** Resonance in dB of a raw pole magnitude, as the filter computes it. */
+/** Resonance in dB of raw pole magnitude, as filter computes it. */
 internal fun magnitudeToDb(magnitude: Int): Double = magnitude * FilterResponse.MAGNITUDE_DB_SCALE
 
-/** Time in ms of an envelope [position], in 1/65536 of the voice, in a voice [durationMs] long. */
+/** Time in ms of envelope [position], in 1/65536 of voice, in voice [durationMs] long. */
 internal fun positionToMs(
     position: Float,
     durationMs: Int,
 ): Float = position / ENVELOPE_POSITION_SPAN * durationMs
 
 /**
- * The part of the time axis, as fractions of the voice, that a plot [plotWidth] px wide shows at
+ * Part of time axis, as fractions of voice, that plot [plotWidth] px wide shows at
  * [viewport].
  */
 internal fun visibleWindow(

@@ -15,7 +15,7 @@ internal object ScrubMath {
             else -> value
         }.coerceIn(range)
 
-    /** Value of a double click: [defaultValue] clamped to [range], or the minimum without one. */
+    /** Value of double click: [defaultValue] clamped to [range], or minimum without one. */
     fun resetValue(
         defaultValue: Float?,
         range: ClosedFloatingPointRange<Float>,

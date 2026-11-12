@@ -48,7 +48,7 @@ internal class PatchFileTasks(
         dispatch(intent)
     }
 
-    /** Writes the patch to the current path, or asks for one when [pick] or there is none. */
+    /** Writes patch to current path, or asks for one when [pick] or there is none. */
     suspend fun save(pick: Boolean) {
         val current = state()
         val patch = current.patch
@@ -68,7 +68,7 @@ internal class PatchFileTasks(
         result?.let(dispatch)
     }
 
-    /** Writes the sample to the current path, or asks for one when [pick] or there is none. */
+    /** Writes sample to current path, or asks for one when [pick] or there is none. */
     suspend fun saveSample(pick: Boolean) {
         val document = state().sample ?: return
         val currentPath = document.path.takeUnless { pick }

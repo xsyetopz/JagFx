@@ -49,7 +49,7 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-/** The integer in [text] clamped to [range], or null when [text] is not an integer. */
+/** Integer in [text] clamped to [range], or null when [text] is not integer. */
 internal fun parseClampedInt(
     text: String,
     range: IntRange,
@@ -59,11 +59,11 @@ internal fun parseClampedInt(
 }
 
 /**
- * An input box at least 24 dp high for an integer in [range], right-aligned on a near-black field with
- * a 2 dp accent ring while focused.
+ * Input box at least 24 dp high for integer in [range], right-aligned on near-black field with
+ * 2 dp accent ring while focused.
  * Enter or focus loss commits through [onValueCommit]; out-of-range input is clamped, and text
- * that is not a number reverts to [value].
- * A non-empty [unit] shows dim after the number.
+ * that is not number reverts to [value].
+ * Non-empty [unit] shows dim after number.
  */
 @Composable
 internal fun JagField(
@@ -88,8 +88,8 @@ internal fun JagField(
 }
 
 /**
- * A [JagField] for a number with [decimals] digits after the point, clamped to [range].
- * [onValueCommit] runs only when the committed text differs from the shown one.
+ * [JagField] for number with [decimals] digits after point, clamped to [range].
+ * [onValueCommit] runs only when committed text differs from shown one.
  */
 @Composable
 internal fun JagDecimalField(
@@ -121,7 +121,7 @@ internal fun JagDecimalField(
     )
 }
 
-/** [value] with [decimals] digits after the point. */
+/** [value] with [decimals] digits after point. */
 internal fun formatDecimal(
     value: Double,
     decimals: Int,
@@ -133,7 +133,7 @@ internal fun formatDecimal(
     return "$sign${scaled / scale}.${(scaled % scale).toString().padStart(decimals, '0')}"
 }
 
-/** The input box of the fields: shows [value], and [onCommit] maps the edited text to the text to show. */
+/** Input box of fields: shows [value], and [onCommit] maps edited text to text to show. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun JagTextField(
@@ -202,11 +202,11 @@ private fun JagTextField(
 }
 
 /**
- * A [JagField] with a stock Material slider under it, the Scala JagFX value control.
- * The slider covers the [scale] range; dragging it or using its keys sets the value through
- * [onValueChange], and the wheel over it and a double click do too. A drag is one undo step
+ * [JagField] with stock Material slider under it, Scala JagFX value control.
+ * Slider covers [scale] range; dragging it or using its keys sets value through
+ * [onValueChange], and wheel over it and double click do too. Drag is one undo step
  * bracketed by [gestures].
- * Typing accepts any value in [range], which can be wider than the slider.
+ * Typing accepts any value in [range], which can be wider than slider.
  */
 @Composable
 internal fun JagBarField(

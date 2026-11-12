@@ -11,9 +11,9 @@ import kotlin.math.pow
 import kotlin.math.sin
 
 /**
- * Magnitude response of a [Filter].
+ * Magnitude response of [Filter].
  *
- * Interpolation runs on the raw integers and truncates them before conversion, as
+ * Interpolation runs on raw integers and truncates them before conversion, as
  * `AudioFilter.GetAmplitude` does.
  */
 internal object FilterResponse {
@@ -28,7 +28,7 @@ internal object FilterResponse {
 
     /**
      * Response in dB at [points] frequencies spaced logarithmically from C1 to C9, with
-     * the poles interpolated from [Pole.start] (factor 0) to [Pole.end] (factor 1). All values
+     * poles interpolated from [Pole.start] (factor 0) to [Pole.end] (factor 1). All values
      * are 0 when [filter] is `null` or has no poles.
      */
     fun magnitudeDb(
@@ -59,11 +59,11 @@ internal object FilterResponse {
         return response
     }
 
-    /** Z-plane radius of a raw pole magnitude. */
+    /** Z-plane radius of raw pole magnitude. */
     fun rawMagnitudeToRadius(raw: Int): Double =
         1.0 - 10.0.pow(-(raw * MAGNITUDE_DB_SCALE) / DECIBEL_FACTOR)
 
-    /** Z-plane angle in radians of a raw pole phase. */
+    /** Z-plane angle in radians of raw pole phase. */
     fun rawPhaseToAngle(raw: Int): Double {
         val frequency =
             2.0.pow(raw * FilterFrequencyScale.RAW_PHASE_TO_OCTAVES) *
@@ -93,13 +93,13 @@ internal object FilterResponse {
         return hypot(sumRe, sumIm)
     }
 
-    /** The `z^-1` term `-2 r cos(theta)` of one second-order section. */
+    /** `z^-1` term `-2 r cos(theta)` of one second-order section. */
     private fun sectionTerm(
         radius: Double,
         theta: Double,
     ): Double = -(radius + radius) * cos(theta)
 
-    /** Expanded product of the second-order sections `1 - 2 r cos(theta) z^-1 + r^2 z^-2`. */
+    /** Expanded product of second-order sections `1 - 2 r cos(theta) z^-1 + r^2 z^-2`. */
     private fun coefficients(
         poles: List<Pole>,
         factor: Double,

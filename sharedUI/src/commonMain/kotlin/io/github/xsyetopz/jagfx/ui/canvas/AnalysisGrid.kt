@@ -8,19 +8,19 @@ import io.github.xsyetopz.jagfx.ui.theme.SynthPalette
 import kotlin.math.floor
 import kotlin.math.max
 
-/** Distance in dp between two bright horizontal rules, the original's 22 px; a faint rule sits halfway. */
+/** Distance in dp between two bright horizontal rules, original's 22 px; faint rule sits halfway. */
 private const val HORIZONTAL_STEP = 22.0
 
-/** Offset that centers a 1px line on a pixel. */
+/** Offset that centers 1px line on pixel. */
 private const val HALF_PIXEL = 0.5
 
 /**
- * Draws the grid that the game's sound editor shares between the pole-zero map and the frequency
- * response: an even faint line per octave of the frequency axis, and horizontal rules that
+ * Draws grid that game's sound editor shares between pole-zero map and frequency
+ * response: even faint line per octave of frequency axis, and horizontal rules that
  * alternate between bright and faint.
- * It has no labels and no octave marks. The lines take [SynthPalette.grid] and [SynthPalette.gridFaint].
+ * It has no labels and no octave marks. Lines take [SynthPalette.grid] and [SynthPalette.gridFaint].
  *
- * A semitone `f` sits at `width * max(1, zoom) * normX(f) - scroll`; [scroll] is in pixels of
+ * Semitone `f` sits at `width * max(1, zoom) * normX(f) - scroll`; [scroll] is in pixels of
  * this draw scope.
  */
 internal fun DrawScope.drawAnalysisGrid(
@@ -36,7 +36,7 @@ internal fun DrawScope.drawAnalysisGrid(
     }
 }
 
-/** The semitones of the C notes that fall on the frequency axis: one per octave. */
+/** Semitones of C notes that fall on frequency axis: one per octave. */
 internal fun octaveSemitones(): List<Int> =
     (SemitoneScale.firstVisibleSemitone..SemitoneScale.lastVisibleSemitone).filter {
         val frequency = SemitoneScale.semitoneToFrequency(it)
@@ -74,6 +74,6 @@ private fun DrawScope.drawRules(
     }
 }
 
-/** [value] in dp snapped to the dp grid, returned in pixels. */
+/** [value] in dp snapped to dp grid, returned in pixels. */
 private fun DrawScope.snapToPx(value: Double): Float =
     ((floor(value) + HALF_PIXEL) * density).toFloat()

@@ -3,9 +3,9 @@ package io.github.xsyetopz.jagfx.ui.editor
 import io.github.xsyetopz.jagfx.core.vorbis.JagVorbis
 
 /**
- * Applies a header-only edit to the open sample. The end trim stays within `0..loadedSampleCount`,
+ * Applies header-only edit to open sample. End trim stays within `0..loadedSampleCount`,
  * `loopBegin` within `0..loopEnd`, and `loopEnd` within `loopBegin..sampleCount`. Trimming pulls
- * the loop region in so that it ends at or before the new sample count.
+ * loop region in so that it ends at or before new sample count.
  */
 internal fun reduceSample(
     state: EditorState,

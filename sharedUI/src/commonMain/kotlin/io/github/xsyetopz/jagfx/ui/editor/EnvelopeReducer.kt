@@ -108,7 +108,7 @@ private fun setWaveform(
         }
     }
 
-/** Replaces the segment list of [target]; the filter target edits the modulation envelope. */
+/** Replaces segment list of [target]; filter target edits modulation envelope. */
 private fun editSegments(
     voice: Voice,
     target: SignalChainSlot,
@@ -136,7 +136,7 @@ private fun editSegments(
     }
 }
 
-/** Applies [transform] to the envelope of [target]. Views without an envelope stay unchanged. */
+/** Applies [transform] to envelope of [target]. Views without envelope stay unchanged. */
 private fun editEnvelope(
     voice: Voice,
     target: SignalChainSlot,
@@ -178,7 +178,7 @@ private fun editEnvelope(
     }
 }
 
-/** The LFO or gate envelope pair that holds [target], or `null`. */
+/** LFO or gate envelope pair that holds [target], or `null`. */
 private fun Voice.pairOf(target: SignalChainSlot): Pair<Envelope, Envelope>? =
     when (target) {
         SignalChainSlot.VibratoRate, SignalChainSlot.VibratoDepth -> {
