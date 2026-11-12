@@ -1,11 +1,14 @@
 package io.github.xsyetopz.jagfx.ui.editor
 
-private const val NORMAL_INTERVAL_MS = 250L
 private const val REDUCED_MOTION_INTERVAL_MS = 1000L
 
-/** Least time in ms between two playhead updates: 4 Hz, or 1 Hz when [reducedMotion] is on. */
+/**
+ * Least time in ms between two playhead updates. `0` passes every position the audio clock
+ * reports (about every 10 ms on desktop and 16 ms in the browser), so the playhead keeps pace with
+ * the sound; [reducedMotion] lowers it to 1 Hz.
+ */
 internal fun playbackIntervalMs(reducedMotion: Boolean): Long =
-    if (reducedMotion) REDUCED_MOTION_INTERVAL_MS else NORMAL_INTERVAL_MS
+    if (reducedMotion) REDUCED_MOTION_INTERVAL_MS else 0L
 
 /**
  * Thins a stream of playback positions to one per [intervalMs]. It reads the timestamps given to

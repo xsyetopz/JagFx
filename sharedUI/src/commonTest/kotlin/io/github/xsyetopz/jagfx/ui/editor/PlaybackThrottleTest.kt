@@ -6,9 +6,17 @@ import kotlin.test.assertNull
 
 class PlaybackThrottleTest {
     @Test
-    fun theIntervalIsFourHertzAndOneHertzWhenMotionIsReduced() {
-        assertEquals(250L, playbackIntervalMs(reducedMotion = false))
+    fun theIntervalFollowsTheAudioClockAndIsOneHertzWhenMotionIsReduced() {
+        assertEquals(0L, playbackIntervalMs(reducedMotion = false))
         assertEquals(1000L, playbackIntervalMs(reducedMotion = true))
+    }
+
+    @Test
+    fun aZeroIntervalPassesEveryPosition() {
+        val throttle = PlaybackThrottle(playbackIntervalMs(reducedMotion = false))
+        val passed = (0 until 100).count { throttle.offer(it / 100f, it * 10L) != null }
+        assertEquals(100, passed)
+        assertNull(throttle.flush())
     }
 
     @Test

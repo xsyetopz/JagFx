@@ -4,6 +4,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 
 /**
  * `true` when the platform asks for less motion ([io.github.xsyetopz.jagfx.ui.editor.PlatformSettings.reducedMotion]).
- * The editor has no animations; this lowers the playhead rate from 4 Hz to 1 Hz.
+ * The editor has no animations; [io.github.xsyetopz.jagfx.ui.editor.EditorViewModel] lowers the
+ * playhead rate to 1 Hz itself.
  */
 internal val LocalReducedMotion = staticCompositionLocalOf { false }

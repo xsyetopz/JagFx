@@ -25,7 +25,7 @@ import kotlin.time.TimeSource
  * render discards an older one. With true-wave off, renders wait until no gesture is open.
  * Opening a sample decodes it on [renderDispatcher] with [sampleDecoder].
  * The panel side, text size, and theme start from [preferences] and are saved whenever they change.
- * Playback positions reach the state at most 4 times a second, or once a second when
+ * Every playback position the audio reports reaches the state, or one a second when
  * [PlatformSettings.reducedMotion] of [settings] is on; the last position always arrives.
  * Call [dispatch] from the main thread.
  */
