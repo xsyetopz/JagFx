@@ -32,17 +32,18 @@ jobs:
       - uses: actions/checkout@v7.0.1
 
       - if: matrix.build-mode == 'manual'
-        uses: actions/setup-java@v6.0.1
+        uses: actions/setup-java@v6.2.0
         with:
           distribution: temurin
           java-version: "21"
 
       - if: matrix.build-mode == 'manual'
-        uses: gradle/actions/setup-gradle@v6.4.0
+        uses: gradle/actions/setup-gradle@v6.4.1
         with:
-          cache-disabled: true
+          # Restores downloaded dependencies only; the build below skips the build cache.
+          cache-read-only: true
 
-      - uses: github/codeql-action/init@v4.38.2
+      - uses: github/codeql-action/init@v4.39.3
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
@@ -57,6 +58,6 @@ jobs:
           :core:engine:compileKotlinJvm :sharedUI:compileKotlinJvm
           :cli:compileKotlin :desktopApp:compileKotlin
 
-      - uses: github/codeql-action/analyze@v4.38.2
+      - uses: github/codeql-action/analyze@v4.39.3
         with:
           category: /language:${{ matrix.language }}
