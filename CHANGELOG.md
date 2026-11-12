@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Waveform, Start, and End of a module → the strip beside its Base cell, as the waveform buttons, Min, and Max in the slot's unit, with a read-only average.
   - Oscillator waveform and range → the voice strip, with Len, Pos, L1, and L2.
   - Point table → the `▼` controls panel of each time-domain cell, with time in ms, the value in its unit, and raw position and level.
-  - Filter pole counts, unity gains, the selected pole, and Snap → the filter strip beside the filter column, with Off/On, Import filter, and Export filter.
+  - Filter pole counts, unity gains, the selected pole, and Snap → the filter strip beside the filter column, with Off/On, Import Filter, and Export Filter.
   - Harmonics and echo → the bottom bar's five harmonic boxes (Semi, Vol, Del) and the Reverb box.
   - Transport, voice chips, Copy, and Reset → Play, Play All, Loop, Loop All, Loops, and Stop in the voice strip; Tones 1 to 10, Copy, and Reset Active in the bottom bar. Play and Loop play the selected tone; Play All and Loop All play the patch.
   - Import and Export tone, theme, text size, and panel side → the File menu in the title bar.
