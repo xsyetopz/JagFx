@@ -143,10 +143,11 @@ git tag -a v<version> -m "JagFx <version>"
 git push origin v<version>
 ```
 
-A manual run (`GitHub -> Actions -> Release -> Run workflow`) with a `release_tag` publishes that existing tag. Without a `release_tag` it builds the artifacts as workflow artifacts and publishes nothing, which tests the release build on a branch:
+A manual run (`GitHub -> Actions -> Release -> Run workflow`) builds the ref picked under "Use workflow from". Picking an existing tag publishes it. Picking a branch builds the artifacts as workflow artifacts and publishes nothing, which tests the release build:
 
 ```bash
 gh workflow run release.yml --ref <branch>
+gh workflow run release.yml --ref v<version>
 ```
 
 ## Artifacts
