@@ -1,5 +1,8 @@
 package io.github.xsyetopz.jagfx.ui.platform
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import io.github.xsyetopz.jagfx.ui.editor.PlatformSettings
 import java.awt.AWTError
 import java.awt.HeadlessException
@@ -12,7 +15,6 @@ import java.util.concurrent.TimeoutException
 import kotlin.math.roundToInt
 
 private const val PROBE_TIMEOUT_MS = 1_500L
-private const val WAIT_MS = 2_500L
 private const val MIN_SCALE = 100
 private const val MAX_SCALE = 200
 private const val PERCENT = 100
@@ -132,44 +134,46 @@ internal fun probePlatform(
 
 /**
  * Desktop platform settings. Windows high contrast comes from the AWT desktop property. On macOS and
- * GNOME the values come from `defaults` and `gsettings`, read once on a background thread started at
- * construction and cached, so a change shows after a restart. A read that has not finished within a
- * few seconds gives the defaults.
+ * GNOME the values come from `defaults` and `gsettings`, read once by [start] (a daemon thread by
+ * default) and cached, so a change shows after a restart.
+ * The values are Compose state: they hold the defaults until the read finishes, then a composable
+ * that read them recomposes. No getter waits.
  */
 class DesktopPlatformSettings internal constructor(
     private val osName: String,
     private val windowsHighContrast: () -> Boolean,
+    start: (() -> Unit) -> Unit = ::startDaemon,
     run: CommandRunner,
 ) : PlatformSettings {
     /** Reads the settings of the OS this JVM runs on. */
-    constructor() : this(System.getProperty("os.name").orEmpty(), ::awtHighContrast, ::runCommand)
+    constructor() : this(
+        System.getProperty("os.name").orEmpty(),
+        ::awtHighContrast,
+        run = ::runCommand,
+    )
 
-    private val values: CompletableFuture<PlatformValues> =
-        CompletableFuture
-            .supplyAsync {
-                probePlatform(
-                    osName,
-                    run,
-                )
-            }.exceptionally { PlatformValues() }
+    private var values by mutableStateOf(PlatformValues())
 
-    private fun cached(): PlatformValues =
-        try {
-            values.get(WAIT_MS, TimeUnit.MILLISECONDS)
-        } catch (_: TimeoutException) {
-            PlatformValues()
-        } catch (_: ExecutionException) {
-            PlatformValues()
-        } catch (_: InterruptedException) {
-            Thread.currentThread().interrupt()
-            PlatformValues()
+    init {
+        start {
+            values =
+                try {
+                    probePlatform(osName, run)
+                } catch (_: RuntimeException) {
+                    PlatformValues()
+                }
         }
+    }
 
     override val highContrast: Boolean
-        get() = if (osName.startsWith("Windows")) windowsHighContrast() else cached().highContrast
+        get() = if (osName.startsWith("Windows")) windowsHighContrast() else values.highContrast
 
-    override val reducedMotion: Boolean get() = cached().reducedMotion
-    override val textScalePercent: Int get() = cached().textScalePercent
+    override val reducedMotion: Boolean get() = values.reducedMotion
+    override val textScalePercent: Int get() = values.textScalePercent
+}
+
+private fun startDaemon(task: () -> Unit) {
+    Thread(task, "jagfx-platform-settings").apply { isDaemon = true }.start()
 }
 
 private fun awtHighContrast(): Boolean =

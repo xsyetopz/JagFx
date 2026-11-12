@@ -1,7 +1,11 @@
 package io.github.xsyetopz.jagfx.ui
 
+import androidx.compose.ui.ImageComposeScene
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.use
 import io.github.xsyetopz.jagfx.ui.platform.DesktopPlatformSettings
 import io.github.xsyetopz.jagfx.ui.platform.runCommand
+import java.util.concurrent.CountDownLatch
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -12,7 +16,9 @@ class DesktopPlatformSettingsTest {
     private fun settings(
         os: String,
         answers: Map<String, String?>,
-    ) = DesktopPlatformSettings(os, { false }) { cmd -> answers[cmd.drop(2).joinToString(" ")] }
+    ) = DesktopPlatformSettings(os, {
+        false
+    }, { it() }) { cmd -> answers[cmd.drop(2).joinToString(" ")] }
 
     private fun mac(answers: Map<String, String?>) = settings("Mac OS X", answers)
 
@@ -98,7 +104,7 @@ class DesktopPlatformSettingsTest {
     fun windowsUsesToolkitFlag() {
         var called = false
         val s =
-            DesktopPlatformSettings("Windows 11", { true }) {
+            DesktopPlatformSettings("Windows 11", { true }, { it() }) {
                 called = true
                 "1"
             }
@@ -110,9 +116,40 @@ class DesktopPlatformSettingsTest {
 
     @Test
     fun throwingRunnerIsDefault() {
-        val s = DesktopPlatformSettings("Linux", { false }) { error("boom") }
+        val s = DesktopPlatformSettings("Linux", { false }, { it() }) { error("boom") }
         assertFalse(s.highContrast)
         assertEquals(100, s.textScalePercent)
+    }
+
+    @Test
+    fun gettersDoNotWaitForTheProbe() {
+        val release = CountDownLatch(1)
+        var started: (() -> Unit)? = null
+        val s =
+            DesktopPlatformSettings("Linux", { false }, { started = it }) {
+                release.await()
+                "true"
+            }
+        assertFalse(s.highContrast)
+        assertEquals(100, s.textScalePercent)
+        release.countDown()
+        started?.invoke()
+        assertTrue(s.highContrast)
+    }
+
+    @Test
+    fun finishedProbeRecomposesAReader() {
+        var finish: (() -> Unit)? = null
+        val s = DesktopPlatformSettings("Linux", { false }, { finish = it }) { "1.5" }
+        val seen = mutableListOf<Int>()
+        ImageComposeScene(100, 100, Density(1f)) {
+            seen += s.textScalePercent
+        }.use { scene ->
+            scene.render()
+            finish?.invoke()
+            scene.render()
+        }
+        assertEquals(listOf(100, 150), seen)
     }
 
     @Test
