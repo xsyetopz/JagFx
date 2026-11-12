@@ -216,6 +216,10 @@ private fun reduceView(
                 loopCount = intent.count.coerceIn(0, EditorState.MAX_LOOP_COUNT),
             )
         }
+
+        is ViewIntent.SetPanelSide -> {
+            state.copy(panelSide = intent.side)
+        }
     }
 
 private fun reduceHistory(

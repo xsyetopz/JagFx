@@ -22,6 +22,7 @@ import io.github.xsyetopz.jagfx.core.model.SynthLimits
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.HistoryIntent
 import io.github.xsyetopz.jagfx.ui.editor.LoopIntent
+import io.github.xsyetopz.jagfx.ui.editor.PanelSide
 import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
 import io.github.xsyetopz.jagfx.ui.editor.ViewIntent
 import io.github.xsyetopz.jagfx.ui.editor.VoiceIntent
@@ -39,6 +40,10 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagText
 private val TimeFieldWidth = 64.dp
 private val CountFieldWidth = 36.dp
 private val U16Ms = 0..SynthLimits.U16_MAX
+
+/** The menu label that puts the properties panel on this side. */
+internal val PanelSide.label: UiString
+    get() = if (this == PanelSide.Left) UiString.PanelOnLeft else UiString.PanelOnRight
 
 /** Whether the properties panel is [open], and [onToggle], which opens or closes it. */
 internal class PanelToggle(
@@ -217,12 +222,14 @@ private fun FileGroup(
 ) {
     val strings = LocalStrings.current
     var expanded by remember { mutableStateOf(false) }
+    val otherSide = if (state.panelSide == PanelSide.Left) PanelSide.Right else PanelSide.Left
     val items =
         listOf(
             Triple(UiString.ToolbarOpenSample, RequestIntent.OpenSample, true),
             Triple(UiString.ToolbarSaveAs, RequestIntent.SaveAs, true),
             Triple(UiString.ImportTone, RequestIntent.ImportTone, true),
             Triple(UiString.ExportTone, RequestIntent.ExportTone, state.voice != null),
+            Triple(otherSide.label, ViewIntent.SetPanelSide(otherSide), true),
         )
     val menuOffset =
         with(LocalDensity.current) { IntOffset(0, JagFxTheme.dimens.controlHeight.roundToPx()) }

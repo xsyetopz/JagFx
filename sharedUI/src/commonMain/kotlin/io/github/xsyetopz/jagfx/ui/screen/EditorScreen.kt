@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.EditorViewModel
+import io.github.xsyetopz.jagfx.ui.editor.PanelSide
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 
 /** The editor: collects [viewModel] state and shows the sample view or the synth editor. */
@@ -60,15 +61,19 @@ internal fun EditorContent(
             Modifier.fillMaxWidth(),
         )
         Row(Modifier.weight(1f).fillMaxWidth()) {
-            Rack(state, view, actions, Modifier.weight(1f).fillMaxHeight().padding(dimens.spaceSm))
-            if (panelOpen) {
-                Inspector(
-                    state,
-                    view,
-                    actions,
-                    Modifier.width(dimens.inspectorWidth).fillMaxHeight(),
-                )
+            val panel: @Composable () -> Unit = {
+                if (panelOpen) {
+                    Inspector(
+                        state,
+                        view,
+                        actions,
+                        Modifier.width(dimens.inspectorWidth).fillMaxHeight(),
+                    )
+                }
             }
+            if (state.panelSide == PanelSide.Left) panel()
+            Rack(state, view, actions, Modifier.weight(1f).fillMaxHeight().padding(dimens.spaceSm))
+            if (state.panelSide == PanelSide.Right) panel()
         }
         StatusBar(state.statusHint, Modifier.fillMaxWidth())
     }

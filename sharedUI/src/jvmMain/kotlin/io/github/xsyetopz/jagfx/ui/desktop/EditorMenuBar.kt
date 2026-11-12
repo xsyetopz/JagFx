@@ -10,12 +10,14 @@ import io.github.xsyetopz.jagfx.core.model.SynthLimits
 import io.github.xsyetopz.jagfx.ui.editor.EditorIntent
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.HistoryIntent
+import io.github.xsyetopz.jagfx.ui.editor.PanelSide
 import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
 import io.github.xsyetopz.jagfx.ui.editor.SlotIntent
 import io.github.xsyetopz.jagfx.ui.editor.ViewIntent
 import io.github.xsyetopz.jagfx.ui.i18n.Strings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
 import io.github.xsyetopz.jagfx.ui.i18n.rememberStrings
+import io.github.xsyetopz.jagfx.ui.screen.label
 
 /** Number keys for voices 1 to 10, as on the number row: 1 to 9, then 0. */
 private val VoiceKeys =
@@ -65,6 +67,13 @@ internal fun FrameWindowScope.EditorMenuBar(
                 shortcut = command(Key.Z, shift = true),
             ) {
                 dispatch(HistoryIntent.Redo)
+            }
+        }
+        Menu(strings[UiString.MenuView], enabled = state.sample == null) {
+            for (side in PanelSide.entries) {
+                RadioButtonItem(strings[side.label], state.panelSide == side) {
+                    dispatch(ViewIntent.SetPanelSide(side))
+                }
             }
         }
         Menu(strings[UiString.MenuPlayback]) { PlaybackItems(state, strings, dispatch) }

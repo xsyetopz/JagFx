@@ -100,6 +100,9 @@ internal data class SampleDocument(
     val isDirty: Boolean get() = sample != savedSample
 }
 
+/** The window edge the properties panel sits on, so either hand can keep it near the mouse. */
+internal enum class PanelSide { Left, Right }
+
 /**
  * Complete editor state. [reduce] is the only function that makes a new state from an intent.
  *
@@ -129,6 +132,7 @@ internal data class EditorState(
     val statusHint: StatusHint? = null,
     val preview: Preview = Preview.Empty,
     val sample: SampleDocument? = null,
+    val panelSide: PanelSide = PanelSide.Right,
 ) {
     val isDirty: Boolean get() = patch != savedPatch
 

@@ -228,6 +228,10 @@ internal sealed interface ViewIntent : EditorIntent {
     data class SetLoopCount(
         val count: Int,
     ) : ViewIntent
+
+    data class SetPanelSide(
+        val side: PanelSide,
+    ) : ViewIntent
 }
 
 /** Undo, redo, and gesture grouping. */

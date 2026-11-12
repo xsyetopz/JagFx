@@ -34,6 +34,15 @@ class EditorReducerTest {
     }
 
     @Test
+    fun panelSideMovesWithoutTouchingPatchOrHistory() {
+        assertEquals(PanelSide.Right, enabled.panelSide)
+        val moved = enabled.after(ViewIntent.SetPanelSide(PanelSide.Left))
+        assertEquals(PanelSide.Left, moved.panelSide)
+        assertSame(enabled.patch, moved.patch)
+        assertEquals(enabled.history, moved.history)
+    }
+
+    @Test
     fun editsToDisabledSlotAreRejected() {
         val state = EditorState().after(VoiceIntent.SetDuration(5))
         assertEquals(Patch.Empty, state.patch)
