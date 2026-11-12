@@ -1,6 +1,7 @@
 package io.github.xsyetopz.jagfx.ui.desktop
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import io.github.xsyetopz.jagfx.ui.editor.PlatformSettings
 import io.github.xsyetopz.jagfx.ui.editor.Preferences
 import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
 import io.github.xsyetopz.jagfx.ui.platform.DesktopPatchFiles
+import io.github.xsyetopz.jagfx.ui.screen.LocalNativeMenu
 import java.io.File
 
 internal val isMacOs: Boolean = System.getProperty("os.name").orEmpty().startsWith("Mac")
@@ -76,6 +78,8 @@ fun ApplicationScope.JagFxWindow(
                 window.rootPane.putClientProperty("Window.documentFile", path?.let(::File))
             }
         }
-        EditorApp(viewModel, home, settings) { if (!isMacOs) title = it }
+        CompositionLocalProvider(LocalNativeMenu provides true) {
+            EditorApp(viewModel, home, settings) { if (!isMacOs) title = it }
+        }
     }
 }

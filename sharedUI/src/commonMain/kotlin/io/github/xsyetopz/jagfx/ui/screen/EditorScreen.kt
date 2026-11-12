@@ -58,6 +58,7 @@ internal fun EditorContent(
     modifier: Modifier = Modifier,
 ) {
     val dimens = JagFxTheme.dimens
+    val nativeMenu = LocalNativeMenu.current
     val rowDirection =
         if (state.panelSide ==
             PanelSide.Left
@@ -73,8 +74,10 @@ internal fun EditorContent(
             .onKeyEvent { event ->
                 val stop =
                     event.type == KeyEventType.KeyDown && stopsPlayback(event.key, state.isPlaying)
+                val toggle = !stop && togglesPlaybackOn(event, nativeMenu)
                 if (stop) actions.dispatch(RequestIntent.Stop)
-                stop
+                if (toggle) actions.dispatch(RequestIntent.TogglePlay)
+                stop || toggle
             },
     ) {
         TitleBar(state, actions, Modifier.fillMaxWidth())

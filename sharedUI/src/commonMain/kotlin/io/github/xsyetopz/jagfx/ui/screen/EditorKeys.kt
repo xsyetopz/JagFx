@@ -60,6 +60,16 @@ internal fun stopsPlayback(
     playing: Boolean,
 ): Boolean = playing && key == Key.Escape
 
+/**
+ * `true` when Space, with no Ctrl, Alt, Cmd, or Shift held, asks to toggle playback. Only without a
+ * [nativeMenu], which binds Space itself, so the key never fires twice.
+ */
+internal fun togglesPlayback(
+    key: Key,
+    modified: Boolean,
+    nativeMenu: Boolean,
+): Boolean = key == Key.Spacebar && !modified && !nativeMenu
+
 /** This view moved one screen ([TimeView.span]) left for a negative [direction], right for a positive one. */
 internal fun TimeView.pannedByScreen(direction: Int): TimeView =
     copy(scroll = (scroll + direction * span).coerceIn(0f, 1f - span))
@@ -123,3 +133,19 @@ internal fun EditorActions.applyViewKey(
         }
     }
 }
+
+/** [togglesPlayback] for a key down [event]. */
+internal fun togglesPlaybackOn(
+    event: KeyEvent,
+    nativeMenu: Boolean,
+): Boolean =
+    event.type == KeyEventType.KeyDown &&
+        togglesPlayback(
+            event.key,
+            modified =
+                event.isCtrlPressed ||
+                    event.isMetaPressed ||
+                    event.isAltPressed ||
+                    event.isShiftPressed,
+            nativeMenu = nativeMenu,
+        )
