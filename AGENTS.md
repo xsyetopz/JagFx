@@ -4,7 +4,7 @@ JagFx reads, writes, renders, and edits Old School RuneScape `.synth` sound effe
 
 ## Commands
 
-The Gradle build is not wired into `just` yet, so Kotlin work runs through `./gradlew`:
+Kotlin work runs through `./gradlew`; `just` covers the TypeScript, Markdown, and hook checks:
 
 ```bash
 ./gradlew check                     # tests, spotlessCheck, detekt
@@ -18,10 +18,11 @@ Compiler warnings are errors, and library modules use explicit API mode.
 
 ## Project Rules
 
+- Commit your own work as you go, one finished slice per commit.
 - Keep binary round-trip fidelity for every file in `references/synths/` that round-trips today.
-- JSON tests for files with a known binary asymmetry compare against `SynthCodec.encode(SynthCodec.decode(bytes).patch)`, not the original bytes.
-- Ask before adding a Gradle or npm dependency, and say why existing APIs fall short. After a Gradle dependency change, run `./gradlew --write-verification-metadata sha256 help`; never use lenient verification.
-- Ask before editing `docs/synth-format-spec.md` unless the task is format-doc work.
+- Compare JSON tests for files with a known binary asymmetry against `SynthCodec.encode(SynthCodec.decode(bytes).patch)`.
+- Build on existing APIs first. Add a Gradle or npm dependency with the user's approval, and after a Gradle dependency change run `./gradlew --write-verification-metadata sha256 help` to keep verification strict.
+- Edit `docs/synth-format-spec.md` in format-doc work, and with the user's approval elsewhere.
 
 ## Code Map
 
