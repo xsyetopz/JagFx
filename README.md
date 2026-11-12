@@ -1,12 +1,6 @@
 # Jagex Synth Editor
 
-<p align="left">
-  <img
-    src="assets/relic_unlock_spinning_hover.png"
-    alt="Cow Death"
-    onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/xsyetopz/JagFx/main/assets/relic_unlock_spinning_hover.png';"
-  >
-</p>
+![Cow Death](assets/relic_unlock_spinning_hover.png)
 
 JagFx edits Jagex Audio Synthesis (`.synth`) files, the sound-effect format used by OldSchool RuneScape. It opens, edits, images, and exports OSRS synth patches.
 
@@ -167,13 +161,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow, coding guidelines, and 
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=xsyetopz%2FJagFx&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=xsyetopz/JagFx&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=xsyetopz/JagFx&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=xsyetopz/JagFx&type=date&legend=top-left" />
- </picture>
-</a>
+[![Star History Chart](https://api.star-history.com/chart?repos=xsyetopz/JagFx&type=date&legend=top-left)](https://www.star-history.com/?repos=xsyetopz%2FJagFx&type=date&legend=top-left)
 
 ---
 

@@ -1,4 +1,4 @@
-# JagFx `.synth` format: formal specification
+# JagFx `.synth` Format: Formal Specification
 
 | Item | Value |
 | --- | --- |
@@ -7,13 +7,13 @@
 | Reference implementation | JagFx 3.0.0 (Kotlin) |
 | Earlier editor | A C# editor for .NET 8. Section 12 lists its deviations. |
 
-## 0. Document conventions
+## 0. Document Conventions
 
-### 0.1 Normative and informative text
+### 0.1 Normative and Informative Text
 
 Sections 1 to 11 are normative. Sections 12 and 13 are informative. Text with the label "Note" is informative in all sections.
 
-### 0.2 Requirement words
+### 0.2 Requirement Words
 
 | Word | Meaning |
 | --- | --- |
@@ -86,9 +86,9 @@ This specification does not define the JSON interchange format. `schemas/synth.s
 
 A patch is valid if it satisfies all invariants in Section 4.3.
 
-## 3. Primitive encodings
+## 3. Primitive Encodings
 
-### 3.1 Fixed-width integers
+### 3.1 Fixed-Width Integers
 
 All multi-byte integers are big-endian.
 
@@ -124,7 +124,7 @@ encode:  -64 <= v <= 63                         ->  u8(v + 64)
 
 Note: The decoder accepts a two-byte form for a value that has a one-byte form. The encoder always writes the shortest form. A file that contains a longer form is therefore not a conforming file.
 
-## 4. Abstract model
+## 4. Abstract Model
 
 ### 4.1 Types
 
@@ -162,7 +162,7 @@ Filter    = (PoleCount: [0..4, 0..4],
 
 In `Filter`, `d` is the direction, `φ` is the filter phase, and `p` is the pole index. The indices have these ranges: `d` in `0..1`, `φ` in `0..1`, `p` in `0..PoleCount[d] - 1`.
 
-### 4.2 Field meanings
+### 4.2 Field Meanings
 
 | Field | Unit | Meaning |
 | --- | --- | --- |
@@ -205,7 +205,7 @@ Mask(F) = sum over d in 0..1, p in 0..PoleCount[d]-1 of
 
 Note: I1 and I2 exist because the waveform byte is also the presence marker of a voice and of a pair.
 
-## 5. Concrete syntax
+## 5. Concrete Syntax
 
 This grammar uses EBNF. A quoted value is one byte with that value. `X{n}` is exactly `n` repetitions of `X`.
 
@@ -255,7 +255,7 @@ Note: The game client defines no shape for a waveform id from `5` to `255` and r
 
 Note: In the game cache, a sound effect group can hold two files: this `.synth` file as file `0`, and a recorded sample in the Vorbis sample layout of the game client as file `1`. The game client plays only the last file of the group. A whole group therefore has bytes after `Loop` and is not a `.synth` file. Section 5.2 defines the sample file.
 
-### 5.1 Tone and filter files
+### 5.1 Tone and Filter Files
 
 A `.tone` file holds one `Voice`, with the bytes that the voice has in a slot of a `.synth` file.
 A `.filter` file holds one `OptFilter`, with the bytes that the filter field has in a voice.
@@ -263,7 +263,7 @@ A decoder reads the filter field of these files as Section 6.7 describes.
 A decoder adds a warning for bytes after the data.
 An encoder rejects a voice or a filter that breaks an invariant of Section 4.3, because the data must stay valid when it is put into a patch.
 
-### 5.2 Sample files
+### 5.2 Sample Files
 
 A `.jagvorbis` file holds file `1` of a sound effect group: one mono Vorbis sample in a container of the game client.
 The container is not an Ogg stream.
@@ -317,7 +317,7 @@ Otherwise:
 
 ## 6. Decoding
 
-### 6.1 Decoder state
+### 6.1 Decoder State
 
 The decoder has this state:
 
@@ -330,7 +330,7 @@ The decoder has this state:
 
 `R = |B| - c` is the number of remaining bytes. `R` can be negative.
 
-### 6.2 Read primitives
+### 6.2 Read Primitives
 
 | Primitive | Result |
 | --- | --- |
@@ -389,7 +389,7 @@ decodeVoice():
   11. filter       = decodeFilter()
 ```
 
-### 6.6 Envelope, pair, and partials
+### 6.6 Envelope, Pair, and Partials
 
 ```text
 decodeEnvelope():
@@ -415,7 +415,7 @@ decodePartials():
   3. The result is the list.
 ```
 
-### 6.7 Filter field
+### 6.7 Filter Field
 
 The byte after `Offset` is always the filter field, as in the game client:
 
@@ -426,7 +426,7 @@ decodeFilter():
   3. Otherwise, the result is readFilter().
 ```
 
-### 6.8 Filter body
+### 6.8 Filter Body
 
 ```text
 readFilter():
@@ -510,9 +510,9 @@ For each valid patch `P`, these statements are true:
 1. `decode(encode(P))` gives no warnings.
 1. `encode(P)` is a conforming file.
 
-## 8. Voice synthesis
+## 8. Voice Synthesis
 
-### 8.1 Global constants
+### 8.1 Global Constants
 
 | Name | Value |
 | --- | --- |
@@ -548,7 +548,7 @@ The tables must have these SHA-256 values. Each value is a hash of the 32,768 en
 
 Note: `mult(120) = 2`. Thus `PitchOffset` has the unit 1/10 semitone.
 
-### 8.3 Oscillator function
+### 8.3 Oscillator Function
 
 Let `A` be an `i32` amplitude, `ph` an `i32` phase, and `w` a waveform. Let `q = ph & 0x7FFF`.
 
@@ -563,7 +563,7 @@ Let `A` be an `i32` amplitude, `ph` an `i32` phase, and `w` a waveform. Let `q =
 
 All operations in this table are `i32` operations.
 
-### 8.4 Envelope generator
+### 8.4 Envelope Generator
 
 The generator uses the effective segment list `Q(E)` of envelope `E`:
 
@@ -604,7 +604,7 @@ advance(P):
 
 Note: `threshold` is an absolute sample count. The generator does not use `Q(E)[0].Duration`. After the last segment, the value stays at the last `TargetLevel`.
 
-### 8.5 Voice setup
+### 8.5 Voice Setup
 
 Let `V` be a voice and `D = V.Duration`.
 
@@ -633,7 +633,7 @@ lfoBase = toI32(f64(Rt.StartValue) × 32.768 / S)
 
 Each envelope has its own generator. All generators use `P = L`.
 
-### 8.6 Gate mask
+### 8.6 Gate Mask
 
 If `V.Gate` is absent, `mask[n] = 1` for all `n` from `0` to `L - 1`.
 
@@ -648,7 +648,7 @@ If `V.Gate` is present, let `g0 = Gate.first` and `g1 = Gate.second`. Set `muted
 
 Note: Both branches of step 3 use the `StartValue` and `EndValue` of `g0`.
 
-### 8.7 Oscillator loop
+### 8.7 Oscillator Loop
 
 Let `buf` be `L` samples of `i32` with the value `0`. Set each partial phase `ph[k] = 0` and each LFO phase to `0`. For each `n` from `0` to `L - 1`, do these steps:
 
@@ -746,7 +746,7 @@ buf[n] ← wrap32(y)
 
 Each product and each shift in the difference equation is an `i64` operation.
 
-### 8.10 Voice result
+### 8.10 Voice Result
 
 The voice result is `buf` after these steps, in this order:
 
@@ -755,7 +755,7 @@ The voice result is `buf` after these steps, in this order:
 1. The filter (Section 8.9).
 1. A clamp of each sample to the range `-32768` to `32767`.
 
-## 9. Patch rendering
+## 9. Patch Rendering
 
 ### 9.1 Parameters
 
@@ -782,7 +782,7 @@ The voice result is `buf` after these steps, in this order:
 
 The result length is `Lp + (le - ls) × max(0, C' - 1)`.
 
-## 10. Output encodings
+## 10. Output Encodings
 
 ### 10.1 PCM
 
@@ -791,7 +791,7 @@ The result length is `Lp + (le - ls) × max(0, C' - 1)`.
 | PCM16 | `s` as a signed 16-bit little-endian integer. |
 | PCM8 | `(s >> 8) + 128` as one unsigned byte. |
 
-### 10.2 WAV container
+### 10.2 WAV Container
 
 A WAV file has a 44-byte header and then the PCM data. All header integers are little-endian.
 
@@ -828,7 +828,7 @@ A WAV file has a 44-byte header and then the PCM data. All header integers are l
 | Noise phase divisor | `2607` | 8.3 |
 | Gate counter step | `256` | 8.6 |
 
-## 12. Known deviations of the earlier editor (informative)
+## 12. Known Deviations of the Earlier Editor (Informative)
 
 The earlier C# editor differs from this specification in the items below. Items a to f have a reproduction. Item c occurs in five files in `references/synths/`. Items a, b, d, e, and f occur in no reference file.
 
@@ -855,7 +855,7 @@ These behaviors of the earlier editor are part of this specification. Implementa
 1. The gate of Section 8.6 uses `g0` values in both branches.
 1. The envelope generator of Section 8.4 does not use `Q(E)[0].Duration`.
 
-## 13. Conformance risks (informative)
+## 13. Conformance Risks (Informative)
 
 1. Sections 8.2 and 8.9 use `sin`, `cos`, `exp`, and `pow`. IEEE 754 does not require exact rounding for these functions. Two platforms can give results that differ by one unit in the last place. A difference of this size can change one fixed-point coefficient.
 1. The golden WAV files come from the renderer of the earlier editor on .NET 8. A Kotlin/JVM, Kotlin/Native, or Kotlin/Wasm renderer must agree with these files. The test suite must check each target.
