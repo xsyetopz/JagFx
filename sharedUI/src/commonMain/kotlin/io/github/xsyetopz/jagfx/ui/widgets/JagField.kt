@@ -2,6 +2,7 @@ package io.github.xsyetopz.jagfx.ui.widgets
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +20,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +46,7 @@ import io.github.xsyetopz.jagfx.ui.theme.DISABLED_ALPHA
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import kotlin.math.abs
 import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 /** The integer in [text] clamped to [range], or null when [text] is not an integer. */
@@ -198,11 +202,11 @@ private fun JagTextField(
 }
 
 /**
- * A [JagField] with a 4 dp bar under it in a 24 dp hit area, the Scala JagFX value control.
- * The bar fills to the position of [value] in the [scale] range; dragging it, the wheel over it,
- * and a double click set the value through [onValueChange], each one undo step bracketed by
- * [gestures].
- * Typing accepts any value in [range], which can be wider than the bar.
+ * A [JagField] with a stock Material slider under it, the Scala JagFX value control.
+ * The slider covers the [scale] range; dragging it or using its keys sets the value through
+ * [onValueChange], and the wheel over it and a double click do too. A drag is one undo step
+ * bracketed by [gestures].
+ * Typing accepts any value in [range], which can be wider than the slider.
  */
 @Composable
 internal fun JagBarField(
@@ -215,29 +219,29 @@ internal fun JagBarField(
     unit: String = "",
     gestures: GestureCallbacks = GestureCallbacks(),
 ) {
-    val colors = JagFxTheme.colors
-    val dimens = JagFxTheme.dimens
     val scrub = rememberUpdatedState(ScrubState(value, scale, onValueChange, gestures))
-    val fraction = ScrubMath.fraction(value.toFloat(), scale.range)
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(dimens.spaceXs)) {
-        JagField(value, onValueChange, range, Modifier.fillMaxWidth(), enabled, unit)
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(dimens.minTarget)
-                .alpha(if (enabled) 1f else DISABLED_ALPHA)
-                .then(if (enabled) Modifier.scrub(scrub) else Modifier),
-            contentAlignment = Alignment.Center,
-        ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(dimens.barHeight)
-                    .background(colors.root)
-                    .border(dimens.border, colors.controlBorder),
-            ) {
-                Box(Modifier.fillMaxHeight().fillMaxWidth(fraction).background(colors.accent))
+    val interaction = remember { MutableInteractionSource() }
+    LaunchedEffect(interaction) {
+        interaction.interactions.collect {
+            when (it) {
+                is DragInteraction.Start -> scrub.value.gestures.onStart()
+                is DragInteraction.Stop, is DragInteraction.Cancel -> scrub.value.gestures.onEnd()
             }
         }
+    }
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceXs)) {
+        JagField(value, onValueChange, range, Modifier.fillMaxWidth(), enabled, unit)
+        Slider(
+            value = value.toFloat().coerceIn(scale.range),
+            onValueChange = { onValueChange(it.roundToInt()) },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(JagFxTheme.dimens.minTarget)
+                    .then(if (enabled) Modifier.scrub(scrub) else Modifier),
+            enabled = enabled,
+            valueRange = scale.range,
+            interactionSource = interaction,
+        )
     }
 }

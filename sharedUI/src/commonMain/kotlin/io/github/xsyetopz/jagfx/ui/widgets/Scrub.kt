@@ -1,6 +1,5 @@
 package io.github.xsyetopz.jagfx.ui.widgets
 
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.runtime.Immutable
@@ -36,8 +35,8 @@ internal class ScrubState(
 )
 
 /**
- * Sets the value of [state] by drag (right or up increases, one hundred pixels per range), wheel,
- * and double click (the default), each change one undo step; the cursor is a hand.
+ * Sets the value of [state] by wheel and double click (the default), each change one undo step; the
+ * cursor is a hand. Dragging belongs to the stock slider that this sits on.
  */
 internal fun Modifier.scrub(state: State<ScrubState>): Modifier {
     fun emit(value: Float) {
@@ -55,22 +54,6 @@ internal fun Modifier.scrub(state: State<ScrubState>): Modifier {
                     current.gestures.onEnd()
                 },
             )
-        }.pointerInput(Unit) {
-            var anchor = 0f
-            var travelled = 0f
-            detectDragGestures(
-                onDragStart = {
-                    anchor = state.value.value.toFloat()
-                    travelled = 0f
-                    state.value.gestures.onStart()
-                },
-                onDragEnd = { state.value.gestures.onEnd() },
-                onDragCancel = { state.value.gestures.onEnd() },
-            ) { change, drag ->
-                change.consume()
-                travelled += drag.x - drag.y
-                emit(ScrubMath.dragValue(anchor, travelled, state.value.scale.range))
-            }
         }.pointerInput(Unit) {
             awaitPointerEventScope {
                 while (true) {

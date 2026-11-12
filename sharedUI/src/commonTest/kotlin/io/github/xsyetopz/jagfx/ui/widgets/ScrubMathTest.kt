@@ -8,26 +8,6 @@ class ScrubMathTest {
     private val range = 0f..200f
 
     @Test
-    fun fractionMapsRangeAndClamps() {
-        assertEquals(0.5f, ScrubMath.fraction(100f, range))
-        assertEquals(0f, ScrubMath.fraction(-5f, range))
-        assertEquals(1f, ScrubMath.fraction(500f, range))
-        assertEquals(0f, ScrubMath.fraction(3f, 3f..3f))
-    }
-
-    @Test
-    fun dragMovesAHundredthOfTheRangePerPixelFromTheAnchor() {
-        assertEquals(120f, ScrubMath.dragValue(100f, 10f, range))
-        assertEquals(80f, ScrubMath.dragValue(100f, -10f, range))
-    }
-
-    @Test
-    fun dragClampsToTheRange() {
-        assertEquals(200f, ScrubMath.dragValue(190f, 50f, range))
-        assertEquals(0f, ScrubMath.dragValue(10f, -50f, range))
-    }
-
-    @Test
     fun wheelStepsByDirectionAndClamps() {
         assertEquals(6f, ScrubMath.wheelValue(5f, 1f, 1f, range))
         assertEquals(3f, ScrubMath.wheelValue(5f, -1f, 2f, range))
