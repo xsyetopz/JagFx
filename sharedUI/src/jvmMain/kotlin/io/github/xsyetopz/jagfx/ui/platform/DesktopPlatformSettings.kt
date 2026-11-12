@@ -86,7 +86,23 @@ internal fun parseRegistryPercent(output: String?): Int =
         ?.toIntOrNull(radix = 16)
         ?.coerceIn(MIN_SCALE, MAX_SCALE) ?: MIN_SCALE
 
+/** Plasma's default UI font size, `Noto Sans,10` in `kcms/fonts/fontssettings.kcfg`. */
+private const val KDE_DEFAULT_POINTS = 10.0
+
+/** Turns a Plasma `QFont` string (`Noto Sans,12,-1,...`) into a percent of 10 pt in 100..200. */
+internal fun parseKdeFontScale(output: String?): Int =
+    output
+        ?.split(',')
+        ?.getOrNull(1)
+        ?.toDoubleOrNull()
+        ?.let { parseTextScale((it / KDE_DEFAULT_POINTS).toString()) } ?: MIN_SCALE
+
 private fun String?.isOn() = this?.trim().let { it == "1" || it == "true" }
+
+private fun CommandRunner.kdeglobals(
+    group: String,
+    key: String,
+) = this(listOf("kreadconfig6", "--file", "kdeglobals", "--group", group, "--key", key))
 
 private fun CommandRunner.gsettings(
     schema: String,
@@ -99,8 +115,8 @@ private fun CommandRunner.defaults(
 ) = this(listOf("defaults", "read", domain, key)).isOn()
 
 /**
- * Reads the macOS and GNOME accessibility settings with [run]. A missing key, a failed command, and
- * a timeout all read as the default.
+ * Reads the macOS, Windows, GNOME, and KDE Plasma accessibility settings with [run]. A missing
+ * key, a failed command, and a timeout all read as the default.
  */
 internal fun probePlatform(
     osName: String,
@@ -148,12 +164,24 @@ internal fun probePlatform(
                             "org.gnome.desktop.a11y.interface",
                             "high-contrast",
                         ).isOn(),
+                // GNOME answers through `gsettings`, Plasma through `kreadconfig6`; the
+                // missing tool reads as the default, so neither needs a desktop check.
                 reducedMotion =
                     run.gsettings("org.gnome.desktop.interface", "enable-animations")?.trim() ==
-                        "false",
+                        "false" ||
+                        run
+                            .kdeglobals(
+                                "KDE",
+                                "AnimationDurationFactor",
+                            )?.trim()
+                            ?.toDoubleOrNull() ==
+                        0.0,
                 textScalePercent =
-                    parseTextScale(
-                        run.gsettings("org.gnome.desktop.interface", "text-scaling-factor"),
+                    maxOf(
+                        parseTextScale(
+                            run.gsettings("org.gnome.desktop.interface", "text-scaling-factor"),
+                        ),
+                        parseKdeFontScale(run.kdeglobals("General", "font")),
                     ),
             )
         }
@@ -161,7 +189,8 @@ internal fun probePlatform(
 
 /**
  * Desktop platform settings. Windows high contrast comes from the AWT desktop property and Windows
- * text size from `reg query`. On macOS and GNOME the values come from `defaults` and `gsettings`.
+ * text size from `reg query`. On macOS, GNOME, and KDE Plasma the values come from `defaults`,
+ * `gsettings`, and `kreadconfig6`.
  * The commands run once by [start] (a daemon thread by default) and are cached, so a change shows
  * after a restart.
  * The values are Compose state: they hold the defaults until the read finishes, then a composable

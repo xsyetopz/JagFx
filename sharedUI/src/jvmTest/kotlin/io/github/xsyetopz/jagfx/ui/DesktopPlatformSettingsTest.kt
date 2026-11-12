@@ -101,6 +101,40 @@ class DesktopPlatformSettingsTest {
         assertFalse(d.reducedMotion)
     }
 
+    private val kdeAnimation = "kdeglobals --group KDE --key AnimationDurationFactor"
+    private val kdeFont = "kdeglobals --group General --key font"
+
+    @Test
+    fun kdeInstantAnimationsAreReducedMotion() {
+        assertTrue(linux(mapOf(kdeAnimation to "0")).reducedMotion)
+        assertFalse(linux(mapOf(kdeAnimation to "0.5")).reducedMotion)
+    }
+
+    @Test
+    fun kdeFontSizeIsTheTextScale() {
+        assertEquals(
+            120,
+            linux(mapOf(kdeFont to "Noto Sans,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1")).textScalePercent,
+        )
+        assertEquals(
+            105,
+            linux(mapOf(kdeFont to "Noto Sans,10.5,-1,5,50,0,0,0,0,0")).textScalePercent,
+        )
+        assertEquals(100, linux(mapOf(kdeFont to "Noto Sans")).textScalePercent)
+    }
+
+    @Test
+    fun linuxTakesTheLargerOfGnomeAndKde() {
+        val s =
+            linux(
+                mapOf(
+                    "org.gnome.desktop.interface text-scaling-factor" to "1.5",
+                    kdeFont to "Noto Sans,12",
+                ),
+            )
+        assertEquals(150, s.textScalePercent)
+    }
+
     @Test
     fun windowsUsesToolkitFlag() {
         val s = DesktopPlatformSettings("Windows 11", { true }, { it() }) { null }
