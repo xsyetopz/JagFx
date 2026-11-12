@@ -69,8 +69,56 @@ flowchart TD
 ./gradlew :desktopApp:run
 ```
 
-```text
-┌-----------------------------------------------------┐
+![The editor in Main mode at 1280 by 800](docs/images/editor-main-1280x800.png)
+
+The editor follows the layout of the original JagFx tool:
+
+- **Title bar**: the file name, the File menu (Open, New, Save As, Import and Export tone, theme, text size, panel side), Undo, and Redo.
+- **Rack**: three rows (Freq, Amp, Output) across Base, Modulation rate, and Modulation range. A strip beside each Base cell holds the module's waveform, Min, Max, and average, or the gate's Off/On and gaps.
+- **Cell headers**: `1x 2x 4x` zoom presets, `S` fits the view, `M…` links the cell's time view to the other cells or gives it its own, and `▼` opens the cell's controls panel with the exact point table.
+- **Voice strip**: the oscillator, Len, Pos, L1, L2, Play, Play All, Loop, Loop All, Loops, Stop, Load, Save, and True Wave. The File menu moves it to the left or right edge.
+- **Bottom bar**: Tones 1 to 10 with Copy and Reset Active, the Mode switch, five harmonic boxes (Semi, Vol, Del), and Reverb.
+- **Mode switch**: Main shows the rack, Filter shows the filter column (Graph of poles and zeros, Transition Curve, Frequency Response), and Both shows the two side by side.
+
+![The editor in Both mode at 1920 by 1080](docs/images/editor-both-1920x1080.png)
+
+### Mouse
+
+- Drag a point to move it. Double-click a line to add a point, and right-click for the point menu.
+- Ctrl or Cmd with the wheel zooms around the pointer. A middle-button drag pans.
+- Double-click a cell header to open the cell over the whole rack.
+
+### Keyboard
+
+Ctrl means Cmd on macOS.
+
+| Keys | Action |
+| --- | --- |
+| Tab, Shift+Tab | Move through the title bar, the voice strip, the rack row by row, and the bottom bar |
+| Alt+Left, Alt+Right | Select the previous or next cell |
+| Alt+Up, Alt+Down | Select the cell one rack row up or down |
+| Left, Right | Select the previous or next point of the focused envelope |
+| Home, End | Select the first or last point |
+| Shift+Arrows | Move the selected point 1024 raw units |
+| Ctrl+Arrows | Move the selected point 64 raw units |
+| Insert or `+` | Add a point after the selected one |
+| Delete or Backspace | Remove the selected point |
+| Ctrl+`+`, Ctrl+`-` | Zoom the focused plot in or out |
+| Shift+Page Up, Shift+Page Down | Pan a time plot by one screen |
+| Space | Play or stop the selected tone (desktop) |
+| Escape | Stop playback |
+| Ctrl+P, Ctrl+Shift+L | Play All, Loop All (desktop) |
+| Ctrl+L, Ctrl+. | Loop, Stop (desktop) |
+| Ctrl+1 to Ctrl+0 | Select tone 1 to 10 (desktop) |
+| Ctrl+Alt+1, 2, 3 | Mode Main, Filter, Both (desktop) |
+| Ctrl+O, Ctrl+S, Ctrl+Shift+S | Open, Save, Save As (desktop) |
+| Ctrl+Z, Ctrl+Shift+Z | Undo, Redo (desktop) |
+
+See [`docs/accessibility.md`](docs/accessibility.md) for the accessibility statement.
+
+The same UI runs in the browser (`./gradlew :webApp:wasmJsBrowserDevelopmentRun`).
+
+-----------------------------------------------------┐
 │  Toolbar: file, transport, loop, undo/redo          │
 ├--------------┬--------------------------------------┤
 │              │                                      │
