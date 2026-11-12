@@ -118,30 +118,6 @@ See [`docs/accessibility.md`](docs/accessibility.md) for the accessibility state
 
 The same UI runs in the browser (`./gradlew :webApp:wasmJsBrowserDevelopmentRun`).
 
------------------------------------------------------┐
-│  Toolbar: file, transport, loop, undo/redo          │
-├--------------┬--------------------------------------┤
-│              │                                      │
-│  Inspector   │        Canvas Grid                   │
-│  Panel       │     (envelope and filter canvases)   │
-│              │                                      │
-├--------------┴--------------------------------------┤
-│  Voice Bar: voice slots, copy/reset, grid mode      │
-│  Partial Bar: 10 additive partials + echo           │
-│  Status Bar                                         │
-└-----------------------------------------------------┘
-```
-
-- Toolbar: open, save, save as, play/stop, loop controls (count, start, end), and undo/redo.
-- Canvas grid: envelope, filter, and output canvases for the selected voice; the grid mode toggles choose main, filter, or both.
-- Inspector panel: controls for the selected envelope: START/END knobs, segment list, filter editor, and echo knobs.
-- Voice bar: voice slot buttons, enable, copy, and reset, plus the grid mode toggles.
-- Partial bar: `10` additive partials with volume, decicent offset, and delay, plus the echo cell.
-- Envelope canvas: double-click to insert breakpoints, right-click for context menu, Delete or Backspace to remove points. Scroll-wheel zoom, drag to pan when zoomed.
-- Narrow windows (phones, small browser windows) show all panels in one scrolling column.
-
-The same UI runs in the browser (`./gradlew :webApp:wasmJsBrowserDevelopmentRun`).
-
 ---
 
 ## CLI

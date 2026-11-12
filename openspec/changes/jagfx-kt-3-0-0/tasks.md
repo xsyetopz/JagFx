@@ -59,6 +59,6 @@
 ## 7. Docs and checks
 
 - [x] 7.1 Render screenshots of Main and Both at 1280 by 800 and 1920 by 1080 and check that nothing clips
-- [ ] 7.2 Update the editor section and screenshots of `README.md`, the 3.0.0 entry of `CHANGELOG.md` (where each inspector control moved), and `llms.txt` if it describes the editor
+- [x] 7.2 Update the editor section and screenshots of `README.md`, the 3.0.0 entry of `CHANGELOG.md` (where each inspector control moved), and `llms.txt` if it describes the editor
 - [ ] 7.3 Run `./gradlew spotlessApply` and `just lint`
 - [ ] 7.4 Run `./gradlew check` and `just verify`

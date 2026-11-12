@@ -49,7 +49,7 @@ internal fun parseClampedInt(
 }
 
 /**
- * An input box at least 24 dp high for an integer in [range], right-aligned on a near-black field with an
+ * An input box at least 24 dp high for an integer in [range], right-aligned on a near-black field with
  * a 2 dp accent ring while focused.
  * Enter or focus loss commits through [onValueCommit]; out-of-range input is clamped, and text
  * that is not a number reverts to [value].
