@@ -47,5 +47,5 @@ for package_json in sorted(Path("packages").glob("*/package.json")):
     if "version" not in payload:
         raise SystemExit(f"missing version in {package_json}")
     payload["version"] = version
-    package_json.write_text(json.dumps(payload, indent=2) + "\n")
+    package_json.write_text(json.dumps(payload, indent="\t") + "\n")
 PY
