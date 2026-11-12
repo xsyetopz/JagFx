@@ -8,7 +8,6 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +26,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.xsyetopz.jagfx.core.model.SynthLimits
 import io.github.xsyetopz.jagfx.ui.editor.EditorIntent
@@ -50,10 +51,9 @@ private const val DETUNE_SCRUB_LIMIT = 240f
 private const val PERCENT_MAX = 100f
 private const val DELAY_SCRUB_MAX = 2000f
 private const val EMPTY_ALPHA = 0.45f
-private const val DETUNE_SHARE = 1.5f
 
 private val EdgeGrab = 6.dp
-private val HarmonicIndexWidth = 30.dp
+private val BoxLabelWidth = 32.dp
 private val USmart16 = 0..SynthLimits.USMART16_MAX
 
 /** The stored [range] of a footer bar field, the [scale] of its bar, and the [unit] of a value. */
@@ -92,7 +92,7 @@ private class VoiceTimeline(
 
 /**
  * The ten voices as chips, each with a bar of its start and length on a shared time axis, and the
- * on, copy and reset tools of the selected voice.
+ * on switch of the selected voice.
  * A click selects a voice, or pastes into it in copy mode; dragging a bar moves the voice, and
  * dragging its end changes the length.
  */
@@ -124,19 +124,6 @@ internal fun VoiceChips(
             strings[UiString.MenuVoiceEnabled],
             { actions.dispatch(SlotIntent.SetVoiceEnabled(state.selectedVoice, voice == null)) },
             active = voice != null,
-        )
-        JagIconButton(
-            Icons.Copy,
-            strings[UiString.TooltipCopyVoice],
-            { actions.dispatch(SlotIntent.CopyVoice) },
-            enabled = voice != null,
-            active = state.isCopyMode,
-        )
-        JagIconButton(
-            Icons.Reset,
-            strings[UiString.TooltipResetVoice],
-            { actions.dispatch(SlotIntent.ResetVoice) },
-            enabled = voice != null,
         )
     }
 }
@@ -245,56 +232,24 @@ private fun Modifier.voiceDrag(
 }
 
 /**
- * The voice part of the properties panel: a table of the harmonics of the selected voice, one row
- * each with its on switch, detune, level and delay, and the echo.
+ * The harmonic box of [row] in the bottom bar: its on switch and number, and Semi, Vol, and Del.
+ * Its fields are disabled while the harmonic is off.
  */
 @Composable
-internal fun VoiceSection(
-    state: EditorState,
-    actions: EditorActions,
-) {
-    val strings = LocalStrings.current
-    val dimens = JagFxTheme.dimens
-    val voice = state.voice ?: return
-    Column(verticalArrangement = Arrangement.spacedBy(dimens.spaceMd)) {
-        JagLabel(strings[UiString.HarmonicsTitle].uppercase())
-        Row(horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)) {
-            Spacer(Modifier.width(HarmonicIndexWidth))
-            JagLabel(strings[UiString.DetuneLabel], Modifier.weight(DETUNE_SHARE))
-            JagLabel(strings[UiString.LevelLabel], Modifier.weight(1f))
-            JagLabel(strings[UiString.DelayLabel], Modifier.weight(1f))
-        }
-        for (row in partialRows(voice)) HarmonicRow(row, actions)
-        JagLabel(strings[UiString.EchoTitle].uppercase())
-        val echo = voice.echo
-        LabeledRow(strings[UiString.EchoDelayLabel]) { field ->
-            PartialField(echo.delay.value, DelaySpec, true, actions, field) {
-                VoiceIntent.SetEchoDelay(it)
-            }
-        }
-        LabeledRow(strings[UiString.EchoFeedbackLabel]) { field ->
-            PartialField(echo.feedback.value, FeedbackSpec, true, actions, field) {
-                VoiceIntent.SetEchoFeedback(it)
-            }
-        }
-    }
-}
-
-/** The on switch and number, detune, level and delay of the harmonic in [row]. */
-@Composable
-private fun HarmonicRow(
+internal fun HarmonicBox(
     row: PartialRow,
     actions: EditorActions,
+    modifier: Modifier = Modifier,
 ) {
     val strings = LocalStrings.current
-    val dimens = JagFxTheme.dimens
     val partial = row.partial
     val i = row.index
     val on = partial != null
-    Row(horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)) {
+    val name = "${strings[UiString.HarmonicsTitle]} ${i + 1}"
+    BoxColumn(modifier) {
         Row(
-            Modifier.width(HarmonicIndexWidth).height(dimens.controlHeight),
-            horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm),
+            Modifier.height(JagFxTheme.dimens.controlHeight),
+            horizontalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             JagCheck(
@@ -304,21 +259,113 @@ private fun HarmonicRow(
             )
             JagText("${i + 1}", color = JagFxTheme.colors.textDim)
         }
-        PartialField(
+        BoxField(
+            strings[UiString.SemiLabel],
+            name,
             partial?.pitchOffset ?: 0,
             DetuneSpec,
             on,
             actions,
-            Modifier.weight(DETUNE_SHARE),
         ) {
             PartialIntent.SetPitchOffset(i, it)
         }
-        PartialField(partial?.amplitude?.value ?: 0, LevelSpec, on, actions, Modifier.weight(1f)) {
+        BoxField(
+            strings[UiString.VolLabel],
+            name,
+            partial?.amplitude?.value ?: 0,
+            LevelSpec,
+            on,
+            actions,
+        ) {
             PartialIntent.SetAmplitude(i, it)
         }
-        PartialField(partial?.delay?.value ?: 0, DelaySpec, on, actions, Modifier.weight(1f)) {
+        BoxField(
+            strings[UiString.DelLabel],
+            name,
+            partial?.delay?.value ?: 0,
+            DelaySpec,
+            on,
+            actions,
+        ) {
             PartialIntent.SetDelay(i, it)
         }
+    }
+}
+
+/** The reverb box of the bottom bar: Vol is the echo feedback and Del its delay. */
+@Composable
+internal fun ReverbBox(
+    state: EditorState,
+    actions: EditorActions,
+    modifier: Modifier = Modifier,
+) {
+    val strings = LocalStrings.current
+    val voice = state.voice
+    val name = strings[UiString.ReverbTitle]
+    BoxColumn(modifier) {
+        JagLabel(name)
+        BoxField(
+            strings[UiString.VolLabel],
+            name,
+            voice?.echo?.feedback?.value ?: 0,
+            FeedbackSpec,
+            voice != null,
+            actions,
+        ) {
+            VoiceIntent.SetEchoFeedback(it)
+        }
+        BoxField(
+            strings[UiString.DelLabel],
+            name,
+            voice?.echo?.delay?.value ?: 0,
+            DelaySpec,
+            voice != null,
+            actions,
+        ) {
+            VoiceIntent.SetEchoDelay(it)
+        }
+    }
+}
+
+@Composable
+private fun BoxColumn(
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
+    val dimens = JagFxTheme.dimens
+    val shape = RoundedCornerShape(dimens.radius)
+    Column(
+        modifier
+            .border(dimens.border, JagFxTheme.colors.border, shape)
+            .padding(dimens.spaceMd),
+        verticalArrangement = Arrangement.spacedBy(dimens.spaceSm),
+    ) { content() }
+}
+
+/** A [label] and a bar field in a box; [box] is the box name that completes its accessible name. */
+@Composable
+private fun BoxField(
+    label: String,
+    box: String,
+    value: Int,
+    spec: FieldSpec,
+    enabled: Boolean,
+    actions: EditorActions,
+    intent: (Int) -> EditorIntent,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceSm),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        JagLabel(label, Modifier.width(BoxLabelWidth))
+        PartialField(
+            value,
+            spec,
+            enabled,
+            actions,
+            Modifier.weight(1f).semantics { contentDescription = "$box $label" },
+            intent,
+        )
     }
 }
 

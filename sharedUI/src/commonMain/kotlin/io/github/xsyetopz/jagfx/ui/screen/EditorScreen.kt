@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,8 +37,8 @@ internal fun EditorScreen(
 }
 
 /**
- * Stateless editor content for [state] and [view]: the header bar with the voices, the rack of
- * all cells, the collapsible properties panel of the selected cell and voice, and the status line.
+ * Stateless editor content for [state] and [view]: the title bar, the voice strip on the side of
+ * [EditorState.panelSide] with the rack, the bottom bar, and the status line.
  */
 @Composable
 internal fun EditorContent(
@@ -50,31 +48,21 @@ internal fun EditorContent(
     modifier: Modifier = Modifier,
 ) {
     val dimens = JagFxTheme.dimens
-    var panelOpen by rememberSaveable { mutableStateOf(true) }
     Column(modifier.fillMaxSize().background(JagFxTheme.colors.root)) {
-        HeaderBar(
-            state,
-            actions,
-            PanelToggle(panelOpen) {
-                panelOpen = !panelOpen
-            },
-            Modifier.fillMaxWidth(),
-        )
+        TitleBar(state, actions, Modifier.fillMaxWidth())
         Row(Modifier.weight(1f).fillMaxWidth()) {
-            val panel: @Composable () -> Unit = {
-                if (panelOpen) {
-                    Inspector(
-                        state,
-                        view,
-                        actions,
-                        Modifier.width(dimens.inspectorWidth).fillMaxHeight(),
-                    )
-                }
+            val strip: @Composable () -> Unit = {
+                VoiceStrip(
+                    state,
+                    actions,
+                    Modifier.fillMaxHeight(),
+                )
             }
-            if (state.panelSide == PanelSide.Left) panel()
+            if (state.panelSide == PanelSide.Left) strip()
             Rack(state, view, actions, Modifier.weight(1f).fillMaxHeight().padding(dimens.spaceSm))
-            if (state.panelSide == PanelSide.Right) panel()
+            if (state.panelSide == PanelSide.Right) strip()
         }
+        BottomBar(state, view, actions, Modifier.fillMaxWidth())
         StatusBar(state.statusHint, Modifier.fillMaxWidth())
     }
 }

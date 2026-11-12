@@ -35,6 +35,9 @@ import androidx.compose.ui.text.style.TextAlign
 import io.github.xsyetopz.jagfx.ui.canvas.GestureCallbacks
 import io.github.xsyetopz.jagfx.ui.theme.DISABLED_ALPHA
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.roundToLong
 
 /** The integer in [text] clamped to [range], or null when [text] is not an integer. */
 internal fun parseClampedInt(
@@ -61,16 +64,82 @@ internal fun JagField(
     enabled: Boolean = true,
     unit: String = "",
 ) {
+    JagTextField(
+        value.toString(),
+        { edited ->
+            val parsed = parseClampedInt(edited, range)
+            if (parsed != null && parsed != value) onValueCommit(parsed)
+            (parsed ?: value).toString()
+        },
+        modifier,
+        enabled,
+        unit,
+    )
+}
+
+/**
+ * A [JagField] for a number with [decimals] digits after the point, clamped to [range].
+ * [onValueCommit] runs only when the committed text differs from the shown one.
+ */
+@Composable
+internal fun JagDecimalField(
+    value: Double,
+    onValueCommit: (Double) -> Unit,
+    range: ClosedFloatingPointRange<Double>,
+    decimals: Int,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    unit: String = "",
+) {
+    val shown = formatDecimal(value, decimals)
+    JagTextField(
+        shown,
+        { edited ->
+            val parsed =
+                edited
+                    .trim()
+                    .replace(',', '.')
+                    .toDoubleOrNull()
+                    ?.coerceIn(range)
+            val text = parsed?.let { formatDecimal(it, decimals) } ?: shown
+            if (parsed != null && text != shown) onValueCommit(parsed)
+            text
+        },
+        modifier,
+        enabled,
+        unit,
+    )
+}
+
+/** [value] with [decimals] digits after the point. */
+internal fun formatDecimal(
+    value: Double,
+    decimals: Int,
+): String {
+    val scale = 10.0.pow(decimals).toLong()
+    val scaled = (abs(value) * scale).roundToLong()
+    val sign = if (value < 0 && scaled != 0L) "-" else ""
+    if (decimals == 0) return "$sign$scaled"
+    return "$sign${scaled / scale}.${(scaled % scale).toString().padStart(decimals, '0')}"
+}
+
+/** The input box of the fields: shows [value], and [onCommit] maps the edited text to the text to show. */
+@Composable
+private fun JagTextField(
+    value: String,
+    onCommit: (String) -> String,
+    modifier: Modifier,
+    enabled: Boolean,
+    unit: String,
+) {
     val colors = JagFxTheme.colors
     val dimens = JagFxTheme.dimens
     val shape = RoundedCornerShape(dimens.radius)
-    var text by remember(value) { mutableStateOf(value.toString()) }
+    var text by remember(value) { mutableStateOf(value) }
     var focused by remember { mutableStateOf(false) }
 
     fun commit() {
-        val parsed = parseClampedInt(text, range)
-        if (parsed != null && parsed != value) onValueCommit(parsed)
-        text = (parsed ?: value).toString()
+        text = onCommit(text)
     }
 
     BasicTextField(

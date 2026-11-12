@@ -120,14 +120,6 @@ private class Shape(
                 Shape(listOf(0.2f to 0.2f, 0.8f to 0.8f)),
                 Shape(listOf(0.8f to 0.2f, 0.2f to 0.8f)),
             )
-        val Panel =
-            listOf(
-                Shape(
-                    listOf(0.1f to 0.15f, 0.9f to 0.15f, 0.9f to 0.85f, 0.1f to 0.85f),
-                    closed = true,
-                ),
-                Shape(listOf(0.62f to 0.15f, 0.62f to 0.85f)),
-            )
         val Fit =
             listOf(
                 Shape(listOf(0.1f to 0.35f, 0.1f to 0.1f, 0.35f to 0.1f)),
@@ -313,7 +305,6 @@ internal object Icons {
     val Add: IconPainter = shapesIcon(Shape.Add)
     val Close: IconPainter = shapesIcon(Shape.Close)
     val Fit: IconPainter = shapesIcon(Shape.Fit)
-    val Panel: IconPainter = shapesIcon(Shape.Panel)
     val Snap: IconPainter = shapesIcon(Shape.Snap)
     val Import: IconPainter = shapesIcon(Shape.Import)
     val Export: IconPainter = shapesIcon(Shape.Export)
