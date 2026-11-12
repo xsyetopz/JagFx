@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -39,7 +40,7 @@ internal fun JagMenuItem(
     icon: IconPainter? = null,
 ) {
     val dimens = JagFxTheme.dimens
-    val style = JagFxTheme.typography.body
+    val style = MaterialTheme.typography.bodySmall
     DropdownMenuItem(
         text = {
             JagText(text, style = if (active) style.copy(fontWeight = FontWeight.Bold) else style)

@@ -8,6 +8,7 @@ import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -140,30 +141,27 @@ internal fun SynthPalette.Companion.of(appearance: JagFxAppearance): SynthPalett
         JagFxAppearance.HighContrast -> HighContrast
     }
 
-/** Monospace type: [body] 12 sp, [label] 11 sp bold, [heading] 14 sp bold, before text scale. */
-@Immutable
-internal data class JagFxTypography(
-    val body: TextStyle = TextStyle(fontFamily = FontFamily.Monospace, fontSize = 12.sp),
-    val label: TextStyle =
-        TextStyle(
-            fontFamily = FontFamily.Monospace,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Bold,
-        ),
-    val heading: TextStyle =
-        TextStyle(
-            fontFamily = FontFamily.Monospace,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-        ),
-) {
-    /** These styles with every size multiplied by [scale]. */
-    fun scaled(scale: Float): JagFxTypography =
-        JagFxTypography(
-            body = body.copy(fontSize = body.fontSize * scale),
-            label = label.copy(fontSize = label.fontSize * scale),
-            heading = heading.copy(fontSize = heading.fontSize * scale),
-        )
+/** The Material 3 type scale with every size multiplied by [scale], so scaled text still fits. */
+internal fun scaledTypography(scale: Float): Typography {
+    fun TextStyle.scaled() = copy(fontSize = fontSize * scale, lineHeight = lineHeight * scale)
+    val base = Typography()
+    return Typography(
+        displayLarge = base.displayLarge.scaled(),
+        displayMedium = base.displayMedium.scaled(),
+        displaySmall = base.displaySmall.scaled(),
+        headlineLarge = base.headlineLarge.scaled(),
+        headlineMedium = base.headlineMedium.scaled(),
+        headlineSmall = base.headlineSmall.scaled(),
+        titleLarge = base.titleLarge.scaled(),
+        titleMedium = base.titleMedium.scaled(),
+        titleSmall = base.titleSmall.scaled(),
+        bodyLarge = base.bodyLarge.scaled(),
+        bodyMedium = base.bodyMedium.scaled(),
+        bodySmall = base.bodySmall.scaled(),
+        labelLarge = base.labelLarge.scaled(),
+        labelMedium = base.labelMedium.scaled(),
+        labelSmall = base.labelSmall.scaled(),
+    )
 }
 
 /** Sizes and spacing for a desktop with a pointer; every control is at least [minTarget] square. */
@@ -207,7 +205,6 @@ internal const val DISABLED_ALPHA = 0.4f
 
 private val LocalColors = staticCompositionLocalOf { JagFxColors.Classic }
 private val LocalPalette = staticCompositionLocalOf { SynthPalette.Classic }
-private val LocalTypography = staticCompositionLocalOf { JagFxTypography() }
 private val LocalDimens = staticCompositionLocalOf { JagFxDimens() }
 
 /**
@@ -223,15 +220,15 @@ internal fun JagFxTheme(
     content: @Composable () -> Unit,
 ) {
     val colors = JagFxColors.of(appearance)
-    val typography = remember(textScale) { JagFxTypography().scaled(textScale) }
+    val typography = remember(textScale) { scaledTypography(textScale) }
     val dimens = remember(textScale) { JagFxDimens().scaled(textScale) }
-    MaterialTheme(colorScheme = jagFxColorScheme(appearance)) {
+    MaterialTheme(colorScheme = jagFxColorScheme(appearance), typography = typography) {
         CompositionLocalProvider(
             LocalRippleConfiguration provides
                 RippleConfiguration(color = colors.accent),
             LocalMinimumInteractiveComponentSize provides dimens.minTarget,
         ) {
-            JagFxProviders(colors, appearance, typography, dimens, content)
+            JagFxProviders(colors, appearance, dimens, content)
         }
     }
 }
@@ -240,14 +237,12 @@ internal fun JagFxTheme(
 private fun JagFxProviders(
     colors: JagFxColors,
     appearance: JagFxAppearance,
-    typography: JagFxTypography,
     dimens: JagFxDimens,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
         LocalColors provides colors,
         LocalPalette provides SynthPalette.of(appearance),
-        LocalTypography provides typography,
         LocalDimens provides dimens,
         LocalContentColor provides colors.text,
         LocalTextSelectionColors provides
@@ -268,10 +263,6 @@ internal object JagFxTheme {
     val palette: SynthPalette
         @Composable @ReadOnlyComposable
         get() = LocalPalette.current
-
-    val typography: JagFxTypography
-        @Composable @ReadOnlyComposable
-        get() = LocalTypography.current
 
     val dimens: JagFxDimens
         @Composable @ReadOnlyComposable

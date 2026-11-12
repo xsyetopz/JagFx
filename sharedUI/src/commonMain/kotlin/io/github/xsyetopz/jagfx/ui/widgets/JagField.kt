@@ -174,7 +174,7 @@ private fun JagTextField(
         enabled = enabled,
         singleLine = true,
         textStyle =
-            JagFxTheme.typography.body.copy(
+            MaterialTheme.typography.bodySmall.copy(
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.End,
             ),
@@ -193,7 +193,7 @@ private fun JagTextField(
                     if (unit.isEmpty()) {
                         null
                     } else {
-                        { JagText(unit, style = JagFxTheme.typography.label) }
+                        { JagText(unit, style = MaterialTheme.typography.labelSmall) }
                     },
                 contentPadding = PaddingValues(horizontal = dimens.spaceMd),
             )

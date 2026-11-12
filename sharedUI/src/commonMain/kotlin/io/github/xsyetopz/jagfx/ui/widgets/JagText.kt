@@ -1,7 +1,8 @@
 package io.github.xsyetopz.jagfx.ui.widgets
 
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,15 +20,17 @@ internal fun JagText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
-    style: TextStyle = JagFxTheme.typography.body,
+    style: TextStyle = MaterialTheme.typography.bodySmall,
     textAlign: TextAlign = TextAlign.Unspecified,
     wrap: Boolean = false,
 ) {
     val resolved = if (color != Color.Unspecified) color else LocalContentColor.current
-    BasicText(
+    Text(
         text = text,
         modifier = modifier,
-        style = style.merge(color = resolved, textAlign = textAlign),
+        color = resolved,
+        textAlign = textAlign,
+        style = style,
         overflow = TextOverflow.Ellipsis,
         maxLines = if (wrap) Int.MAX_VALUE else 1,
         softWrap = wrap,
@@ -41,5 +44,5 @@ internal fun JagLabel(
     modifier: Modifier = Modifier,
     color: Color = JagFxTheme.colors.textDim,
 ) {
-    JagText(text.uppercase(), modifier, color, JagFxTheme.typography.label)
+    JagText(text.uppercase(), modifier, color, MaterialTheme.typography.labelSmall)
 }

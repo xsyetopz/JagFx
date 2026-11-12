@@ -3,8 +3,10 @@ package io.github.xsyetopz.jagfx.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,6 +17,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +35,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.xsyetopz.jagfx.core.model.Envelope
@@ -224,6 +230,7 @@ private fun PointRow(
  * A text box showing [value]. Enter or focus loss runs [check]: a valid entry goes to [onApply], an
  * out-of-range one shows the allowed range under the box and stays, and anything else reverts.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PointCell(
     value: String,
@@ -235,7 +242,7 @@ private fun PointCell(
     val strings = LocalStrings.current
     val colors = JagFxTheme.colors
     val dimens = JagFxTheme.dimens
-    val shape = RoundedCornerShape(dimens.radius)
+    val interaction = remember { MutableInteractionSource() }
     var text by remember(value) { mutableStateOf(value) }
     var focused by remember { mutableStateOf(false) }
     var error by remember(value) { mutableStateOf<FieldEdit.OutOfRange?>(null) }
@@ -267,13 +274,6 @@ private fun PointCell(
                 Modifier
                     .fillMaxWidth()
                     .defaultMinSize(minWidth = dimens.minTarget, minHeight = dimens.controlHeight)
-                    .alpha(if (enabled) 1f else DISABLED_ALPHA)
-                    .background(colors.input, shape)
-                    .border(
-                        dimens.border,
-                        if (error != null) colors.warning else colors.controlBorder,
-                        shape,
-                    ).focusRing(focused, colors.accent, dimens.focusRing, dimens.radius)
                     .onFocusChanged {
                         val lost = focused && !it.isFocused
                         focused = it.isFocused
@@ -286,22 +286,30 @@ private fun PointCell(
             enabled = enabled,
             singleLine = true,
             textStyle =
-                JagFxTheme.typography.body.copy(color = colors.text, textAlign = TextAlign.End),
-            cursorBrush = SolidColor(colors.accent),
+                MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.End,
+                ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            interactionSource = interaction,
             decorationBox = { inner ->
-                Row(
-                    Modifier.fillMaxHeight().padding(horizontal = dimens.spaceMd),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    inner()
-                }
+                OutlinedTextFieldDefaults.DecorationBox(
+                    value = text,
+                    innerTextField = inner,
+                    enabled = enabled,
+                    singleLine = true,
+                    visualTransformation = VisualTransformation.None,
+                    interactionSource = interaction,
+                    isError = error != null,
+                    contentPadding = PaddingValues(horizontal = dimens.spaceMd),
+                )
             },
         )
         error?.let {
             JagText(
                 strings.format(UiString.RangeError, it.min, it.max),
                 color = colors.warning,
-                style = JagFxTheme.typography.label,
+                style = MaterialTheme.typography.labelSmall,
             )
         }
     }

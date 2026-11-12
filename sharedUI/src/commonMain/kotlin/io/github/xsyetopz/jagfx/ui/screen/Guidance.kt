@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -104,7 +105,7 @@ internal fun ToneOffOverlay(
             PromptBox {
                 JagText(
                     strings.format(UiString.ToneOffTitle, state.selectedVoice + 1),
-                    style = JagFxTheme.typography.heading,
+                    style = MaterialTheme.typography.titleSmall,
                 )
                 JagText(strings[UiString.ToneOffHint], textAlign = TextAlign.Center, wrap = true)
                 JagButton(
@@ -127,7 +128,7 @@ internal fun NoFileScreen(
     Column(modifier.fillMaxSize().background(JagFxTheme.colors.root)) {
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             PromptBox {
-                JagText(strings[UiString.NoFileTitle], style = JagFxTheme.typography.heading)
+                JagText(strings[UiString.NoFileTitle], style = MaterialTheme.typography.titleSmall)
                 JagText(strings[UiString.NoFileHint], textAlign = TextAlign.Center, wrap = true)
                 Column(
                     verticalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceMd),

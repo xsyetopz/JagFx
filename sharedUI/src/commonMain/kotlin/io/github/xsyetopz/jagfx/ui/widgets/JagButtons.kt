@@ -22,6 +22,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.runtime.Composable
@@ -122,7 +123,7 @@ internal fun JagButton(
     role: Role = Role.Button,
 ) {
     JagButton(onClick, modifier, enabled, active, tooltip, role = role) {
-        val label = JagFxTheme.typography.label
+        val label = MaterialTheme.typography.labelSmall
         JagText(
             text,
             style = if (active) label.copy(fontWeight = FontWeight.ExtraBold) else label,

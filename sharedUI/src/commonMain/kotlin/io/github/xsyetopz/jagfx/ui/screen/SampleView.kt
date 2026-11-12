@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -156,7 +157,7 @@ private fun SampleWave(
         modifier,
         verticalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceMd),
     ) {
-        JagText(document.name, style = JagFxTheme.typography.heading)
+        JagText(document.name, style = MaterialTheme.typography.titleSmall)
         OutputWaveCanvas(
             samples = samples,
             playbackPosition = if (looped) 0f else state.playbackPosition,

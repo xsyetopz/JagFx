@@ -1,5 +1,6 @@
 package io.github.xsyetopz.jagfx.ui.screen
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.xsyetopz.jagfx.core.model.Waveform
@@ -108,7 +109,7 @@ internal fun GateStrip(
         ) { on ->
             JagText(
                 strings[if (on) UiString.OnLabel else UiString.OffLabel],
-                style = JagFxTheme.typography.label,
+                style = MaterialTheme.typography.labelSmall,
             )
         }
         val min = envelope?.startValue ?: 0

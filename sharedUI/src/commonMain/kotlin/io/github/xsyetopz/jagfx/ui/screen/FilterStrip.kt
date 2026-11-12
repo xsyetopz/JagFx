@@ -1,5 +1,6 @@
 package io.github.xsyetopz.jagfx.ui.screen
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.xsyetopz.jagfx.core.model.Filter
@@ -54,7 +55,7 @@ internal fun FilterStrip(
         ) { on ->
             JagText(
                 strings[if (on) UiString.OnLabel else UiString.OffLabel],
-                style = JagFxTheme.typography.label,
+                style = MaterialTheme.typography.labelSmall,
             )
         }
         StripButtons(
@@ -130,7 +131,7 @@ private fun PoleFields(
     JagText(
         "${ChannelNames[ref.channel]}${ref.pole + 1} $phaseName",
         color = JagFxTheme.colors.text,
-        style = JagFxTheme.typography.label,
+        style = MaterialTheme.typography.labelSmall,
     )
     val hz = FilterFrequencyScale.rawPhaseToFrequency(coefficient.phase).roundToInt()
     StripField(
