@@ -67,12 +67,9 @@ pnpm-lock.yaml
 # ===-----------------------------------------------------------------------===
 # Project-specific
 # ===-----------------------------------------------------------------------===
-.serena/
+.claude/claudetto/
 .cursorignore
 .cursorindexingignore
-
-# Codebase MCP
-.codebase-memory/
 
 # ===-----------------------------------------------------------------------===
 # Gradle / Kotlin Multiplatform
