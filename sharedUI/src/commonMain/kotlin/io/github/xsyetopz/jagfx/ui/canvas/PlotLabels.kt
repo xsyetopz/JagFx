@@ -89,11 +89,18 @@ internal fun DrawScope.drawValueAxis(
         val y = ENVELOPE_PADDING + plotHeight * (1f - tick.fraction)
         val layout =
             measurer.measure(formatDecimal(tick.value, VALUE_DECIMALS) + unit.suffix(), labelStyle)
-        val top =
-            (y - layout.size.height / 2f).coerceIn(
-                0f,
-                size.height - 2 * layout.size.height - LABEL_INSET,
-            )
+        val top = valueLabelTop(y, layout.size.height.toFloat(), size.height)
         drawText(layout, topLeft = Offset(LABEL_INSET, top))
     }
 }
+
+/**
+ * The top of a value label of [labelHeight] centred on [y], kept above the time labels of a plot
+ * [height] tall and below its top edge; a plot too short for both keeps the label at the top.
+ */
+internal fun valueLabelTop(
+    y: Float,
+    labelHeight: Float,
+    height: Float,
+): Float =
+    (y - labelHeight / 2f).coerceAtMost(height - 2 * labelHeight - LABEL_INSET).coerceAtLeast(0f)
