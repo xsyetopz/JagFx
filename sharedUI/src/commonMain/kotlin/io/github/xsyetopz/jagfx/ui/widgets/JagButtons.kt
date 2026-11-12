@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilledTonalButton
@@ -74,6 +76,7 @@ internal fun PainterIcon(
  * rest are outlined, so color is not only sign. [tooltip] shows in stock tooltip.
  * [description] is accessible name when content is symbol; [role] is accessible
  * role, and [Role.Switch], [Role.Checkbox], or [Role.RadioButton] reports [active] as its state.
+ * [fill] button takes whole width that [modifier] gives it, such as weight.
  */
 @Composable
 internal fun JagButton(
@@ -84,13 +87,16 @@ internal fun JagButton(
     tooltip: String? = null,
     description: String? = null,
     role: Role = Role.Button,
+    fill: Boolean = false,
     content: @Composable RowScope.() -> Unit,
 ) {
     val dimens = JagFxTheme.dimens
     val padding = PaddingValues(horizontal = dimens.spaceLg)
     val semantic =
         Modifier
+            .fillWidth(fill)
             .height(dimens.controlHeight)
+            .widthIn(min = dimens.buttonMinWidth)
             .semantics(mergeDescendants = true) {
                 description?.let { contentDescription = it }
                 this.role = role
@@ -121,8 +127,9 @@ internal fun JagButton(
     active: Boolean = false,
     tooltip: String? = null,
     role: Role = Role.Button,
+    fill: Boolean = false,
 ) {
-    JagButton(onClick, modifier, enabled, active, tooltip, role = role) {
+    JagButton(onClick, modifier, enabled, active, tooltip, role = role, fill = fill) {
         val label = MaterialTheme.typography.labelSmall
         JagText(
             text,
@@ -131,7 +138,7 @@ internal fun JagButton(
     }
 }
 
-/** Stock Material icon button that draws [icon]; [tooltip] names it. */
+/** Stock Material icon button that draws [icon]; [tooltip] names it, and [fill] is as in [JagButton]. */
 @Composable
 internal fun JagIconButton(
     icon: IconPainter,
@@ -140,9 +147,14 @@ internal fun JagIconButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     active: Boolean = false,
+    fill: Boolean = false,
 ) {
     val dimens = JagFxTheme.dimens
-    val size = Modifier.size(dimens.controlHeight).semantics { contentDescription = tooltip }
+    val size =
+        Modifier
+            .fillWidth(fill)
+            .size(dimens.controlHeight)
+            .semantics { contentDescription = tooltip }
     Tip(tooltip, modifier) {
         if (active) {
             FilledTonalIconButton(onClick, size, enabled) { PainterIcon(icon) }
@@ -173,6 +185,7 @@ internal fun <T> JagToggleGroup(
                 tooltip = tooltip(option),
                 description = tooltip(option),
                 role = Role.RadioButton,
+                fill = true,
             ) { item(option) }
         }
     }
@@ -207,3 +220,7 @@ private fun androidx.compose.ui.semantics.SemanticsPropertyReceiver.stateOf(
         Role.RadioButton -> selected = active
     }
 }
+
+// The tooltip box measures its anchor without the minimum width a weight sets, so a button that
+// should fill its slot asks for the full width itself.
+private fun Modifier.fillWidth(fill: Boolean): Modifier = if (fill) fillMaxWidth() else this

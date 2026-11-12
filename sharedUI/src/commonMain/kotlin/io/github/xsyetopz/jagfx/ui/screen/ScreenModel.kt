@@ -13,10 +13,6 @@ import io.github.xsyetopz.jagfx.ui.editor.SignalChainSlot
 import io.github.xsyetopz.jagfx.ui.editor.StatusHint
 import io.github.xsyetopz.jagfx.ui.i18n.Strings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
-import kotlin.math.abs
-
-/** `PitchOffset` units per semitone. */
-private const val DETUNE_UNITS_PER_SEMITONE = 10
 
 /** `true` for slots that draw voice timeline: envelope slots and output. */
 internal val SignalChainSlot.isTimeDomain: Boolean
@@ -150,14 +146,6 @@ internal data class PartialRow(
 /** [SynthLimits.MAX_PARTIALS] harmonic rows of [voice]. */
 internal fun partialRows(voice: Voice?): List<PartialRow> =
     List(SynthLimits.MAX_PARTIALS) { index -> PartialRow(index, voice?.partials?.getOrNull(index)) }
-
-/** [units] of `PitchOffset` as signed semitones with one decimal, as `+2.5st`. */
-internal fun semitones(units: Int): String {
-    val sign = if (units < 0) "-" else "+"
-    val whole = abs(units) / DETUNE_UNITS_PER_SEMITONE
-    val tenth = abs(units) % DETUNE_UNITS_PER_SEMITONE
-    return "$sign$whole.${tenth}st"
-}
 
 /** Panel title key of [slot]. */
 internal fun titleOf(slot: SignalChainSlot): UiString =

@@ -3,9 +3,12 @@ package io.github.xsyetopz.jagfx.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +22,7 @@ import io.github.xsyetopz.jagfx.ui.editor.DocumentIntent
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.HistoryIntent
 import io.github.xsyetopz.jagfx.ui.editor.PanelSide
+import io.github.xsyetopz.jagfx.ui.editor.RackMode
 import io.github.xsyetopz.jagfx.ui.editor.RequestIntent
 import io.github.xsyetopz.jagfx.ui.editor.ThemePreference
 import io.github.xsyetopz.jagfx.ui.editor.ViewIntent
@@ -32,6 +36,7 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagLabel
 import io.github.xsyetopz.jagfx.ui.widgets.JagMenu
 import io.github.xsyetopz.jagfx.ui.widgets.JagMenuItem
 import io.github.xsyetopz.jagfx.ui.widgets.JagText
+import io.github.xsyetopz.jagfx.ui.widgets.JagToggleGroup
 
 /** Menu label that puts voice strip on this side. */
 internal val PanelSide.label: UiString
@@ -57,7 +62,10 @@ internal data class TitleBarItems(
 internal fun titleBarItems(hasNativeMenu: Boolean): TitleBarItems =
     TitleBarItems(fileMenu = !hasNativeMenu, history = !hasNativeMenu)
 
-/** Title bar: file name, and unless platform has menu bar, file menu, Undo, and Redo. */
+/**
+ * Title bar: file name, View switch, and unless platform has menu bar, file menu, Undo,
+ * and Redo.
+ */
 @Composable
 internal fun TitleBar(
     state: EditorState,
@@ -75,6 +83,7 @@ internal fun TitleBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         JagText(state.fileName, Modifier.weight(1f), color = JagFxTheme.colors.textDim)
+        ViewSwitch(state, actions)
         val items = titleBarItems(LocalNativeMenu.current)
         if (items.fileMenu) FileMenu(state, actions)
         if (items.history) {
@@ -152,6 +161,30 @@ private fun FileMenu(
                     )
                 }
             }
+        }
+    }
+}
+
+/** The rack view switch: Envelopes, Filter, or All. */
+@Composable
+private fun ViewSwitch(
+    state: EditorState,
+    actions: EditorActions,
+) {
+    val strings = LocalStrings.current
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceMd),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        JagLabel(strings[UiString.ModeLabel])
+        JagToggleGroup(
+            RackMode.entries,
+            state.mode,
+            { mode -> actions.dispatch(ViewIntent.SetMode(mode)) },
+            Modifier.width(IntrinsicSize.Max),
+            tooltip = { strings[it.label] },
+        ) { mode ->
+            JagText(strings[mode.label], style = MaterialTheme.typography.labelSmall)
         }
     }
 }

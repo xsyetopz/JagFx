@@ -9,7 +9,6 @@ internal enum class UiString {
     LabelLoopEnd,
     LoopsLabel,
     PlayAll,
-    LoopTone,
     LoopAll,
     LoadLabel,
     LivePreview,

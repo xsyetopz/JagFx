@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
 import io.github.xsyetopz.jagfx.ui.widgets.JagDecimalField
 import io.github.xsyetopz.jagfx.ui.widgets.JagField
@@ -26,7 +25,6 @@ import io.github.xsyetopz.jagfx.ui.widgets.JagLabel
 import io.github.xsyetopz.jagfx.ui.widgets.JagText
 import io.github.xsyetopz.jagfx.ui.widgets.formatDecimal
 
-private val LabelWidth = 64.dp
 private val AnyInt = Int.MIN_VALUE..Int.MAX_VALUE
 
 /** Scrolling side strip of editor, as wide as [JagFxTheme] says. */
@@ -42,12 +40,12 @@ internal fun StripColumn(
             .background(JagFxTheme.colors.panel)
             .verticalScroll(rememberScrollState())
             .padding(dimens.spaceLg),
-        verticalArrangement = Arrangement.spacedBy(dimens.spaceMd),
+        verticalArrangement = Arrangement.spacedBy(dimens.spaceSm),
         content = content,
     )
 }
 
-/** [label] left of control; [field] gets modifier that fills row and names control. */
+/** [label] left of control; [field] gets modifier that sizes and names control. */
 @Composable
 internal fun StripRow(
     label: String,
@@ -59,8 +57,12 @@ internal fun StripRow(
         horizontalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceMd),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        JagLabel(label, Modifier.width(LabelWidth))
-        field(Modifier.weight(1f).semantics { contentDescription = description })
+        JagLabel(label, Modifier.weight(1f))
+        field(
+            Modifier.width(JagFxTheme.dimens.fieldWidth).semantics {
+                contentDescription = description
+            },
+        )
     }
 }
 

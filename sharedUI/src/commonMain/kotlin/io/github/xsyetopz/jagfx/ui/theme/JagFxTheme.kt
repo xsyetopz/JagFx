@@ -171,7 +171,8 @@ internal data class JagFxDimens(
     val headerHeight: Dp = 36.dp,
     val controlHeight: Dp = 24.dp,
     val cellHeaderHeight: Dp = 28.dp,
-    val stripWidth: Dp = 160.dp,
+    val stripWidth: Dp = 176.dp,
+    val fieldWidth: Dp = 64.dp,
     val voiceChipWidth: Dp = 28.dp,
     val voiceChipHeight: Dp = 24.dp,
     val buttonMinWidth: Dp = 24.dp,
@@ -192,6 +193,7 @@ internal data class JagFxDimens(
             controlHeight = controlHeight * scale,
             cellHeaderHeight = cellHeaderHeight * scale,
             stripWidth = stripWidth * scale,
+            fieldWidth = fieldWidth * scale,
             voiceChipWidth = voiceChipWidth * scale,
             voiceChipHeight = voiceChipHeight * scale,
         )

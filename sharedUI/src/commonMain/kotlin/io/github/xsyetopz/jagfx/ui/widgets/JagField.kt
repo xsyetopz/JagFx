@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -207,6 +208,7 @@ private fun JagTextField(
  * [onValueChange], and wheel over it and double click do too. Drag is one undo step
  * bracketed by [gestures].
  * Typing accepts any value in [range], which can be wider than slider.
+ * Field shows stored value divided by 10 to [decimals], and [label] sits left of it.
  */
 @Composable
 internal fun JagBarField(
@@ -218,6 +220,8 @@ internal fun JagBarField(
     enabled: Boolean = true,
     unit: String = "",
     gestures: GestureCallbacks = GestureCallbacks(),
+    label: String = "",
+    decimals: Int = 0,
 ) {
     val scrub = rememberUpdatedState(ScrubState(value, scale, onValueChange, gestures))
     val interaction = remember { MutableInteractionSource() }
@@ -229,8 +233,24 @@ internal fun JagBarField(
             }
         }
     }
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceXs)) {
-        JagField(value, onValueChange, range, Modifier.fillMaxWidth(), enabled, unit)
+    val dimens = JagFxTheme.dimens
+    val factor = 10.0.pow(decimals)
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(dimens.spaceXs)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            JagLabel(label, Modifier.weight(1f))
+            JagDecimalField(
+                value / factor,
+                { onValueChange((it * factor).roundToInt()) },
+                range.first / factor..range.last / factor,
+                decimals,
+                Modifier.width(dimens.fieldWidth),
+                enabled,
+                unit,
+            )
+        }
         Slider(
             value = value.toFloat().coerceIn(scale.range),
             onValueChange = { onValueChange(it.roundToInt()) },

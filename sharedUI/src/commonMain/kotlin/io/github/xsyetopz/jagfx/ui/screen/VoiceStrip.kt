@@ -17,13 +17,15 @@ import io.github.xsyetopz.jagfx.ui.editor.VoiceIntent
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.i18n.UiString
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
+import io.github.xsyetopz.jagfx.ui.widgets.Icons
 import io.github.xsyetopz.jagfx.ui.widgets.JagButton
+import io.github.xsyetopz.jagfx.ui.widgets.JagIconButton
 
 private val U16Ms = 0..SynthLimits.U16_MAX
 
 /**
- * Voice strip, as original's left strip: oscillator, timing and loop fields of
- * selected tone, transport, Load and Save, and True Wave.
+ * Voice strip: oscillator, timing and loop fields of selected voice, transport, Load
+ * and Save, and Live preview.
  */
 @Composable
 internal fun VoiceStrip(
@@ -43,13 +45,6 @@ internal fun VoiceStrip(
             { actions.dispatch(ViewIntent.SetLoopCount(it)) },
             "",
             range = 0..EditorState.MAX_LOOP_COUNT,
-        )
-        StripButtons(
-            Button(
-                strings[UiString.MenuStop],
-                null,
-                false,
-            ) { actions.dispatch(RequestIntent.Stop) },
         )
         StripButtons(
             Button(
@@ -73,7 +68,7 @@ internal fun VoiceStrip(
     }
 }
 
-/** Length and Start of selected voice, and loop start and end of patch. */
+/** Length and Offset of selected voice, and loop start and end of patch. */
 @Composable
 private fun TimingFields(
     state: EditorState,
@@ -118,32 +113,63 @@ private fun TimingFields(
     )
 }
 
-/** Play, Play All, Loop, and Loop All; button of running playback is active. */
+/**
+ * Play, Loop, and Stop as icons for selected voice, over Play All and Loop All; button
+ * of running playback is active.
+ */
 @Composable
 private fun Transport(
     state: EditorState,
     actions: EditorActions,
 ) {
     val strings = LocalStrings.current
-    val labels =
-        mapOf(
-            PlayAction.Play to (UiString.MenuPlay to UiString.TooltipPlayTone),
-            PlayAction.PlayAll to (UiString.PlayAll to UiString.TooltipPlayAll),
-            PlayAction.Loop to (UiString.LoopTone to UiString.TooltipLoopTone),
-            PlayAction.LoopAll to (UiString.LoopAll to UiString.TooltipLoopAll),
+
+    fun running(action: PlayAction) =
+        state.isPlaying &&
+            state.playSingleVoice == action.singleTone &&
+            state.isLooping == action.looping
+
+    fun start(action: PlayAction) = action.intents().forEach(actions.dispatch)
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceSm),
+    ) {
+        JagIconButton(
+            Icons.Play,
+            strings[UiString.TooltipPlayTone],
+            { start(PlayAction.Play) },
+            Modifier.weight(1f),
+            active = running(PlayAction.Play),
+            fill = true,
         )
-    val buttons =
-        PlayAction.entries.map { action ->
-            val (label, tooltip) = labels.getValue(action)
-            val running =
-                state.isPlaying &&
-                    state.playSingleVoice == action.singleTone &&
-                    state.isLooping == action.looping
-            Button(strings[label], strings[tooltip], running) {
-                action.intents().forEach(actions.dispatch)
-            }
-        }
-    for (pair in buttons.chunked(2)) StripButtons(*pair.toTypedArray())
+        JagIconButton(
+            Icons.Loop,
+            strings[UiString.TooltipLoopTone],
+            { start(PlayAction.Loop) },
+            Modifier.weight(1f),
+            active = running(PlayAction.Loop),
+            fill = true,
+        )
+        JagIconButton(
+            Icons.Stop,
+            strings[UiString.TooltipStop],
+            { actions.dispatch(RequestIntent.Stop) },
+            Modifier.weight(1f),
+            fill = true,
+        )
+    }
+    StripButtons(
+        Button(
+            strings[UiString.PlayAll],
+            strings[UiString.TooltipPlayAll],
+            running(PlayAction.PlayAll),
+        ) { start(PlayAction.PlayAll) },
+        Button(
+            strings[UiString.LoopAll],
+            strings[UiString.TooltipLoopAll],
+            running(PlayAction.LoopAll),
+        ) { start(PlayAction.LoopAll) },
+    )
 }
 
 /** Text button of strip: [label], optional [tooltip], [active] state, and [onClick]. */
@@ -171,6 +197,7 @@ internal fun StripButtons(vararg buttons: Button) {
                     ).semantics { contentDescription = button.tooltip ?: button.label },
                 active = button.active,
                 tooltip = button.tooltip,
+                fill = true,
             )
         }
     }

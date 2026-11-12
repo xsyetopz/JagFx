@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,35 +53,39 @@ private const val DETUNE_SCRUB_LIMIT = 240f
 private const val PERCENT_MAX = 100f
 private const val DELAY_SCRUB_MAX = 2000f
 private const val EMPTY_ALPHA = 0.45f
+private const val VOICES_PER_ROW = 5
 
 private val EdgeGrab = 6.dp
-private val BoxLabelWidth = 32.dp
 private val USmart16 = 0..SynthLimits.USMART16_MAX
 
-/** Stored [range] of footer bar field, [scale] of its bar, and [unit] of value. */
+/**
+ * Stored [range] of footer bar field, [scale] of its bar, its [unit], and [decimals] of
+ * shown value, which is stored one over 10 to [decimals].
+ */
 private class FieldSpec(
     val range: IntRange,
     val scale: ScrubScale,
-    val unit: (Int) -> String,
+    val unit: String,
+    val decimals: Int = 0,
 )
 
 private val DetuneSpec =
     FieldSpec(
         SynthLimits.SMART16_MIN..SynthLimits.SMART16_MAX,
         ScrubScale(-DETUNE_SCRUB_LIMIT..DETUNE_SCRUB_LIMIT, defaultValue = 0f),
-        ::semitones,
+        "st",
+        decimals = 1,
     )
 private val LevelSpec =
     FieldSpec(
         1..SynthLimits.USMART16_MAX,
         ScrubScale(1f..PERCENT_MAX, defaultValue = PERCENT_MAX),
-    ) {
-        "%"
-    }
+        "%",
+    )
 private val DelaySpec =
-    FieldSpec(USmart16, ScrubScale(0f..DELAY_SCRUB_MAX, defaultValue = 0f)) { "ms" }
+    FieldSpec(USmart16, ScrubScale(0f..DELAY_SCRUB_MAX, defaultValue = 0f), "ms")
 private val FeedbackSpec =
-    FieldSpec(USmart16, ScrubScale(0f..PERCENT_MAX, defaultValue = 0f)) { "%" }
+    FieldSpec(USmart16, ScrubScale(0f..PERCENT_MAX, defaultValue = 0f), "%")
 
 /**
  * Time span that voice bars share, and [onFreeze], which holds span during drag and
@@ -93,8 +97,8 @@ private class VoiceTimeline(
 )
 
 /**
- * Ten voices as chips, each with bar of its start and length on shared time axis, and
- * on switch of selected voice.
+ * Voices label with on switch of selected voice, over ten voices as chips in two rows
+ * of five, each with bar of its start and length on shared time axis.
  * Click selects voice, or pastes into it in copy mode; dragging bar moves voice, and
  * dragging its end changes length.
  */
@@ -108,25 +112,36 @@ internal fun VoiceChips(
     val voice = state.voice
     var frozen by remember { mutableStateOf<Int?>(null) }
     val timeline = VoiceTimeline(frozen ?: timelineSpan(state.patch)) { frozen = it }
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        for (index in 0 until SynthLimits.VOICE_SLOTS) {
-            VoiceTile(
-                index,
-                state,
-                timeline,
-                actions,
-                Modifier.width(dimens.voiceChipWidth).height(dimens.voiceChipHeight),
+    Column(verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            JagLabel(strings[UiString.VoicesLabel], Modifier.weight(1f))
+            JagIconButton(
+                Icons.Power,
+                strings[UiString.MenuVoiceEnabled],
+                {
+                    actions.dispatch(
+                        SlotIntent.SetVoiceEnabled(state.selectedVoice, voice == null),
+                    )
+                },
+                active = voice != null,
             )
         }
-        JagIconButton(
-            Icons.Power,
-            strings[UiString.MenuVoiceEnabled],
-            { actions.dispatch(SlotIntent.SetVoiceEnabled(state.selectedVoice, voice == null)) },
-            active = voice != null,
-        )
+        for (row in (0 until SynthLimits.VOICE_SLOTS).chunked(VOICES_PER_ROW)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)) {
+                for (index in row) {
+                    VoiceTile(
+                        index,
+                        state,
+                        timeline,
+                        actions,
+                        Modifier
+                            .weight(1f)
+                            .widthIn(min = dimens.voiceChipWidth)
+                            .height(dimens.voiceChipHeight),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -238,7 +253,7 @@ private fun Modifier.voiceDrag(
 }
 
 /**
- * Harmonic box of [row] in bottom bar: its on switch and number, and Semi, Vol, and Del.
+ * Harmonic box of [row] in bottom bar: its on switch and number, and Pitch, Level, and Delay.
  * Its fields are disabled while harmonic is off.
  */
 @Composable
@@ -359,40 +374,16 @@ private fun BoxField(
     actions: EditorActions,
     intent: (Int) -> EditorIntent,
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(JagFxTheme.dimens.spaceSm),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        JagLabel(label, Modifier.width(BoxLabelWidth))
-        PartialField(
-            value,
-            spec,
-            enabled,
-            actions,
-            Modifier.weight(1f).semantics { contentDescription = "$box $label" },
-            intent,
-        )
-    }
-}
-
-/** Bar field that dispatches intent that [intent] makes of each new value. */
-@Composable
-private fun PartialField(
-    value: Int,
-    spec: FieldSpec,
-    enabled: Boolean,
-    actions: EditorActions,
-    modifier: Modifier = Modifier,
-    intent: (Int) -> EditorIntent,
-) {
     JagBarField(
         value,
         { actions.dispatch(intent(it)) },
         spec.range,
         spec.scale,
-        modifier,
+        Modifier.semantics { contentDescription = "$box $label" },
         enabled,
-        spec.unit(value),
+        spec.unit,
         actions.gestureCallbacks(),
+        label,
+        spec.decimals,
     )
 }
