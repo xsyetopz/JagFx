@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.LocalContentColor
@@ -176,10 +177,7 @@ internal fun <T> JagToggleGroup(
     }
 }
 
-/**
- * A check box with a 24 dp hit area around a 12 dp box: an input-colored box with an accent border
- * and mark when [checked], and a 2 dp accent ring while focused.
- */
+/** A stock Material check box; [tooltip] shows in a stock tooltip and is its accessible name. */
 @Composable
 internal fun JagCheck(
     checked: Boolean,
@@ -188,49 +186,15 @@ internal fun JagCheck(
     enabled: Boolean = true,
     tooltip: String? = null,
 ) {
-    val colors = JagFxTheme.colors
-    val dimens = JagFxTheme.dimens
-    val interaction = remember { MutableInteractionSource() }
-    val hovered by interaction.collectIsHoveredAsState()
-    val focused by interaction.collectIsFocusedAsState()
-    val shape = RoundedCornerShape(dimens.radius)
     Tip(tooltip, modifier) {
-        Box(
-            modifier =
-                Modifier
-                    .size(dimens.minTarget)
-                    .alpha(if (enabled) 1f else DISABLED_ALPHA)
-                    .hoverable(interaction)
-                    .clickable(
-                        interactionSource = interaction,
-                        indication = null,
-                        enabled = enabled,
-                        role = Role.Checkbox,
-                    ) { onCheckedChange(!checked) }
-                    .semantics(mergeDescendants = true) {
-                        tooltip?.let { contentDescription = it }
-                        toggleableState = ToggleableState(checked)
-                    },
-            contentAlignment = Alignment.Center,
-        ) {
-            Box(
-                Modifier
-                    .size(dimens.iconSize)
-                    .background(colors.input, shape)
-                    .border(
-                        dimens.border,
-                        if (checked) colors.accent else colors.controlBorder,
-                        shape,
-                    ).focusRing(focused, colors.accent, dimens.focusRing, dimens.radius),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (checked) Box(Modifier.size(CheckMarkSize).background(colors.accent))
-            }
-        }
+        Checkbox(
+            checked,
+            onCheckedChange,
+            Modifier.semantics { tooltip?.let { contentDescription = it } },
+            enabled,
+        )
     }
 }
-
-private val CheckMarkSize = 6.dp
 
 /** The state a control with [role] reports: on or off for toggles, chosen for radio buttons. */
 private fun androidx.compose.ui.semantics.SemanticsPropertyReceiver.stateOf(
