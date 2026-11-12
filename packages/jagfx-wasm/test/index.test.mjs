@@ -1,21 +1,55 @@
 import { describe, expect, test } from "bun:test";
 import { readFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 
 import { createJagFxWasmBackend } from "../dist/index.mjs";
 
-const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const packageDir = resolve(import.meta.dirname, "..");
 const repoRoot = resolve(packageDir, "../..");
 const cowDeathPath = resolve(repoRoot, "references/synths/cow_death.synth");
 const cowDeathWavPath = resolve(repoRoot, "references/wav/cow_death.wav");
 const samplePath = resolve(repoRoot, "references/vorbis/11102.jagvorbis");
 const wavHeaderBytes = 44;
 
+/**
+ * @param {unknown} value
+ * @returns {value is import("../src/index.ts").SampleInfo}
+ */
+const isSampleInfo = (value) =>
+	typeof value === "object" &&
+	value !== null &&
+	"sampleRate" in value &&
+	"sampleCount" in value &&
+	"loopEnd" in value;
+
+/**
+ * @param {{ readSampleInfo: (data: Uint8Array) => unknown }} backend
+ * @param {Uint8Array} sample
+ * @returns {import("../src/index.ts").SampleInfo}
+ */
+const readInfo = (backend, sample) => {
+	const info = backend.readSampleInfo(sample);
+	if (!isSampleInfo(info)) {
+		throw new TypeError("malformed sample info");
+	}
+	return info;
+};
+
+/**
+ * @param {unknown} error_
+ * @returns {unknown}
+ */
+const rejectionOf = (error_) => error_;
+
 describe("createJagFxWasmBackend", () => {
 	test("passes bytes and options to the loaded module", async () => {
 		const backend = await createJagFxWasmBackend(() =>
 			Promise.resolve({
+				/**
+				 * @param {Int8Array} data
+				 * @param {number} loops
+				 * @param {number} voiceFilter
+				 */
 				renderPcm16Le(data, loops, voiceFilter) {
 					expect(data).toBeInstanceOf(Int8Array);
 					expect([...data]).toEqual([9, 8, 7]);
@@ -49,23 +83,28 @@ describe("createJagFxWasmBackend", () => {
 	});
 
 	test("rejects a module without the sample exports", async () => {
-		await expect(
-			createJagFxWasmBackend(() =>
-				Promise.resolve({ renderPcm16Le: () => new Int8Array() }),
-			),
-		).rejects.toThrow("does not export samplePcm16Le");
+		const error = await createJagFxWasmBackend(() => ({
+			renderPcm16Le: () => new Int8Array(),
+		})).catch(rejectionOf);
+		expect(error).toBeInstanceOf(Error);
+		expect(error).toHaveProperty(
+			"message",
+			expect.stringContaining("does not export samplePcm16Le"),
+		);
 	});
 
 	test("decodes a sample through Kotlin/Wasm", async () => {
 		const backend = await createJagFxWasmBackend();
 		const sample = new Uint8Array(await readFile(samplePath));
 
-		const info = backend.readSampleInfo(sample);
+		const info = readInfo(backend, sample);
 		const pcm = backend.decodeSampleToPcm(sample);
 		expect(info.sampleRate).toBeGreaterThan(0);
 		expect(info.loopEnd).toBeLessThanOrEqual(info.sampleCount);
 		expect(pcm.byteLength).toBe(info.sampleCount * 2);
-		expect(() => backend.readSampleInfo(sample.subarray(0, 3))).toThrow();
+		expect(() => {
+			backend.readSampleInfo(sample.subarray(0, 3));
+		}).toThrow();
 	});
 
 	test("rejects a zero loop count", async () => {
