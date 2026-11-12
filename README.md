@@ -59,11 +59,11 @@ flowchart TD
 
 The editor follows the layout of the original JagFx tool:
 
-- Title bar: the file name, the View switch, the File menu (Open, New, Save As, Import and Export tone, theme, text size, panel side), Undo, and Redo.
+- Title bar: the file name, the View switch, the File menu (Open, New, Save As, Import Tone, Export Tone, Theme, Text Size, panel side), Undo, and Redo.
 - Rack: three rows (Pitch, Volume, Output) across the envelope, rate, and depth cells. A strip beside each envelope cell holds the module's waveform, Start, End, and Average, or the gate's Off/On and closed-time Start, End, and Average.
-- Cell headers: `1x 2x 4x` zoom presets, Values, Grid, and Points toggles, Fit fits the view, the time view menu (Linked or This cell) links the cell's time view to the other cells or gives it its own, and Controls opens the cell's controls panel with the exact point table.
-- Voice strip: the oscillator, Length, Offset, Loop start, Loop end, Play, Loop, Stop, Play All, Loop All, Loop count, Load, Save, and Live preview. The File menu moves it to the left or right edge.
-- Bottom bar: Voices 1 to 10 with Copy voice and Reset voice, five harmonic boxes (Pitch, Level, Delay), and Echo (Feedback, Delay).
+- Cell headers: `1x 2x 4x` zoom presets, Values, Grid, and Points toggles, Fit fits the view, the time view menu (Linked or This Cell) links the cell's time view to the other cells or gives it its own, and Controls opens the cell's controls panel with the exact point table.
+- Voice strip: the oscillator, Length, Offset, Loop start, Loop end, Play, Loop, Stop, Play All, Loop All, Loop count, Load, Save, and Live Preview. The File menu moves it to the left or right edge.
+- Bottom bar: Voices 1 to 10 with Copy Voice and Reset Voice, five harmonic boxes (Pitch, Level, Delay), and Echo (Feedback, Delay).
 - View switch: Envelopes shows the rack, Filter shows the filter column (Poles and zeros, Filter envelope, Frequency response), and All shows the two side by side.
 
 ![The editor in Both mode at 1920 by 1080](docs/images/editor-both-1920x1080.png)
