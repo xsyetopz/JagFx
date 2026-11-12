@@ -3,7 +3,7 @@
 JavaScript and TypeScript helpers for JagFx synth patches.
 
 The package converts and renders in-process through the JagFx Kotlin/JS engine
-and exposes small builders for the JSON patch format. Use it from Node or Bun scripts when you want to generate a patch, convert
+and exposes small builders for the JSON patch format. Use it from Bun scripts when you want to generate a patch, convert
 `.synth` files to JSON, or render WAV files.
 
 ```js

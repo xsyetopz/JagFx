@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, resolve } from "node:path";
 
-import {
+import * as dist from "../dist/index.mjs";
+
+/** @type {typeof import("../src/index.ts")} */
+const {
 	assertRealSynthData,
 	createEnvelope,
 	createPatch,
@@ -23,15 +25,27 @@ import {
 	synthToJson,
 	toneToJson,
 	writePatchJson,
-} from "../dist/index.mjs";
+} = dist;
 
-const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const packageDir = resolve(import.meta.dirname, "..");
 const repoRoot = resolve(packageDir, "../..");
 const cowDeathPath = resolve(repoRoot, "references/synths/cow_death.synth");
 const cowDeathJsonPath = resolve(repoRoot, "references/json/cow_death.json");
 const cowDeathWavPath = resolve(repoRoot, "references/wav/cow_death.wav");
 const samplePath = resolve(repoRoot, "references/vorbis/11102.jagvorbis");
 const fakeCliPath = resolve(packageDir, "test/fake-jagfx-cli.mjs");
+/**
+ * @param {Promise<unknown>} promise
+ * @returns {Promise<unknown>} the rejection reason, or `null` when it resolved
+ */
+const rejection = async (promise) => {
+	try {
+		await promise;
+	} catch (error) {
+		return error;
+	}
+	return null;
+};
 const fakeCommand = { command: process.execPath, args: [fakeCliPath] };
 const lfsPointer = Buffer.from(`version https://git-lfs.github.com/spec/v1
 oid sha256:ba0494ff046823e2e11143beff9c0c705189afb8c810742f2e798b68f0f7baed
@@ -41,14 +55,18 @@ size 130
 describe("git lfs checks", () => {
 	test("detects Git LFS pointer files", () => {
 		expect(isGitLfsPointer(lfsPointer)).toBe(true);
-		expect(() => assertRealSynthData(lfsPointer)).toThrow(JagFxError);
+		expect(() => {
+			assertRealSynthData(lfsPointer);
+		}).toThrow(JagFxError);
 	});
 
 	test("does not classify real synth bytes as an LFS pointer", async () => {
 		const synthData = await readFile(cowDeathPath);
 
 		expect(isGitLfsPointer(synthData)).toBe(false);
-		expect(() => assertRealSynthData(synthData)).not.toThrow();
+		expect(() => {
+			assertRealSynthData(synthData);
+		}).not.toThrow();
 	});
 });
 
@@ -65,7 +83,7 @@ describe("patch builders", () => {
 					amplitudeEnvelope: createEnvelope({
 						waveform: "off",
 						startValue: 0,
-						endValue: 65535,
+						endValue: 65_535,
 					}),
 					durationMs: 250,
 				}),
@@ -151,10 +169,12 @@ describe("in-process conversions", () => {
 
 		try {
 			const patch = await synthToJson(cowDeathPath, { outputPath: jsonPath });
-			expect(patch).toEqual(JSON.parse(reference));
-			expect(JSON.parse(await readFile(jsonPath, "utf8"))).toEqual(
-				JSON.parse(reference),
-			);
+			/** @type {unknown} */
+			const expected = JSON.parse(reference);
+			/** @type {unknown} */
+			const written = JSON.parse(await readFile(jsonPath, "utf8"));
+			expect(patch).toEqual(expected);
+			expect(written).toEqual(expected);
 		} finally {
 			await rm(dir, { recursive: true, force: true });
 		}
@@ -195,13 +215,15 @@ describe("in-process conversions", () => {
 		const dir = await mkdtemp(join(tmpdir(), "jagfx-tone-"));
 		const tonePath = join(dir, "voice.tone");
 		const filterPath = join(dir, "voice.filter");
-		const voice = (await readPatchJson(cowDeathJsonPath)).voices.find(Boolean);
+		const referencePatch = await readPatchJson(cowDeathJsonPath);
+		const voice = referencePatch.voices.find(Boolean);
 
 		try {
 			await jsonToTone(voice, tonePath);
 			expect(await toneToJson(tonePath)).toEqual(voice);
-			await jsonToFilter(voice.filter ?? null, filterPath);
-			expect(await filterToJson(filterPath)).toEqual(voice.filter ?? null);
+			expect(voice.filter).toBeUndefined();
+			await jsonToFilter(null, filterPath);
+			expect(await filterToJson(filterPath)).toBeNull();
 			await jsonToFilter(null, filterPath);
 			expect([...(await readFile(filterPath))]).toEqual([0]);
 		} finally {
@@ -230,9 +252,8 @@ describe("in-process conversions", () => {
 
 		try {
 			await writeFile(jsonPath, "{");
-			await expect(
-				jsonToSynth(jsonPath, join(dir, "bad.synth")),
-			).rejects.toMatchObject({ code: "JAGFX_CONVERSION_FAILED" });
+			const error = await rejection(jsonToSynth(jsonPath, join(dir, "bad.synth")));
+			expect(error).toMatchObject({ code: "JAGFX_CONVERSION_FAILED" });
 		} finally {
 			await rm(dir, { recursive: true, force: true });
 		}
@@ -240,7 +261,8 @@ describe("in-process conversions", () => {
 });
 
 test("rejects invalid loop counts", async () => {
-	await expect(
+	const error = await rejection(
 		renderSynthToWav(cowDeathPath, "unused.wav", { loops: 0 }),
-	).rejects.toMatchObject({ code: "JAGFX_INVALID_ARGUMENT" });
+	);
+	expect(error).toMatchObject({ code: "JAGFX_INVALID_ARGUMENT" });
 });
