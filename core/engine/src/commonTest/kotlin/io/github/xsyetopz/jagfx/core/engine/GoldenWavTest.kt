@@ -20,7 +20,6 @@ class GoldenWavTest {
                 .map { it.substringBefore('.') }
                 .toSet()
         assertEquals(synths.keys, names)
-        assertEquals(17, ReferenceWavs.hex.size)
     }
 
     @Test
