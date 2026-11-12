@@ -7,7 +7,7 @@ import io.github.xsyetopz.jagfx.core.model.SynthLimits
 /** Raw units a Shift arrow moves a point: 1/64 of the voice or of the level range. */
 internal const val KEY_STEP: Int = 1024
 
-/** Raw units a Ctrl, Alt, or Cmd arrow moves a point. */
+/** Raw units a Ctrl or Cmd arrow moves a point. */
 internal const val KEY_FINE_STEP: Int = 64
 
 /** What a key does in a focused envelope cell. */
@@ -32,7 +32,7 @@ internal data class KeyEdit(
 
 /**
  * The command of [key]: an arrow selects the previous or next point (Left, Right) and with
- * [move] (Shift, Ctrl, Alt, or Cmd held) moves it; Home and End select the ends; Insert, `+`
+ * [move] (Shift, Ctrl, or Cmd held) moves it; Home and End select the ends; Insert, `+`
  * add a point after the selected one; Delete and Backspace remove it.
  */
 internal fun envelopeKeyCommand(

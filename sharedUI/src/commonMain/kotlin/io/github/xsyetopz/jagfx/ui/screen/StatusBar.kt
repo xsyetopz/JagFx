@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import io.github.xsyetopz.jagfx.ui.editor.StatusHint
 import io.github.xsyetopz.jagfx.ui.i18n.LocalStrings
 import io.github.xsyetopz.jagfx.ui.theme.JagFxTheme
@@ -19,6 +22,7 @@ internal fun StatusBar(
     val dimens = JagFxTheme.dimens
     Box(
         modifier
+            .semantics { liveRegion = LiveRegionMode.Polite }
             .background(JagFxTheme.colors.footer)
             .padding(horizontal = dimens.spaceXl, vertical = dimens.spaceSm),
     ) {

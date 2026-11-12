@@ -2,17 +2,26 @@ package io.github.xsyetopz.jagfx.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import io.github.xsyetopz.jagfx.core.model.Waveform
 import io.github.xsyetopz.jagfx.ui.editor.EditorState
 import io.github.xsyetopz.jagfx.ui.editor.EnvelopeIntent
@@ -45,8 +54,20 @@ internal fun GridCell(
     val colors = JagFxTheme.colors
     val dimens = JagFxTheme.dimens
     val selected = slot == state.selectedTarget
+    val focus = remember { FocusRequester() }
+    LaunchedEffect(selected) {
+        if (selected && actions.focusSelectedCell) {
+            actions.focusSelectedCell = false
+            focus.requestFocus()
+        }
+    }
     Column(
         modifier
+            .onPreviewKeyEvent { event ->
+                viewKeyCommandOf(event)?.also { actions.applyViewKey(it, slot, view) } != null
+            }.onKeyEvent(actions::handleCellNavigationKey)
+            .focusRequester(focus)
+            .focusGroup()
             .background(if (selected) colors.cellSelected else colors.cell)
             .border(dimens.border, if (selected) colors.accent else colors.border)
             .pointerInput(slot) {
@@ -54,6 +75,7 @@ internal fun GridCell(
                     while (true) {
                         val event = awaitPointerEvent(PointerEventPass.Initial)
                         if (event.type == PointerEventType.Press) {
+                            actions.focusSelectedCell = false
                             actions.dispatch(SlotIntent.SelectTarget(slot))
                         }
                     }
@@ -61,7 +83,14 @@ internal fun GridCell(
             }.padding(dimens.border),
     ) {
         CellHeader(slot, selected, view, actions)
-        CellScope(slot, state, view, actions, Modifier.weight(1f).fillMaxWidth())
+        val summary = plotSummary(slot, envelopeOf(state.voice, slot), LocalStrings.current)
+        CellScope(
+            slot,
+            state,
+            view,
+            actions,
+            Modifier.weight(1f).fillMaxWidth().semantics { contentDescription = summary },
+        )
         if (slot.isTimeDomain && view.canvas(slot).panelOpen) {
             ControlsPanel(slot, state, view, actions, Modifier.weight(1f).fillMaxWidth())
         }

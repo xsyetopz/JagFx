@@ -26,7 +26,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.xsyetopz.jagfx.core.model.SynthLimits
@@ -141,6 +143,7 @@ private fun VoiceTile(
     val palette = JagFxTheme.palette
     val dimens = JagFxTheme.dimens
     val voice = state.patch.voices[index]
+    val strings = LocalStrings.current
     val selected = index == state.selectedVoice
     val shape = RoundedCornerShape(dimens.radius)
     val barColor = if (selected) palette.output else colors.textDim
@@ -149,7 +152,10 @@ private fun VoiceTile(
             .clip(shape)
             .background(if (selected) colors.cellSelected else colors.button)
             .border(dimens.border, if (selected) colors.accent else colors.border, shape)
-            .clickable { actions.dispatch(SlotIntent.SelectVoice(index)) }
+            .semantics(mergeDescendants = true) {
+                contentDescription = strings.format(UiString.VoiceNumber, index + 1)
+                this.selected = selected
+            }.clickable(role = Role.RadioButton) { actions.dispatch(SlotIntent.SelectVoice(index)) }
             .voiceDrag(index, state, timeline, actions)
             .alpha(if (voice == null) EMPTY_ALPHA else 1f)
             .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),

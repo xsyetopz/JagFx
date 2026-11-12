@@ -7,7 +7,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isAltPressed
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.isShiftPressed
@@ -101,14 +100,15 @@ internal fun EnvelopeCallbacks.applyMenu(menu: EnvelopeMenu) {
 /**
  * Runs the key command of [event] (see [envelopeKeyCommand]): select, move, fine move, add, or
  * delete. Each edit is one [EnvelopeCallbacks.onSegmentsChange], so one undo step. Shift moves a
- * point by [KEY_STEP]; Ctrl, Alt, or Cmd by [KEY_FINE_STEP]. True when [event] was handled.
+ * point by [KEY_STEP]; Ctrl or Cmd by [KEY_FINE_STEP]. Alt is left to the cell navigation. True
+ * when [event] was handled.
  */
 internal fun handleEnvelopeKey(
     event: KeyEvent,
     view: EnvelopeView,
     callbacks: EnvelopeCallbacks,
 ): Boolean {
-    val fine = event.isCtrlPressed || event.isAltPressed || event.isMetaPressed
+    val fine = event.isCtrlPressed || event.isMetaPressed
     val command = envelopeKeyCommand(event.key, event.isShiftPressed || fine)
     val edit =
         view.envelope?.segments?.takeIf { event.type == KeyEventType.KeyDown }?.let { segments ->

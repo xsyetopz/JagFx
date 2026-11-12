@@ -18,18 +18,6 @@ import kotlin.math.abs
 /** `PitchOffset` units per semitone. */
 private const val DETUNE_UNITS_PER_SEMITONE = 10
 
-/** Which parts of the editor the rack shows. */
-internal enum class RackMode {
-    /** The three envelope rows. */
-    Main,
-
-    /** The filter column at full size. */
-    Filter,
-
-    /** The rows and the filter column side by side. */
-    Both,
-}
-
 /** `true` for the slots that draw the voice timeline: the envelope slots and the output. */
 internal val SignalChainSlot.isTimeDomain: Boolean
     get() = isEnvelope || this == SignalChainSlot.Output
@@ -57,7 +45,6 @@ internal data class CanvasView(
  * View state of the screen that [EditorState] does not hold.
  *
  * @property openCell The cell that fills the rack on its own, or `null` for the whole rack.
- * @property mode The parts of the editor that the rack shows.
  * @property timeView The time view that every linked time-domain cell shares.
  */
 @Immutable
@@ -65,7 +52,6 @@ internal data class ScreenViewState(
     val canvases: Map<SignalChainSlot, CanvasView> = emptyMap(),
     val selectedPole: PoleRef? = null,
     val openCell: SignalChainSlot? = null,
-    val mode: RackMode = RackMode.Main,
     val timeView: TimeView = TimeView(),
 ) {
     fun canvas(slot: SignalChainSlot): CanvasView = canvases[slot] ?: CanvasView()
@@ -234,3 +220,31 @@ internal fun statusText(
             )
         }
     }
+
+/**
+ * The text a screen reader reads for the plot of [slot]: its title, waveform, point count, and
+ * the lowest and highest target level in percent of the full range. Only the title for a plot
+ * without an [envelope].
+ */
+internal fun plotSummary(
+    slot: SignalChainSlot,
+    envelope: Envelope?,
+    strings: Strings,
+): String {
+    val title = strings[titleOf(slot)]
+    val levels = envelope?.segments?.map { it.targetLevel * PERCENT / SynthLimits.U16_MAX }
+    return if (envelope == null || levels.isNullOrEmpty()) {
+        title
+    } else {
+        strings.format(
+            UiString.PlotSummary,
+            title,
+            waveformName(strings, envelope.waveform),
+            levels.size,
+            levels.min(),
+            levels.max(),
+        )
+    }
+}
+
+private const val PERCENT = 100

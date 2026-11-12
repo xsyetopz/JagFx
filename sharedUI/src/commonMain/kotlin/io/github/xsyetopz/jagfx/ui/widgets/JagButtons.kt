@@ -19,11 +19,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -55,7 +67,11 @@ internal fun PainterIcon(
  * A flat button at least 24 dp square.
  * An [active] button has accent text, an accent border, and a bar along its bottom edge, so color
  * is not the only sign.
- * A focused button shows a 2 dp accent ring. [tooltip] shows while the pointer rests on it.
+ * A focused button shows a 2 dp accent ring. [tooltip] shows while the pointer rests on it or the
+ * button has keyboard focus, and Escape closes it.
+ * It acts on release and not on press, and moving off before release cancels it.
+ * [description] is the accessible name when the content is a symbol; [role] is the accessible
+ * role, and a [Role.Switch], [Role.Checkbox], or [Role.RadioButton] reports [active] as its state.
  */
 @Composable
 internal fun JagButton(
@@ -64,6 +80,8 @@ internal fun JagButton(
     enabled: Boolean = true,
     active: Boolean = false,
     tooltip: String? = null,
+    description: String? = null,
+    role: Role = Role.Button,
     content: @Composable RowScope.() -> Unit,
 ) {
     val colors = JagFxTheme.colors
@@ -71,6 +89,7 @@ internal fun JagButton(
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
     val focused by interaction.collectIsFocusedAsState()
+    val tooltipState = rememberTooltipState(hovered || focused)
     val shape = RoundedCornerShape(dimens.radius)
     val background =
         when {
@@ -78,10 +97,11 @@ internal fun JagButton(
             hovered && enabled -> colors.buttonHover
             else -> colors.button
         }
-    JagTooltip(tooltip, hovered, modifier) {
+    JagTooltip(tooltip, tooltipState.visible, modifier) {
         Row(
             modifier =
                 Modifier
+                    .dismissTooltipOnEscape(tooltipState)
                     .defaultMinSize(
                         minWidth = dimens.buttonMinWidth,
                         minHeight = dimens.controlHeight,
@@ -98,9 +118,12 @@ internal fun JagButton(
                         interactionSource = interaction,
                         indication = null,
                         enabled = enabled,
-                        role = Role.Button,
+                        role = role,
                         onClick = onClick,
-                    ).padding(horizontal = dimens.spaceMd),
+                    ).semantics(mergeDescendants = true) {
+                        description?.let { contentDescription = it }
+                        stateOf(role, active)
+                    }.padding(horizontal = dimens.spaceMd),
             horizontalArrangement =
                 Arrangement.spacedBy(
                     dimens.spaceMd,
@@ -126,8 +149,9 @@ internal fun JagButton(
     enabled: Boolean = true,
     active: Boolean = false,
     tooltip: String? = null,
+    role: Role = Role.Button,
 ) {
-    JagButton(onClick, modifier, enabled, active, tooltip) {
+    JagButton(onClick, modifier, enabled, active, tooltip, role = role) {
         val label = JagFxTheme.typography.label
         JagText(
             text,
@@ -146,7 +170,7 @@ internal fun JagIconButton(
     enabled: Boolean = true,
     active: Boolean = false,
 ) {
-    JagButton(onClick, modifier, enabled, active, tooltip) { PainterIcon(icon) }
+    JagButton(onClick, modifier, enabled, active, tooltip, tooltip) { PainterIcon(icon) }
 }
 
 /** A row of joined buttons; the one equal to [selected] is active. */
@@ -168,6 +192,8 @@ internal fun <T> JagToggleGroup(
                 enabled = enabled,
                 active = option == selected,
                 tooltip = tooltip(option),
+                description = tooltip(option),
+                role = Role.RadioButton,
             ) { item(option) }
         }
     }
@@ -190,11 +216,13 @@ internal fun JagCheck(
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
     val focused by interaction.collectIsFocusedAsState()
+    val tooltipState = rememberTooltipState(hovered || focused)
     val shape = RoundedCornerShape(dimens.radius)
-    JagTooltip(tooltip, hovered, modifier) {
+    JagTooltip(tooltip, tooltipState.visible, modifier) {
         Box(
             modifier =
                 Modifier
+                    .dismissTooltipOnEscape(tooltipState)
                     .size(dimens.minTarget)
                     .alpha(if (enabled) 1f else DISABLED_ALPHA)
                     .hoverable(interaction)
@@ -203,7 +231,11 @@ internal fun JagCheck(
                         indication = null,
                         enabled = enabled,
                         role = Role.Checkbox,
-                    ) { onCheckedChange(!checked) },
+                    ) { onCheckedChange(!checked) }
+                    .semantics(mergeDescendants = true) {
+                        tooltip?.let { contentDescription = it }
+                        toggleableState = ToggleableState(checked)
+                    },
             contentAlignment = Alignment.Center,
         ) {
             Box(
@@ -224,6 +256,46 @@ internal fun JagCheck(
 }
 
 private val CheckMarkSize = 6.dp
+
+/** The state a control with [role] reports: on or off for toggles, chosen for radio buttons. */
+private fun androidx.compose.ui.semantics.SemanticsPropertyReceiver.stateOf(
+    role: Role,
+    active: Boolean,
+) {
+    when (role) {
+        Role.Switch, Role.Checkbox -> toggleableState = ToggleableState(active)
+        Role.RadioButton -> selected = active
+    }
+}
+
+/**
+ * Whether a tooltip shows: while [shown] (hover or keyboard focus) until Escape closes it. It
+ * shows again after the pointer or focus leaves and returns.
+ */
+internal class TooltipState(
+    shown: Boolean,
+    private val dismissed: androidx.compose.runtime.MutableState<Boolean>,
+) {
+    val visible: Boolean = shown && !dismissed.value
+
+    fun dismiss() {
+        dismissed.value = true
+    }
+}
+
+@Composable
+internal fun rememberTooltipState(shown: Boolean): TooltipState {
+    val dismissed = remember(shown) { mutableStateOf(false) }
+    return TooltipState(shown, dismissed)
+}
+
+/** Closes a showing tooltip on Escape and consumes the key; other Escapes pass on. */
+internal fun Modifier.dismissTooltipOnEscape(state: TooltipState): Modifier =
+    onKeyEvent {
+        val close = state.visible && it.key == Key.Escape && it.type == KeyEventType.KeyDown
+        if (close) state.dismiss()
+        close
+    }
 
 /**
  * Shows [text] in a small box above [content] while [visible]; nothing when [text] is null.

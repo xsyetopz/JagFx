@@ -194,4 +194,5 @@ internal val stringsEs: Map<UiString, String> =
         UiString.PointColumnLevel to "Nivel (bruto)",
         UiString.RangeError to "Rango permitido: {0} a {1}",
         UiString.ControlsPanelTitle to "Controles: {0}",
+        UiString.PlotSummary to "{0}: {1}, {2} puntos, {3} % a {4} %",
     )

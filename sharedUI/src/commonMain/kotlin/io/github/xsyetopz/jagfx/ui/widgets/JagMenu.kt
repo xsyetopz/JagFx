@@ -24,6 +24,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
@@ -85,8 +88,14 @@ internal fun JagMenuItem(
                 .background(if (hovered && enabled) colors.buttonHover else colors.panel)
                 .focusRing(focused, colors.accent, dimens.focusRing, dimens.radius)
                 .hoverable(interaction)
-                .clickable(interaction, indication = null, enabled = enabled, onClick = onClick)
-                .padding(horizontal = dimens.spaceLg),
+                .semantics { selected = active }
+                .clickable(
+                    interaction,
+                    indication = null,
+                    enabled = enabled,
+                    role = Role.Button,
+                    onClick = onClick,
+                ).padding(horizontal = dimens.spaceLg),
         horizontalArrangement = Arrangement.spacedBy(dimens.spaceMd),
         verticalAlignment = Alignment.CenterVertically,
     ) {

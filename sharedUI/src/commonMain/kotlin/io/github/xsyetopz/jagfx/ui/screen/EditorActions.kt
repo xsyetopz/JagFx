@@ -13,6 +13,12 @@ internal class EditorActions(
     val dispatch: (EditorIntent) -> Unit,
     val updateView: ((ScreenViewState) -> ScreenViewState) -> Unit,
 ) {
+    /**
+     * Set by the Alt and arrow keys: the cell that becomes selected next takes the keyboard
+     * focus, so the focus follows the selection. Not state; the cell clears it.
+     */
+    var focusSelectedCell: Boolean = false
+
     fun beginGesture() = dispatch(HistoryIntent.BeginGesture)
 
     fun endGesture() = dispatch(HistoryIntent.EndGesture)

@@ -183,4 +183,5 @@ internal enum class UiString {
     PointColumnLevel,
     RangeError,
     ControlsPanelTitle,
+    PlotSummary,
 }

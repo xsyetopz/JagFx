@@ -195,4 +195,5 @@ internal val stringsIt: Map<UiString, String> =
         UiString.PointColumnLevel to "Livello (grezzo)",
         UiString.RangeError to "Intervallo consentito: da {0} a {1}",
         UiString.ControlsPanelTitle to "Controlli: {0}",
+        UiString.PlotSummary to "{0}: {1}, {2} punti, {3}% a {4}%",
     )

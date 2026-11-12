@@ -191,4 +191,5 @@ internal val stringsEn: Map<UiString, String> =
         UiString.PointColumnLevel to "Level (raw)",
         UiString.RangeError to "Allowed range: {0} to {1}",
         UiString.ControlsPanelTitle to "Controls: {0}",
+        UiString.PlotSummary to "{0}: {1}, {2} points, {3}% to {4}%",
     )
