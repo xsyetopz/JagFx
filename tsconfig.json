@@ -1,8 +1,7 @@
 {
-  "extends": "./tsconfig.base.json",
-  "include": [
-    "packages/*/src",
-    "packages/*/test",
-    "packages/*/playground"
-  ]
+	"$schema": "https://json.schemastore.org/tsconfig.json",
+	"extends": ["./tsconfig.base.json", "typescript-bedrock/tsconfig.base.json"],
+	"include": ["packages/*/src", "packages/*/test", "packages/*/playground"],
+	"compilerOptions": {},
+	"exclude": ["**/.build", "**/build", "**/coverage", "**/dist", "**/target"]
 }

@@ -1,26 +1,22 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "ci"
 
-  - package-ecosystem: "gradle"
-    directory: "/"
+# >>> bedrock
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "build"
-      include: "scope"
+      interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]
+# <<< bedrock
 
-  - package-ecosystem: "bun"
-    directory: "/"
+# >>> typescript-bedrock
+  - package-ecosystem: bun
+    directory: /
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "build"
-      include: "scope"
+      interval: weekly
+    groups:
+      bun-dependencies:
+        patterns: ["*"]
+# <<< typescript-bedrock

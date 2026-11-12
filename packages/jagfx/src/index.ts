@@ -3,16 +3,12 @@ import { spawn } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+
 import * as kotlin from "../kotlin/jagfx-bindings.mjs";
 
 /** `undefined<id>` names a waveform id from 5 to 255, which the game client renders as silence. */
 export type Waveform =
-	| "off"
-	| "square"
-	| "sine"
-	| "saw"
-	| "noise"
-	| `undefined${number}`;
+	"off" | "square" | "sine" | "saw" | "noise" | `undefined${number}`;
 
 export interface JagFxCommand {
 	command: string;
@@ -563,7 +559,9 @@ function loopCount(optionLoops?: number): number {
 	return loops;
 }
 
-async function encodeSynth(patchOrPath: PatchJson | string): Promise<Int8Array> {
+async function encodeSynth(
+	patchOrPath: PatchJson | string,
+): Promise<Int8Array> {
 	const json =
 		typeof patchOrPath === "string"
 			? await readFile(patchOrPath, "utf8")

@@ -1,4 +1,4 @@
 {
-  "include": ["tools"],
-  "typeCheckingMode": "standard"
+	"include": ["tools"],
+	"typeCheckingMode": "standard"
 }

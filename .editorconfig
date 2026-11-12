@@ -53,6 +53,37 @@ end_of_line = lf
 [*.md]
 trim_trailing_whitespace = true
 
+# >>> bedrock
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = tab
+indent_size = 2
+
+[*.{yml,yaml,md,mdx}]
+indent_style = space
+
+[{justfile,*.just}]
+indent_style = space
+indent_size = 4
+
+# Markdown marks a hard line break with two trailing spaces.
+[*.{md,mdx}]
+trim_trailing_whitespace = false
+
+[*.{bat,cmd,ps1}]
+end_of_line = crlf
+# <<< bedrock
+
+# >>> typescript-bedrock
+[*.{ts,tsx,js,jsx,mjs,cjs,mts,cts,json,jsonc}]
+indent_style = tab
+indent_size = 2
+max_line_length = 80
+# <<< typescript-bedrock
+
 # ktlint_official indents Kotlin with four spaces; the bedrock defaults above would make it tabs.
 [*.{kt,kts}]
 indent_style = space

@@ -27,7 +27,11 @@ export interface JagFxWasmBackend {
 
 /** The exports of the Kotlin/Wasm module `dist/kotlin/jagfx-bindings.mjs`. */
 export interface JagFxWasmModule {
-	renderPcm16Le(synth: Int8Array, loops: number, voiceFilter: number): Int8Array;
+	renderPcm16Le(
+		synth: Int8Array,
+		loops: number,
+		voiceFilter: number,
+	): Int8Array;
 	samplePcm16Le(sample: Int8Array): Int8Array;
 	sampleInfo(sample: Int8Array): string;
 }
@@ -53,7 +57,11 @@ export async function createJagFxWasmBackend(
 	}
 
 	const module = await loader();
-	for (const name of ["renderPcm16Le", "samplePcm16Le", "sampleInfo"] as const) {
+	for (const name of [
+		"renderPcm16Le",
+		"samplePcm16Le",
+		"sampleInfo",
+	] as const) {
 		if (typeof module?.[name] !== "function") {
 			throw new Error(`The JagFx Wasm module does not export ${name}.`);
 		}

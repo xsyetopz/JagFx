@@ -1,33 +1,33 @@
 {
-  "name": "@xsyetopz/jagfx-node",
-  "version": "3.0.0",
-  "description": "Node bindings for JagFx, built on Kotlin/JS.",
-  "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "scripts": {
-    "build": "bun run build:esm && bun run build:cjs && bun run build:types",
-    "build:kotlin": "../../gradlew -p ../.. :bindings:syncNpmPackages",
-    "test": "node --test test/index.test.mjs",
-    "build:esm": "bun build ./src/index.ts --target=node --format=esm --packages=external --outfile=./dist/index.mjs",
-    "build:cjs": "bun build ./src/index.ts --target=node --format=cjs --packages=external --outfile=./dist/index.cjs",
-    "build:types": "tsc -p tsconfig.build.json"
-  },
-  "license": "MIT",
-  "engines": {
-    "bun": ">=1.4.2"
-  },
-  "source": "./src/index.ts"
+	"name": "@xsyetopz/jagfx-node",
+	"version": "3.0.0",
+	"description": "Node bindings for JagFx, built on Kotlin/JS.",
+	"license": "MIT",
+	"source": "./src/index.ts",
+	"files": [
+		"dist",
+		"src"
+	],
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"scripts": {
+		"build": "bun run build:esm && bun run build:cjs && bun run build:types",
+		"build:cjs": "bun build ./src/index.ts --target=node --format=cjs --packages=external --outfile=./dist/index.cjs",
+		"build:esm": "bun build ./src/index.ts --target=node --format=esm --packages=external --outfile=./dist/index.mjs",
+		"build:kotlin": "../../gradlew -p ../.. :bindings:syncNpmPackages",
+		"build:types": "tsc -p tsconfig.build.json",
+		"test": "node --test test/index.test.mjs"
+	},
+	"engines": {
+		"bun": ">=1.4.2"
+	}
 }

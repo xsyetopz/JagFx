@@ -1,0 +1,12 @@
+{
+	"$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/v0.24.0/schema/markdownlint-cli2-config-schema.json",
+	"globs": ["**/*.md"],
+	"gitignore": true,
+	// A repo without a .gitignore must not have its dependencies linted or fixed.
+	"ignores": ["**/node_modules/**"],
+	// The rules come from typescript-bedrock; a custom rule must be named here to load.
+	"customRules": ["markdownlint-rule-title-case-style"],
+	"config": {
+		"extends": "./node_modules/typescript-bedrock/markdownlint.jsonc",
+	},
+}
